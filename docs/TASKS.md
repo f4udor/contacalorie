@@ -40,7 +40,7 @@ Funzione per §3.3. Riceve la data, i giorni della settimana e le impostazioni; 
 - Un saldo positivo non aumenta mai l'obiettivo.
 - La base non scende mai sotto la soglia minima; il bonus si somma sopra.
 
-### T1.5 Obiettivi dei nutrienti · da fare
+### T1.5 Obiettivi dei nutrienti · fatto
 Funzione per §3.4.
 - Casi E, F, G di §3.6 per i carboidrati.
 - Valori manuali di proteine e grassi sostituiscono la formula.
