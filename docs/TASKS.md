@@ -57,7 +57,7 @@ Funzione che restituisce, per una settimana: kcal e obiettivo di ogni giorno, sa
 - Le medie considerano solo i giorni con almeno un pasto; i passi medi solo i giorni con passi.
 - Settimana vuota: nessun errore, valori assenti e non zero.
 
-### T1.8 Piano della sfida · da fare
+### T1.8 Piano della sfida · fatto
 Funzione pura per §6: dato il piano, la data di inizio e una data, restituisce numero del giorno ed esercizi con ripetizioni.
 - Giorno 1: push up 1, crunch 20, crunch incrociati 10 per lato.
 - Giorno 4: push up 4, crunch 20, crunch incrociati 10, dead bug 10.
