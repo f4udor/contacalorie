@@ -5,3 +5,4 @@ export * from "./budget";
 export * from "./activity";
 export * from "./dates";
 export * from "./target";
+export * from "./nutrients";
