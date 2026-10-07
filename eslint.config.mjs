@@ -8,19 +8,16 @@ export default defineConfig([
   globalIgnores([".next/**", "node_modules/**", "next-env.d.ts"]),
   {
     // Il motore dei calcoli è puro: può importare solo da se stesso.
-    files: ["src/engine/**/*.ts"],
+    // La cartella è piatta: sono ammessi solo import "./nome" (nessun "../", nessun pacchetto).
+    files: ["src/engine/*.ts"],
     rules: {
       "no-restricted-imports": [
         "error",
         {
           patterns: [
             {
-              regex: "^(?!\\./|\\.\\./)",
-              message: "src/engine può importare solo da src/engine (percorsi relativi interni).",
-            },
-            {
-              regex: "^\\.\\./\\.\\./",
-              message: "src/engine non può importare da fuori src/engine.",
+              regex: "^(?!\\./)",
+              message: "src/engine può importare solo da src/engine (percorsi './nome').",
             },
           ],
         },
@@ -28,15 +25,15 @@ export default defineConfig([
     },
   },
   {
-    // I test del motore possono usare vitest.
-    files: ["src/engine/**/*.test.ts"],
+    // I test del motore possono usare anche vitest.
+    files: ["src/engine/*.test.ts"],
     rules: {
       "no-restricted-imports": [
         "error",
         {
           patterns: [
             {
-              regex: "^(?!\\./|\\.\\./|vitest$)",
+              regex: "^(?!\\./|vitest$)",
               message: "src/engine può importare solo da src/engine (e i test da vitest).",
             },
           ],
