@@ -75,5 +75,5 @@ Migrazioni SQL in `supabase/migrations` per le tabelle di §7.
 - Un file `docs/SCHEMA.md` descrive ogni tabella in una riga.
 - Le migrazioni non sono state applicate a un database reale: scrivilo in "Non verificato", a meno che l'ambiente permetta di provarle in locale.
 
-### T1.10 Report di fase · da fare
+### T1.10 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-1.md` come indicato in `CLAUDE.md` e fermati.

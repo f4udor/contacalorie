@@ -14,6 +14,7 @@ Una riga per task chiuso.
 - T1.7 · fatto · `weekSummary`: giorni, saldo, medie, km, passi, pasto libero, sfida; settimana vuota → `null`. Scelte in 'Decisioni da confermare'.
 - T1.8 · fatto · `challengeDay` con piano come dato (`DEFAULT_CHALLENGE_PLAN` in file a parte); aggiunta `daysBetween`.
 - T1.9 · fatto · 10 migrazioni/tabelle con RLS, piano di 30 giorni come dato iniziale, `docs/SCHEMA.md`. Provate solo su PostgreSQL locale con stand-in di Supabase (vedi Non verificato).
+- T1.10 · fatto · `docs/REPORT-FASE-1.md` scritto.
 
 ## Decisioni da confermare
 
