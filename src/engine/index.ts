@@ -7,3 +7,4 @@ export * from "./dates";
 export * from "./target";
 export * from "./nutrients";
 export * from "./traffic";
+export * from "./week";

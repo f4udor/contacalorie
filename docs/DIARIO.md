@@ -18,6 +18,8 @@ Una riga per task chiuso.
 - Soglia gialla dell'anello kcal (×1,05) è una costante `KCAL_RING_YELLOW_LIMIT` in `defaults.ts`, non un'impostazione modificabile: §3 non la elenca tra le impostazioni.
 - Semaforo "tetto" (sale): assunto esattamente uguale al tetto → giallo; rosso solo se supera il tetto.
 - Il giorno di cui si calcola l'obiettivo non entra nel proprio saldo (solo i giorni precedenti).
+- Riepilogo settimana: "media kcal" usa le kcal reali (non il budget); "saldo" usa il budget (pasto libero col tetto); passi 0 sono considerati assenti nella media; km totali `null` solo se nessun giorno ha km registrati.
+- Il saldo della settimana somma tutti i giorni con pasti (anche l'ultimo), a differenza del saldo di `dayTarget` che si ferma ai giorni precedenti.
 
 ## Non verificato
 
