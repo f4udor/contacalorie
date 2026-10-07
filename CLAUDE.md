@@ -46,6 +46,9 @@ Per ogni task:
    - respinto: correggi seguendo le note e ripeti dal punto 2;
    - respinto due volte: stato `bloccato`, motivo nel diario, passa al task successivo.
 5. Un commit per task, con il codice del task nel messaggio (es. `T1.4 target del giorno`).
+6. **Push dopo ogni commit**, sul ramo della sessione. Anche un task `bloccato` va salvato e inviato: aggiornamento di `docs/TASKS.md` e del diario in un commit a parte. Nessun lavoro deve restare solo nell'ambiente della sessione.
+
+Lavora in autonomia, senza chiedere conferme all'utente: nessuno sta guardando. Se serve una scelta, applica la regola dei "Limiti" qui sotto e prosegui.
 
 ### Cosa controlla il revisore
 
