@@ -52,7 +52,7 @@ Funzione per §3.5, una per tipo (minimo, intervallo, tetto) più quella dell'an
 - Test sui valori esattamente al confine di ogni soglia.
 - Obiettivo pari a 0: nessun errore, stato neutro.
 
-### T1.7 Riepilogo della settimana · da fare
+### T1.7 Riepilogo della settimana · fatto
 Funzione che restituisce, per una settimana: kcal e obiettivo di ogni giorno, saldo, media kcal, medie dei nutrienti, km totali, passi medi, pasto libero usato, giorni di sfida completati.
 - Le medie considerano solo i giorni con almeno un pasto; i passi medi solo i giorni con passi.
 - Settimana vuota: nessun errore, valori assenti e non zero.

@@ -11,6 +11,7 @@ Una riga per task chiuso.
 - T1.4 · fatto · `dayTarget` (§3.3) con date in UTC (`dates.ts`); casi A, B, C, D, H. Il giorno stesso è escluso dal saldo; date duplicate in ingresso non gestite.
 - T1.5 · fatto · `nutrientTargets` (§3.4); casi E, F, G. Carboidrati arrotondati al grammo intero.
 - T1.6 · fatto · semafori minimo/intervallo/tetto e anello kcal (`traffic.ts`); casi I, J e tutti i confini.
+- T1.7 · fatto · `weekSummary`: giorni, saldo, medie, km, passi, pasto libero, sfida; settimana vuota → `null`. Scelte in 'Decisioni da confermare'.
 
 ## Decisioni da confermare
 
