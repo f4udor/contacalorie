@@ -13,7 +13,7 @@ Crea il progetto con lo stack e la struttura di cartelle di `CLAUDE.md`.
 - Una regola di lint impedisce a `src/engine` di importare da fuori `src/engine`.
 - La pagina iniziale mostra solo il nome dell'app.
 
-### T1.1 Tipi e impostazioni · da fare
+### T1.1 Tipi e impostazioni · fatto
 In `src/engine`: tipi per pasto, giorno, attività, impostazioni; `defaults.ts` con i valori di §3.
 - I default coincidono uno per uno con la tabella di §3.
 - Una funzione unisce impostazioni parziali dell'utente ai default; i valori mancanti o non validi (negativi, non numerici) tornano al default.

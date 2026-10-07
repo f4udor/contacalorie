@@ -5,6 +5,7 @@ Una riga per task chiuso.
 ## Task chiusi
 
 - T1.0 · bloccato · respinto due volte dalla revisione: la regola di lint su `src/engine` si aggira con `./../app/page` (il pattern `^(?!\./)` accetta ogni import che inizia con `./`). Correzione indicata dal revisore: regex `^(?!\./[A-Za-z0-9_-]+$)` (per i test `^(?!\./[A-Za-z0-9_-]+$|vitest$)`) più i casi `./../app/page` e `./sub/../../app/page` in `tools/lint-engine.test.ts`. Il resto del task (lint/test/build, pagina, diario, `.gitkeep`) è approvato.
+- T1.1 · fatto · tipi, default di §3, `mergeSettings` con test. Aggiunti `proteinGramsManual`/`fatGramsManual` (null = formula).
 
 ## Decisioni da confermare
 
