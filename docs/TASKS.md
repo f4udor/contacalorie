@@ -46,7 +46,7 @@ Funzione per §3.4.
 - Valori manuali di proteine e grassi sostituiscono la formula.
 - I carboidrati non sono mai negativi.
 
-### T1.6 Semafori · da fare
+### T1.6 Semafori · fatto
 Funzione per §3.5, una per tipo (minimo, intervallo, tetto) più quella dell'anello kcal.
 - Casi I e J di §3.6.
 - Test sui valori esattamente al confine di ogni soglia.
