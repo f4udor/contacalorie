@@ -26,7 +26,7 @@ Funzione per §3.1.
 - Funzione che dice se nella settimana è già stato usato un pasto libero, con possibilità di escludere un pasto (serve in modifica).
 - Giorno senza pasti: 0.
 
-### T1.3 Bonus attività · da fare
+### T1.3 Bonus attività · fatto
 Funzione per §3.2.
 - Usa le kcal di Salute se presenti, altrimenti km × kcal per km.
 - Passi sotto la soglia: bonus 0.
