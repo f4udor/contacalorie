@@ -22,9 +22,12 @@ Una riga per task chiuso.
 - Il giorno di cui si calcola l'obiettivo non entra nel proprio saldo (solo i giorni precedenti).
 - Riepilogo settimana: "media kcal" usa le kcal reali (non il budget); "saldo" usa il budget (pasto libero col tetto); passi 0 sono considerati assenti nella media; km totali `null` solo se nessun giorno ha km registrati.
 - Il saldo della settimana somma tutti i giorni con pasti (anche l'ultimo), a differenza del saldo di `dayTarget` che si ferma ai giorni precedenti.
+- Piano della sfida come piano di sistema (`user_id` null, uguale per tutti) scelto da `settings.challenge_plan_id`; la data di inizio è in `settings.challenge_start_date`.
+- Il vincolo "un solo pasto libero a settimana" non è nel database (si controlla nell'app con `hasFreeMealInWeek`).
+- Token degli ingressi: nel database solo l'impronta (hash).
 
 ## Non verificato
 
 - T1.0: la regola di lint `no-restricted-imports` non copre `require()` né `import()` dinamico.
 - T1.0: il buco `./../` nella regola di lint resta aperto finché il task è bloccato.
-
+- T1.9: le migrazioni sono state eseguite solo su un PostgreSQL 16 locale con uno stand-in di `auth.users`/`auth.uid()` e del ruolo `authenticated`; non su Supabase reale. Verificato lì: creazione di tutte le tabelle, dato iniziale (1 piano, 12 esercizi), isolamento tra due utenti (lettura, modifica, inserimento altrui rifiutati), piano di sistema non modificabile, unicità attività per utente e data. Non verificato: comportamento con il vero `auth.uid()` di Supabase, grant dei ruoli Supabase, `gen_random_uuid()` su Supabase.
