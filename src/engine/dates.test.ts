@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addDays, weekDates, weekdayIndex, weekStart } from "./dates";
+import { addDays, daysBetween, weekDates, weekdayIndex, weekStart } from "./dates";
 
 describe("date", () => {
   it("lunedì = 0 e domenica = 6", () => {
@@ -33,5 +33,13 @@ describe("date", () => {
   it("rifiuta date non valide", () => {
     expect(() => weekdayIndex("2026-02-30")).toThrow();
     expect(() => weekdayIndex("pippo")).toThrow();
+  });
+});
+
+describe("daysBetween", () => {
+  it("conta i giorni di calendario anche attraverso l'ora legale", () => {
+    expect(daysBetween("2026-03-28", "2026-03-30")).toBe(2);
+    expect(daysBetween("2026-01-05", "2026-01-04")).toBe(-1);
+    expect(daysBetween("2026-01-05", "2026-01-05")).toBe(0);
   });
 });

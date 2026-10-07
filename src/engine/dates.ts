@@ -39,3 +39,8 @@ export function weekDates(date: DateKey): DateKey[] {
   const start = weekStart(date);
   return Array.from({ length: 7 }, (_, i) => addDays(start, i));
 }
+
+/** Differenza in giorni di calendario tra due date (b − a). */
+export function daysBetween(a: DateKey, b: DateKey): number {
+  return Math.round((toUtcMs(b) - toUtcMs(a)) / MS_PER_DAY);
+}

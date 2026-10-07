@@ -8,3 +8,5 @@ export * from "./target";
 export * from "./nutrients";
 export * from "./traffic";
 export * from "./week";
+export * from "./challenge";
+export * from "./challenge-plan";
