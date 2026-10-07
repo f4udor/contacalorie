@@ -32,7 +32,7 @@ Funzione per §3.2.
 - Passi sotto la soglia: bonus 0.
 - Casi E e F di §3.6 per la parte di bonus.
 
-### T1.4 Obiettivo del giorno · da fare
+### T1.4 Obiettivo del giorno · fatto
 Funzione per §3.3. Riceve la data, i giorni della settimana e le impostazioni; restituisce base, recupero, bonus bici, bonus passi e totale.
 - Settimana da lunedì a domenica, calcolata senza dipendere dal fuso orario della macchina.
 - Casi A, B, C, D, H di §3.6 con i numeri esatti.

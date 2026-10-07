@@ -8,6 +8,7 @@ Una riga per task chiuso.
 - T1.1 · fatto · tipi, default di §3, `mergeSettings` con test. Aggiunti `proteinGramsManual`/`fatGramsManual` (null = formula).
 - T1.2 · fatto · kcal di budget (`kcalBudget`, tetto pasto libero), kcal reali (`kcalEaten`), `hasFreeMealInWeek` con esclusione.
 - T1.3 · fatto · bonus bici (`bikeBonus`) e passi (`stepsBonus`); casi A, E, F.
+- T1.4 · fatto · `dayTarget` (§3.3) con date in UTC (`dates.ts`); casi A, B, C, D, H. Il giorno stesso è escluso dal saldo; date duplicate in ingresso non gestite.
 
 ## Decisioni da confermare
 
