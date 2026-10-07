@@ -66,7 +66,7 @@ Funzione pura per §6: dato il piano, la data di inizio e una data, restituisce 
 - Prima dell'inizio e dopo il giorno 30: nessun esercizio, con stato distinto ("non iniziata", "completata").
 - Il piano è un dato in ingresso, non è scritto dentro la funzione.
 
-### T1.9 Schema del database · da fare
+### T1.9 Schema del database · fatto
 Migrazioni SQL in `supabase/migrations` per le tabelle di §7.
 - Ogni tabella ha il riferimento all'utente e regole di sicurezza per riga: un utente legge e scrive solo le proprie righe.
 - Attività giornaliera: una riga per utente e data, con fonte distinta per passi e bici.
