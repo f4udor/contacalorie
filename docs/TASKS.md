@@ -19,7 +19,7 @@ In `src/engine`: tipi per pasto, giorno, attività, impostazioni; `defaults.ts` 
 - Una funzione unisce impostazioni parziali dell'utente ai default; i valori mancanti o non validi (negativi, non numerici) tornano al default.
 - Test su entrambi i comportamenti.
 
-### T1.2 Kcal contate nel budget · da fare
+### T1.2 Kcal contate nel budget · fatto
 Funzione per §3.1.
 - Pasto libero sopra il tetto conta il tetto; sotto il tetto conta il suo valore.
 - Le kcal reali del giorno restano disponibili separatamente.
