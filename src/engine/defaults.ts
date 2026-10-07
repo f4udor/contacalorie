@@ -18,3 +18,6 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
   proteinGramsManual: null,
   fatGramsManual: null,
 });
+
+/** Oltre l'obiettivo kcal fino a questo multiplo l'anello è giallo, poi rosso (BRIEF §3.5). */
+export const KCAL_RING_YELLOW_LIMIT = 1.05;

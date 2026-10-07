@@ -13,6 +13,11 @@ Una riga per task chiuso.
 
 ## Decisioni da confermare
 
+- Carboidrati arrotondati al grammo intero (§3.4 non lo specifica; gli esempi di §3.6 sono interi).
+- Soglia gialla dell'anello kcal (×1,05) è una costante `KCAL_RING_YELLOW_LIMIT` in `defaults.ts`, non un'impostazione modificabile: §3 non la elenca tra le impostazioni.
+- Semaforo "tetto" (sale): assunto esattamente uguale al tetto → giallo; rosso solo se supera il tetto.
+- Il giorno di cui si calcola l'obiettivo non entra nel proprio saldo (solo i giorni precedenti).
+
 ## Non verificato
 
 - T1.0: la regola di lint `no-restricted-imports` non copre `require()` né `import()` dinamico.

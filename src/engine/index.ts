@@ -6,3 +6,4 @@ export * from "./activity";
 export * from "./dates";
 export * from "./target";
 export * from "./nutrients";
+export * from "./traffic";
