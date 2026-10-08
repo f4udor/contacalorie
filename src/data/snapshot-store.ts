@@ -1,7 +1,7 @@
 import type { DateKey } from "@/engine";
 import type { DataStore } from "./store";
 import { STORAGE_VERSION } from "./types";
-import type { ActivityRecord, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, FavoriteDish, FavoriteMeal, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 
 /** Dove vengono scritti i dati serializzati. */
 export interface Persistence {
@@ -16,7 +16,7 @@ export const NOTICE_UNKNOWN_VERSION = "I dati salvati sono di una versione scono
 export const NOTICE_WRITE_FAILED = "Non è stato possibile salvare i dati su questo dispositivo.";
 
 export function emptyData(): StoredData {
-  return { version: STORAGE_VERSION, settings: {}, meals: [], activity: [], weighIns: [] };
+  return { version: STORAGE_VERSION, settings: {}, meals: [], activity: [], weighIns: [], favoriteDishes: [], favoriteMeals: [] };
 }
 
 function isObject(v: unknown): v is Record<string, unknown> {
@@ -46,7 +46,10 @@ function parse(text: string | null): Parsed {
   if (!ok) return { data: emptyData(), notice: NOTICE_UNREADABLE };
   // I dati salvati prima della fase 4 possono contenere il registro della sfida (tolta): non serve più.
   delete raw.challengeLog;
-  return { data: raw as unknown as StoredData, notice: null };
+  // I preferiti sono nati nella fase 4: i dati più vecchi non li hanno.
+  const favoriteDishes = Array.isArray(raw.favoriteDishes) ? raw.favoriteDishes : [];
+  const favoriteMeals = Array.isArray(raw.favoriteMeals) ? raw.favoriteMeals : [];
+  return { data: { ...(raw as unknown as StoredData), favoriteDishes, favoriteMeals } as StoredData, notice: null };
 }
 
 const copy = <T>(v: T): T => structuredClone(v);
@@ -147,6 +150,38 @@ export class SnapshotDataStore implements DataStore {
 
   async deleteWeighIn(date: DateKey) {
     this.data.weighIns = this.data.weighIns.filter((w) => w.date !== date);
+    this.commit();
+  }
+
+  async listFavoriteDishes() {
+    return copy(this.data.favoriteDishes);
+  }
+
+  async saveFavoriteDish(favorite: FavoriteDish) {
+    const i = this.data.favoriteDishes.findIndex((f) => f.id === favorite.id);
+    if (i >= 0) this.data.favoriteDishes[i] = copy(favorite);
+    else this.data.favoriteDishes.push(copy(favorite));
+    this.commit();
+  }
+
+  async deleteFavoriteDish(id: string) {
+    this.data.favoriteDishes = this.data.favoriteDishes.filter((f) => f.id !== id);
+    this.commit();
+  }
+
+  async listFavoriteMeals() {
+    return copy(this.data.favoriteMeals);
+  }
+
+  async saveFavoriteMeal(favorite: FavoriteMeal) {
+    const i = this.data.favoriteMeals.findIndex((f) => f.id === favorite.id);
+    if (i >= 0) this.data.favoriteMeals[i] = copy(favorite);
+    else this.data.favoriteMeals.push(copy(favorite));
+    this.commit();
+  }
+
+  async deleteFavoriteMeal(id: string) {
+    this.data.favoriteMeals = this.data.favoriteMeals.filter((f) => f.id !== id);
     this.commit();
   }
 

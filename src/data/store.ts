@@ -1,5 +1,5 @@
 import type { DateKey } from "@/engine";
-import type { ActivityRecord, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, FavoriteDish, FavoriteMeal, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 
 /**
  * Unico punto d'accesso ai dati per le schermate.
@@ -30,6 +30,16 @@ export interface DataStore {
   /** Una sola pesata per data: sostituisce quella esistente. */
   saveWeighIn(weighIn: WeighIn): Promise<void>;
   deleteWeighIn(date: DateKey): Promise<void>;
+
+  /** Piatti preferiti, in ordine di salvataggio. */
+  listFavoriteDishes(): Promise<FavoriteDish[]>;
+  /** Crea il preferito o, se l'id esiste già, lo sostituisce. */
+  saveFavoriteDish(favorite: FavoriteDish): Promise<void>;
+  deleteFavoriteDish(id: string): Promise<void>;
+  /** Pasti preferiti, in ordine di salvataggio. */
+  listFavoriteMeals(): Promise<FavoriteMeal[]>;
+  saveFavoriteMeal(favorite: FavoriteMeal): Promise<void>;
+  deleteFavoriteMeal(id: string): Promise<void>;
 
   /** Tutti i dati salvati (per l'importazione e l'esportazione). */
   exportAll(): Promise<StoredData>;

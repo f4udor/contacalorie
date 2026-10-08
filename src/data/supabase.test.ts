@@ -55,6 +55,27 @@ describe("SupabaseDataStore: dati", () => {
 
 });
 
+describe("SupabaseDataStore: preferiti", () => {
+  const body = { name: "Pasta al pesto", quantity: "80 g", kcal: 480, protein: 15, carbs: 70, fat: 16, fiber: 4, salt: 1.3 };
+
+  it("il piatto preferito sta in `favorites`, con la quantità; il pasto in `favorite_meals`, con i piatti in un campo solo", async () => {
+    const { db, store } = setup();
+    await store.saveFavoriteDish({ id: "f1", ...body });
+    await store.saveFavoriteMeal({ id: "p1", name: "Cena leggera", slot: "cena", dishes: [body, { ...body, name: "Insalata", quantity: null }] });
+    expect(db.rows("favorites")[0]).toMatchObject({ id: "f1", user_id: "utente-1", name: "Pasta al pesto", quantity: "80 g", slot: null, kcal: 480 });
+    expect(db.rows("favorite_meals")[0]).toMatchObject({ id: "p1", user_id: "utente-1", name: "Cena leggera", slot: "cena" });
+    expect(db.rows("favorite_meals")[0].dishes).toHaveLength(2);
+    expect(await store.listFavoriteDishes()).toEqual([{ id: "f1", ...body }]);
+    expect((await store.listFavoriteMeals())[0].dishes[1]).toMatchObject({ name: "Insalata", quantity: null });
+  });
+
+  it("numeri che il database restituisce come testo (numeric) tornano numeri", async () => {
+    const { db, store } = setup();
+    db.rows("favorites").push({ id: "f9", user_id: "utente-1", name: "Mela", quantity: null, kcal: "95", protein: "0.5", carbs: "25", fat: "0.3", fiber: "4", salt: "0" });
+    expect(await store.listFavoriteDishes()).toEqual([{ id: "f9", name: "Mela", quantity: null, kcal: 95, protein: 0.5, carbs: 25, fat: 0.3, fiber: 4, salt: 0 }]);
+  });
+});
+
 describe("SupabaseDataStore: tante righe", () => {
   it("exportAll e le pesate leggono a pagine: oltre le 1000 righe non se ne perde nessuna", async () => {
     const { db, store } = setup();

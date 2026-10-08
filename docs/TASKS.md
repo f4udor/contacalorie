@@ -259,7 +259,7 @@ Vincoli di questa fase:
 - Il pannello del piatto a mano chiede nome e quantità; kcal e macro diventano facoltativi.
 - Se kcal sono vuote: pulsante "Stima con AI" che riempie i numeri dal nome e dalla quantità, da confermare. Senza AI configurata, kcal resta obbligatorio come oggi.
 
-### T4.4 Preferiti · da fare
+### T4.4 Preferiti · fatto
 - Toccando un piatto: "Salva nei preferiti". Toccando l'intestazione di un pasto: "Salva pasto" (tutti i suoi piatti, con un nome modificabile).
 - Nel pannello Aggiungi, sezione "Preferiti" con piatti e pasti salvati, cercabili per nome; un tocco li aggiunge al giorno visualizzato, nella fascia scelta, senza AI.
 - Eliminazione di un preferito. Nuova tabella per i pasti preferiti, per aggiunta; i preferiti di piatti usano la tabella esistente.

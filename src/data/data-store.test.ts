@@ -118,6 +118,27 @@ describe.each(factories)("DataStore %s", (_nome, make) => {
     expect((await s.exportAll()).meals).toHaveLength(2);
   });
 
+  it("preferiti: piatti e pasti, sostituzione per id, eliminazione, e compaiono in exportAll", async () => {
+    const s = make();
+    expect(await s.listFavoriteDishes()).toEqual([]);
+    expect(await s.listFavoriteMeals()).toEqual([]);
+    const body = { name: "Pasta al pesto", quantity: "80 g", kcal: 480, protein: 15, carbs: 70, fat: 16, fiber: 4, salt: 1.3 };
+    await s.saveFavoriteDish({ id: "f1", ...body });
+    await s.saveFavoriteDish({ id: "f2", ...body, name: "Mela", quantity: null, kcal: 95 });
+    await s.saveFavoriteDish({ id: "f1", ...body, kcal: 500 });
+    expect((await s.listFavoriteDishes()).map((f) => [f.id, f.kcal])).toEqual([["f1", 500], ["f2", 95]]);
+    const pasto = { id: "p1", name: "Cena leggera", slot: "cena" as const, dishes: [body, { ...body, name: "Insalata", quantity: null, kcal: 60 }] };
+    await s.saveFavoriteMeal(pasto);
+    expect(await s.listFavoriteMeals()).toEqual([pasto]);
+    const all = await s.exportAll();
+    expect(all.favoriteDishes).toHaveLength(2);
+    expect(all.favoriteMeals).toEqual([pasto]);
+    await s.deleteFavoriteDish("f1");
+    await s.deleteFavoriteMeal("p1");
+    expect((await s.listFavoriteDishes()).map((f) => f.id)).toEqual(["f2"]);
+    expect(await s.listFavoriteMeals()).toEqual([]);
+  });
+
   it("il messaggio si può cancellare", async () => {
     const s = make();
     await s.clearNotice();
@@ -146,6 +167,15 @@ describe("sportello nel browser", () => {
     expect(await s.getNotice()).toBeNull();
     expect(await s.listWeighIns()).toHaveLength(1);
     expect("challengeLog" in (await s.exportAll())).toBe(false);
+  });
+
+  it("dati salvati prima dei preferiti: si leggono e i preferiti partono vuoti", async () => {
+    const storage = new FakeStorage();
+    storage.setItem(BROWSER_STORAGE_KEY, JSON.stringify({ version: 1, settings: { weightKg: 90 }, meals: [], activity: [], weighIns: [] }));
+    const s = createBrowserDataStore(storage);
+    expect(await s.getNotice()).toBeNull();
+    expect(await s.listFavoriteDishes()).toEqual([]);
+    expect(await s.listFavoriteMeals()).toEqual([]);
   });
 
   it.each([

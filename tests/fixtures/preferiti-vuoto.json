@@ -1,0 +1,30 @@
+{
+  "id": "preferiti-vuoto",
+  "descrizione": "Nessun preferito: spiega come salvarli.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "click": "Preferiti",
+      "exact": true
+    }
+  ]
+}

@@ -17,7 +17,7 @@ export function summarize(data: StoredData): DataSummary {
 
 /** Non c'è niente da importare: nessun dato e nessuna impostazione. */
 export function isEmptyData(data: StoredData): boolean {
-  return data.meals.length === 0 && data.activity.length === 0 && data.weighIns.length === 0 && Object.keys(data.settings).length === 0;
+  return data.meals.length === 0 && data.favoriteDishes.length === 0 && data.favoriteMeals.length === 0 && data.activity.length === 0 && data.weighIns.length === 0 && Object.keys(data.settings).length === 0;
 }
 
 /**
@@ -45,6 +45,8 @@ export interface ImportResult {
   addedWeighIns: number;
   /** Giorni con attività nuovi. */
   addedActivityDays: number;
+  /** Piatti e pasti preferiti nuovi. */
+  addedFavorites: number;
   /** Elementi che c'erano già nell'account e non sono stati toccati o duplicati. */
   alreadyThere: number;
   /** Pasti in cui il segno "libero" è stato esteso a tutti i piatti. */
@@ -81,7 +83,7 @@ async function inChunks<T>(items: readonly T[], size: number, fn: (item: T) => P
  */
 export async function importLocalData(local: StoredData, remote: DataStore): Promise<ImportResult> {
   const existing = await remote.exportAll();
-  const result: ImportResult = { addedDishes: 0, addedWeighIns: 0, addedActivityDays: 0, alreadyThere: 0, normalizedFreeMeals: 0 };
+  const result: ImportResult = { addedDishes: 0, addedWeighIns: 0, addedActivityDays: 0, addedFavorites: 0, alreadyThere: 0, normalizedFreeMeals: 0 };
 
   // piatti
   const normalized = normalizeFreeFlags(local.meals);
@@ -118,6 +120,16 @@ export async function importLocalData(local: StoredData, remote: DataStore): Pro
   result.alreadyThere += local.weighIns.length - newWeights.length;
   result.addedWeighIns = newWeights.length;
   await inChunks(newWeights, 5, (w) => remote.saveWeighIn(w));
+
+  // preferiti: stesso id = stesso preferito
+  const knownFavDishes = new Set(existing.favoriteDishes.map((f) => f.id));
+  const newFavDishes = local.favoriteDishes.filter((f) => !knownFavDishes.has(f.id));
+  const knownFavMeals = new Set(existing.favoriteMeals.map((f) => f.id));
+  const newFavMeals = local.favoriteMeals.filter((f) => !knownFavMeals.has(f.id));
+  result.alreadyThere += local.favoriteDishes.length - newFavDishes.length + local.favoriteMeals.length - newFavMeals.length;
+  result.addedFavorites = newFavDishes.length + newFavMeals.length;
+  await inChunks(newFavDishes, 5, (f) => remote.saveFavoriteDish(f));
+  await inChunks(newFavMeals, 5, (f) => remote.saveFavoriteMeal(f));
 
   // impostazioni: completa solo quelle mancanti
   const missing: Record<string, unknown> = {};

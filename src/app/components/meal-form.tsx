@@ -24,6 +24,8 @@ interface MealFormProps {
   /** Se presente compare "Elimina", con conferma. */
   onDelete?: () => Promise<void> | void;
   deleteName?: string;
+  /** Contenuto in più sotto i pulsanti (es. "Salva nei preferiti"). */
+  extra?: React.ReactNode;
 }
 
 const NUMERIC: { key: Exclude<MealFieldKey, "isFree">; label: string; required?: boolean }[] = [
@@ -38,7 +40,7 @@ const NUMERIC: { key: Exclude<MealFieldKey, "isFree">; label: string; required?:
 const input = "min-h-11 w-full rounded-xl bg-bg px-3 text-[17px] outline-none placeholder:text-muted focus:ring-2 focus:ring-accent";
 
 /** Modulo per aggiungere o modificare un pasto a mano. */
-export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = false, freeMealCap, submitLabel, onSubmit, onDelete, deleteName }: MealFormProps) {
+export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = false, freeMealCap, submitLabel, onSubmit, onDelete, deleteName, extra }: MealFormProps) {
   const [values, setValues] = useState<MealFormValues>(initial);
   const [errors, setErrors] = useState<MealFormErrors>({});
   const [saving, setSaving] = useState(false);
@@ -223,6 +225,7 @@ export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = 
           Elimina piatto
         </button>
       )}
+      {extra}
     </form>
   );
 }

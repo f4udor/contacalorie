@@ -12,10 +12,12 @@ interface MealListProps {
   settings: Pick<Settings, "freeMealCap">;
   onSelectDish: (dish: MealRecord) => void;
   onAddDish: (slot: MealSlot) => void;
+  /** Tocco sull'intestazione di un pasto: salvarlo nei preferiti. */
+  onSaveMeal: (slot: MealSlot) => void;
 }
 
 /** I pasti del giorno: una scheda per fascia, con totali, piatti elencati e "Aggiungi piatto". */
-export function MealList({ dishes, settings, onSelectDish, onAddDish }: MealListProps) {
+export function MealList({ dishes, settings, onSelectDish, onAddDish, onSaveMeal }: MealListProps) {
   const byId = new Map(dishes.map((d) => [d.id, d]));
   const groups = groupMeals(dishes);
   const empty = MEAL_SLOTS.filter((slot) => !groups.some((g) => g.slot === slot));
@@ -26,20 +28,22 @@ export function MealList({ dishes, settings, onSelectDish, onAddDish }: MealList
         const counted = mealBudgetKcal(g, settings);
         return (
           <article key={g.slot} aria-label={LABEL[g.slot]} className="overflow-hidden rounded-2xl bg-card">
-            <header className="px-4 pb-2 pt-3">
-              <div className="flex items-start justify-between gap-3">
-                <h2 className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[17px] font-bold">
-                  {LABEL[g.slot]}
-                  {g.isFree && <span className="rounded-full bg-track px-2 py-0.5 text-xs font-semibold text-accent">libero</span>}
-                </h2>
-                <p className="shrink-0 text-[17px] font-bold tabular-nums">
-                  {formatNumber(g.kcal)} <span className="text-sm font-medium text-muted">kcal</span>
-                </p>
-              </div>
-              <p className="mt-0.5 text-sm text-muted tabular-nums">
-                P {formatNumber(g.protein)} · C {formatNumber(g.carbs)} · G {formatNumber(g.fat)}
-                {g.isFree && counted < g.kcal && ` · nel budget ${formatNumber(counted)} kcal`}
-              </p>
+            <header>
+              <button type="button" onClick={() => onSaveMeal(g.slot)} aria-label={`${LABEL[g.slot]}: salva il pasto nei preferiti`} className="block w-full px-4 pb-2 pt-3 text-left">
+                <span className="flex items-start justify-between gap-3">
+                  <span role="heading" aria-level={2} className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[17px] font-bold">
+                    {LABEL[g.slot]}
+                    {g.isFree && <span className="rounded-full bg-track px-2 py-0.5 text-xs font-semibold text-accent">libero</span>}
+                  </span>
+                  <span className="shrink-0 text-[17px] font-bold tabular-nums">
+                    {formatNumber(g.kcal)} <span className="text-sm font-medium text-muted">kcal</span>
+                  </span>
+                </span>
+                <span className="mt-0.5 block text-sm text-muted tabular-nums">
+                  P {formatNumber(g.protein)} · C {formatNumber(g.carbs)} · G {formatNumber(g.fat)}
+                  {g.isFree && counted < g.kcal && ` · nel budget ${formatNumber(counted)} kcal`}
+                </span>
+              </button>
             </header>
             <ul>
               {g.dishes.map((d) => {

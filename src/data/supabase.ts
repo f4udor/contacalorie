@@ -2,8 +2,12 @@ import type { DateKey } from "@/engine";
 import { DataStoreError, MESSAGE_NOT_SIGNED_IN, MESSAGE_READ_FAILED, MESSAGE_WRITE_FAILED } from "./errors";
 import {
   activityToRow,
+  favoriteDishToRow,
+  favoriteMealToRow,
   mealToRow,
   rowToActivity,
+  rowToFavoriteDish,
+  rowToFavoriteMeal,
   rowToMeal,
   rowToSettings,
   rowToWeighIn,
@@ -11,7 +15,7 @@ import {
   weighInToRow,
 } from "./mapping";
 import type { DataStore } from "./store";
-import type { ActivityRecord, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, FavoriteDish, FavoriteMeal, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 import { STORAGE_VERSION } from "./types";
 
 type Row = Record<string, unknown>;
@@ -182,16 +186,56 @@ export class SupabaseDataStore implements DataStore {
     });
   }
 
+  // --- preferiti
+
+  listFavoriteDishes(): Promise<FavoriteDish[]> {
+    return this.run("lettura", async (c) => (await this.allRows(c, "favorites", "created_at")).map(rowToFavoriteDish));
+  }
+
+  saveFavoriteDish(favorite: FavoriteDish): Promise<void> {
+    return this.run("scrittura", async (c) => {
+      const res = await c.from("favorites").upsert(favoriteDishToRow(favorite, await this.userId(c)), { onConflict: "id" });
+      SupabaseDataStore.check(res.error);
+    });
+  }
+
+  deleteFavoriteDish(id: string): Promise<void> {
+    return this.run("scrittura", async (c) => {
+      const res = await c.from("favorites").delete().eq("id", id);
+      SupabaseDataStore.check(res.error);
+    });
+  }
+
+  listFavoriteMeals(): Promise<FavoriteMeal[]> {
+    return this.run("lettura", async (c) => (await this.allRows(c, "favorite_meals", "created_at")).map(rowToFavoriteMeal));
+  }
+
+  saveFavoriteMeal(favorite: FavoriteMeal): Promise<void> {
+    return this.run("scrittura", async (c) => {
+      const res = await c.from("favorite_meals").upsert(favoriteMealToRow(favorite, await this.userId(c)), { onConflict: "id" });
+      SupabaseDataStore.check(res.error);
+    });
+  }
+
+  deleteFavoriteMeal(id: string): Promise<void> {
+    return this.run("scrittura", async (c) => {
+      const res = await c.from("favorite_meals").delete().eq("id", id);
+      SupabaseDataStore.check(res.error);
+    });
+  }
+
   // --- tutti i dati
 
   exportAll(): Promise<StoredData> {
     return this.run("lettura", async (c) => {
       const uid = await this.userId(c);
-      const [settings, meals, activity, weighIns] = await Promise.all([
+      const [settings, meals, activity, weighIns, favDishes, favMeals] = await Promise.all([
         this.rows(c, "settings", (q) => q.eq("user_id", uid)),
         this.allRows(c, "meals", "created_at"),
         this.allRows(c, "daily_activity", "date"),
         this.allRows(c, "weigh_ins", "date"),
+        this.allRows(c, "favorites", "created_at"),
+        this.allRows(c, "favorite_meals", "created_at"),
       ]);
       return {
         version: STORAGE_VERSION,
@@ -199,6 +243,8 @@ export class SupabaseDataStore implements DataStore {
         meals: meals.map(rowToMeal),
         activity: activity.map(rowToActivity),
         weighIns: weighIns.map(rowToWeighIn),
+        favoriteDishes: favDishes.map(rowToFavoriteDish),
+        favoriteMeals: favMeals.map(rowToFavoriteMeal),
       };
     });
   }

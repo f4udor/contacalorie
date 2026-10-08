@@ -82,7 +82,8 @@ export function ImportSheet({ local, remote, onClose, onLocalCleared }: Props) {
         <div className="flex flex-col gap-4">
           <p className="text-[17px] font-semibold">Importazione completata.</p>
           <p className="text-[15px]">
-            Nuovi nell&apos;account: {plural(result.addedDishes, "piatto", "piatti")}, {plural(result.addedWeighIns, "pesata", "pesate")}, {plural(result.addedActivityDays, "giorno di attività", "giorni di attività")}.
+            Nuovi nell&apos;account: {plural(result.addedDishes, "piatto", "piatti")}, {plural(result.addedWeighIns, "pesata", "pesate")}, {plural(result.addedActivityDays, "giorno di attività", "giorni di attività")}
+            {result.addedFavorites > 0 && `, ${plural(result.addedFavorites, "preferito", "preferiti")}`}.
             {result.alreadyThere > 0 && ` Già presenti e lasciati com'erano: ${plural(result.alreadyThere, "elemento", "elementi")}.`}
           </p>
           <p className="text-[15px] text-muted">Controlla che sia tutto a posto. I dati sono ancora anche su questo dispositivo: toglili solo quando sei sicuro.</p>

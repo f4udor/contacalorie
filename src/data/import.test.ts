@@ -8,13 +8,15 @@ const dish = (id: string, date: string, slot: MealRecord["slot"] = "pranzo", isF
   id, date, slot, name: id, quantity: null, kcal, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0, isFree, originalText: null,
 });
 const act = (date: string, o: Partial<ActivityRecord> = {}): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, ...o });
-const data = (o: Partial<StoredData> = {}): StoredData => ({ version: 1, settings: {}, meals: [], activity: [], weighIns: [], ...o });
+const data = (o: Partial<StoredData> = {}): StoredData => ({ version: 1, settings: {}, meals: [], activity: [], weighIns: [], favoriteDishes: [], favoriteMeals: [], ...o });
 
 async function filled(d: StoredData): Promise<DataStore> {
   const s = createMemoryDataStore();
   for (const m of d.meals) await s.saveMeal(m);
   for (const a of d.activity) await s.saveActivity(a);
   for (const w of d.weighIns) await s.saveWeighIn(w);
+  for (const f of d.favoriteDishes) await s.saveFavoriteDish(f);
+  for (const f of d.favoriteMeals) await s.saveFavoriteMeal(f);
   if (Object.keys(d.settings).length) await s.saveSettings(d.settings);
   return s;
 }
@@ -51,6 +53,28 @@ describe("normalizeFreeFlags (pasti salvati prima dei pasti composti)", () => {
     const { meals, changedMeals } = normalizeFreeFlags([dish("a", "2026-01-05", "pranzo", true), dish("b", "2026-01-05", "cena")]);
     expect(changedMeals).toBe(0);
     expect(meals.map((m) => m.isFree)).toEqual([true, false]);
+  });
+});
+
+describe("importLocalData: preferiti", () => {
+  const body = { name: "Pasta al pesto", quantity: "80 g", kcal: 480, protein: 15, carbs: 70, fat: 16, fiber: 4, salt: 1.3 };
+  const local = data({ favoriteDishes: [{ id: "f1", ...body }], favoriteMeals: [{ id: "p1", name: "Cena leggera", slot: "cena", dishes: [body, { ...body, name: "Insalata", quantity: null, kcal: 60 }] }] });
+
+  it("porta i preferiti, senza doppioni se ripetuta o con un secondo dispositivo", async () => {
+    const remote = createMemoryDataStore();
+    const first = await importLocalData(local, remote);
+    expect(first).toMatchObject({ addedFavorites: 2, alreadyThere: 0 });
+    const again = await importLocalData(local, remote);
+    expect(again).toMatchObject({ addedFavorites: 0, alreadyThere: 2 });
+    const second = await importLocalData(data({ favoriteDishes: [{ id: "f2", ...body, name: "Altro" }] }), remote);
+    expect(second.addedFavorites).toBe(1);
+    const all = await remote.exportAll();
+    expect(all.favoriteDishes.map((f) => f.id)).toEqual(["f1", "f2"]);
+    expect(all.favoriteMeals).toHaveLength(1);
+  });
+
+  it("un archivio con soli preferiti non è vuoto", () => {
+    expect(isEmptyData(local)).toBe(false);
   });
 });
 
