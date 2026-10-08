@@ -18,9 +18,9 @@ const LIGHT_LABEL: Record<Light, string> = {
 };
 
 /** Scheda di un nutriente: nome, assunto su obiettivo e barretta a semaforo. */
-export function NutrientCard({ n }: { n: NutrientView }) {
+export function NutrientCard({ n, wide = false }: { n: NutrientView; wide?: boolean }) {
   return (
-    <div className="rounded-2xl bg-card p-3.5">
+    <div className={`rounded-2xl bg-card p-3.5 ${wide ? "col-span-2" : ""}`}>
       <h3 className="text-sm font-semibold text-muted">{n.name}</h3>
       {n.needsWeight && n.key === "protein" ? (
         <Link href="/impostazioni" className="mt-1 flex min-h-11 items-center text-[15px] font-semibold leading-snug text-accent">

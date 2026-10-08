@@ -27,7 +27,7 @@ const NUMERIC: { key: Exclude<MealFieldKey, "isFree">; label: string; required?:
   { key: "salt", label: "Sale (g)" },
 ];
 
-const input = "min-h-11 w-full rounded-xl bg-bg px-3 text-[17px] outline-none focus:ring-2 focus:ring-accent";
+const input = "min-h-11 w-full rounded-xl bg-bg px-3 text-[17px] outline-none placeholder:text-muted focus:ring-2 focus:ring-accent";
 
 /** Modulo per aggiungere o modificare un pasto a mano. */
 export function MealForm({ initial, freeAllowed, freeMealCap, submitLabel, onSubmit, onDelete, deleteName }: MealFormProps) {

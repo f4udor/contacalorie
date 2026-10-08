@@ -31,7 +31,7 @@ export function TextField({ id, label, value, onChange, error, required, inputMo
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy}
-        className={`min-h-11 w-full rounded-xl bg-bg px-3 text-[17px] outline-none focus:ring-2 focus:ring-accent ${error ? "ring-2 ring-bad" : ""}`}
+        className={`min-h-11 w-full rounded-xl bg-bg px-3 text-[17px] outline-none placeholder:text-muted focus:ring-2 focus:ring-accent ${error ? "ring-2 ring-bad" : ""}`}
       />
       {hint && !error && (
         <p id={`${id}-hint`} className="text-sm text-muted">

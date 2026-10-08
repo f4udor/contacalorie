@@ -67,8 +67,8 @@ export function OggiScreen() {
             </p>
           </Card>
           <div className="grid grid-cols-2 gap-3">
-            {view.nutrients.map((n) => (
-              <NutrientCard key={n.key} n={n} />
+            {view.nutrients.map((n, i) => (
+              <NutrientCard key={n.key} n={n} wide={i === view.nutrients.length - 1 && view.nutrients.length % 2 === 1} />
             ))}
           </div>
           {meals.length > 0 ? (

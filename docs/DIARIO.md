@@ -54,6 +54,7 @@ Una riga per task chiuso.
 - Impostazioni: un solo modulo con un pulsante "Salva" (non un salvataggio per campo); un campo vuoto = valore predefinito (mostrato come suggerimento); se un campo non è valido non si salva nulla. Margine e quota di bonus si scrivono in percentuale (10 % = 0,10). Limiti dei campi (es. margine al massimo 50 %) scelti di buon senso, per respingere errori di battitura.
 - "Ripristina valori predefiniti" toglie obiettivi, regole di calcolo, attività e tetto del pasto libero; profilo (peso, altezza, età, peso obiettivo) e data della sfida restano.
 - La formula proposta per proteine e grassi usa le impostazioni salvate (non quelle in corso di modifica) e il peso più recente.
+- Rifinitura (T2.8): l'ultima scheda dei nutrienti occupa tutta la riga quando il numero è dispari (niente scheda "orfana" a metà); suggerimenti dei campi vuoti più leggibili in tema scuro; intestazione di Settimana con l'intervallo sotto il titolo (a 375 px il tasto "Questa settimana" andava a capo). Nessuna funzione nuova.
 
 ## Non verificato
 
@@ -64,3 +65,4 @@ Una riga per task chiuso.
 - T2.1: `npm run screens` a 390 px, chiaro e scuro: 10 screenshot, nessuna segnalazione (niente scorrimento orizzontale, aree toccabili ≥ 44 px, pagine entro 844 px).
 - T2.3: aggiunta, modifica, eliminazione e "Copia da ieri" provate in un browser headless (dati salvati e ancora presenti dopo il ricaricamento della pagina); non provate con il tocco su iPhone né con la tastiera numerica di iOS (`inputmode="decimal"`: su iPhone in italiano dovrebbe offrire la virgola, non verificato).
 - T2.7: il campo data della sfida è il selettore nativo del telefono: su iPhone in italiano dovrebbe mostrare gg/mm/aaaa; negli screenshot (browser senza lingua italiana) appare mm/gg/aaaa. Non verificato su iPhone.
+- T2.8: controllati a mano 375, 390 e 430 px (52 scenari × chiaro e scuro = 312 immagini) per scorrimento orizzontale e aree toccabili con lo script (nessuna segnalazione); l'aspetto è stato guardato su un campione rappresentativo di schermate, non su tutte le 312 immagini una per una.
