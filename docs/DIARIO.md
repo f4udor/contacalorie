@@ -38,6 +38,10 @@ Una riga per task chiuso.
 - Il giorno mostrato in Oggi sta nell'indirizzo (`/?d=AAAA-MM-GG`).
 - Pasti: fascia predefinita "Pranzo"; nome vuoto salvato come "Pasto"; "Copia da ieri" copia tutti i pasti di ieri come normali e, se li ripeti, li duplica; per eliminare un pasto la conferma è dentro il pannello (non una finestra del browser).
 - Pasto libero: l'interruttore è attivo in modifica del pasto che è già l'unico libero della settimana; disattivato in tutti gli altri casi se la settimana ne ha già uno.
+- Attività a mano: le kcal della bici scritte dall'utente sono salvate nello stesso campo di quelle di Salute (`bikeKcalHealth`, per il motore sono "kcal registrate"), con fonte "manuale"; passi e kcal sono numeri interi, i km possono avere decimali. Campi lasciati vuoti restano assenti (non zero).
+- Pesata: una per giorno; la seconda sostituisce la prima. Il peso salvato è subito usato per le proteine.
+- Tema scuro: colore d'accento `#0a84ff` (con il precedente più chiaro il testo bianco sui pulsanti aveva poco contrasto).
+- In Oggi l'ordine è anello, nutrienti, pasti, attività (poi la sfida, T2.5).
 
 ## Non verificato
 

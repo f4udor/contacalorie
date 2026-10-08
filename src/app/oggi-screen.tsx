@@ -4,7 +4,8 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import type { MealRecord } from "@/data";
 import { useDataStore } from "./data-provider";
-import { AddPanel, EditMealPanel } from "./components/add-panel";
+import { ActivityCard } from "./components/activity-card";
+import { AddPanel, EditActivityPanel, EditMealPanel } from "./components/add-panel";
 import { MealList } from "./components/meal-list";
 import { Card } from "./components/card";
 import { DayHeader } from "./components/day-header";
@@ -24,7 +25,7 @@ export function OggiScreen() {
   const date = param && DATE_PARAM.test(param) ? param : today;
   const { data, reload } = useWeekData(date);
   const store = useDataStore();
-  const [panel, setPanel] = useState<{ kind: "add" } | { kind: "edit"; meal: MealRecord } | null>(null);
+  const [panel, setPanel] = useState<{ kind: "add" } | { kind: "edit"; meal: MealRecord } | { kind: "activity" } | null>(null);
 
   if (!today || !date) return <main aria-busy="true" />;
 
@@ -38,7 +39,12 @@ export function OggiScreen() {
     : null;
 
   const meals = data?.meals.filter((m) => m.date === date) ?? [];
-  const panelContext = data && store ? { store, date, days: data.days, settings: data.settings, onChanged: reload, onClose: () => setPanel(null) } : null;
+  const activity = data?.activity.find((a) => a.date === date) ?? null;
+  const weighIn = data?.weighIns.find((w) => w.date === date) ?? null;
+  const panelContext =
+    data && store
+      ? { store, date, days: data.days, settings: data.settings, activity, weightKg: weighIn?.weightKg ?? null, onChanged: reload, onClose: () => setPanel(null) }
+      : null;
 
   return (
     <main className="pb-24">
@@ -65,6 +71,7 @@ export function OggiScreen() {
               <p className="text-center text-[15px] text-muted">Nessun pasto per questo giorno. Tocca + per aggiungerne uno.</p>
             </Card>
           )}
+          <ActivityCard activity={activity} settings={data!.settings} onEdit={() => setPanel({ kind: "activity" })} />
         </div>
       )}
       <button
@@ -78,6 +85,7 @@ export function OggiScreen() {
         </svg>
       </button>
       {panelContext && panel?.kind === "add" && <AddPanel {...panelContext} />}
+      {panelContext && panel?.kind === "activity" && <EditActivityPanel {...panelContext} />}
       {panelContext && panel?.kind === "edit" && <EditMealPanel {...panelContext} meal={panel.meal} />}
     </main>
   );

@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m65",
+        "id": "m60",
         "date": "2026-01-07",
         "slot": "colazione",
         "name": "Yogurt e cereali",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m66",
+        "id": "m61",
         "date": "2026-01-07",
         "slot": "cena",
         "name": "Pizza",

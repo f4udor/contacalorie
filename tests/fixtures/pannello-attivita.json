@@ -1,0 +1,20 @@
+{
+  "id": "pannello-attivita",
+  "descrizione": "Attività a mano: modulo vuoto.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi"
+      }
+    },
+    {
+      "click": "Attività a mano"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "dopo-pesata",
+  "descrizione": "Dopo aver salvato 90 kg da un profilo senza peso: la scheda proteine ha l'obiettivo 125 g (1,4 × 90).",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi"
+      }
+    },
+    {
+      "click": "Pesata",
+      "exact": true
+    },
+    {
+      "fill": [
+        "Peso (kg)",
+        "90"
+      ]
+    },
+    {
+      "click": "Salva pesata"
+    },
+    {
+      "wait": 600
+    }
+  ]
+}
