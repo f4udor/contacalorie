@@ -6,7 +6,7 @@ import { estimateDish } from "../lib/ai-client";
 import { useAiAvailable } from "../lib/use-ai";
 import { FreeMealSwitch } from "./free-meal-switch";
 import type { MealSlot } from "@/engine";
-import { SLOTS, validateMealForm } from "../lib/meal-form";
+import { KCAL_CHECK_MESSAGE, SLOTS, textNeedsKcalCheck, validateMealForm } from "../lib/meal-form";
 import type { MealFieldKey, MealFormErrors, MealFormValues, ParsedMeal } from "../lib/meal-form";
 
 interface MealFormProps {
@@ -161,6 +161,12 @@ export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = 
       {aiNote !== null && values.kcal.trim() !== "" && (
         <p role="status" className="rounded-xl bg-bg px-3 py-2.5 text-[15px]">
           <span className="font-semibold">Stimato con l&apos;AI: controlla i numeri.</span> {aiNote}
+        </p>
+      )}
+      {aiNote !== null && textNeedsKcalCheck(values) && (
+        <p role="status" className="rounded-xl bg-bg px-3 py-2.5 text-[15px] font-semibold text-warn">
+          <span aria-hidden="true">⚠ </span>
+          {KCAL_CHECK_MESSAGE}
         </p>
       )}
 

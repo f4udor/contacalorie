@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { emptyMealForm, mealToForm, parseDecimal, validateMealForm } from "./meal-form";
+import { emptyMealForm, mealToForm, parseDecimal, textNeedsKcalCheck, validateMealForm } from "./meal-form";
 
 describe("parseDecimal", () => {
   it("accetta virgola e punto", () => {
@@ -90,5 +90,30 @@ describe("mealToForm", () => {
     const meal = { name: "X", quantity: "100 g", slot: "pranzo" as const, kcal: 321.5, protein: 12, carbs: 40, fat: 9.5, fiber: 3, salt: 1.1, isFree: false };
     const r = validateMealForm(mealToForm(meal), true);
     expect(r.ok && r.meal).toEqual(meal);
+  });
+});
+
+describe("textNeedsKcalCheck (T5b.4)", () => {
+  const t = (kcal: string, protein = "", carbs = "", fat = "") => textNeedsKcalCheck({ kcal, protein, carbs, fat });
+  it("caso T: 110 kcal con proteine 13, carboidrati 72, grassi 6 → da controllare (numeri con la virgola)", () => {
+    expect(t("110", "13", "72", "6")).toBe(true);
+    expect(t("110", "13,0", "72,0", "6,0")).toBe(true);
+  });
+  it("caso U (birra) e V: non segnalati", () => {
+    expect(t("215", "2", "18", "0")).toBe(false);
+    expect(t("380", "13", "72", "6")).toBe(false);
+  });
+  it("kcal vuote o non valide, o macro non validi: nessun controllo", () => {
+    expect(t("", "13", "72", "6")).toBe(false);
+    expect(t("abc", "13", "72", "6")).toBe(false);
+    expect(t("110", "x", "72", "6")).toBe(false);
+  });
+  it("macro vuoti valgono 0; tutto a zero non è segnalato", () => {
+    expect(t("0", "", "", "")).toBe(false);
+    expect(t("10", "50", "", "")).toBe(true);
+  });
+  it("si ricalcola ritoccando i numeri", () => {
+    expect(t("110", "13", "72", "6")).toBe(true);
+    expect(t("380", "13", "72", "6")).toBe(false);
   });
 });

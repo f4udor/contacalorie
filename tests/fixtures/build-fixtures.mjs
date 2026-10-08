@@ -358,6 +358,13 @@ add("ai-libero-disattivato", "La settimana ha già un pasto libero (spuntino di 
 aiScen("ai-libero-due-pasti", "Due pasti proposti, entrambi segnalati: se ne accende uno solo (il primo); l'altro è disattivato con la spiegazione.", { risposte: [prop(pizzaBirra(true, "pranzo"), pizzaBirra(true, "cena"))] }, [scrivi("pasto libero a pranzo e pasto libero a cena"), stima, { wait: 600 }, { scrollTo: "Annulla" }]);
 aiScen("ai-libero-conferma", "Dopo Conferma con l'interruttore acceso: il pasto di oggi è etichettato 'libero' e conta al massimo il tetto.", { risposte: [prop(pizzaBirra(true))] }, [scrivi2, stima, { wait: 600 }, btn("Conferma"), { wait: 700 }]);
 
+// --- Controllo di coerenza kcal / nutrienti (T5b.4)
+const dolce = { slot: "spuntino", freeMeal: false, dishes: [dish("Torta di mele", "1 fetta, 120 g", false, 110, 13, 72, 6, 3, 0.3, "Fetta media di torta."), dish("Birra", "1 bottiglia, 330 ml", false, 215, 2, 18, 0, 0, 0)] };
+aiScen("ai-controllo-segnalato", "Proposta con un piatto che non supera il controllo di coerenza (110 kcal ma i nutrienti ne danno 394): sulla riga '⚠ controlla'; la birra (kcal più alte dei nutrienti) non è segnalata.", { risposte: [prop(dolce)] }, [scrivi("una fetta di torta di mele e una birra"), stima, { wait: 600 }]);
+aiScen("ai-controllo-aperto", "Aperto, il piatto segnalato mostra la frase 'Le kcal sembrano basse rispetto ai nutrienti: controlla i numeri.'; non blocca la conferma e non cambia i numeri.", { risposte: [prop(dolce)] }, [scrivi("una fetta di torta di mele e una birra"), stima, { wait: 600 }, { click: "Torta di mele" }, { wait: 300 }]);
+aiScen("ai-controllo-ritoccato", "Dopo aver ritoccato le kcal a 380 il segno scompare: il controllo si ricalcola.", { risposte: [prop(dolce)] }, [scrivi("una fetta di torta di mele e una birra"), stima, { wait: 600 }, { click: "Torta di mele" }, { fill: ["Kcal", "380"] }, { wait: 300 }]);
+aiScen("piatto-stima-segnalato", "Piatto a mano stimato con l'AI con kcal troppo basse rispetto ai nutrienti: sotto la nota compare l'avviso di controllo.", { risposte: [prop({ slot: "spuntino", dishes: [dish("Torta di mele", "1 fetta, 120 g", false, 110, 13, 72, 6, 3, 0.3, "Fetta media di torta.")] })] }, [manuale, { fill: ["Nome del piatto", "Torta di mele"] }, btn("Stima con AI"), { wait: 600 }]);
+
 // --- Piatto a mano con stima (T4.3)
 const pesto = prop({ slot: "pranzo", dishes: [dish("Spaghetti al pesto", "80 g pasta a crudo, 20 g pesto alla genovese", false, 480, 15, 70, 16, 4, 1.3, "Pasta con circa 20 g di pesto alla genovese.")] });
 const aMano = [manuale, { fill: ["Nome del piatto", "Spaghetti al pesto"] }, { fill: ["Quantità (facoltativa)", "80 g di pasta"] }];

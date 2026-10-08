@@ -8,7 +8,7 @@ import type { MealProposal } from "@/modules/ai";
 import { useAuth } from "../auth-provider";
 import { requestEstimate } from "../lib/ai-client";
 import { newId } from "../lib/ids";
-import { SLOTS } from "../lib/meal-form";
+import { KCAL_CHECK_MESSAGE, SLOTS, textNeedsKcalCheck } from "../lib/meal-form";
 import { DISH_NUMBER_KEYS, draftsToProposal, forceSlot, freeSwitchBlock, hasDishes, proposalToDrafts, proposalToRecords, withInitialFree, withSlot } from "../lib/proposal-form";
 import type { DishDraft, DishNumberKey, DraftErrors, FreeRules, MealDraft } from "../lib/proposal-form";
 import { FreeMealSwitch } from "./free-meal-switch";
@@ -180,6 +180,8 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
           {meal.dishes.map((d) => {
             const isOpen = openKeys.includes(d.key);
             const hasError = errors[d.key] !== undefined;
+            // Il controllo vale per i numeri stimati dal modello e si ricalcola a ogni ritocco.
+            const check = textNeedsKcalCheck(d);
             return (
               <div key={d.key} className="overflow-hidden rounded-xl bg-card">
                 <button
@@ -195,6 +197,7 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
                       {d.quantity.trim() !== "" && <span className="line-clamp-2 break-words">{d.quantity.trim()}</span>}
                       {d.quantityAssumed && <span className="font-semibold text-warn">ipotizzata</span>}
                       {hasError && <span className="font-semibold text-bad">da correggere</span>}
+                      {check && <span className="font-semibold text-warn"><span aria-hidden="true">⚠ </span>controlla</span>}
                     </span>
                   </span>
                   <span className="shrink-0 text-[17px] font-semibold tabular-nums">{d.kcal.trim() === "" ? "–" : d.kcal} <span className="text-sm font-medium text-muted">kcal</span></span>
@@ -213,6 +216,12 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
                       </label>
                       <textarea id={`qty-${d.key}`} autoComplete="off" rows={Math.min(8, Math.max(1, Math.ceil(d.quantity.length / 30)))} value={d.quantity} onChange={(e) => setDish(meal.key, d.key, { quantity: e.target.value.replace(/\n/g, " "), quantityAssumed: false })} className={`${input} field-sizing-content resize-none bg-bg py-2.5`} />
                       {d.note && <p className="text-sm text-muted">{d.note}</p>}
+                      {check && (
+                        <p role="status" className="text-sm font-semibold text-warn">
+                          <span aria-hidden="true">⚠ </span>
+                          {KCAL_CHECK_MESSAGE}
+                        </p>
+                      )}
                     </div>
                     <div className="grid grid-cols-2 gap-x-3 gap-y-3">
                       {DISH_NUMBER_KEYS.map((k) => {

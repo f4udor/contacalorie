@@ -8,6 +8,12 @@ export const ringGreenAbove = 50;
 /** Oltre `ringGreenAbove` e fino a questo eccesso l'anello è giallo, poi rosso. */
 export const ringYellowAbove = 200;
 
+/** Controllo di coerenza delle stime (BRIEF §3.7): costanti del motore, senza campo in Impostazioni né colonna nel database. */
+/** Le kcal dichiarate sono troppo basse se mancano più di questa quota delle kcal dei macronutrienti... */
+export const kcalCheckShare = 0.2;
+/** ...e più di queste kcal. */
+export const kcalCheckMin = 40;
+
 /** Valori di default di BRIEF §3. */
 export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
   baseKcal: 2100,
