@@ -289,6 +289,15 @@ accesso("accesso-effettuato", "Codice giusto (123456 nella modalità dimostrativ
 scenarios.push({ id: "impostazioni-account", descrizione: "Impostazioni con l'accesso attivo: in fondo l'account con l'email e 'Esci'.", oggi: "2026-01-08", percorso: "/impostazioni", dati: null, scorre: true, accessoDimostrativo: { session: { email: "mauro@esempio.it" } }, passi: [{ scrollTo: "Esci" }] });
 scenarios.push({ id: "dopo-esci", descrizione: "Dopo 'Esci': si torna alla schermata Accedi.", oggi: "2026-01-08", percorso: "/impostazioni", dati: null, fisso: true, accessoDimostrativo: { session: { email: "mauro@esempio.it" } }, passi: [{ clickRole: { role: "button", name: "Esci", exact: true } }, { wait: 500 }] });
 
+// --- Esportazione (T3.6)
+const datiImportBase = () => ({ ...settimanaCompleta, weighIns: [{ date: "2026-01-05", weightKg: 93 }, { date: "2026-01-09", weightKg: 92 }] });
+const dati = (id, descrizione, dati, passi, extra = {}) =>
+  scenarios.push({ id, descrizione, oggi: "2026-01-11", percorso: "/impostazioni", dati, scorre: true, passi, ...extra });
+dati("impostazioni-dati", "Impostazioni → Dati: i due pulsanti di esportazione (con dati sul dispositivo).", datiImportBase(), [{ scrollTo: "Esporta i piatti" }]);
+dati("esporta-piatti", "Dopo 'Esporta i piatti': il file CSV viene scaricato e la pagina dice quale e quanti piatti.", datiImportBase(), [{ click: "Esporta i piatti (CSV)" }, { wait: 600 }, { scrollTo: "Scaricato" }]);
+dati("esporta-pesate", "Dopo 'Esporta pesate e attività': file e numero di giorni.", datiImportBase(), [{ click: "Esporta pesate e attività (CSV)" }, { wait: 600 }, { scrollTo: "Scaricato" }]);
+dati("esporta-vuoto", "Senza dati: il pulsante lo dice invece di scaricare un file vuoto.", null, [{ click: "Esporta i piatti (CSV)" }, { wait: 400 }, { scrollTo: "Non ci sono ancora" }]);
+
 // --- Importazione dei dati del dispositivo (T3.5): accesso dimostrativo + dati nel browser
 const datiImport = { ...settimanaCompleta, weighIns: [{ date: "2026-01-05", weightKg: 93 }, { date: "2026-01-09", weightKg: 92 }] };
 const importa = (id, descrizione, passi, extra = {}) =>

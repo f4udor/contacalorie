@@ -73,7 +73,13 @@ describe("SupabaseDataStore: tante righe", () => {
       db.rows("meals").push({ id: `m${i}`, user_id: "utente-1", date: "2026-01-05", slot: "pranzo", name: `p${i}`, kcal: 1, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0, is_free: false, created_at: i });
     }
     for (let i = 0; i < 1200; i++) db.rows("weigh_ins").push({ id: `w${i}`, user_id: "utente-1", date: `2025-${String((i % 12) + 1).padStart(2, "0")}-${String((i % 28) + 1).padStart(2, "0")}#${i}`, weight_kg: 90 });
-    expect((await store.exportAll()).meals).toHaveLength(2500);
+    const all = await store.exportAll();
+    expect(all.meals).toHaveLength(2500);
+    expect(new Set(all.meals.map((m) => m.id)).size).toBe(2500);
+    // ogni lettura a pagine ha un secondo ordinamento per id, così le pagine non si sovrappongono
+    const paged = db.selects.filter((q) => q.ranged);
+    expect(paged.length).toBeGreaterThan(0);
+    expect(paged.every((q) => q.order.length === 2 && q.order[1] === "id")).toBe(true);
     expect(await store.listWeighIns()).toHaveLength(1200);
   });
 });

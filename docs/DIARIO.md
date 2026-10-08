@@ -84,6 +84,8 @@ Una riga per task chiuso.
 - Pasti vecchi con un piatto libero e uno normale nella stessa fascia: l'importazione estende il segno "libero" a tutto il pasto (la regola dei pasti composti) e lo dice; il budget di quel giorno può quindi scendere.
 - I dati restano nel browser finché l'utente non preme "Tutto a posto: togli i dati da questo dispositivo" e conferma; "Più tardi" chiude la proposta fino alla prossima apertura dell'app e la voce resta in Impostazioni → Dati.
 - Le letture di tutti i dati (pesate, esportazione) avvengono a pagine da 1.000 righe, il limite di Supabase per richiesta.
+- Esportazione (T3.6): due file CSV in Impostazioni → Dati: piatti (con quantità) e pesate/attività (una riga per giorno). Formato pensato per Excel in italiano: separatore ";", numeri con la virgola, UTF-8 con segno iniziale; i testi che iniziano con = + - @ hanno un apice davanti per non essere letti come formule. Il nome del file contiene la data di oggi. Con un archivio vuoto non si scarica un file vuoto: lo dice. Funziona con lo sportello del browser e con quello di Supabase (`exportAll`).
+- Le letture a pagine di Supabase ordinano anche per `id`, così le pagine non si ripetono né saltano righe (nota del revisore di T3.5).
 
 ## Non verificato
 
@@ -101,3 +103,4 @@ Una riga per task chiuso.
 - T3.3: l'avviso per un salvataggio non riuscito è visto in uno screenshot solo nel caso del browser che non riesce a scrivere (i dati restano in memoria). Il caso di Supabase (errore di rete: l'avviso compare, il pannello o la spunta restano com'erano per riprovare) è coperto da test dello sportello e del segnalatore di errori, ma non da uno screenshot né da una prova a schermo.
 - T3.4: l'accesso vero (invio dell'email con il codice, verifica, sessione che resta attiva sull'app installata sulla Home dell'iPhone, compilazione automatica del codice dall'email) **non è stato provato**: solo test con un client di accesso finto e screenshot con l'accesso dimostrativo. Il modello dell'email deve mostrare il codice (non il link): sta nella guida T3.7.
 - T3.5: l'importazione è provata con test (archivio dell'account finto in memoria: account vuoto, ripetizione, secondo dispositivo, errore a metà) e con screenshot nella modalità dimostrativa, dove l'archivio dell'account è finto. Non provata con Supabase vero né con un browser che contiene dati reali di una versione precedente dell'app.
+- T3.6: il file CSV è stato scaricato e letto in un browser headless (contenuto e nome corretti); non aperto con Excel, Numbers o Fogli, né provato su iPhone (dove il file va nell'app File).

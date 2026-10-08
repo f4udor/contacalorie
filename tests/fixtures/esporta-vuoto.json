@@ -1,0 +1,19 @@
+{
+  "id": "esporta-vuoto",
+  "descrizione": "Senza dati: il pulsante lo dice invece di scaricare un file vuoto.",
+  "oggi": "2026-01-11",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "click": "Esporta i piatti (CSV)"
+    },
+    {
+      "wait": 400
+    },
+    {
+      "scrollTo": "Non ci sono ancora"
+    }
+  ]
+}

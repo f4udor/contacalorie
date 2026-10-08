@@ -83,7 +83,8 @@ export class SupabaseDataStore implements DataStore {
     const PAGE = 1000;
     const out: Row[] = [];
     for (let from = 0; ; from += PAGE) {
-      const res = await client.from(table).select("*").order(orderBy).range(from, from + PAGE - 1);
+      // Secondo ordinamento per id: con valori uguali nella prima colonna le pagine non devono ripetere né saltare righe.
+      const res = await client.from(table).select("*").order(orderBy).order("id").range(from, from + PAGE - 1);
       SupabaseDataStore.check(res.error);
       const page = res.data ?? [];
       out.push(...page);

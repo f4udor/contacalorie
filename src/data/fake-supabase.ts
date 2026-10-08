@@ -13,6 +13,8 @@ export class FakeSupabaseDb {
   offline = false;
   /** Se impostato, ogni richiesta risponde con questo errore del server. */
   serverError: string | null = null;
+  /** Le letture fatte: tabella, colonne di ordinamento e se a pagine. */
+  selects: { table: string; order: string[]; ranged: boolean }[] = [];
   /** Quante richieste di scrittura sono state accettate. */
   writes = 0;
   private seq = 0;
@@ -76,7 +78,7 @@ class FakeTable implements SupabaseTable {
 
 class FakeQuery implements SupabaseQuery {
   private filters: ((r: Row) => boolean)[] = [];
-  private orderBy: string | null = null;
+  private orderBy: string[] = [];
   private window: [number, number] | null = null;
 
   constructor(
@@ -98,7 +100,7 @@ class FakeQuery implements SupabaseQuery {
     return this;
   }
   order(column: string) {
-    this.orderBy = column;
+    this.orderBy.push(column);
     return this;
   }
   range(from: number, to: number) {
@@ -126,11 +128,14 @@ class FakeQuery implements SupabaseQuery {
       this.db.writes++;
       return { data: null, error: null };
     }
+    this.db.selects.push({ table: this.table, order: [...this.orderBy], ranged: this.window !== null });
     const sorted = [...matches];
-    if (this.orderBy) {
-      const col = this.orderBy;
-      sorted.sort((a, b) => (a[col] === b[col] ? 0 : (a[col] as string | number) < (b[col] as string | number) ? -1 : 1));
-    }
+    sorted.sort((a, b) => {
+      for (const col of this.orderBy) {
+        if (a[col] !== b[col]) return (a[col] as string | number) < (b[col] as string | number) ? -1 : 1;
+      }
+      return 0;
+    });
     const page = this.window ? sorted.slice(this.window[0], this.window[1] + 1) : sorted;
     return { data: page.map((r) => ({ ...r })), error: null };
   }

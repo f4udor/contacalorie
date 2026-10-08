@@ -1,24 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { ImportSection } from "./components/data-import";
+import { DataSection } from "./components/data-section";
 import { PageTitle } from "./components/page-title";
 import { SettingsForm } from "./components/settings-form";
 import { useAuth } from "./auth-provider";
 import { useDataStore } from "./data-provider";
 import { useToday } from "./lib/use-today";
 import { useUserSettings } from "./lib/use-user-settings";
-
-/** Sezione "Dati" (importazione; l'esportazione arriva in T3.6): compare solo se c'è qualcosa da mostrare. */
-function DataSection() {
-  const { kind } = useAuth();
-  if (kind === null) return null;
-  return (
-    <section className="mt-3 rounded-2xl bg-card p-4 empty:hidden" aria-label="Dati">
-      <ImportSection />
-    </section>
-  );
-}
 
 /** Schermata Impostazioni. */
 export function ImpostazioniScreen() {
