@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useDataStore } from "../data-provider";
+import { useDataProblem, useDataStore } from "../data-provider";
 import { initialOnboardingValues, needsOnboarding, onboardingPatch, SKIP_PATCH } from "../lib/onboarding";
 import type { OnboardingValues } from "../lib/onboarding";
 import type { SettingsFormErrors } from "../lib/settings-form";
@@ -16,6 +16,7 @@ const STEPS = [
 /** Primo avvio guidato: tre schermate brevi per chi non ha ancora nessuna impostazione. Compare sopra l'app e si può saltare. */
 export function Onboarding() {
   const store = useDataStore();
+  const { problem } = useDataProblem();
   // undefined = non ancora letto, true = da mostrare, false = non serve
   const [show, setShow] = useState<boolean | undefined>(undefined);
   const [step, setStep] = useState(0);
@@ -35,7 +36,8 @@ export function Onboarding() {
     };
   }, [store]);
 
-  if (!store || !show) return null;
+  // Con l'avviso "dati illeggibili" in cima si aspetta che venga chiuso: il banner coprirebbe l'intestazione del primo avvio.
+  if (!store || !show || problem?.kind === "avviso") return null;
 
   const finish = async (patch: Parameters<typeof store.saveSettings>[0]) => {
     setBusy(true);

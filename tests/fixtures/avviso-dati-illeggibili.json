@@ -1,6 +1,6 @@
 {
   "id": "avviso-dati-illeggibili",
-  "descrizione": "Dati salvati corrotti: l'app riparte vuota e mostra l'avviso (e, senza impostazioni, il primo avvio guidato sotto l'avviso).",
+  "descrizione": "Dati salvati corrotti: l'app riparte vuota e mostra l'avviso (il primo avvio guidato compare dopo aver chiuso l'avviso).",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": "{{non json",

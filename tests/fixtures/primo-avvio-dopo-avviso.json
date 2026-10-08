@@ -1,0 +1,18 @@
+{
+  "id": "primo-avvio-dopo-avviso",
+  "descrizione": "Dati illeggibili e nessuna impostazione: prima l'avviso, il primo avvio compare dopo aver chiuso l'avviso.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": "{{non json",
+  "primoAvvio": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Ok",
+        "exact": true
+      }
+    }
+  ]
+}
