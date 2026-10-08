@@ -425,7 +425,7 @@ Vincoli di questa fase:
 - Il verde è quello dei semafori già in uso; contrasto sufficiente in chiaro e scuro.
 - Test: caso S di §3.8 con tutti e sei i valori di confine; giorno senza pasti; giorno con pasto libero che resta verde grazie al tetto. Scenari di screenshot per i quattro colori.
 
-### T5b.2 Proposta dell'AI: ricetta, regola del crudo, stima stabile · da fare
+### T5b.2 Proposta dell'AI: ricetta, regola del crudo, stima stabile · fatto
 - `SYSTEM_PROMPT` riscritto secondo §4: nome = solo il nome del piatto; quantità = ingredienti principali con i grammi; grammi di pasta, riso, cereali e legumi secchi intesi a crudo salvo indicazione contraria, con l'interpretazione scritta nella quantità; piatti distinti restano separati. Il prompt contiene due o tre esempi brevi di ingresso e uscita, tra cui "pasta al pomodoro 100 g" (circa 400-450 kcal, quantità "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio") e "100 g di pasta cotta al pomodoro" (circa 130-150 kcal).
 - Temperatura a 0. Lo schema di risposta resta strutturato.
 - Nessuna modifica al database: la quantità resta il campo di testo esistente. La riga compatta della proposta e la riga del piatto in Oggi devono reggere una quantità lunga: va a capo o si tronca con i puntini, senza scorrimento orizzontale e senza coprire le kcal; toccando il piatto si legge per intero.
