@@ -1,6 +1,6 @@
 {
-  "id": "settimana-peso-scende",
-  "descrizione": "Peso: ultima pesata 91,4 kg, «−0,6 kg» dalla pesata precedente (92,0 del 2 gennaio), obiettivo 82 kg: differenza in verde.",
+  "id": "settimana-peso-quasi-uguale",
+  "descrizione": "Differenza di 40 grammi (91,36 su 91,4): arrotondata vale 0,0, quindi «0,0 kg» in grigio, mai «−0 kg».",
   "oggi": "2026-01-11",
   "percorso": "/settimana",
   "dati": {
@@ -252,11 +252,11 @@
     "weighIns": [
       {
         "date": "2026-01-02",
-        "weightKg": 92
+        "weightKg": 91.4
       },
       {
-        "date": "2026-01-07",
-        "weightKg": 91.4
+        "date": "2026-01-08",
+        "weightKg": 91.36
       }
     ]
   },

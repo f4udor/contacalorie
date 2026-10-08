@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatDateLong, formatDayMonth, formatNumber, formatSigned, formatWeekday } from "./format";
+import { formatDateLong, formatDayMonth, formatNumber, formatSigned, formatWeekday, formatWeightDelta } from "./format";
 
 describe("formatNumber", () => {
   it("separatore delle migliaia anche a 4 cifre e virgola decimale", () => {
@@ -32,5 +32,21 @@ describe("date", () => {
     expect(formatDayMonth("2026-01-08")).toBe("8 gennaio");
     expect(formatDateLong("2026-01-08")).toBe("Giovedì 8 gennaio");
     expect(formatDateLong("2026-03-01")).toBe("Domenica 1 marzo");
+  });
+});
+
+describe("formatWeightDelta (T5b.7)", () => {
+  it("sempre segno e un decimale, con il meno tipografico", () => {
+    expect(formatWeightDelta(-0.4)).toBe("−0,4");
+    expect(formatWeightDelta(-1.2)).toBe("−1,2");
+    expect(formatWeightDelta(0.3)).toBe("+0,3");
+    expect(formatWeightDelta(12)).toBe("+12,0");
+    expect(formatWeightDelta(-1234.5)).toBe("−1.234,5");
+  });
+  it("una differenza che arrotondata vale 0,0 si scrive «0,0», senza segno", () => {
+    expect(formatWeightDelta(0)).toBe("0,0");
+    expect(formatWeightDelta(-0.04)).toBe("0,0");
+    expect(formatWeightDelta(0.04)).toBe("0,0");
+    expect(formatWeightDelta(-0.05)).toBe("−0,1");
   });
 });

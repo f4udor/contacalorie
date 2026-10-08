@@ -9,7 +9,7 @@ import { Card } from "./components/card";
 import { ActivityWeekPanel, FreeMealPanel, WeightPanel } from "./components/week-panels";
 import { useDataStore } from "./data-provider";
 import { WeekChart } from "./components/week-chart";
-import { formatDayMonth, formatNumber, formatSigned } from "./lib/format";
+import { formatDayMonth, formatNumber, formatSigned, formatWeightDelta } from "./lib/format";
 import { useToday } from "./lib/use-today";
 import { useWeekData } from "./lib/use-week-data";
 import { buildWeekView } from "./lib/week-view";
@@ -80,7 +80,7 @@ export function SettimanaScreen() {
   const view = data ? buildWeekView({ date: monday, days: data.days, settings: data.settings, today }) : null;
   const s = view?.summary;
   const weight = data ? weekWeight({ monday, sunday, weighIns: data.weighIns, profileWeightKg: data.userSettings.weightKg, targetWeightKg: data.userSettings.targetWeightKg }) : null;
-  const card = weightCard(weight, (kg) => formatNumber(kg, 1), (kg) => formatSigned(kg, 1));
+  const card = weightCard(weight, (kg) => formatNumber(kg, 1), formatWeightDelta);
   const stats: StatProps[] = s
     ? [
         { label: "Saldo", value: s.balance === null ? dash : `${formatSigned(s.balance)} kcal`, hint: s.balance === null ? undefined : s.balance < 0 ? "da recuperare" : "di vantaggio" },

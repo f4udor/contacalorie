@@ -1,13 +1,13 @@
 {
-  "id": "settimana-peso-scende",
-  "descrizione": "Peso: ultima pesata 91,4 kg, «−0,6 kg» dalla pesata precedente (92,0 del 2 gennaio), obiettivo 82 kg: differenza in verde.",
+  "id": "settimana-peso-salire-scende",
+  "descrizione": "Obiettivo sopra il peso (si vuole salire) ma il peso scende di 0,4 kg: «−0,4 kg» in rosso.",
   "oggi": "2026-01-11",
   "percorso": "/settimana",
   "dati": {
     "version": 1,
     "settings": {
-      "weightKg": 92.5,
-      "targetWeightKg": 82
+      "weightKg": 60,
+      "targetWeightKg": 70
     },
     "meals": [
       {
@@ -252,11 +252,11 @@
     "weighIns": [
       {
         "date": "2026-01-02",
-        "weightKg": 92
+        "weightKg": 60
       },
       {
-        "date": "2026-01-07",
-        "weightKg": 91.4
+        "date": "2026-01-08",
+        "weightKg": 59.6
       }
     ]
   },

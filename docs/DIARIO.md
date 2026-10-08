@@ -63,6 +63,7 @@ Una riga per task chiuso.
 - T5b.4 · fatto · `src/engine/coherence.ts` (`kcalFromMacros`, `needsKcalCheck`, costanti `kcalCheckShare` 0,20 e `kcalCheckMin` 40 in `defaults.ts`); casi T, U, V, soglie esatte, numeri a zero. Nella proposta il piatto segnalato ha «⚠ controlla» sulla riga e, aperto, la frase breve; nel piatto a mano stimato con l'AI la stessa frase sotto la nota. Non blocca, non cambia i numeri, si ricalcola a ogni ritocco. 4 scenari.
 - T5b.5 · fatto · preferiti (piatti e pasti) con `SwipeRow`: scorrendo a sinistra compare il cestino, che elimina subito senza conferma (`deleteFavorite`); tolta la modalità «Modifica» (con «Elimina» / «Elimina davvero»); il + e il tocco sulla riga aggiungono come prima. `npm run prova-scorrimento` ora prova anche i preferiti (20 controlli). Scenari `preferiti-modifica` e `preferiti-elimina` sostituiti da 3 scenari di scorrimento.
 - T5b.6 · fatto · media kcal della settimana sui giorni conclusi (`weekSummary` esclude il giorno `today` dalla media; senza `today` non esclude nessuno): test esistenti della media aggiornati (si passa un `today` dopo la settimana), nuovi casi W, X, Y; la scheda dice «sui giorni conclusi»; sul grafico linea tratteggiata grigia alla media (`avgRatio`, stessa scala delle barre) e legenda sopra le barre («obiettivo», «media 2.040»). 4 scenari (sopra, sotto, vicina, assente).
+- T5b.7 · in attesa di revisione · variazione di peso sempre con segno e un decimale (`formatWeightDelta`: «−0,4 kg», «+0,3 kg», «0,0 kg» in grigio quando arrotondata vale 0,0), usata nella scheda Peso della Settimana (l'unico punto dove oggi si mostra la variazione); colori già corretti anche per chi vuole salire (verificati con test). 2 scenari nuovi, descrizioni aggiornate.
 
 ## Decisioni da confermare
 
@@ -156,6 +157,7 @@ Una riga per task chiuso.
 - Controllo di coerenza (T5b.4): soglie esatte non segnalate (serve superarle entrambe). Nel piatto a mano il controllo compare solo dopo «Stima con AI» (non sui numeri scritti a mano) e vale sui numeri correnti del modulo; se il modello divide il piatto in più piatti il controllo è sulla somma. La frase è la stessa nella proposta e nel piatto a mano.
 - Preferiti (T5b.5): nei preferiti il cestino è solo nello scorrimento (a differenza dei pannelli della Settimana non c'è un cestino sempre visibile), come da brief.
 - Media (T5b.6): l'etichetta «media 2.040» sta in una legenda sopra le barre (con «obiettivo»), non accanto alla linea: accanto avrebbe ristretto le barre sotto i 44 px o coperto la domenica. Solo la media delle kcal esclude oggi; le medie dei nutrienti restano su tutti i giorni con pasti.
+- Variazione di peso (T5b.7): `formatSigned` (usato per kcal) resta com'è; per i kg c'è `formatWeightDelta`. Nei Grafici (fase 6) la variazione dovrà usare lo stesso formato.
 
 ## Non verificato
 

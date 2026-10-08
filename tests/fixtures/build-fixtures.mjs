@@ -424,13 +424,15 @@ scenarios.push({ id: "impostazioni-collegamenti-spenta", descrizione: "Impostazi
 
 // --- Peso nella Settimana (T4b.5)
 const conPeso = (settings, weighIns) => ({ ...settimanaCompleta, settings, weighIns });
-sett("settimana-peso-scende", "Peso: ultima pesata 91,4 kg, −0,6 kg dalla pesata precedente (92,0 del 2 gennaio), obiettivo 82 kg: differenza in verde.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-07", weightKg: 91.4 }]));
+sett("settimana-peso-scende", "Peso: ultima pesata 91,4 kg, «−0,6 kg» dalla pesata precedente (92,0 del 2 gennaio), obiettivo 82 kg: differenza in verde.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-07", weightKg: 91.4 }]));
 sett("settimana-peso-sale", "Peso: +0,8 kg con obiettivo sotto: differenza in rosso.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-09", weightKg: 92.8 }]));
 sett("settimana-peso-partenza", "Peso senza pesate precedenti: confronto con il peso di partenza del profilo (92,5 kg), −0,8 kg in verde.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-06", weightKg: 91.7 }]));
 sett("settimana-peso-senza-obiettivo", "Peso senza peso obiettivo: differenza in grigio.", "2026-01-11", conPeso({ weightKg: 92.5 }, [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-07", weightKg: 91.4 }]));
 sett("settimana-peso-salire", "Obiettivo sopra il peso (si vuole salire): +0,9 kg in verde.", "2026-01-11", conPeso({ weightKg: 60, targetWeightKg: 70 }, [{ date: "2026-01-02", weightKg: 60 }, { date: "2026-01-08", weightKg: 60.9 }]));
-sett("settimana-peso-invariato", "Peso uguale alla pesata precedente: 0 kg in grigio.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 91.4 }, { date: "2026-01-08", weightKg: 91.4 }]));
+sett("settimana-peso-invariato", "Peso uguale alla pesata precedente: «0,0 kg» in grigio.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 91.4 }, { date: "2026-01-08", weightKg: 91.4 }]));
 sett("settimana-peso-senza-pesate", "Settimana senza pesate (pesate solo in altre settimane): la scheda Peso non compare.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-13", weightKg: 91 }]));
+sett("settimana-peso-quasi-uguale", "Differenza di 40 grammi (91,36 su 91,4): arrotondata vale 0,0, quindi «0,0 kg» in grigio, mai «−0 kg».", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 91.4 }, { date: "2026-01-08", weightKg: 91.36 }]));
+sett("settimana-peso-salire-scende", "Obiettivo sopra il peso (si vuole salire) ma il peso scende di 0,4 kg: «−0,4 kg» in rosso.", "2026-01-11", conPeso({ weightKg: 60, targetWeightKg: 70 }, [{ date: "2026-01-02", weightKg: 60 }, { date: "2026-01-08", weightKg: 59.6 }]));
 sett("settimana-peso-solo", "Settimana senza pasti né attività ma con una pesata: compare la scheda Peso e non il messaggio 'Nessun dato'.", "2026-01-11", data({ settings: { weightKg: 92.5, targetWeightKg: 82 }, weighIns: [{ date: "2026-01-07", weightKg: 91.6 }] }));
 
 // --- Impostazioni (T2.7)

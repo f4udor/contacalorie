@@ -1,6 +1,6 @@
 {
   "id": "settimana-peso-invariato",
-  "descrizione": "Peso uguale alla pesata precedente: 0 kg in grigio.",
+  "descrizione": "Peso uguale alla pesata precedente: «0,0 kg» in grigio.",
   "oggi": "2026-01-11",
   "percorso": "/settimana",
   "dati": {

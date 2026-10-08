@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { weekWeight } from "./week-weight";
+import { formatNumber, formatWeightDelta } from "./format";
+import { weekWeight, weightCard } from "./week-weight";
 
 const MON = "2026-01-05";
 const SUN = "2026-01-11";
@@ -71,5 +72,32 @@ describe("weekWeight", () => {
       expect(run([w("2026-01-06", 83)], { profileWeightKg: 86, targetWeightKg: 85 })?.tone).toBe("bad"); // da 1 a 2
       expect(run([w("2026-01-06", 84)], { profileWeightKg: 86, targetWeightKg: 85 })?.tone).toBe("neutral"); // da 1 a 1
     });
+  });
+});
+
+describe("scheda Peso: testo e colore della variazione (T5b.7)", () => {
+  const card = (kg: number, o: { profileWeightKg?: number; targetWeightKg?: number } = {}) =>
+    weightCard(run([w("2026-01-06", kg)], { profileWeightKg: 92, ...o }), (n) => formatNumber(n, 1), formatWeightDelta);
+
+  it("−0,04 → «0,0 kg», in grigio", () => {
+    expect(card(91.96, { targetWeightKg: 85 })).toMatchObject({ hint: "0,0 kg dal peso di partenza", tone: "neutral" });
+  });
+  it("−0,4, −1,2 e +0,3: sempre segno e un decimale", () => {
+    expect(card(91.6).hint).toBe("−0,4 kg dal peso di partenza");
+    expect(card(90.8).hint).toBe("−1,2 kg dal peso di partenza");
+    expect(card(92.3).hint).toBe("+0,3 kg dal peso di partenza");
+  });
+  it("con una pesata precedente il testo lo dice", () => {
+    const r = weightCard(run([w("2026-01-02", 93), w("2026-01-06", 92.6)]), (n) => formatNumber(n, 1), formatWeightDelta);
+    expect(r.hint).toBe("−0,4 kg dalla pesata precedente");
+  });
+  it("obiettivo più alto del peso attuale: la variazione positiva è verde, quella negativa rossa", () => {
+    expect(card(92.3, { targetWeightKg: 100 })).toMatchObject({ hint: "+0,3 kg dal peso di partenza", tone: "ok" });
+    expect(card(91.6, { targetWeightKg: 100 })).toMatchObject({ hint: "−0,4 kg dal peso di partenza", tone: "bad" });
+  });
+  it("obiettivo più basso: scendere verde, salire rosso; senza obiettivo grigio", () => {
+    expect(card(91.6, { targetWeightKg: 85 }).tone).toBe("ok");
+    expect(card(92.3, { targetWeightKg: 85 }).tone).toBe("bad");
+    expect(card(91.6).tone).toBe("neutral");
   });
 });
