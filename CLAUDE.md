@@ -41,6 +41,7 @@ Per ogni task:
 1. **Costruisci** solo ciò che il task chiede.
 2. **Verifica**: `npm run lint`, `npm test`, `npm run build` devono passare.
 3. **Revisione**: avvia il subagente `revisore` (definito in `.claude/agents/revisore.md`), passandogli solo il testo del task e il diff. Il revisore non vede il tuo ragionamento.
+   Se il subagente `revisore` non è disponibile nella sessione, avvia un agente `general-purpose` passandogli come istruzioni il contenuto integrale di `.claude/agents/revisore.md`, più il testo del task e il diff. Vale come revisione a tutti gli effetti.
 4. **Esito**:
    - approvato: commit, stato del task a `fatto`, una riga nel diario;
    - respinto: correggi seguendo le note e ripeti dal punto 2;
