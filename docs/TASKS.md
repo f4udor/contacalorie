@@ -145,7 +145,7 @@ Schermata Settimana (§2 del brief), usando `weekSummary`.
 - Toccare una barra apre quel giorno in Oggi.
 - Scenari: settimana vuota, settimana parziale, settimana completa con uno sforamento.
 
-### T2.7 Impostazioni · da fare
+### T2.7 Impostazioni · fatto
 - Profilo: peso, altezza, età, peso obiettivo.
 - Obiettivi: kcal base e soglia minima; grammi di proteine e grassi con il valore proposto dalla formula visibile e la possibilità di sostituirlo o tornare alla formula; fibre, sale, margine dei semafori.
 - Attività: kcal per km, kcal per passo, soglia passi, quota di bonus. Pasto libero: tetto di kcal.
