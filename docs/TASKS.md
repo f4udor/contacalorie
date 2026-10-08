@@ -215,7 +215,7 @@ Solo quando Supabase è configurato.
 - I dati del browser restano finché l'utente non conferma che l'importazione è andata a buon fine.
 - I pasti salvati prima di T3.0 (un piatto per voce) vengono importati come pasti di un solo piatto.
 
-### T3.6 Esportazione dei dati · da fare
+### T3.6 Esportazione dei dati · fatto
 Impostazioni → Dati → "Esporta": un file CSV dei piatti (data, pasto, nome, kcal, macro, fibre, sale, libero) e uno delle pesate e attività. Funziona sia con il browser sia con Supabase.
 
 ### T3.7 Guida al collegamento · da fare
