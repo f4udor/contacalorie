@@ -224,3 +224,56 @@ creare il progetto su Supabase, incollare `supabase/setup.sql`, attivare l'acces
 
 ### T3.8 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-3.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici, includi i controlli da fare sul telefono prima e dopo il collegamento di Supabase.
+
+## Fase 4: inserimento con l'AI, preferiti, pulizia
+
+Obiettivo: segnare un pasto scrivendo o dettando una frase, con la stima fatta da Gemini su Vertex AI; riusare piatti e pasti salvati senza AI; togliere la sfida; accogliere un secondo utente con un primo avvio guidato. Regole del brief in §4.
+
+Vincoli di questa fase:
+- Nessuna chiave reale. Vertex si collega con variabili d'ambiente **solo lato server** (mai `NEXT_PUBLIC_`): progetto, regione, modello e credenziali dell'account di servizio. Senza queste variabili l'app funziona come oggi: il campo AI mostra "Stima automatica non disponibile" e resta l'inserimento con i numeri.
+- In sviluppo e nei test si usa il provider finto. Nessuna chiamata di rete reale nei test.
+- Gli accessi si gestiscono da Supabase: nessuna schermata di inviti.
+- Per le schermate valgono le regole della fase 2 (scenari, screenshot, formato italiano, stati vuoti).
+
+### T4.0 Rimozione della sfida mattutina · da fare
+- Spariscono la sezione in Oggi, i giorni di sfida in Settimana, la data di inizio in Impostazioni e il codice del motore e dei moduli dedicato alla sfida, con i suoi test.
+- Le tabelle della sfida restano nel database (nessuna migrazione che le elimina).
+- I test e gli screenshot esistenti vengono aggiornati di conseguenza; il diario elenca cosa è stato tolto.
+
+### T4.1 Provider AI e stima lato server · da fare
+- In `src/modules/ai`: interfaccia `AiProvider` con un'unica operazione "stima pasti da testo", implementazione Vertex AI (Gemini) e implementazione finta.
+- Una route del server riceve testo, data e ora locali ed eventuale stima precedente con correzione; richiede un utente con accesso; chiama il provider; restituisce la proposta.
+- Al modello va solo ciò che §4 consente. Il prompt è in un file a parte, in italiano, e chiede risposta in JSON con uno schema fisso.
+- La risposta del modello viene validata: valori numerici non negativi, fasce ammesse, almeno un piatto. Se non è valida, errore chiaro e nessun salvataggio.
+- Limite di 60 stime al giorno per utente, contate nel database (nuova tabella, per aggiunta). Oltre il limite: messaggio chiaro.
+- Test con il provider finto su almeno 10 frasi tipiche in `tests/fixtures/ai/`: un piatto; più piatti nello stesso pasto ("anelli di totano e un'insalata di pomodorini" → due piatti); due pasti nella stessa frase ("a colazione… e a pranzo…"); fascia detta; fascia dedotta dall'ora; quantità dette; quantità mancanti (ipotizzate e segnate come tali); correzione; risposta non valida; limite superato.
+
+### T4.2 Schermata di inserimento con l'AI · da fare
+- In cima al pannello Aggiungi: campo "Cosa hai mangiato?" con suggerimento "Puoi dettare con il microfono della tastiera", e pulsante "Stima".
+- Proposta raggruppata per pasto, con i piatti: nome, quantità (con etichetta "ipotizzata" se lo è), kcal e macro, tutti modificabili; fascia del pasto modificabile; un piatto si può togliere.
+- Campo "Correggi" per una correzione a parole, che rifà la stima partendo dalla precedente.
+- "Conferma" salva tutti i piatti nei pasti indicati del giorno visualizzato; "Annulla" non salva nulla.
+- Stato di caricamento, errori di rete, limite superato e AI non configurata: messaggi chiari, il testo scritto non si perde.
+
+### T4.3 Piatto a mano con stima · da fare
+- Il pannello del piatto a mano chiede nome e quantità; kcal e macro diventano facoltativi.
+- Se kcal sono vuote: pulsante "Stima con AI" che riempie i numeri dal nome e dalla quantità, da confermare. Senza AI configurata, kcal resta obbligatorio come oggi.
+
+### T4.4 Preferiti · da fare
+- Toccando un piatto: "Salva nei preferiti". Toccando l'intestazione di un pasto: "Salva pasto" (tutti i suoi piatti, con un nome modificabile).
+- Nel pannello Aggiungi, sezione "Preferiti" con piatti e pasti salvati, cercabili per nome; un tocco li aggiunge al giorno visualizzato, nella fascia scelta, senza AI.
+- Eliminazione di un preferito. Nuova tabella per i pasti preferiti, per aggiunta; i preferiti di piatti usano la tabella esistente.
+- Funziona sia con i dati nel browser sia con Supabase.
+
+### T4.5 Primo avvio guidato · da fare
+- Al primo accesso di un utente senza impostazioni salvate: tre schermate brevi con peso, peso obiettivo e kcal base, precompilate con i valori predefiniti, più "Salta".
+- Alla fine si arriva in Oggi. Le stesse voci restano modificabili in Impostazioni.
+- In Impostazioni, sezione "Collegamenti": stato dell'AI ("attiva" o "non configurata").
+
+### T4.6 Guida al collegamento di Vertex AI · da fare
+`docs/COLLEGA-VERTEX.md`, stesso stile della guida di Supabase, passi numerati con cosa si vede a schermo:
+attivare l'API di Vertex AI nel progetto Google Cloud, creare un account di servizio con il ruolo minimo necessario per chiamare i modelli, scaricare la chiave JSON, scegliere regione europea e modello verificandone la disponibilità, impostare un avviso di budget, inserire le variabili su Vercel (solo lato server), ripubblicare, provare una stima.
+La guida avverte che i nomi dei pulsanti possono essere cambiati e che la chiave JSON non va mai incollata in chat né nel repository.
+
+### T4.7 Report di fase · da fare
+Scrivi `docs/REPORT-FASE-4.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici, includi i controlli da fare sul telefono prima e dopo il collegamento di Vertex.

@@ -14,18 +14,17 @@ Navigazione in basso: **Oggi, Settimana, Grafici, Impostazioni**.
 3. Griglia di schede dei nutrienti: proteine, carboidrati, grassi, fibre, sale. Ogni scheda: nome, "assunto su obiettivo", barretta colorata a semaforo.
 4. Pasti del giorno: Colazione, Pranzo, Cena, Spuntino. Ogni pasto è composto da uno o più piatti e mostra il totale di kcal e macro, con i piatti elencati sotto ed etichetta "libero" se lo è. Ogni piatto si modifica o elimina; ogni pasto ha il suo "Aggiungi piatto".
 5. Attività: passi e bici (km, kcal), con la fonte ("da Salute" o "manuale").
-6. Sfida mattutina: esercizi del giorno da spuntare, ripetizioni modificabili, "Salta".
 7. Pulsante **+** sempre visibile.
 
 ### Pannello Aggiungi (dal +)
-- In cima: campo di testo con microfono. L'utente detta o scrive, il modello AI restituisce uno o più pasti stimati, l'utente conferma, corregge i numeri a mano oppure invia una correzione a voce o testo ("il riso era poco") che aggiorna la stima.
-- Preferiti, "Copia da ieri", inserimento manuale di un piatto. Se kcal e macro restano vuoti, li stima il modello AI a partire da nome e quantità, e l'utente conferma.
+- In cima: un campo di testo "Cosa hai mangiato?". L'utente scrive o detta con il microfono della tastiera dell'iPhone, il modello AI restituisce uno o più pasti con i loro piatti stimati, l'utente conferma, corregge i numeri a mano oppure invia una correzione a voce o testo ("il totano era di più") che aggiorna la stima.
+- Preferiti (piatti e pasti salvati), "Copia da ieri", piatto a mano con nome e quantità. I numeri sono facoltativi: se restano vuoti li stima il modello AI, e l'utente conferma.
 - Interruttore "Pasto libero" sul pasto intero, disattivato se già usato nella settimana.
 - Voci separate: "Pesata" e "Attività a mano".
 
 ### Settimana (lunedì-domenica)
 - Sette barre delle kcal mangiate con la linea dell'obiettivo di ogni giorno.
-- Saldo della settimana, media kcal, medie dei nutrienti, km in bici, passi medi, pasto libero usato o no, giorni di sfida completati.
+- Saldo della settimana, media kcal, medie dei nutrienti, km in bici, passi medi, pasto libero usato o no.
 
 ### Grafici
 - Peso, kcal e deficit, macro medi, attività. Periodo: 4 settimane, 3 mesi, tutto.
@@ -119,12 +118,15 @@ Default della tabella, peso 100 kg (proteine 140 g, grassi 70 g). Questi numeri 
 
 ## 4. Pasti e modello AI
 
-- Al modello arriva solo il testo del pasto (ed eventualmente la stima precedente e la correzione). Nessun altro dato dell'utente.
-- Risposta strutturata: elenco di pasti, ognuno con nome, fascia, kcal, proteine, carboidrati, grassi, fibre, sale e una nota breve sulle quantità ipotizzate.
-- Nulla viene salvato senza conferma dell'utente.
-- Ogni pasto stimato conserva il testo originale.
-- Provider intercambiabile dietro `AiProvider`; il primo è Gemini. In sviluppo si usa un provider finto con risposte fisse.
-- I preferiti sono pasti salvati con i loro numeri. Niente ricette con ingredienti, niente foto.
+- **Cosa riceve il modello**: solo il testo scritto o dettato dall'utente, la data e l'ora locali (per dedurre la fascia) ed eventualmente la stima precedente con la correzione. Nessun altro dato dell'utente: niente peso, obiettivi, email.
+- **Cosa restituisce**: uno o più pasti; per ogni pasto la fascia (colazione, pranzo, cena, spuntino) e i piatti. Per ogni piatto: nome, quantità, se la quantità è stata ipotizzata, kcal, proteine, carboidrati, grassi, fibre, sale, e una nota breve.
+- **Fascia**: quella detta dall'utente ("a pranzo"); se non la dice, si deduce dall'ora. Si può cambiare prima di confermare.
+- **Quantità**: se l'utente non le dice, il modello usa porzioni standard di un adulto, le scrive nella proposta e le segna come ipotizzate. Non fa domande.
+- **Piatti separati**: "anelli di totano e un'insalata di pomodorini" diventano due piatti dello stesso pasto, ciascuno con la sua stima.
+- Nulla viene salvato senza conferma dell'utente. Ogni piatto stimato conserva il testo originale.
+- **Provider**: intercambiabile dietro `AiProvider`. Il primo è Gemini su **Vertex AI** (Google Cloud), chiamato solo dal server. Modello, progetto e regione sono variabili d'ambiente. In sviluppo si usa un provider finto con risposte fisse.
+- **Protezioni**: solo utenti con accesso possono chiamare il modello; massimo 60 stime al giorno per utente (impostazione del server); risposta del modello sempre validata prima di mostrarla.
+- **Preferiti**: piatti singoli e pasti interi salvati con i loro numeri, da riaggiungere senza passare dal modello. Niente ricette con ingredienti, niente foto.
 
 ## 5. Attività e automazioni
 
@@ -139,26 +141,7 @@ Salute e Promemoria di Apple non sono raggiungibili da un server: i dati arrivan
 
 ## 6. Sfida mattutina
 
-Piano di 30 giorni precaricato, con data di inizio modificabile.
-
-- Push up: ripetizioni pari al numero del giorno.
-- Altri esercizi: ripetizioni = base + 5 × ((giorno − 1) mod 3). Ogni esercizio entra dal suo giorno di inizio.
-
-| Esercizio | Dal giorno | Base | Per lato |
-|---|---|---|---|
-| Crunch | 1 | 20 | no |
-| Crunch incrociati | 1 | 10 | sì |
-| Dead bug | 4 | 10 | sì |
-| Tocchi ai talloni | 7 | 10 | sì |
-| Ponte glutei | 10 | 10 | no |
-| Bird dog | 13 | 10 | sì |
-| Squat | 16 | 10 | no |
-| Plank laterale con discesa bacino | 19 | 10 | sì |
-| Superman | 22 | 10 | no |
-| Russian twist (piedi a terra) | 25 | 10 | sì |
-| Plank con tocco spalla | 28 | 10 | sì |
-
-Per ogni esercizio del giorno: fatto, ripetizioni modificate, saltato. Nel database la sfida è un "piano" con "esercizi", così in futuro si possono aggiungere altri piani senza cambiare lo schema.
+Rimossa dall'app nella fase 4. Le sue tabelle restano nel database, inutilizzate, perché il database cresce solo per aggiunte.
 
 ## 7. Dati
 
@@ -171,13 +154,13 @@ Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate,
 | Fase | Contenuto |
 |---|---|
 | 1 | Motore dei calcoli con test, schema del database |
-| 2 | Schermate Oggi, Settimana, Impostazioni; peso; sfida |
+| 2 | Schermate Oggi, Settimana, Impostazioni; peso; sfida (poi rimossa) |
 | 3 | Supabase: login, dati online, importazione dal browser; pasti composti da piatti; proteine sul peso obiettivo |
-| 4 | Dati da Salute e Fitness tramite Comando rapido, guardiano |
-| 5 | Inserimento a voce e testo con AI, stima dei numeri mancanti, correzione, preferiti |
+| 4 | Inserimento con AI (Vertex), piatti a mano con stima, preferiti, rimozione della sfida, primo avvio guidato |
+| 5 | Dati da Salute e Fitness tramite Comando rapido, guardiano |
 | 6 | Grafici |
 | 7 | Promemoria (opzionale) |
 
 ## 9. Fuori dalla prima versione
 
-Nuova sfida creata col modello, esercizi come etichette con serie, editor della sfida, app nativa, foto del piatto, Strava.
+Sfida mattutina e programmi di allenamento, gestione inviti nell'app (gli accessi si gestiscono da Supabase), attività diverse da bici e passi, app nativa, foto del piatto, Strava.
