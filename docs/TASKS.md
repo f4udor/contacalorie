@@ -403,7 +403,7 @@ I task sono in ordine di valore: si eseguono in quest'ordine.
 
 Vincoli di questa fase:
 - Nessuna chiave reale e nessuna chiamata di rete reale nei test: Supabase e Vertex restano simulati.
-- Il database cresce per aggiunte. C'è una sola modifica allo schema (T5b.0); le istruzioni SQL da eseguire a mano su Supabase stanno in `supabase/aggiornamento-fase-5b.sql`; `supabase/setup.sql` va rigenerato. Nessun'altra tabella o colonna nuova.
+- Il database cresce per aggiunte. C'è una sola modifica allo schema (T5b.0), più il nuovo valore di `recoveryMin` (T5b.1); le istruzioni SQL da eseguire a mano su Supabase stanno in `supabase/aggiornamento-fase-5b.sql`; `supabase/setup.sql` va rigenerato. Nessun'altra tabella o colonna nuova.
 - Per le schermate valgono le regole delle fasi 2, 4b e 5. Si rigenerano solo gli screenshot degli scenari toccati dal task.
 - Nessuna funzione oltre a quelle elencate. In particolare: niente passi a mano, niente più uscite a mano nello stesso giorno, niente soglie dell'anello in Impostazioni, niente tabella di ingredienti (§9).
 
@@ -419,6 +419,7 @@ Vincoli di questa fase:
 ### T5b.1 Colori dell'anello delle kcal · da fare
 - Motore: la regola di §3.5 sostituisce quella attuale. `RingColor` guadagna il verde. Costanti `ringGreenBelow`, `ringGreenAbove`, `ringYellowAbove` in `src/engine/defaults.ts`, senza campo in Impostazioni e senza colonna nel database.
 - **Questo task cambia una regola di calcolo: i test dell'anello si aggiornano.** Nessun altro test del motore si tocca.
+- `recoveryMin` passa da 25 a 50, uguale a `ringGreenAbove`: default in `defaults.ts`, default della colonna e valore delle righe esistenti che hanno ancora 25 (istruzione in `supabase/aggiornamento-fase-5b.sql`). I casi M, N, O, Q e R di §3.6 restano identici; si aggiunge il caso Z di §3.8.
 - Il confronto usa le kcal contate nel budget (con il tetto del pasto libero), come il resto dell'obiettivo.
 - Le barre della Settimana prendono gli stessi colori, senza altro lavoro.
 - Il verde è quello dei semafori già in uso; contrasto sufficiente in chiaro e scuro.

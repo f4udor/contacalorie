@@ -53,7 +53,7 @@ Tutti i valori sono impostazioni con questi default.
 | `baseKcal` | 2100 |
 | `floorKcal` | 1800 |
 | `recoveryMaxPerDay` | 100 |
-| `recoveryMin` | 25 |
+| `recoveryMin` | 50 |
 | `creditCap` | 300 |
 | `bonusShare` | 0,5 |
 | `kcalPerKm` | 27 |
@@ -127,7 +127,7 @@ Anello delle kcal. Con `d` = kcal contate nel budget − obiettivo del giorno:
 | Giallo | oltre `+ringGreenAbove`, fino a `+ringYellowAbove` compreso |
 | Rosso | `d > +ringYellowAbove` |
 
-Un giorno senza pasti resta nel colore d'accento. Le barre della Settimana usano gli stessi colori.
+`ringGreenAbove` e `recoveryMin` hanno lo stesso valore: finché l'anello è verde, il giorno dopo non scatta nessun recupero. Un giorno senza pasti resta nel colore d'accento. Le barre della Settimana usano gli stessi colori.
 
 ### 3.6 Casi di verifica
 Default della tabella, peso 100 kg (proteine 140 g, grassi 70 g). Questi numeri devono uscire identici dai test.
@@ -164,6 +164,7 @@ Casi di verifica aggiuntivi (obiettivo del giorno 2.100):
 | # | Situazione | Risultato atteso |
 |---|---|---|
 | S | Contate 1.949 / 1.950 / 2.150 / 2.151 / 2.300 / 2.301 | accento / verde / verde / giallo / giallo / rosso |
+| Z | Lunedì 2.140 kcal. Martedì senza attività | Debito 40, sotto `recoveryMin`: recupero 0, obiettivo mar = 2.100. Con 2.150 kcal: debito 50, recupero −50, obiettivo mar = 2.050 |
 | T | Piatto con 110 kcal, proteine 13, carboidrati 72, grassi 6 (`kcalMacro` 394) | Da controllare |
 | U | Birra: 215 kcal, proteine 2, carboidrati 18, grassi 0 (`kcalMacro` 80) | Non segnalata |
 | V | Piatto con 380 kcal e `kcalMacro` 394 | Non segnalato |
