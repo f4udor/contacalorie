@@ -132,9 +132,20 @@ describe("SupabaseAuthService", () => {
     const { service } = make();
     await expect(service.verifyCode("a@b.it", "000000")).rejects.toBeInstanceOf(AuthError);
   });
+
+  it("getAccessToken: la chiave della sessione, null senza sessione o con errore", async () => {
+    const withSession: SupabaseAuthLike = { auth: { ...fakeClient().client.auth, getSession: async () => ({ data: { session: { access_token: "abc", user: { email: "a@b.it" } } } }) } };
+    expect(await new SupabaseAuthService(async () => withSession).getAccessToken()).toBe("abc");
+    expect(await make().service.getAccessToken()).toBeNull();
+    expect(await new SupabaseAuthService(async () => { throw new Error("x"); }).getAccessToken()).toBeNull();
+  });
 });
 
 describe("modalità dimostrativa e scelta del servizio", () => {
+  it("accesso dimostrativo: nessuna chiave per le stime", async () => {
+    expect(await new DemoAuthService(new MemStorage()).getAccessToken()).toBeNull();
+  });
+
   it("senza Supabase e senza la chiave dimostrativa: nessun accesso richiesto", () => {
     expect(createAuthService({ url: undefined, anonKey: undefined }, new MemStorage())).toBeNull();
   });

@@ -1,0 +1,55 @@
+{
+  "id": "ai-errore-rete",
+  "descrizione": "Servizio non raggiungibile: messaggio chiaro, il testo scritto resta.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": [
+      {
+        "stato": 502,
+        "corpo": {
+          "error": {
+            "code": "rete",
+            "message": "Non riesco a raggiungere il servizio di stima: controlla la connessione e riprova."
+          }
+        }
+      }
+    ]
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Cosa hai mangiato?",
+        "una pera"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Stima",
+        "exact": true
+      }
+    },
+    {
+      "wait": 500
+    }
+  ]
+}

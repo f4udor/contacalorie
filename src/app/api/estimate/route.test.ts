@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { POST } from "./route";
+import { GET, POST } from "./route";
 
 const call = (body: unknown) => POST(new Request("http://localhost/api/estimate", { method: "POST", body: JSON.stringify(body), headers: { "Content-Type": "application/json" } }));
 const body = { text: "una pera", localDate: "2026-01-08", localTime: "12:00" };
@@ -38,5 +38,14 @@ describe("POST /api/estimate", () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
     const res = await POST(new Request("http://localhost/api/estimate", { method: "POST", body: "non json" }));
     expect(res.status).toBe(400);
+  });
+
+  it("GET dice se la stima è attiva", async () => {
+    vi.stubEnv("AI_PROVIDER", "");
+    vi.stubEnv("VERTEX_PROJECT", "");
+    expect(await (await GET()).json()).toEqual({ available: false });
+    vi.stubEnv("AI_PROVIDER", "fake");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
+    expect(await (await GET()).json()).toEqual({ available: true });
   });
 });

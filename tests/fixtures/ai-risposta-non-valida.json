@@ -1,0 +1,55 @@
+{
+  "id": "ai-risposta-non-valida",
+  "descrizione": "Risposta del modello non utilizzabile: messaggio chiaro, nulla salvato.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": [
+      {
+        "stato": 502,
+        "corpo": {
+          "error": {
+            "code": "non-valida",
+            "message": "La stima ricevuta non è utilizzabile. Riprova, magari con parole diverse."
+          }
+        }
+      }
+    ]
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Cosa hai mangiato?",
+        "una pera"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Stima",
+        "exact": true
+      }
+    },
+    {
+      "wait": 500
+    }
+  ]
+}

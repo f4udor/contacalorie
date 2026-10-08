@@ -248,7 +248,7 @@ Vincoli di questa fase:
 - Limite di 60 stime al giorno per utente, contate nel database (nuova tabella, per aggiunta). Oltre il limite: messaggio chiaro.
 - Test con il provider finto su almeno 10 frasi tipiche in `tests/fixtures/ai/`: un piatto; più piatti nello stesso pasto ("anelli di totano e un'insalata di pomodorini" → due piatti); due pasti nella stessa frase ("a colazione… e a pranzo…"); fascia detta; fascia dedotta dall'ora; quantità dette; quantità mancanti (ipotizzate e segnate come tali); correzione; risposta non valida; limite superato.
 
-### T4.2 Schermata di inserimento con l'AI · da fare
+### T4.2 Schermata di inserimento con l'AI · fatto
 - In cima al pannello Aggiungi: campo "Cosa hai mangiato?" con suggerimento "Puoi dettare con il microfono della tastiera", e pulsante "Stima".
 - Proposta raggruppata per pasto, con i piatti: nome, quantità (con etichetta "ipotizzata" se lo è), kcal e macro, tutti modificabili; fascia del pasto modificabile; un piatto si può togliere.
 - Campo "Correggi" per una correzione a parole, che rifà la stima partendo dalla precedente.

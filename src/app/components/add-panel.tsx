@@ -12,6 +12,7 @@ import type { ParsedActivity } from "../lib/activity-form";
 import { emptyMealForm, mealToForm } from "../lib/meal-form";
 import type { ParsedMeal } from "../lib/meal-form";
 import { ActivityForm, WeightForm } from "./activity-forms";
+import { AiEstimate } from "./ai-estimate";
 import { MealForm } from "./meal-form";
 import { Sheet } from "./sheet";
 
@@ -95,24 +96,25 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
   return (
     <Sheet open onClose={onClose} title={initialSlot && view === "pasto" ? `Piatto · ${SLOT_NAME[initialSlot]}` : TITLES[view]}>
       {view === "menu" ? (
-        <div className="flex flex-col gap-4">
-          <div className="rounded-2xl bg-bg px-4 py-4 text-center text-[15px] text-muted">Inserimento a voce: in arrivo</div>
-          <div className="overflow-hidden rounded-2xl bg-bg">
-            <MenuRow title="Piatto a mano" hint="Scrivi tu nome, kcal e nutrienti" onClick={() => setView("pasto")} />
-            <div className="border-t border-line" />
-            <MenuRow title="Copia da ieri" hint="Rimetti i piatti di ieri, come pasto normale" onClick={copyFromYesterday} />
+        <AiEstimate store={store} date={date} dayDishes={dayDishes} onChanged={onChanged} onClose={onClose}>
+          <div className="flex flex-col gap-4">
+            <div className="overflow-hidden rounded-2xl bg-bg">
+              <MenuRow title="Piatto a mano" hint="Scrivi tu nome, kcal e nutrienti" onClick={() => setView("pasto")} />
+              <div className="border-t border-line" />
+              <MenuRow title="Copia da ieri" hint="Rimetti i piatti di ieri, come pasto normale" onClick={copyFromYesterday} />
+            </div>
+            <div className="overflow-hidden rounded-2xl bg-bg">
+              <MenuRow title="Attività a mano" hint="Passi, km e kcal della bici" onClick={() => setView("attivita")} />
+              <div className="border-t border-line" />
+              <MenuRow title="Pesata" hint="Il tuo peso di oggi, in kg" onClick={() => setView("pesata")} />
+            </div>
+            {note && (
+              <p role="status" className="rounded-xl bg-bg px-4 py-3 text-[15px] font-medium">
+                {note}
+              </p>
+            )}
           </div>
-          <div className="overflow-hidden rounded-2xl bg-bg">
-            <MenuRow title="Attività a mano" hint="Passi, km e kcal della bici" onClick={() => setView("attivita")} />
-            <div className="border-t border-line" />
-            <MenuRow title="Pesata" hint="Il tuo peso di oggi, in kg" onClick={() => setView("pesata")} />
-          </div>
-          {note && (
-            <p role="status" className="rounded-xl bg-bg px-4 py-3 text-[15px] font-medium">
-              {note}
-            </p>
-          )}
-        </div>
+        </AiEstimate>
       ) : (
         <div className="flex flex-col gap-3">
           {!(initialSlot && view === "pasto") && (

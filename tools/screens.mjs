@@ -121,6 +121,16 @@ try {
             };
           });
         }
+        if (sc.ai) {
+          // Stima automatica finta: disponibilità e risposte in ordine (l'ultima si ripete). `ritardo` = millisecondi di attesa.
+          const risposte = [...(sc.ai.risposte ?? [])];
+          await context.route("**/api/estimate", async (route) => {
+            if (route.request().method() === "GET") return route.fulfill({ json: { available: sc.ai.disponibile !== false } });
+            const r = risposte.length > 1 ? risposte.shift() : risposte[0];
+            if (r?.ritardo) await new Promise((res) => setTimeout(res, r.ritardo));
+            return route.fulfill({ status: r?.stato ?? 200, json: r?.corpo ?? {} });
+          });
+        }
         const page = await context.newPage();
         await page.goto(BASE + (sc.percorso ?? "/"), { waitUntil: "networkidle" });
         for (const step of sc.passi ?? []) {

@@ -50,13 +50,18 @@ function parseRequest(body: unknown): EstimateRequest | null {
   return request;
 }
 
+/** Dice se la stima automatica è disponibile (provider configurato e, senza Supabase, solo il provider finto). */
+export function isAiAvailable(deps: Pick<EstimateDeps, "provider" | "gate">): boolean {
+  return deps.provider !== null && (deps.gate !== null || deps.provider.name === "finto");
+}
+
 /** Gestisce una richiesta di stima: accesso, limite, modello, validazione. Nessuna chiamata di rete se non quella del provider. */
 export async function handleEstimate(deps: EstimateDeps, authorization: string | null, body: unknown): Promise<EstimateOutcome> {
   const token = authorization?.match(/^Bearer\s+(.+)$/i)?.[1]?.trim() ?? null;
   if (deps.gate) {
     if (!token || !(await deps.gate.verify(token).catch(() => false))) return fail("accesso");
   }
-  if (!deps.provider || (!deps.gate && deps.provider.name !== "finto")) return fail("non-configurata");
+  if (!deps.provider || !isAiAvailable(deps)) return fail("non-configurata");
   const request = parseRequest(body);
   if (!request) return fail("richiesta");
   if (deps.gate) {
