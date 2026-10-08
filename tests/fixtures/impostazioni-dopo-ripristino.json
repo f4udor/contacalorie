@@ -1,0 +1,35 @@
+{
+  "id": "impostazioni-dopo-ripristino",
+  "descrizione": "Dopo il ripristino: regole di nuovo vuote (predefinite), peso del profilo mantenuto.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 92.5,
+      "baseKcal": 2000,
+      "margin": 0.12,
+      "challengeStartDate": "2026-01-05"
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "passi": [
+    {
+      "click": "Ripristina valori predefiniti"
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Ripristina",
+        "exact": true
+      }
+    },
+    {
+      "wait": 500
+    }
+  ]
+}

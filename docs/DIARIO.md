@@ -50,6 +50,9 @@ Una riga per task chiuso.
 - Settimana: il colore di ogni barra usa il budget contro l'obiettivo (come l'anello), l'altezza le kcal reali; la linea dell'obiettivo è un tratto per ogni giorno; i giorni futuri mostrano solo il tratto. Il saldo include anche il giorno in corso, con i pasti ancora da mangiare che risultano "vantaggio" (è il calcolo del motore, T1.7).
 - Giorno di sfida "completato" = ogni esercizio del giorno è "fatto"; un esercizio saltato non conta. Nella schermata Settimana "0 giorni" è mostrato come "–".
 - La settimana mostrata sta nell'indirizzo (`/settimana?w=AAAA-MM-GG`, un giorno qualsiasi di quella settimana).
+- Impostazioni: un solo modulo con un pulsante "Salva" (non un salvataggio per campo); un campo vuoto = valore predefinito (mostrato come suggerimento); se un campo non è valido non si salva nulla. Margine e quota di bonus si scrivono in percentuale (10 % = 0,10). Limiti dei campi (es. margine al massimo 50 %) scelti di buon senso, per respingere errori di battitura.
+- "Ripristina valori predefiniti" toglie obiettivi, regole di calcolo, attività e tetto del pasto libero; profilo (peso, altezza, età, peso obiettivo) e data della sfida restano.
+- La formula proposta per proteine e grassi usa le impostazioni salvate (non quelle in corso di modifica) e il peso più recente.
 
 ## Non verificato
 
@@ -59,3 +62,4 @@ Una riga per task chiuso.
 - T2.1: pannello dal basso provato in un browser headless con il mouse (Esc, Chiudi, tocco fuori, trascinamento corto e lungo: tutto come atteso), non con il tocco di un iPhone. Nessun test automatico oltre a `shouldCloseOnDrag`.
 - T2.1: `npm run screens` a 390 px, chiaro e scuro: 10 screenshot, nessuna segnalazione (niente scorrimento orizzontale, aree toccabili ≥ 44 px, pagine entro 844 px).
 - T2.3: aggiunta, modifica, eliminazione e "Copia da ieri" provate in un browser headless (dati salvati e ancora presenti dopo il ricaricamento della pagina); non provate con il tocco su iPhone né con la tastiera numerica di iOS (`inputmode="decimal"`: su iPhone in italiano dovrebbe offrire la virgola, non verificato).
+- T2.7: il campo data della sfida è il selettore nativo del telefono: su iPhone in italiano dovrebbe mostrare gg/mm/aaaa; negli screenshot (browser senza lingua italiana) appare mm/gg/aaaa. Non verificato su iPhone.
