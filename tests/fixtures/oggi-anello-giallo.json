@@ -1,0 +1,31 @@
+{
+  "id": "oggi-anello-giallo",
+  "descrizione": "Anello giallo: 2.250 kcal su 2.100 (da +50 a +200).",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m57",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2250,
+        "protein": 150,
+        "carbs": 250,
+        "fat": 75,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

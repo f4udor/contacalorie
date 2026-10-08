@@ -13,7 +13,7 @@ describe("default (BRIEF §3)", () => {
       stepThreshold: 6000,
       freeMealCap: 800,
       recoveryMaxPerDay: 100,
-      recoveryMin: 25,
+      recoveryMin: 50,
       creditCap: 300,
       proteinPerKg: 1.4,
       proteinPerKgTarget: 1.8,

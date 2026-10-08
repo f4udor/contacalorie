@@ -90,9 +90,18 @@ describe("dayTarget", () => {
     expect(t.total).toBe(2100);
   });
 
-  it("recoveryMin: un debito di 25 kcal si recupera (−25), uno di 24 no", () => {
-    expect(dayTarget(MAR, [day(LUN, [meal("a", 2125)]), day(MAR, [])], s).recovery).toBe(-25);
-    expect(dayTarget(MAR, [day(LUN, [meal("a", 2124)]), day(MAR, [])], s).recovery).toBe(0);
+  it("recoveryMin (50): un debito di 50 kcal si recupera (−50), uno di 49 no", () => {
+    expect(dayTarget(MAR, [day(LUN, [meal("a", 2150)]), day(MAR, [])], s).recovery).toBe(-50);
+    expect(dayTarget(MAR, [day(LUN, [meal("a", 2149)]), day(MAR, [])], s).recovery).toBe(0);
+  });
+
+  it("caso Z: 2.140 kcal → debito 40, nessun recupero (obiettivo 2.100); 2.150 kcal → debito 50, recupero −50 (obiettivo 2.050)", () => {
+    const sotto = dayTarget(MAR, [day(LUN, [meal("a", 2140)]), day(MAR, [])], s);
+    expect(sotto.recovery).toBe(0);
+    expect(sotto.total).toBe(2100);
+    const soglia = dayTarget(MAR, [day(LUN, [meal("a", 2150)]), day(MAR, [])], s);
+    expect(soglia.recovery).toBe(-50);
+    expect(soglia.total).toBe(2050);
   });
 
   it("caso N: il debito si estingue in più giorni (−100, −100, poi 2.100)", () => {

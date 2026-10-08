@@ -1,0 +1,59 @@
+{
+  "id": "oggi-anello-libero-verde",
+  "descrizione": "Pasto libero da 1.500 kcal reali: il budget conta il tetto (800), l'anello resta verde.",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m59",
+        "date": "2026-01-05",
+        "slot": "colazione",
+        "name": "Colazione",
+        "kcal": 300,
+        "protein": 10,
+        "carbs": 40,
+        "fat": 8,
+        "fiber": 2,
+        "salt": 0.4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m60",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pizza e dolce",
+        "kcal": 1500,
+        "protein": 40,
+        "carbs": 190,
+        "fat": 60,
+        "fiber": 6,
+        "salt": 4,
+        "isFree": true,
+        "originalText": null
+      },
+      {
+        "id": "m61",
+        "date": "2026-01-05",
+        "slot": "cena",
+        "name": "Cena",
+        "kcal": 1000,
+        "protein": 50,
+        "carbs": 100,
+        "fat": 30,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

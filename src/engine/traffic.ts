@@ -1,8 +1,8 @@
-import { KCAL_RING_YELLOW_LIMIT } from "./defaults";
+import { ringGreenAbove, ringGreenBelow, ringYellowAbove } from "./defaults";
 import type { Settings } from "./types";
 
 export type Light = "verde" | "giallo" | "rosso" | "neutro";
-export type RingColor = "accento" | "giallo" | "rosso" | "neutro";
+export type RingColor = "accento" | "verde" | "giallo" | "rosso" | "neutro";
 
 /** Elimina il rumore dei decimali binari (es. 140 × 0,9) senza alterare i confini reali. */
 function clean(n: number): number {
@@ -33,10 +33,15 @@ export function lightCeiling(x: number, target: number, s: Pick<Settings, "margi
   return "verde";
 }
 
-/** Anello kcal: accento fino a T, giallo fino a T × 1,05, rosso oltre. */
+/**
+ * Anello kcal (BRIEF §3.5). Con d = kcal contate − obiettivo: accento se d < −ringGreenBelow (in corso), verde da −ringGreenBelow
+ * a +ringGreenAbove (estremi compresi), giallo oltre e fino a +ringYellowAbove compreso, rosso oltre.
+ */
 export function lightKcalRing(eaten: number, target: number): RingColor {
   if (target <= 0) return "neutro";
-  if (eaten <= target) return "accento";
-  if (eaten <= clean(target * KCAL_RING_YELLOW_LIMIT)) return "giallo";
+  const d = clean(eaten - target);
+  if (d < -ringGreenBelow) return "accento";
+  if (d <= ringGreenAbove) return "verde";
+  if (d <= ringYellowAbove) return "giallo";
   return "rosso";
 }

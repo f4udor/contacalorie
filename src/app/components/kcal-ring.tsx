@@ -3,6 +3,7 @@ import { formatNumber } from "../lib/format";
 
 const STROKE: Record<RingColor, string> = {
   accento: "var(--accent)",
+  verde: "var(--ok-fill)",
   giallo: "var(--warn-fill)",
   rosso: "var(--bad-fill)",
   neutro: "var(--track)",

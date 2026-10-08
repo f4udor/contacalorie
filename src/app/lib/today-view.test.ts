@@ -182,3 +182,26 @@ describe("hasCompositionDetail (riga di composizione sotto l'anello)", () => {
     expect(hasCompositionDetail(view(week(day("2026-01-05", [meal("a", 3000)]), day("2026-01-06")), "2026-01-06").composition)).toBe(true);
   });
 });
+
+describe("colore dell'anello (T5b.1)", () => {
+  const color = (kcal: number[], extra: Partial<Meal>[] = []) =>
+    buildTodayView({ date: "2026-01-05", days: week(day("2026-01-05", kcal.map((k, i) => meal(`m${i}`, k, { slot: (["colazione", "pranzo", "cena", "spuntino"] as const)[i], ...(extra[i] ?? {}) })))), settings: s, weightKg: 100 }).ringColor;
+
+  it("giorno senza pasti: accento", () => {
+    expect(color([])).toBe("accento");
+  });
+  it("verde nella fascia di tolleranza, anche un po' sopra l'obiettivo", () => {
+    expect(color([1950])).toBe("verde");
+    expect(color([2150])).toBe("verde");
+    expect(color([2151])).toBe("giallo");
+    expect(color([2301])).toBe("rosso");
+    expect(color([1949])).toBe("accento");
+  });
+  it("pasto libero: conta col tetto, quindi il giorno resta verde anche con kcal reali molto più alte", () => {
+    // 1.300 + pasto libero da 2.000 (conta 800) = 2.100 nel budget: verde, ma le mangiate reali sono 3.300.
+    const v = buildTodayView({ date: "2026-01-05", days: week(day("2026-01-05", [meal("a", 1300, { slot: "colazione" }), meal("b", 2000, { slot: "pranzo", isFree: true })])), settings: s, weightKg: 100 });
+    expect(v.eaten).toBe(3300);
+    expect(v.ringColor).toBe("verde");
+  });
+});
+

@@ -5,6 +5,7 @@ import type { WeekBar } from "../lib/week-view";
 
 const FILL: Record<RingColor, string> = {
   accento: "var(--accent)",
+  verde: "var(--ok-fill)",
   giallo: "var(--warn-fill)",
   rosso: "var(--bad-fill)",
   neutro: "var(--track)",

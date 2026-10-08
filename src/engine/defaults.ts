@@ -1,5 +1,13 @@
 import type { Settings } from "./types";
 
+/** Anello kcal (BRIEF §3.5), in kcal: costanti del motore, senza campo in Impostazioni né colonna nel database. */
+/** Fino a questa distanza sotto l'obiettivo l'anello è ancora verde; più in basso è nel colore d'accento (giornata in corso). */
+export const ringGreenBelow = 150;
+/** Fino a questo eccesso sopra l'obiettivo l'anello è verde. Uguale a `recoveryMin`: finché è verde non scatta nessun recupero. */
+export const ringGreenAbove = 50;
+/** Oltre `ringGreenAbove` e fino a questo eccesso l'anello è giallo, poi rosso. */
+export const ringYellowAbove = 200;
+
 /** Valori di default di BRIEF §3. */
 export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
   baseKcal: 2100,
@@ -10,7 +18,7 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
   stepThreshold: 6000,
   freeMealCap: 800,
   recoveryMaxPerDay: 100,
-  recoveryMin: 25,
+  recoveryMin: ringGreenAbove,
   creditCap: 300,
   proteinPerKg: 1.4,
   proteinPerKgTarget: 1.8,
@@ -23,5 +31,3 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
   fatGramsManual: null,
 });
 
-/** Oltre l'obiettivo kcal fino a questo multiplo l'anello è giallo, poi rosso (BRIEF §3.5). */
-export const KCAL_RING_YELLOW_LIMIT = 1.05;

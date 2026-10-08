@@ -26,7 +26,7 @@ describe("buildWeekView", () => {
     ];
     const v = buildWeekView({ date: "2026-01-08", days, settings: s });
     expect(v.bars.map((b) => b.target).slice(0, 4)).toEqual([2100, 2100, 2175, 2000]);
-    expect(v.bars.map((b) => b.color).slice(0, 4)).toEqual(["accento", "accento", "rosso", "accento"]);
+    expect(v.bars.map((b) => b.color).slice(0, 4)).toEqual(["accento", "accento", "rosso", "verde"]);
     expect(v.summary.balance).toBe(-575); // 300, 300, −775, −575 (margine limitato a 300)
     expect(v.isEmpty).toBe(false);
   });

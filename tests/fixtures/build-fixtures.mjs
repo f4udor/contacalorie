@@ -130,6 +130,17 @@ add("pannello-modifica-libero", "Modifica del pasto libero: l'interruttore resta
   passi: [{ click: "Pizza al taglio" }, { scrollTo: "Pasto libero" }],
 });
 add("pannello-elimina", "Eliminazione: chiede conferma prima di cancellare.", "2026-01-08", giornoPasti(), { fisso: true, passi: [{ click: "Pasta al pomodoro" }, { click: "Elimina piatto" }] });
+// --- Colori dell'anello (T5b.1): obiettivo 2.100, nel giorno solo i kcal indicati.
+const giornoKcal = (kcal) => data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", kcal, Math.round(kcal / 15), Math.round(kcal / 9), Math.round(kcal / 30), 8, 2)] });
+add("oggi-anello-accento", "Anello nel colore d'accento: 1.700 kcal su 2.100 (oltre 150 sotto l'obiettivo, giornata in corso).", "2026-01-05", giornoKcal(1700));
+add("oggi-anello-verde", "Anello verde: 2.120 kcal su 2.100 (tra −150 e +50 dall'obiettivo).", "2026-01-05", giornoKcal(2120));
+add("oggi-anello-giallo", "Anello giallo: 2.250 kcal su 2.100 (da +50 a +200).", "2026-01-05", giornoKcal(2250));
+add("oggi-anello-rosso", "Anello rosso: 2.350 kcal su 2.100 (oltre +200).", "2026-01-05", giornoKcal(2350));
+add("oggi-anello-libero-verde", "Pasto libero da 1.500 kcal reali: il budget conta il tetto (800), l'anello resta verde.", "2026-01-05", data({
+  settings: { weightKg: 100 },
+  meals: [meal("2026-01-05", "colazione", "Colazione", 300, 10, 40, 8, 2, 0.4), meal("2026-01-05", "pranzo", "Pizza e dolce", 1500, 40, 190, 60, 6, 4, { isFree: true }), meal("2026-01-05", "cena", "Cena", 1000, 50, 100, 30, 8, 2)],
+}));
+
 // --- Attività e pesata (T2.4)
 const conAttivita = data({
   settings: { weightKg: 100 },
@@ -514,6 +525,16 @@ add("oggi-scorrimento-a-destra", "Scorrimento verso destra: non succede nulla.",
 settScheda("settimana-pesate-scorrimento", "Pannello Pesate: scorrendo una pesata compare solo il cestino.", settimanaPiena, [tocca("Peso"), sw("Giovedì 8 gennaio")]);
 settScheda("settimana-bici-scorrimento", "Pannello Bici: scorrendo la parte a mano di martedì compare il cestino; la parte di Salute non si elimina.", settimanaPiena, [tocca("Bici"), sw("Martedì 6 gennaio")]);
 settScheda("settimana-bici-scorrimento-salute", "Pannello Bici: una riga con la sola parte di Salute non mostra nessuna azione.", settimanaPiena, [tocca("Bici"), sw("Mercoledì 7 gennaio")]);
+
+sett("settimana-colori-barre", "Settimana con i quattro colori delle barre: accento (lun), verde (mar), giallo (mer), rosso (gio).", "2026-01-11", data({
+  settings: { weightKg: 100 },
+  meals: [
+    meal("2026-01-05", "pranzo", "Pranzo", 1700, 60, 190, 55, 20, 4),
+    meal("2026-01-06", "pranzo", "Pranzo", 2130, 90, 240, 70, 25, 4),
+    meal("2026-01-07", "pranzo", "Pranzo", 2250, 100, 250, 75, 25, 4),
+    meal("2026-01-08", "pranzo", "Pranzo", 2400, 100, 260, 80, 25, 4),
+  ],
+}));
 
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));

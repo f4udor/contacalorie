@@ -1,0 +1,73 @@
+{
+  "id": "settimana-colori-barre",
+  "descrizione": "Settimana con i quattro colori delle barre: accento (lun), verde (mar), giallo (mer), rosso (gio).",
+  "oggi": "2026-01-11",
+  "percorso": "/settimana",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m279",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1700,
+        "protein": 60,
+        "carbs": 190,
+        "fat": 55,
+        "fiber": 20,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m280",
+        "date": "2026-01-06",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2130,
+        "protein": 90,
+        "carbs": 240,
+        "fat": 70,
+        "fiber": 25,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m281",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2250,
+        "protein": 100,
+        "carbs": 250,
+        "fat": 75,
+        "fiber": 25,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m282",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2400,
+        "protein": 100,
+        "carbs": 260,
+        "fat": 80,
+        "fiber": 25,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

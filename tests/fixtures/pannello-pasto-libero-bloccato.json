@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m90",
+        "id": "m97",
         "date": "2026-01-06",
         "slot": "cena",
         "name": "Pizza",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m91",
+        "id": "m98",
         "date": "2026-01-07",
         "slot": "pranzo",
         "name": "Riso",
