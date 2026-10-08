@@ -1,6 +1,6 @@
 {
-  "id": "ai-proposta-due-piatti",
-  "descrizione": "Proposta con due piatti nel pasto Cena, uno per riga: nome, quantità con 'ipotizzata', kcal; i numeri compaiono toccando la riga.",
+  "id": "ai-proposta-piatto-aperto",
+  "descrizione": "Toccando la riga 'Anelli di totano' si aprono nome, quantità, nota del modello, kcal e nutrienti modificabili e 'Togli'.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -80,6 +80,12 @@
     },
     {
       "wait": 600
+    },
+    {
+      "click": "Anelli di totano"
+    },
+    {
+      "wait": 300
     }
   ]
 }

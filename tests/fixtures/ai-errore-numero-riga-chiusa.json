@@ -1,6 +1,6 @@
 {
-  "id": "ai-errore-numero",
-  "descrizione": "Kcal svuotate nella riga aperta prima di confermare: errore accanto al campo, nulla è salvato.",
+  "id": "ai-errore-numero-riga-chiusa",
+  "descrizione": "Kcal svuotate e riga richiusa: confermando la riga si riapre da sola, con l'errore accanto al campo; la riga dice 'da correggere'.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -35,6 +35,18 @@
                     "fiber": 5,
                     "salt": 1.2,
                     "note": ""
+                  },
+                  {
+                    "name": "Insalata",
+                    "quantity": "1 ciotola",
+                    "quantityAssumed": true,
+                    "kcal": 60,
+                    "protein": 2,
+                    "carbs": 8,
+                    "fat": 2,
+                    "fiber": 3,
+                    "salt": 0.1,
+                    "note": ""
                   }
                 ]
               }
@@ -56,7 +68,7 @@
     {
       "fill": [
         "Cosa hai mangiato?",
-        "pasta al pomodoro"
+        "pasta al pomodoro e insalata"
       ]
     },
     {
@@ -77,6 +89,9 @@
         "Kcal",
         ""
       ]
+    },
+    {
+      "click": "Pasta al pomodoro"
     },
     {
       "clickRole": {

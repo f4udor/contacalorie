@@ -296,7 +296,7 @@ Vincoli di questa fase:
 - "+ Aggiungi piatto" sotto un pasto apre lo stesso pannello, su AI, con il nome della fascia come titolo e la fascia fissata: tutti i piatti proposti dall'AI vanno in quella fascia, anche se il modello ne indica un'altra. Sotto compare solo "Preferiti".
 - Test della logica che porta i piatti proposti nella fascia fissata.
 
-### T4b.2 Proposta della stima a righe compatte · da fare
+### T4b.2 Proposta della stima a righe compatte · fatto
 - Ogni piatto della proposta è una riga: nome, quantità (con "ipotizzata" se lo è), kcal.
 - Toccando la riga si aprono nome, quantità, nota del modello, kcal e nutrienti modificabili, e "Togli". Un piatto con un errore si apre da solo e la riga lo segnala.
 - Sparisce la frase iniziale "Controlla la stima…". Restano "Correggi", "Rifai la stima", "Conferma", "Annulla".

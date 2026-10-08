@@ -44,6 +44,7 @@ Una riga per task chiuso.
 - T4.7 · fatto · `docs/REPORT-FASE-4.md` scritto, con i controlli da fare sul telefono prima e dopo il collegamento di Vertex AI.
 - Verifica dopo la fase · contatore delle stime AI protetto: l'utente poteva azzerare `ai_usage` con un update diretto e superare il limite. Migrazione 0009: tolti i permessi diretti di inserimento e modifica, funzione `use_ai_estimate` con i permessi del proprietario. Provata su PostgreSQL locale: limite rispettato, update diretto senza effetto. Aggiunto `supabase/aggiornamento-fase-4.sql` (migrazioni 6-9) per chi ha già eseguito `setup.sql` della fase 3.
 - T4b.1 · fatto · pannello Aggiungi con selettore "AI | Manuale" accanto al titolo (si apre su AI); AI: campo "Cosa hai mangiato?" vuoto, senza esempio né frase sul microfono, avviso «Usa Manuale» se l'AI non c'è; Manuale: piatto a mano con "Stima con AI"; sotto "Preferiti", "Attività a mano", "Pesata" senza righe grigie. Tolti "Piatto a mano" e "Copia da ieri" (con `copy-meals.ts`, il suo test e 2 scenari). "+ Aggiungi piatto" apre lo stesso pannello con la fascia come titolo e fissata (`forceSlot`: tutti i piatti proposti nella fascia fissata) e sotto solo "Preferiti". Tolti anche tutti i testi d'esempio nei campi (piatto, AI, correzione, primo avvio, accesso). 4 scenari nuovi.
+- T4b.2 · fatto · proposta dell'AI a righe compatte: ogni piatto è una riga (nome, quantità con "ipotizzata", kcal); toccandola si aprono nome, quantità, nota del modello, kcal e nutrienti e "Togli"; un piatto con un errore si apre da solo e la riga dice "da correggere"; tolta la frase "Controlla la stima…". Restano Correggi, Rifai la stima, Conferma, Annulla. Scenari aggiornati (+2 nuovi).
 
 ## Decisioni da confermare
 
@@ -116,6 +117,7 @@ Una riga per task chiuso.
 - Guida a Vertex AI (T4.6): propone un budget di 5 €/mese come esempio, il modello della famiglia Flash e le regioni `europe-west4` / `europe-west1` come esempi, con l'istruzione di verificare la disponibilità del modello nella regione. Il budget di Google Cloud avvisa ma non blocca la spesa: la protezione vera è il limite di 60 stime al giorno.
 - Pannello Aggiungi (T4b.1): la parte principale resta montata (nascosta) quando si apre Preferiti, Attività o Pesata, così il testo scritto e la proposta non si perdono tornando indietro; passando da AI a Manuale e ritorno succede lo stesso. Con la fascia fissata tutti i piatti proposti finiscono in un solo pasto in quella fascia, e il segno «libero» segue lo stato del pasto già esistente (come prima). Nel pannello a fascia fissata la sotto-schermata Preferiti parte con quella fascia. Il selettore ha pulsanti larghi almeno 44 px.
 - Tolti i testi d'esempio anche nel primo avvio e nell'accesso (non richiesto dal solo T4b.1 ma dalla regola di fase): restano solo i suggerimenti dei valori predefiniti in Impostazioni, che non sono esempi.
+- Proposta compatta (T4b.2): le righe partono tutte chiuse (anche con un solo piatto); si possono aprire più righe insieme. Dopo "Rifai la stima" le righe tornano chiuse. Nessuna logica nuova da testare a parte (solo presentazione).
 
 ## Non verificato
 

@@ -44,11 +44,14 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
   const [original, setOriginal] = useState<{ proposal: MealProposal; text: string } | null>(null);
   const [correction, setCorrection] = useState("");
   const [errors, setErrors] = useState<DraftErrors>({});
+  // I piatti aperti per la modifica (gli altri sono una riga sola).
+  const [openKeys, setOpenKeys] = useState<string[]>([]);
 
   const start = (proposal: MealProposal, originalText: string) => {
     setOriginal({ proposal, text: originalText });
     setDrafts(proposalToDrafts(fixedSlot ? forceSlot(proposal, fixedSlot) : proposal));
     setErrors({});
+    setOpenKeys([]);
     setCorrection("");
   };
 
@@ -88,6 +91,8 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
     const r = draftsToProposal(drafts);
     if (!r.ok) {
       setErrors(r.errors);
+      // I piatti con un errore si aprono da soli.
+      setOpenKeys((open) => [...new Set([...open, ...Object.keys(r.errors)])]);
       return;
     }
     setErrors({});
@@ -106,6 +111,7 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
 
   const setDish = (mealKey: string, dishKey: string, patch: Partial<DishDraft>) =>
     setDrafts((ds) => ds && ds.map((m) => (m.key === mealKey ? { ...m, dishes: m.dishes.map((d) => (d.key === dishKey ? { ...d, ...patch } : d)) } : m)));
+  const toggle = (key: string) => setOpenKeys((open) => (open.includes(key) ? open.filter((k) => k !== key) : [...open, key]));
   const removeDish = (mealKey: string, dishKey: string) =>
     setDrafts((ds) => ds && ds.map((m) => (m.key === mealKey ? { ...m, dishes: m.dishes.filter((d) => d.key !== dishKey) } : m)).filter((m) => m.dishes.length > 0));
 
@@ -144,9 +150,6 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-[15px] text-muted">
-        Controlla la stima: puoi cambiare ogni numero. Non è salvato finché non confermi.
-      </p>
       {drafts.map((meal) => (
         <section key={meal.key} aria-label={`Pasto ${meal.slot}`} className="flex flex-col gap-3 rounded-2xl bg-bg p-3">
           {!fixedSlot && (
@@ -168,50 +171,74 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
             </select>
           </div>
           )}
-          {meal.dishes.map((d) => (
-            <div key={d.key} className="flex flex-col gap-3 rounded-xl bg-card p-3">
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor={`name-${d.key}`} className="text-sm font-semibold text-muted">
-                  Piatto
-                </label>
-                <input id={`name-${d.key}`} type="text" autoComplete="off" value={d.name} onChange={(e) => setDish(meal.key, d.key, { name: e.target.value })} className={`${input} bg-bg`} />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor={`qty-${d.key}`} className="flex items-center gap-2 text-sm font-semibold text-muted">
-                  Quantità
-                  {d.quantityAssumed && <span className="rounded-md bg-bg px-1.5 py-0.5 text-xs font-semibold text-warn">ipotizzata</span>}
-                </label>
-                <input id={`qty-${d.key}`} type="text" autoComplete="off" value={d.quantity} onChange={(e) => setDish(meal.key, d.key, { quantity: e.target.value, quantityAssumed: false })} className={`${input} bg-bg`} />
-                {d.note && <p className="text-sm text-muted">{d.note}</p>}
-              </div>
-              <div className="grid grid-cols-2 gap-x-3 gap-y-3">
-                {DISH_NUMBER_KEYS.map((k) => {
-                  const err = errors[d.key]?.[k];
-                  return (
-                    <div key={k} className={`flex flex-col gap-1.5 ${k === "kcal" ? "col-span-2" : ""}`}>
-                      <label htmlFor={`${k}-${d.key}`} className="text-sm font-semibold text-muted">
-                        {NUMBER_LABELS[k]}
+          {meal.dishes.map((d) => {
+            const isOpen = openKeys.includes(d.key);
+            const hasError = errors[d.key] !== undefined;
+            return (
+              <div key={d.key} className="overflow-hidden rounded-xl bg-card">
+                <button
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={`dish-${d.key}`}
+                  onClick={() => toggle(d.key)}
+                  className="flex min-h-14 w-full items-center justify-between gap-3 px-3 py-2 text-left"
+                >
+                  <span className="min-w-0">
+                    <span className="block break-words text-[17px] font-semibold leading-snug">{d.name.trim() || "Piatto"}</span>
+                    <span className="flex flex-wrap items-center gap-x-2 text-sm text-muted">
+                      {d.quantity.trim() !== "" && <span className="break-words">{d.quantity.trim()}</span>}
+                      {d.quantityAssumed && <span className="font-semibold text-warn">ipotizzata</span>}
+                      {hasError && <span className="font-semibold text-bad">da correggere</span>}
+                    </span>
+                  </span>
+                  <span className="shrink-0 text-[17px] font-semibold tabular-nums">{d.kcal.trim() === "" ? "–" : d.kcal} <span className="text-sm font-medium text-muted">kcal</span></span>
+                </button>
+                {isOpen && (
+                  <div id={`dish-${d.key}`} className="flex flex-col gap-3 border-t border-line p-3">
+                    <div className="flex flex-col gap-1.5">
+                      <label htmlFor={`name-${d.key}`} className="text-sm font-semibold text-muted">
+                        Piatto
                       </label>
-                      <input
-                        id={`${k}-${d.key}`}
-                        type="text"
-                        inputMode="decimal"
-                        autoComplete="off"
-                        value={d[k]}
-                        onChange={(e) => setDish(meal.key, d.key, { [k]: e.target.value })}
-                        aria-invalid={err ? true : undefined}
-                        className={`${input} bg-bg ${err ? "ring-2 ring-bad" : ""}`}
-                      />
-                      {err && <p className="text-sm font-medium text-bad">{err}</p>}
+                      <input id={`name-${d.key}`} type="text" autoComplete="off" value={d.name} onChange={(e) => setDish(meal.key, d.key, { name: e.target.value })} className={`${input} bg-bg`} />
                     </div>
-                  );
-                })}
+                    <div className="flex flex-col gap-1.5">
+                      <label htmlFor={`qty-${d.key}`} className="text-sm font-semibold text-muted">
+                        Quantità
+                      </label>
+                      <input id={`qty-${d.key}`} type="text" autoComplete="off" value={d.quantity} onChange={(e) => setDish(meal.key, d.key, { quantity: e.target.value, quantityAssumed: false })} className={`${input} bg-bg`} />
+                      {d.note && <p className="text-sm text-muted">{d.note}</p>}
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-3">
+                      {DISH_NUMBER_KEYS.map((k) => {
+                        const err = errors[d.key]?.[k];
+                        return (
+                          <div key={k} className={`flex flex-col gap-1.5 ${k === "kcal" ? "col-span-2" : ""}`}>
+                            <label htmlFor={`${k}-${d.key}`} className="text-sm font-semibold text-muted">
+                              {NUMBER_LABELS[k]}
+                            </label>
+                            <input
+                              id={`${k}-${d.key}`}
+                              type="text"
+                              inputMode="decimal"
+                              autoComplete="off"
+                              value={d[k]}
+                              onChange={(e) => setDish(meal.key, d.key, { [k]: e.target.value })}
+                              aria-invalid={err ? true : undefined}
+                              className={`${input} bg-bg ${err ? "ring-2 ring-bad" : ""}`}
+                            />
+                            {err && <p className="text-sm font-medium text-bad">{err}</p>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <button type="button" onClick={() => removeDish(meal.key, d.key)} className="min-h-11 rounded-xl bg-bg px-3 text-[15px] font-semibold text-bad">
+                      Togli {d.name.trim() || "il piatto"}
+                    </button>
+                  </div>
+                )}
               </div>
-              <button type="button" onClick={() => removeDish(meal.key, d.key)} className="min-h-11 rounded-xl bg-bg px-3 text-[15px] font-semibold text-bad">
-                Togli {d.name.trim() || "il piatto"}
-              </button>
-            </div>
-          ))}
+            );
+          })}
         </section>
       ))}
 
