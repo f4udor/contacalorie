@@ -416,7 +416,7 @@ Vincoli di questa fase:
 - Lo sportello dei dati (browser e Supabase) e l'esportazione CSV riportano le due parti.
 - Test: passi da Salute che sostituiscono un valore a mano; bici solo Salute, solo a mano, entrambe; kcal a mano presenti e assenti; invio da Salute che non tocca la parte a mano; eliminazione della parte a mano che lascia quella di Salute; migrazione dei vecchi valori a mano (su PostgreSQL locale); E e F invariati.
 
-### T5b.1 Colori dell'anello delle kcal · da fare
+### T5b.1 Colori dell'anello delle kcal · fatto
 - Motore: la regola di §3.5 sostituisce quella attuale. `RingColor` guadagna il verde. Costanti `ringGreenBelow`, `ringGreenAbove`, `ringYellowAbove` in `src/engine/defaults.ts`, senza campo in Impostazioni e senza colonna nel database.
 - **Questo task cambia una regola di calcolo: i test dell'anello si aggiornano.** Nessun altro test del motore si tocca.
 - `recoveryMin` passa da 25 a 50, uguale a `ringGreenAbove`: default in `defaults.ts`, default della colonna e valore delle righe esistenti che hanno ancora 25 (istruzione in `supabase/aggiornamento-fase-5b.sql`). I casi M, N, O, Q e R di §3.6 restano identici; si aggiunge il caso Z di §3.8.
