@@ -441,7 +441,7 @@ Vincoli di questa fase:
 - Il tetto di kcal lo applica solo il motore.
 - Test: campo vero e falso; settimana con pasto libero già usato; due pasti proposti; fascia fissata. Screenshot della conferma con interruttore acceso, spento e disattivato.
 
-### T5b.4 Controllo di coerenza tra kcal e nutrienti · da fare
+### T5b.4 Controllo di coerenza tra kcal e nutrienti · fatto
 - Motore: funzione pura che applica §3.7, con le costanti `kcalCheckShare` e `kcalCheckMin` in `defaults.ts`.
 - Si applica ai piatti restituiti dal modello (stima nuova, stima corretta, stima di un piatto a mano). Non si applica ai numeri scritti a mano dall'utente.
 - Nella proposta, il piatto segnalato mostra sulla riga un segno e, aperto, una frase breve ("Le kcal sembrano basse rispetto ai nutrienti: controlla i numeri."). Non blocca la conferma e non cambia i numeri. Ritoccando i numeri il controllo si ricalcola.
