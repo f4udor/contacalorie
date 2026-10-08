@@ -124,6 +124,8 @@ export function SettingsForm({ store, settings, weighIns, today, onChanged }: Pr
       <Section title="Obiettivi" intro="Da quante kcal parte ogni giorno e quanti grammi di nutrienti puntare. Lasciando un campo vuoto vale il valore suggerito.">
         {field("baseKcal", "Kcal base", { placeholder: formatNumber(D.baseKcal), hint: "Le kcal di un giorno senza bonus né recupero." })}
         {field("floorKcal", "Soglia minima (kcal)", { placeholder: formatNumber(D.floorKcal), hint: "La base non scende mai sotto questo valore. Il bonus si somma sopra." })}
+        {field("recoveryMaxPerDay", "Recupero massimo al giorno (kcal)", { placeholder: formatNumber(D.recoveryMaxPerDay), hint: "Se sgarri, ogni giorno si toglie al massimo questo numero di kcal finché il debito della settimana è pari." })}
+        {field("creditCap", "Margine massimo della settimana (kcal)", { placeholder: formatNumber(D.creditCap), hint: "Quante kcal risparmiate possono fare da cuscinetto per un sgarro successivo nella stessa settimana." })}
         {formulaRow("proteinGramsManual", "Proteine (g)", proteinProposed)}
         {formulaRow("fatGramsManual", "Grassi (g)", proposed.fat)}
         {field("fiberMin", "Fibre (g, minimo)", { placeholder: formatNumber(D.fiberMin) })}

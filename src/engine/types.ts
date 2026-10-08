@@ -66,6 +66,12 @@ export interface Settings {
   kcalPerStep: number;
   stepThreshold: number;
   freeMealCap: number;
+  /** Recupero massimo al giorno di un debito della settimana (kcal). */
+  recoveryMaxPerDay: number;
+  /** Sotto questo debito (kcal) non si recupera nulla. */
+  recoveryMin: number;
+  /** Tetto del margine positivo della settimana (kcal). */
+  creditCap: number;
   proteinPerKg: number;
   /** Grammi di proteine per kg di peso obiettivo (usato quando il peso obiettivo è impostato). */
   proteinPerKgTarget: number;

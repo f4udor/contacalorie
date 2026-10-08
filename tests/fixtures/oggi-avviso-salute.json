@@ -1,0 +1,14 @@
+{
+  "id": "oggi-avviso-salute",
+  "descrizione": "Oggi con codice attivo e ultimo invio 30 ore fa: avviso in cima che porta a Collegamenti.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "salute": {
+    "active": true,
+    "codeCreatedAt": "2026-01-02T08:00:00Z",
+    "lastSuccessAt": "2026-01-07T02:00:00Z",
+    "lastAttempt": null
+  }
+}

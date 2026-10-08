@@ -25,10 +25,16 @@ describe("buildWeekView", () => {
       day("2026-01-08", [meal("d", 1900)]),
     ];
     const v = buildWeekView({ date: "2026-01-08", days, settings: s });
-    expect(v.bars.map((b) => b.target).slice(0, 4)).toEqual([2100, 2100, 2175, 1994]);
+    expect(v.bars.map((b) => b.target).slice(0, 4)).toEqual([2100, 2100, 2175, 2000]);
     expect(v.bars.map((b) => b.color).slice(0, 4)).toEqual(["accento", "accento", "rosso", "accento"]);
-    expect(v.summary.balance).toBe(350 + 300 + (2100 + 75 - 3250) + (2100 - 1900));
+    expect(v.summary.balance).toBe(-575); // 300, 300, −775, −575 (margine limitato a 300)
     expect(v.isEmpty).toBe(false);
+  });
+
+  it("con `today` i giorni dopo oggi mostrano l'anteprima: debito di 250 → 2.000, 2.000, 2.050, 2.100", () => {
+    const days = [day("2026-01-05", [meal("a", 2350)]), day("2026-01-06", [meal("b", 2100)]), day("2026-01-07", [meal("c", 2100)])];
+    const v = buildWeekView({ date: "2026-01-08", days, settings: s, today: "2026-01-08" });
+    expect(v.bars.map((b) => b.target).slice(3)).toEqual([2000, 2000, 2050, 2100]);
   });
 
   it("le altezze usano una scala comune e restano entro 1", () => {

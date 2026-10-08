@@ -9,6 +9,8 @@ export type SettingsFieldKey =
   | "targetWeightKg"
   | "baseKcal"
   | "floorKcal"
+  | "recoveryMaxPerDay"
+  | "creditCap"
   | "proteinGramsManual"
   | "fatGramsManual"
   | "fiberMin"
@@ -39,6 +41,8 @@ export const FIELD_RULES: Record<SettingsFieldKey, FieldRule> = {
   targetWeightKg: { kind: "decimal", min: 0, positive: true, max: 500 },
   baseKcal: { kind: "decimal", min: 0, positive: true, max: 10000 },
   floorKcal: { kind: "decimal", min: 0, max: 10000 },
+  recoveryMaxPerDay: { kind: "decimal", min: 0, max: 2000 },
+  creditCap: { kind: "decimal", min: 0, max: 5000 },
   proteinGramsManual: { kind: "decimal", min: 0, max: 1000 },
   fatGramsManual: { kind: "decimal", min: 0, max: 1000 },
   fiberMin: { kind: "decimal", min: 0, max: 200 },

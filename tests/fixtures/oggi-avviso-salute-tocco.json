@@ -1,0 +1,22 @@
+{
+  "id": "oggi-avviso-salute-tocco",
+  "descrizione": "Toccando l'avviso si arriva a Impostazioni → Collegamenti.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "salute": {
+    "active": true,
+    "codeCreatedAt": "2026-01-02T08:00:00Z",
+    "lastSuccessAt": "2026-01-07T02:00:00Z",
+    "lastAttempt": null
+  },
+  "passi": [
+    {
+      "click": "Nessun dato da Salute da ieri"
+    },
+    {
+      "wait": 600
+    }
+  ]
+}

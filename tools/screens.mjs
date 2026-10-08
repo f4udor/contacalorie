@@ -47,6 +47,25 @@ function findChromium() {
   return existsSync(fallback) ? fallback : undefined;
 }
 
+/** Scorrimento con il tocco simulato (eventi touch veri del browser): dal centro dell'elemento di `dx`, `dy` pixel. */
+async function touchSwipe(page, locator, dx, dy = 0) {
+  await locator.scrollIntoViewIfNeeded();
+  const box = await locator.boundingBox();
+  if (!box) throw new Error("Elemento da scorrere non trovato");
+  const x = box.x + box.width / 2;
+  const y = box.y + box.height / 2;
+  const cdp = await page.context().newCDPSession(page);
+  const send = (type, points) => cdp.send("Input.dispatchTouchEvent", { type, touchPoints: points });
+  await send("touchStart", [{ x, y }]);
+  const steps = 8;
+  for (let i = 1; i <= steps; i++) {
+    await send("touchMove", [{ x: x + (dx * i) / steps, y: y + (dy * i) / steps }]);
+    await page.waitForTimeout(16);
+  }
+  await send("touchEnd", []);
+  await cdp.detach();
+}
+
 let server = null;
 if (!process.env.SCREENS_URL) {
   const busy = await fetch(BASE).then(() => true, () => false);
@@ -120,6 +139,15 @@ try {
             ["personal-health:demo-auth", JSON.stringify({ session: sc.accessoDimostrativo.session ?? null })],
           );
         }
+        if (sc.salute) {
+          // Collegamento con Salute simulato (solo senza Supabase): stato scritto nella chiave dimostrativa.
+          await context.addInitScript(
+            ([key, value]) => {
+              if (!localStorage.getItem(key)) localStorage.setItem(key, value);
+            },
+            ["personal-health:demo-health", JSON.stringify(sc.salute)],
+          );
+        }
         if (sc.scritturaFallita) {
           // Simula il browser che non riesce più a scrivere (memoria piena): dopo aver caricato i dati, ogni salvataggio fallisce.
           await context.addInitScript(() => {
@@ -141,9 +169,10 @@ try {
         const page = await context.newPage();
         await page.goto(BASE + (sc.percorso ?? "/"), { waitUntil: "networkidle" });
         for (const step of sc.passi ?? []) {
-          if (step.click) await page.getByText(step.click, { exact: step.exact ?? true }).first().click();
+          if (step.click) await page.getByText(step.click, { exact: step.exact ?? true }).filter({ visible: true }).first().click();
           else if (step.clickRole) await page.getByRole(step.clickRole.role, { name: step.clickRole.name, exact: step.clickRole.exact }).first().click();
           else if (step.fill) await page.getByLabel(step.fill[0]).filter({ visible: true }).fill(step.fill[1]);
+          else if (step.swipe) await touchSwipe(page, page.getByText(step.swipe.text, { exact: true }).first(), step.swipe.dx ?? -140, step.swipe.dy ?? 0);
           else if (step.press) await page.keyboard.press(step.press);
           else if (step.scrollTo) await page.getByText(step.scrollTo).first().scrollIntoViewIfNeeded();
           await page.waitForTimeout(step.wait ?? 350);

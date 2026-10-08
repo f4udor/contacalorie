@@ -10,7 +10,8 @@
     "test": "vitest run",
     "screens": "node tools/screens.mjs",
     "fixtures": "node tests/fixtures/build-fixtures.mjs",
-    "setup-sql": "node tools/build-setup-sql.mjs"
+    "setup-sql": "node tools/build-setup-sql.mjs",
+    "prova-scorrimento": "node tools/prova-scorrimento.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",

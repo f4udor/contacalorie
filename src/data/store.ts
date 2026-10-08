@@ -1,5 +1,5 @@
 import type { DateKey } from "@/engine";
-import type { ActivityRecord, FavoriteDish, FavoriteMeal, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, FavoriteDish, FavoriteMeal, HealthLinkStatus, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 
 /**
  * Unico punto d'accesso ai dati per le schermate.
@@ -40,6 +40,13 @@ export interface DataStore {
   listFavoriteMeals(): Promise<FavoriteMeal[]>;
   saveFavoriteMeal(favorite: FavoriteMeal): Promise<void>;
   deleteFavoriteMeal(id: string): Promise<void>;
+
+  /** Stato del collegamento con Salute (codice e ultimi invii). */
+  getHealthLink(): Promise<HealthLinkStatus>;
+  /** Crea un nuovo codice (invalida il precedente) e lo restituisce in chiaro: questa è l'unica volta. */
+  createHealthCode(): Promise<string>;
+  /** Disattiva il codice: il Comando rapido smette di funzionare. */
+  revokeHealthCode(): Promise<void>;
 
   /** Tutti i dati salvati (per l'importazione e l'esportazione). */
   exportAll(): Promise<StoredData>;

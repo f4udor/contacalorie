@@ -1,0 +1,19 @@
+{
+  "id": "salute-mai-arrivato",
+  "descrizione": "Codice appena creato, nessun invio ancora.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "scrollTo": "Salute"
+    }
+  ],
+  "salute": {
+    "active": true,
+    "codeCreatedAt": "2026-01-08T07:30:00Z",
+    "lastSuccessAt": null,
+    "lastAttempt": null
+  }
+}

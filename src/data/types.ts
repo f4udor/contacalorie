@@ -31,6 +31,20 @@ export interface ActivityRecord {
   bikeSource: ActivitySource | null;
 }
 
+/** Collegamento con Salute: codice personale e stato degli invii (letto dal registro delle chiamate). */
+export interface HealthLinkStatus {
+  /** Falso se i dati sono solo nel browser: il collegamento richiede l'accesso. */
+  supported: boolean;
+  /** Esiste un codice attivo. */
+  active: boolean;
+  /** Quando è stato creato il codice attivo (ISO); null se non c'è. */
+  codeCreatedAt: string | null;
+  /** Ultimo invio riuscito (ISO). */
+  lastSuccessAt: string | null;
+  /** Ultimo tentativo, riuscito o no. */
+  lastAttempt: { at: string; success: boolean; detail: string | null } | null;
+}
+
 /** Pesata (tabella `weigh_ins`): una per data. */
 export interface WeighIn {
   date: DateKey;

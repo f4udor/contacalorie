@@ -1,0 +1,19 @@
+{
+  "id": "salute-senza-codice",
+  "descrizione": "Salute senza codice: spiegazione e pulsante 'Crea codice'.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "scrollTo": "Salute"
+    }
+  ],
+  "salute": {
+    "active": false,
+    "codeCreatedAt": null,
+    "lastSuccessAt": null,
+    "lastAttempt": null
+  }
+}

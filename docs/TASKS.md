@@ -334,7 +334,7 @@ Vincoli di questa fase:
 - Per le schermate valgono le regole della fase 2 e della 4b (scenari, screenshot a 390 px in chiaro e scuro, formato italiano, stati vuoti, nessun testo d'esempio nei campi).
 - Nessuna funzione oltre a quelle elencate. In particolare: niente email, niente velocità media, niente obiettivo del giorno modificabile a mano (§9).
 
-### T5.0 Ingresso dei dati da Salute · da fare
+### T5.0 Ingresso dei dati da Salute · fatto
 - Route del server `POST /api/ingest/health`. Il codice personale arriva nell'intestazione `Authorization: Bearer …`. Codice assente, sbagliato o revocato: 401, senza dire quale dei tre.
 - Corpo JSON con due campi facoltativi, `passi` e `bici_km`. Ciascuno è un testo con una riga per giorno, `data;valore` (per esempio `2026-10-08;8123`), oppure un elenco di oggetti `{ "data": "2026-10-08", "valore": 8123 }`. Il testo è scritto a mano dentro un Comando rapido, quindi la lettura deve essere tollerante:
   - separatore `;`, `,` seguito da spazio, tabulazione o più spazi; righe vuote ignorate;
@@ -347,7 +347,7 @@ Vincoli di questa fase:
 - Ogni chiamata finisce in `ingest_log` con esito e dettaglio breve. Limite di 200 chiamate al giorno per utente; oltre: 429 con messaggio chiaro.
 - Test: codice valido, sbagliato, revocato; tutti i formati elencati sopra; riga di tre giorni fa scartata; valore manuale non sovrascritto; invio ripetuto senza doppioni; valore aggiornato dal secondo invio; solo passi; solo bici; corpo vuoto o non JSON (400); limite superato; due utenti che non si vedono.
 
-### T5.1 Codice personale, stato e avviso · da fare
+### T5.1 Codice personale, stato e avviso · fatto
 - Impostazioni → Collegamenti, voce "Salute": senza codice, pulsante "Crea codice"; il codice compare una sola volta con "Copia" e l'indirizzo dell'ingresso da copiare. Con un codice già creato: "Rigenera" (con conferma, perché il Comando rapido smette di funzionare finché non si aggiorna) e "Disattiva".
 - Sotto: ultimo invio riuscito (data e ora) e i valori ricevuti per oggi e ieri; se l'ultimo tentativo è fallito, il motivo.
 - Senza accesso a Supabase (dati solo nel browser) la voce spiega in una riga che il collegamento richiede l'accesso.
@@ -355,7 +355,7 @@ Vincoli di questa fase:
 - La scheda Attività di Oggi continua a mostrare la fonte ("da Salute" o "manuale").
 - Test della logica dell'avviso (nessun codice; invio 23 ore fa; 25 ore fa; mai arrivato dopo la creazione del codice) e scenari di screenshot per ogni stato.
 
-### T5.2 Guida al Comando rapido · da fare
+### T5.2 Guida al Comando rapido · fatto
 `docs/COLLEGA-SALUTE.md`, stesso stile delle altre guide, passi numerati con cosa si vede a schermo:
 1. eseguire `supabase/aggiornamento-fase-5.sql`;
 2. creare il codice in Impostazioni;
@@ -365,7 +365,7 @@ Vincoli di questa fase:
 6. cosa controllare in Impostazioni.
 La guida dichiara che i nomi delle azioni non sono stati visti a schermo e possono essere diversi, avverte del doppio conteggio con altre app che scrivono in Salute e spiega che gli invii a telefono bloccato non riescono ed è normale.
 
-### T5.3 Nuova regola del recupero · da fare
+### T5.3 Nuova regola del recupero · fatto
 - Motore: §3.3 riscritto. Nuove impostazioni `recoveryMaxPerDay` (100), `recoveryMin` (25), `creditCap` (300) in `src/engine/defaults.ts`, salvate come le altre (nuove colonne per aggiunta).
 - **Questo task cambia una regola di calcolo: i test del motore si aggiornano ai nuovi valori di §3.6.** Cambiano i casi B, C e D; si aggiungono M, N, O, P, Q, R. Gli altri casi (A, E, F, G, H, I, J, K, L) devono restare identici e i loro test non si toccano.
 - Anteprima dei giorni futuri come in §3.3: una funzione pura che riceve qual è "oggi" come parametro (il motore non legge la data). Oggi, Settimana e la linea dell'obiettivo sulle sette barre usano questa funzione per i giorni dopo oggi.
@@ -374,7 +374,7 @@ La guida dichiara che i nomi delle azioni non sono stati visti a schermo e posso
 - Impostazioni → Obiettivi: "Recupero massimo al giorno" e "Margine massimo della settimana", con una riga di spiegazione ciascuno. `recoveryMin` non ha un campo.
 - Test: tutti i casi di §3.6; debito che si estingue in più giorni; margine che assorbe uno sgarro successivo; giorni senza pasti che non entrano nel saldo; lunedì che azzera; soglia minima con `recoveryMaxPerDay` alto.
 
-### T5.4 Schede della Settimana toccabili · da fare
+### T5.4 Schede della Settimana toccabili · fatto
 - **Peso**: la scheda c'è sempre; senza pesate nella settimana dice "Nessuna pesata". Toccandola: pannello con le pesate, dalla più recente, e "Aggiungi pesata". Ogni pesata si elimina.
 - **Bici** e **Passi**: toccandole, pannello con i sette giorni della settimana, valore e fonte. Le righe con fonte `manuale` si eliminano; quelle `salute` no. Eliminare un valore a mano lascia il giorno vuoto: il prossimo invio da Salute potrà riempirlo.
 - **Pasto libero**: se nella settimana c'è, il pannello mostra giorno, fascia e kcal, con "Togli pasto libero" (il pasto resta e torna normale, cioè conta per intero). Se non c'è, elenco dei pasti della settimana con "Segna come libero".
@@ -382,7 +382,7 @@ La guida dichiara che i nomi delle azioni non sono stati visti a schermo e posso
 - Dopo ogni modifica, Settimana e Oggi mostrano subito i numeri ricalcolati.
 - Test della logica (eliminazione consentita solo per `manuale`; pasto libero tolto e rimesso; pesata eliminata e scheda che torna a "Nessuna pesata") e scenari di screenshot per ogni pannello, pieno e vuoto.
 
-### T5.5 Scorrimento a sinistra per le azioni · da fare
+### T5.5 Scorrimento a sinistra per le azioni · fatto
 - Un solo componente condiviso per le righe che scorrono. Scorrendo verso **sinistra** compaiono i pulsanti a destra della riga; scorrendo indietro o toccando altrove si richiudono. Nessuna azione sullo scorrimento verso destra.
 - Piatti in Oggi: "Preferiti" (salva il piatto nei preferiti) e cestino. Pannelli di T5.4 (pesate, attività a mano): solo cestino.
 - Il cestino elimina subito, senza conferma.
@@ -392,6 +392,6 @@ La guida dichiara che i nomi delle azioni non sono stati visti a schermo e posso
 - Ritocco insieme a questo task: "Elimina davvero" con contrasto sufficiente in tema chiaro.
 - Test della logica del gesto (soglie, direzione, una riga aperta alla volta) e prova con il tocco simulato di Playwright. Nel diario, sotto "Non verificato": il gesto su un iPhone vero.
 
-### T5.6 Report di fase · da fare
+### T5.6 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-5.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: i controlli da fare sul telefono dopo la pubblicazione e, a parte, quelli da fare dopo aver collegato il Comando rapido.
 

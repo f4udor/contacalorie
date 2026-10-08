@@ -42,7 +42,7 @@ add(
 
 add(
   "oggi-caso-b",
-  "Caso B del brief: giovedì dopo lunedì 1.750, martedì 1.800 e mercoledì 3.250 kcal (9.000 passi): saldo −425, recupero −106, obiettivo 1.994.",
+  "Caso B del brief: giovedì dopo lunedì 1.750, martedì 1.800 e mercoledì 3.250 kcal (9.000 passi): margine fermo a 300, saldo −775, recupero −100, obiettivo 2.000.",
   "2026-01-08",
   data({
     settings: { weightKg: 100 },
@@ -419,6 +419,99 @@ add("dopo-kcal-base", "Kcal base cambiata a 2.000 nelle Impostazioni: Oggi mostr
   percorso: "/impostazioni",
   passi: [{ fill: ["Kcal base", "2000"] }, salva, { wait: 500 }, { click: "Oggi", exact: true }, { wait: 500 }],
 });
+// --- Salute (T5.1). "Adesso" negli screenshot: giovedì 2026-01-08, 09:00 a Roma = 08:00 UTC.
+const salute = (stato) => ({ active: false, codeCreatedAt: null, lastSuccessAt: null, lastAttempt: null, ...stato });
+const sal = (id, descrizione, st, extra = {}) => scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/impostazioni", dati: null, scorre: true, passi: [{ scrollTo: "Salute" }], ...(st ? { salute: salute(st) } : {}), ...extra });
+sal("salute-senza-accesso", "Impostazioni → Collegamenti → Salute con i dati solo sul dispositivo: dice che serve l'accesso.", null);
+sal("salute-senza-codice", "Salute senza codice: spiegazione e pulsante 'Crea codice'.", {});
+sal("salute-codice-creato", "Appena creato: il codice compare una sola volta, con 'Copia' e l'indirizzo.", {}, { passi: [{ click: "Crea codice" }, { wait: 400 }, { scrollTo: "Fatto" }] });
+sal("salute-dopo-fatto", "Dopo 'Fatto': il codice non si vede più, restano stato e pulsanti.", {}, { passi: [{ click: "Crea codice" }, { click: "Fatto", exact: true }, { wait: 400 }, { scrollTo: "Disattiva" }] });
+sal("salute-collegata", "Salute collegata: ultimo invio, valori di oggi e di ieri.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-08T07:40:00Z", lastAttempt: { at: "2026-01-08T07:40:00Z", success: true, detail: null } }, {
+  dati: data({ activity: [activity("2026-01-08", { steps: 3120, stepsSource: "salute", bikeKm: 12.4, bikeSource: "salute" }), activity("2026-01-07", { steps: 9450, stepsSource: "salute" })] }),
+});
+sal("salute-mai-arrivato", "Codice appena creato, nessun invio ancora.", { active: true, codeCreatedAt: "2026-01-08T07:30:00Z" });
+sal("salute-ultimo-fallito", "L'ultimo tentativo non è riuscito: compare il motivo.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-07T17:00:00Z", lastAttempt: { at: "2026-01-08T07:50:00Z", success: false, detail: "Nessuna riga utile" } });
+sal("salute-rigenera-conferma", "'Rigenera codice' chiede conferma e avverte che il Comando rapido smette di funzionare.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-08T07:40:00Z" }, { passi: [{ scrollTo: "Rigenera codice" }, { click: "Rigenera codice", exact: true }, { wait: 300 }] });
+sal("salute-disattivata", "Dopo 'Disattiva': torna 'Crea codice'.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-08T07:40:00Z" }, { passi: [{ scrollTo: "Disattiva" }, { click: "Disattiva", exact: true }, { wait: 400 }] });
+const oggiSalute = (id, descrizione, st) => scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/", dati: null, scorre: true, salute: salute(st) });
+oggiSalute("oggi-avviso-salute", "Oggi con codice attivo e ultimo invio 30 ore fa: avviso in cima che porta a Collegamenti.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-07T02:00:00Z" });
+oggiSalute("oggi-salute-recente", "Oggi con codice attivo e ultimo invio 1 ora fa: nessun avviso.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-08T07:00:00Z" });
+oggiSalute("oggi-salute-senza-codice", "Oggi senza codice: nessun avviso.", {});
+scenarios.push({ id: "oggi-avviso-salute-tocco", descrizione: "Toccando l'avviso si arriva a Impostazioni → Collegamenti.", oggi: "2026-01-08", percorso: "/", dati: null, scorre: true, salute: salute({ active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-07T02:00:00Z" }), passi: [{ click: "Nessun dato da Salute da ieri" }, { wait: 600 }] });
+
+// --- Nuova regola del recupero (T5.3). Debito di 250 kcal da lunedì; oggi è giovedì, ancora senza pasti.
+const debito250 = data({
+  settings: { weightKg: 100 },
+  meals: [meal("2026-01-05", "pranzo", "Pranzo", 2350, 90, 200, 60, 20, 4), meal("2026-01-06", "pranzo", "Pranzo", 2100, 100, 210, 65, 22, 4), meal("2026-01-07", "pranzo", "Pranzo", 2100, 100, 210, 65, 22, 4)],
+});
+add("oggi-anteprima-venerdi", "Giorno futuro (venerdì) con debito di 250 kcal da lunedì: l'anteprima dà 2.000 (−100), non il debito ripetuto.", "2026-01-08", debito250, { percorso: "/?d=2026-01-09" });
+add("oggi-anteprima-domenica", "Domenica in anteprima: il debito è stato estinto nei giorni intermedi, obiettivo 2.100 e nessuna riga di recupero.", "2026-01-08", debito250, { percorso: "/?d=2026-01-11" });
+add("oggi-debito-piccolo", "Lunedì 2.111 kcal (debito 11, sotto la soglia di 25): martedì obiettivo 2.100 e nessuna riga di recupero.", "2026-01-06", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", 2111, 90, 200, 60, 20, 4)] }));
+sett("settimana-anteprima", "Settimana con debito di 250 kcal e oggi giovedì: le linee dell'obiettivo dei giorni futuri sono 2.000, 2.000, 2.050, 2.100.", "2026-01-08", debito250);
+
+// --- Schede della Settimana toccabili (T5.4). Settimana 5-11 gennaio, oggi giovedì 8.
+const settScheda = (id, descrizione, dati, passi, extra = {}) => scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/settimana", dati, scorre: true, fisso: true, passi, ...extra });
+const tocca = (name) => ({ clickRole: { role: "button", name, exact: false } });
+const settimanaPiena = data({
+  settings: { weightKg: 92.5, targetWeightKg: 82 },
+  weighIns: [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-06", weightKg: 91.8 }, { date: "2026-01-08", weightKg: 91.4 }],
+  meals: [
+    meal("2026-01-05", "pranzo", "Pasta al pomodoro", 700, 20, 100, 12, 5, 1.5),
+    meal("2026-01-06", "cena", "Pizza margherita", 1100, 40, 140, 35, 6, 3),
+    meal("2026-01-07", "pranzo", "Risotto ai funghi", 650, 15, 95, 18, 4, 2),
+    meal("2026-01-07", "pranzo", "Tiramisù", 450, 8, 50, 22, 1, 0.4),
+  ],
+  activity: [
+    activity("2026-01-05", { steps: 8123, stepsSource: "salute", bikeKm: 12.4, bikeSource: "salute" }),
+    activity("2026-01-06", { steps: 5400, stepsSource: "manuale", bikeKm: 20, bikeSource: "manuale" }),
+    activity("2026-01-07", { steps: 9450, stepsSource: "salute" }),
+  ],
+});
+const conLibero = { ...settimanaPiena, meals: settimanaPiena.meals.map((m) => (m.date === "2026-01-07" && m.slot === "pranzo" ? { ...m, isFree: true } : m)) };
+const senzaPesate = { ...settimanaPiena, weighIns: [{ date: "2026-01-02", weightKg: 92 }] };
+scenarios.push({ id: "settimana-peso-nessuna-pesata", descrizione: "La scheda Peso c'è sempre: senza pesate nella settimana dice 'Nessuna pesata' (con la freccia che la rende toccabile).", oggi: "2026-01-08", percorso: "/settimana", dati: senzaPesate, scorre: true });
+settScheda("settimana-pannello-peso", "Pannello Pesate: le pesate della settimana dalla più recente, ognuna con il cestino, e 'Aggiungi pesata'.", settimanaPiena, [tocca("Peso")]);
+settScheda("settimana-pannello-peso-aggiungi", "Aggiungi pesata: scelta del giorno della settimana e campo del peso.", settimanaPiena, [tocca("Peso"), { click: "Aggiungi pesata" }]);
+settScheda("settimana-pannello-peso-vuoto", "Pannello Pesate senza pesate nella settimana.", senzaPesate, [tocca("Peso")]);
+settScheda("settimana-pannello-bici", "Pannello Bici: sette giorni con km e fonte; il cestino solo sul valore a mano.", settimanaPiena, [tocca("Bici")]);
+settScheda("settimana-pannello-passi", "Pannello Passi: sette giorni con passi e fonte; il cestino solo sul valore a mano.", settimanaPiena, [tocca("Passi medi")]);
+settScheda("settimana-pannello-bici-vuoto", "Pannello Bici senza nessun valore nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Bici")]);
+settScheda("settimana-pannello-passi-vuoto", "Pannello Passi senza nessun valore nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Passi medi")]);
+settScheda("settimana-pannello-libero", "Pasto libero presente: giorno, fascia, kcal e 'Togli pasto libero'.", conLibero, [tocca("Pasto libero")]);
+settScheda("settimana-pannello-libero-scegli", "Nessun pasto libero: elenco dei pasti della settimana con 'Segna come libero'.", settimanaPiena, [tocca("Pasto libero")]);
+settScheda("settimana-pannello-libero-vuoto", "Nessun pasto libero e nessun pasto nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Pasto libero")]);
+settScheda("settimana-dopo-elimina-bici", "Dopo aver eliminato i km a mano di martedì e chiuso il pannello: il totale dei km (da 32,4 a 12,4) si è aggiornato.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Elimina il valore di Martedì 6 gennaio", exact: true } }, { wait: 500 }, { click: "Chiudi", exact: true }]);
+settScheda("settimana-dopo-togli-libero", "Dopo 'Togli pasto libero': la scheda dice 'non usato' e il pasto resta.", conLibero, [tocca("Pasto libero"), { click: "Togli pasto libero" }, { wait: 500 }, { click: "Chiudi", exact: true }]);
+
+scenarios.push({
+  id: "oggi-dopo-modifica-settimana",
+  descrizione: "Passi a mano di giovedì (9.000, bonus +75) eliminati dalla Settimana: aprendo Oggi l'obiettivo è tornato a 2.100 e la riga di composizione non c'è più.",
+  oggi: "2026-01-08",
+  percorso: "/settimana",
+  dati: data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pranzo", 700, 30, 80, 20, 5, 2)], activity: [activity("2026-01-08", { steps: 9000, stepsSource: "manuale" })] }),
+  scorre: true,
+  passi: [tocca("Passi medi"), { clickRole: { role: "button", name: "Elimina il valore di Giovedì 8 gennaio", exact: true } }, { wait: 400 }, { click: "Chiudi", exact: true }, { clickRole: { role: "link", name: "Oggi", exact: true } }, { wait: 600 }],
+});
+// --- Scorrimento a sinistra per le azioni (T5.5), con il tocco simulato del browser.
+const giornoConPiatti = data({
+  settings: { weightKg: 92.5 },
+  meals: [
+    meal("2026-01-08", "colazione", "Cappuccino e brioche", 320, 8, 48, 10, 1, 0.4),
+    meal("2026-01-08", "pranzo", "Pasta al pomodoro", 650, 22, 110, 12, 6, 1.8),
+    meal("2026-01-08", "pranzo", "Insalata di pomodorini", 90, 2, 10, 4, 3, 0.2),
+    meal("2026-01-08", "cena", "Frittata con zucchine", 420, 25, 8, 30, 3, 1.2),
+  ],
+});
+const sw = (text, dx = -140) => ({ swipe: { text, dx } });
+add("oggi-scorrimento-aperto", "Piatto scorso a sinistra: a destra compaiono «Preferiti» e il cestino.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro")] });
+add("oggi-scorrimento-due-righe", "Una sola riga aperta alla volta: scorrendo un secondo piatto il primo si richiude.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), sw("Frittata con zucchine")] });
+add("oggi-scorrimento-preferiti", "Dopo «Preferiti»: il piatto è salvato, la riga si richiude e compare la conferma.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), { click: "Preferiti", exact: true }, { wait: 500 }] });
+add("oggi-scorrimento-cestino", "Dopo il cestino: il piatto è eliminato subito, senza conferma, e i totali si ricalcolano.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), { clickRole: { role: "button", name: "Elimina Pasta al pomodoro", exact: true } }, { wait: 500 }] });
+add("oggi-scorrimento-a-destra", "Scorrimento verso destra: non succede nulla.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro", 140)] });
+settScheda("settimana-pesate-scorrimento", "Pannello Pesate: scorrendo una pesata compare solo il cestino.", settimanaPiena, [tocca("Peso"), sw("Giovedì 8 gennaio")]);
+settScheda("settimana-bici-scorrimento", "Pannello Bici: scorrendo il valore a mano di martedì compare il cestino; le righe da Salute non scorrono.", settimanaPiena, [tocca("Bici"), sw("Martedì 6 gennaio")]);
+settScheda("settimana-bici-scorrimento-salute", "Pannello Bici: una riga con fonte Salute non mostra nessuna azione.", settimanaPiena, [tocca("Bici"), sw("Lunedì 5 gennaio")]);
+
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");

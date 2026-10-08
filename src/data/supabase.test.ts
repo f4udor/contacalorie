@@ -208,3 +208,88 @@ describe("scelta dello sportello", () => {
     void storage;
   });
 });
+
+describe("SupabaseDataStore: collegamento con Salute", () => {
+  const log = (db: FakeSupabaseDb, id: string, at: string, success: boolean, detail: string | null = null) =>
+    db.rows("ingest_log").push({ id, user_id: "utente-1", kind: "salute", called_at: at, success, detail });
+
+  it("senza codice: non attivo, nessun invio", async () => {
+    const { store } = setup();
+    expect(await store.getHealthLink()).toEqual({ supported: true, active: false, codeCreatedAt: null, lastSuccessAt: null, lastAttempt: null });
+  });
+
+  it("crea il codice una volta sola e il precedente viene revocato", async () => {
+    const { db, store } = setup();
+    const first = await store.createHealthCode();
+    expect(first).toMatch(/^ph/);
+    expect((await store.getHealthLink()).active).toBe(true);
+    const second = await store.createHealthCode();
+    expect(second).not.toBe(first);
+    const tokens = db.rows("ingest_tokens");
+    expect(tokens.filter((t) => !t.revoked_at)).toHaveLength(1);
+    // Il codice in chiaro non è mai salvato nelle righe lette dall'app.
+    expect(JSON.stringify(await store.getHealthLink())).not.toContain(second);
+  });
+
+  it("disattiva il codice", async () => {
+    const { store } = setup();
+    await store.createHealthCode();
+    await store.revokeHealthCode();
+    expect((await store.getHealthLink()).active).toBe(false);
+  });
+
+  it("ultimo invio riuscito e ultimo tentativo, anche se fallito", async () => {
+    const { db, store } = setup();
+    await store.createHealthCode();
+    log(db, "l1", "2026-01-08T07:00:00Z", true);
+    log(db, "l2", "2026-01-08T08:00:00Z", false, "Nessuna riga utile");
+    const link = await store.getHealthLink();
+    expect(link.lastSuccessAt).toBe("2026-01-08T07:00:00Z");
+    expect(link.lastAttempt).toEqual({ at: "2026-01-08T08:00:00Z", success: false, detail: "Nessuna riga utile" });
+  });
+
+  it("non vede i dati di un altro utente", async () => {
+    const { db, store } = setup();
+    db.rows("ingest_log").push({ id: "x", user_id: "altro", kind: "salute", called_at: "2026-01-08T07:00:00Z", success: true, detail: null });
+    // Il filtro per utente è della sicurezza per riga del database; qui basta che il finto non rompa la lettura.
+    expect((await store.getHealthLink()).supported).toBe(true);
+  });
+
+  it("senza accesso o con la rete assente: errore", async () => {
+    const { db, store } = setup();
+    db.offline = true;
+    await expect(store.createHealthCode()).rejects.toBeInstanceOf(DataStoreError);
+    await expect(store.getHealthLink()).rejects.toBeInstanceOf(DataStoreError);
+  });
+});
+
+describe("collegamento con Salute nel browser", () => {
+  const mem = () => {
+    const m = new Map<string, string>();
+    return { getItem: (k: string) => m.get(k) ?? null, setItem: (k: string, v: string) => void m.set(k, v), m };
+  };
+  it("senza accesso non è supportato e non si può creare il codice", async () => {
+    const store = createBrowserDataStore(mem());
+    expect((await store.getHealthLink()).supported).toBe(false);
+    await expect(store.createHealthCode()).rejects.toThrow(/accesso/);
+  });
+  it("con la chiave dimostrativa il collegamento è simulato", async () => {
+    const storage = mem();
+    storage.setItem("personal-health:demo-health", JSON.stringify({ active: false, codeCreatedAt: null, lastSuccessAt: null, lastAttempt: null }));
+    const store = createBrowserDataStore(storage);
+    expect((await store.getHealthLink()).supported).toBe(true);
+    expect(await store.createHealthCode()).toMatch(/^ph/);
+    expect((await store.getHealthLink()).active).toBe(true);
+    await store.revokeHealthCode();
+    expect((await store.getHealthLink()).active).toBe(false);
+  });
+});
+
+describe("SupabaseDataStore: impostazioni del recupero", () => {
+  it("salva e rilegge recupero massimo, soglia minima e margine massimo nelle colonne nuove", async () => {
+    const { db, store } = setup();
+    await store.saveSettings({ recoveryMaxPerDay: 150, recoveryMin: 30, creditCap: 200 });
+    expect(db.rows("settings")[0]).toMatchObject({ recovery_max_per_day: 150, recovery_min: 30, credit_cap: 200 });
+    expect(await store.getSettings()).toMatchObject({ recoveryMaxPerDay: 150, recoveryMin: 30, creditCap: 200 });
+  });
+});

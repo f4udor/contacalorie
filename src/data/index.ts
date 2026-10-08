@@ -14,3 +14,4 @@ export * from "./auth";
 export { createAuthService } from "./auth-factory";
 export * from "./import";
 export { SupabaseAiGate, createSupabaseAiGate } from "./ai-gate";
+export { SupabaseHealthGate, createSupabaseHealthGate } from "./health-gate";

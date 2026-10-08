@@ -106,7 +106,7 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
           <>
             <div className="flex min-h-14 min-w-0 flex-1 items-center justify-between gap-3 px-4 py-2">{text}</div>
             {confirmDelete === `${kind}-${id}` ? (
-              <button type="button" disabled={busy} onClick={() => remove(kind, id)} className="min-h-14 shrink-0 bg-bad-fill px-3 text-[15px] font-semibold text-white disabled:opacity-50">
+              <button type="button" disabled={busy} onClick={() => remove(kind, id)} className="min-h-14 shrink-0 bg-bad-btn px-3 text-[15px] font-semibold text-white disabled:opacity-50">
                 Elimina davvero
               </button>
             ) : (

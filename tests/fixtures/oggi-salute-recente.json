@@ -1,0 +1,14 @@
+{
+  "id": "oggi-salute-recente",
+  "descrizione": "Oggi con codice attivo e ultimo invio 1 ora fa: nessun avviso.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "salute": {
+    "active": true,
+    "codeCreatedAt": "2026-01-02T08:00:00Z",
+    "lastSuccessAt": "2026-01-08T07:00:00Z",
+    "lastAttempt": null
+  }
+}

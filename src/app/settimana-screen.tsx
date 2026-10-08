@@ -2,15 +2,18 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { addDays, weekStart } from "@/engine";
+import { addDays, weekDates, weekStart } from "@/engine";
 import type { DateKey } from "@/engine";
+import { useState } from "react";
 import { Card } from "./components/card";
+import { ActivityWeekPanel, FreeMealPanel, WeightPanel } from "./components/week-panels";
+import { useDataStore } from "./data-provider";
 import { WeekChart } from "./components/week-chart";
 import { formatDayMonth, formatNumber, formatSigned } from "./lib/format";
 import { useToday } from "./lib/use-today";
 import { useWeekData } from "./lib/use-week-data";
 import { buildWeekView } from "./lib/week-view";
-import { weekWeight } from "./lib/week-weight";
+import { weekWeight, weightCard } from "./lib/week-weight";
 
 const DATE_PARAM = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -25,15 +28,34 @@ interface StatProps {
   value: string;
   hint?: string;
   hintTone?: "ok" | "bad" | "neutral";
+  /** Se c'è, la scheda si tocca e apre un pannello. */
+  onOpen?: () => void;
 }
 
-function Stat({ label, value, hint, hintTone, wide }: StatProps & { wide?: boolean }) {
-  return (
-    <div className={`rounded-2xl bg-card p-3.5 ${wide ? "col-span-2" : ""}`}>
-      <h3 className="text-sm font-semibold text-muted">{label}</h3>
-      <p className="mt-1 text-[22px] font-bold leading-tight tabular-nums">{value}</p>
-      {hint && <p className={`mt-0.5 text-xs ${hintTone === "ok" ? "font-semibold text-ok" : hintTone === "bad" ? "font-semibold text-bad" : "text-muted"}`}>{hint}</p>}
-    </div>
+function Stat({ label, value, hint, hintTone, wide, onOpen }: StatProps & { wide?: boolean }) {
+  const Title = onOpen ? "span" : "h3";
+  const Line = onOpen ? "span" : "p";
+  const body = (
+    <>
+      <span className="flex items-center justify-between gap-2">
+        <Title className="text-sm font-semibold text-muted">{label}</Title>
+        {onOpen && (
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-muted" aria-hidden="true">
+            <path d="M9 5l7 7-7 7" />
+          </svg>
+        )}
+      </span>
+      <Line className="mt-1 block text-[22px] font-bold leading-tight tabular-nums">{value}</Line>
+      {hint && <Line className={`mt-0.5 block text-xs ${hintTone === "ok" ? "font-semibold text-ok" : hintTone === "bad" ? "font-semibold text-bad" : "text-muted"}`}>{hint}</Line>}
+    </>
+  );
+  const cls = `rounded-2xl bg-card p-3.5 ${wide ? "col-span-2" : ""}`;
+  return onOpen ? (
+    <button type="button" onClick={onOpen} className={`${cls} block min-h-14 w-full text-left`}>
+      {body}
+    </button>
+  ) : (
+    <div className={cls}>{body}</div>
   );
 }
 
@@ -45,7 +67,9 @@ export function SettimanaScreen() {
   const param = useSearchParams().get("w");
   const anchor = param && DATE_PARAM.test(param) ? param : today;
   const monday: DateKey | null = anchor ? weekStart(anchor) : null;
-  const { data } = useWeekData(monday);
+  const { data, reload } = useWeekData(monday);
+  const store = useDataStore();
+  const [panel, setPanel] = useState<"peso" | "bici" | "passi" | "libero" | null>(null);
 
   if (!today || !monday) return <main aria-busy="true" />;
 
@@ -53,26 +77,18 @@ export function SettimanaScreen() {
   const isCurrent = monday === weekStart(today);
   const href = (d: DateKey) => (d === weekStart(today) ? "/settimana" : `/settimana?w=${d}`);
   const btn = "flex min-h-11 min-w-11 items-center justify-center rounded-full bg-card text-accent";
-  const view = data ? buildWeekView({ date: monday, days: data.days, settings: data.settings }) : null;
+  const view = data ? buildWeekView({ date: monday, days: data.days, settings: data.settings, today }) : null;
   const s = view?.summary;
   const weight = data ? weekWeight({ monday, sunday, weighIns: data.weighIns, profileWeightKg: data.userSettings.weightKg, targetWeightKg: data.userSettings.targetWeightKg }) : null;
+  const card = weightCard(weight, (kg) => formatNumber(kg, 1), (kg) => formatSigned(kg, 1));
   const stats: StatProps[] = s
     ? [
         { label: "Saldo", value: s.balance === null ? dash : `${formatSigned(s.balance)} kcal`, hint: s.balance === null ? undefined : s.balance < 0 ? "da recuperare" : "di vantaggio" },
         { label: "Media kcal", value: s.avgKcal === null ? dash : `${formatNumber(s.avgKcal)} kcal`, hint: "sui giorni con pasti" },
-        { label: "Bici", value: s.totalKm === null ? dash : `${formatNumber(s.totalKm, 1)} km` },
-        { label: "Passi medi", value: s.avgSteps === null ? dash : formatNumber(s.avgSteps), hint: "sui giorni con passi" },
-        ...(weight
-          ? [
-              {
-                label: "Peso",
-                value: `${formatNumber(weight.lastKg, 1)} kg`,
-                hint: weight.deltaKg === null ? undefined : `${formatSigned(weight.deltaKg, 1)} kg ${weight.comparedWith === "pesata" ? "dalla pesata precedente" : "dal peso di partenza"}`,
-                hintTone: weight.tone,
-              },
-            ]
-          : []),
-        { label: "Pasto libero", value: s.freeMealUsed ? "usato" : "non usato" },
+        { label: "Bici", value: s.totalKm === null ? dash : `${formatNumber(s.totalKm, 1)} km`, onOpen: () => setPanel("bici") },
+        { label: "Passi medi", value: s.avgSteps === null ? dash : formatNumber(s.avgSteps), hint: "sui giorni con passi", onOpen: () => setPanel("passi") },
+        { label: "Peso", value: card.value, hint: card.hint, hintTone: card.tone, onOpen: () => setPanel("peso") },
+        { label: "Pasto libero", value: s.freeMealUsed ? "usato" : "non usato", onOpen: () => setPanel("libero") },
       ]
     : [];
 
@@ -139,6 +155,10 @@ export function SettimanaScreen() {
           </Card>
         </div>
       )}
+      {data && store && panel && (() => {
+        const common = { store, data, dates: weekDates(monday), today, onChanged: reload, onClose: () => setPanel(null) };
+        return panel === "peso" ? <WeightPanel {...common} /> : panel === "libero" ? <FreeMealPanel {...common} /> : <ActivityWeekPanel {...common} kind={panel} />;
+      })()}
     </main>
   );
 }

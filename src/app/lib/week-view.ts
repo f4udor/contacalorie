@@ -23,8 +23,8 @@ export interface WeekView {
 }
 
 /** Barre e riepilogo della settimana che contiene `date`, calcolati dal motore. */
-export function buildWeekView(input: { date: DateKey; days: readonly Day[]; settings: Settings }): WeekView {
-  const summary = weekSummary(input.date, input.days, input.settings);
+export function buildWeekView(input: { date: DateKey; days: readonly Day[]; settings: Settings; /** Oggi: i giorni dopo oggi usano l'anteprima dell'obiettivo. */ today?: DateKey }): WeekView {
+  const summary = weekSummary(input.date, input.days, input.settings, input.today);
   const top = Math.max(1, ...summary.days.map((d) => Math.max(d.kcalEaten, d.target))) * 1.08;
   const bars: WeekBar[] = summary.days.map((d) => ({
     date: d.date,

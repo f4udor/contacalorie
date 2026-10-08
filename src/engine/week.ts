@@ -1,8 +1,9 @@
-import { bikeBonus, stepsBonus } from "./activity";
 import { hasFreeMealInWeek, kcalBudget, kcalEaten } from "./budget";
 import { weekDates } from "./dates";
-import { dayTarget } from "./target";
-import type { DateKey, Day, Settings } from "./types";
+import { previewDayTarget } from "./preview";
+import { dayTarget, runBalance } from "./target";
+import type { TargetSettings } from "./target";
+import type { DateKey, Day } from "./types";
 
 export interface WeekDayRow {
   date: DateKey;
@@ -25,7 +26,7 @@ export interface NutrientAverages {
 
 export interface WeekSummary {
   days: WeekDayRow[];
-  /** Saldo dei giorni con pasti (base + bonus − budget); null se nessun giorno ha pasti. */
+  /** Saldo della regola (§3.3, con il tetto al margine) fino al giorno più recente con pasti, questo compreso; null se nessun giorno ha pasti. */
   balance: number | null;
   /** Media delle kcal reali sui giorni con pasti; null se nessuno. */
   avgKcal: number | null;
@@ -37,10 +38,7 @@ export interface WeekSummary {
   freeMealUsed: boolean;
 }
 
-type WeekSettings = Pick<
-  Settings,
-  "baseKcal" | "floorKcal" | "bonusShare" | "kcalPerKm" | "kcalPerStep" | "stepThreshold" | "freeMealCap"
->;
+type WeekSettings = TargetSettings;
 
 const EMPTY_ACTIVITY = { steps: null, bikeKm: null, bikeKcalHealth: null };
 
@@ -48,8 +46,11 @@ function mean(values: number[]): number | null {
   return values.length === 0 ? null : values.reduce((a, b) => a + b, 0) / values.length;
 }
 
-/** Riepilogo della settimana (lunedì-domenica) che contiene `date`. I giorni mancanti sono considerati vuoti. */
-export function weekSummary(date: DateKey, knownDays: readonly Day[], settings: WeekSettings): WeekSummary {
+/**
+ * Riepilogo della settimana (lunedì-domenica) che contiene `date`. I giorni mancanti sono considerati vuoti.
+ * Se `today` è dato, l'obiettivo dei giorni dopo oggi è l'anteprima di §3.3 (`previewDayTarget`).
+ */
+export function weekSummary(date: DateKey, knownDays: readonly Day[], settings: WeekSettings, today?: DateKey): WeekSummary {
   const dates = weekDates(date);
   const days: Day[] = dates.map(
     (d) => knownDays.find((k) => k.date === d) ?? { date: d, meals: [], activity: EMPTY_ACTIVITY },
@@ -61,17 +62,10 @@ export function weekSummary(date: DateKey, knownDays: readonly Day[], settings: 
     hasMeals: d.meals.length > 0,
     kcalEaten: kcalEaten(d.meals),
     kcalBudget: kcalBudget(d.meals, settings),
-    target: dayTarget(d.date, days, settings).total,
+    target: (today !== undefined && d.date > today ? previewDayTarget(d.date, today, days, settings) : dayTarget(d.date, days, settings)).total,
   }));
 
-  const balance =
-    eatenDays.length === 0
-      ? null
-      : eatenDays.reduce(
-          (sum, d) =>
-            sum + settings.baseKcal + bikeBonus(d.activity, settings) + stepsBonus(d.activity, settings) - kcalBudget(d.meals, settings),
-          0,
-        );
+  const balance = eatenDays.length === 0 ? null : runBalance(eatenDays, settings);
 
   const avgOf = (pick: (d: Day) => number): number | null => mean(eatenDays.map(pick));
   const avgNutrients: NutrientAverages | null =

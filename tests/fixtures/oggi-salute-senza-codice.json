@@ -1,0 +1,14 @@
+{
+  "id": "oggi-salute-senza-codice",
+  "descrizione": "Oggi senza codice: nessun avviso.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "salute": {
+    "active": false,
+    "codeCreatedAt": null,
+    "lastSuccessAt": null,
+    "lastAttempt": null
+  }
+}

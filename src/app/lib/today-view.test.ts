@@ -54,7 +54,7 @@ describe("buildTodayView", () => {
     expect(v.nutrients.every((n) => !n.empty)).toBe(true);
   });
 
-  it("caso B: giovedì con recupero → obiettivo 1.994, recupero −106", () => {
+  it("caso B: giovedì con recupero → obiettivo 2.000, recupero −100", () => {
     const days = week(
       day("2026-01-05", [meal("a", 1750)]),
       day("2026-01-06", [meal("b", 1800)]),
@@ -62,12 +62,28 @@ describe("buildTodayView", () => {
       day("2026-01-08", [meal("d", 900)]),
     );
     const v = buildTodayView({ date: "2026-01-08", days, settings: s, weightKg: 100 });
-    expect(v.target).toBe(1994);
-    expect(v.remaining).toBe(1094);
+    expect(v.target).toBe(2000);
+    expect(v.remaining).toBe(1100);
     expect(v.composition).toEqual([
       { label: "Base", amount: 2100, signed: false },
-      { label: "recupero", amount: -106, signed: true },
+      { label: "recupero", amount: -100, signed: true },
     ]);
+  });
+
+  it("caso Q: l'anteprima di un giorno futuro non ripete il debito; senza `today` vale l'obiettivo normale", () => {
+    const days = week(day("2026-01-05", [meal("a", 2350)]), day("2026-01-06", [meal("b", 2100)]), day("2026-01-07", [meal("c", 2100)]));
+    const at = (date: string, today?: string) => buildTodayView({ date, today, days, settings: s, weightKg: 100 });
+    expect(at("2026-01-09", "2026-01-08").target).toBe(2000);
+    expect(at("2026-01-10", "2026-01-08").target).toBe(2050);
+    expect(at("2026-01-11", "2026-01-08").target).toBe(2100);
+    expect(at("2026-01-11").target).toBe(2000); // senza anteprima: debito di 250 mai recuperato nei giorni vuoti
+  });
+
+  it("recupero sotto la soglia minima: la riga di composizione non lo mostra", () => {
+    const days = week(day("2026-01-05", [meal("a", 2111)]));
+    const v = buildTodayView({ date: "2026-01-06", days, settings: s, weightKg: 100 });
+    expect(v.target).toBe(2100);
+    expect(v.composition).toEqual([{ label: "Base", amount: 2100, signed: false }]);
   });
 
   it("caso E: giorno di bici → obiettivo 2.505, bonus bici 405, carboidrati 329", () => {
