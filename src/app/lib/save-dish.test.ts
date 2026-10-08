@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createMemoryDataStore } from "@/data";
 import type { MealRecord } from "@/data";
-import { saveDish, setMealFree } from "./save-dish";
+import { isMealFree, saveDish, setMealFree } from "./save-dish";
 
 function dish(id: string, slot: MealRecord["slot"], kcal: number, isFree = false, date = "2026-01-08"): MealRecord {
   return { id, date, name: id, quantity: null, slot, kcal, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0, isFree, originalText: null };
@@ -64,5 +64,29 @@ describe("setMealFree", () => {
     await s.saveMeal(dish("a", "pranzo", 500, true));
     await setMealFree(s, "2026-01-08", "pranzo", true);
     expect(await free(s)).toEqual({ a: true });
+  });
+});
+
+describe("isMealFree", () => {
+  const dishes = [dish("a", "pranzo", 500, true), dish("b", "pranzo", 300, true), dish("c", "cena", 400)];
+  it("un pasto è libero se almeno un piatto lo è", () => {
+    expect(isMealFree(dishes, "pranzo")).toBe(true);
+    expect(isMealFree(dishes, "cena")).toBe(false);
+    expect(isMealFree(dishes, "colazione")).toBe(false);
+  });
+  it("escludendo un piatto, conta solo gli altri", () => {
+    expect(isMealFree(dishes, "pranzo", "a")).toBe(true);
+    expect(isMealFree([dish("a", "pranzo", 500, true)], "pranzo", "a")).toBe(false);
+  });
+});
+
+describe("aggiunta di un piatto normale a un pasto già libero (dal + generale)", () => {
+  it("il piatto prende il segno del pasto e il pasto resta libero", async () => {
+    const s = createMemoryDataStore();
+    await s.saveMeal(dish("a", "cena", 900, true));
+    // il modulo parte dallo stato del pasto scelto: libero
+    const mealFree = isMealFree(await s.listMeals("2026-01-08"), "cena");
+    await saveDish(s, dish("b", "cena", 200), mealFree);
+    expect(await free(s)).toEqual({ a: true, b: true });
   });
 });

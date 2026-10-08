@@ -10,7 +10,8 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Aggiungi"
+        "name": "Aggiungi",
+        "exact": true
       }
     },
     {

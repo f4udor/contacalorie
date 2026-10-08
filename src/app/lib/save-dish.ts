@@ -1,4 +1,4 @@
-import type { DateKey, MealSlot } from "@/engine";
+import type { DateKey, Meal, MealSlot } from "@/engine";
 import type { DataStore, MealRecord } from "@/data";
 
 /**
@@ -18,4 +18,12 @@ export async function setMealFree(store: DataStore, date: DateKey, slot: MealSlo
   for (const d of dishes) {
     if (d.slot === slot && d.isFree !== isFree) await store.saveMeal({ ...d, isFree });
   }
+}
+
+/**
+ * Dice se il pasto di una fascia è libero, guardando i piatti del giorno (un pasto è libero se almeno un piatto lo è).
+ * `excludeDishId` lascia fuori un piatto (quello che si sta modificando).
+ */
+export function isMealFree(dishes: readonly Pick<Meal, "id" | "slot" | "isFree">[], slot: MealSlot, excludeDishId?: string): boolean {
+  return dishes.some((d) => d.slot === slot && d.isFree && d.id !== excludeDishId);
 }

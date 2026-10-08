@@ -1,7 +1,7 @@
 {
-  "id": "pannello-libero-usato",
-  "descrizione": "La settimana ha già un pasto libero: l'interruttore è disattivato e spiega perché.",
-  "oggi": "2026-01-08",
+  "id": "pannello-piatto-generale-pasto-libero",
+  "descrizione": "Dal + generale, scegliendo la cena che è già un pasto libero: l'interruttore si accende da solo, così il piatto non toglie il segno al pasto.",
+  "oggi": "2026-01-05",
   "percorso": "/",
   "dati": {
     "version": 1,
@@ -10,16 +10,16 @@
     },
     "meals": [
       {
-        "id": "m34",
-        "date": "2026-01-06",
+        "id": "m96",
+        "date": "2026-01-05",
         "slot": "cena",
         "name": "Pizza",
-        "kcal": 1100,
-        "protein": 40,
-        "carbs": 130,
-        "fat": 42,
-        "fiber": 6,
-        "salt": 4.2,
+        "kcal": 900,
+        "protein": 30,
+        "carbs": 120,
+        "fat": 30,
+        "fiber": 5,
+        "salt": 3.5,
         "isFree": true,
         "originalText": null
       }
@@ -40,6 +40,12 @@
     },
     {
       "click": "Piatto a mano"
+    },
+    {
+      "clickRole": {
+        "role": "radio",
+        "name": "Cena"
+      }
     },
     {
       "scrollTo": "Pasto libero"

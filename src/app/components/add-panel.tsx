@@ -6,7 +6,7 @@ import type { DateKey, Day, MealSlot, Settings } from "@/engine";
 import type { ActivityRecord, DataStore, MealRecord } from "@/data";
 import { copyMealsFromYesterday } from "../lib/copy-meals";
 import { newId } from "../lib/ids";
-import { saveDish } from "../lib/save-dish";
+import { isMealFree, saveDish } from "../lib/save-dish";
 import { buildActivityRecord } from "../lib/activity-form";
 import type { ParsedActivity } from "../lib/activity-form";
 import { emptyMealForm, mealToForm } from "../lib/meal-form";
@@ -55,7 +55,8 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
   const { store, date, days, settings, activity, weightKg, onChanged, onClose, initialSlot } = ctx;
   const [view, setView] = useState<"menu" | "pasto" | "attivita" | "pesata">(initialSlot ? "pasto" : "menu");
   const freeAllowedFor = (slot: MealSlot) => !hasFreeMealInWeek(days, { date, slot });
-  const existingFree = (slot: MealSlot) => days.find((d) => d.date === date)?.meals.some((m) => m.slot === slot && m.isFree) ?? false;
+  const dayDishes = days.find((d) => d.date === date)?.meals ?? [];
+  const existingFree = (slot: MealSlot) => isMealFree(dayDishes, slot);
   const [note, setNote] = useState<string | null>(null);
 
   const saveMeal = async (parsed: ParsedMeal) => {
@@ -117,8 +118,9 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
           )}
           {view === "pasto" && (
             <MealForm
-              initial={{ ...emptyMealForm(initialSlot), isFree: initialSlot ? existingFree(initialSlot) : false }}
+              initial={{ ...emptyMealForm(initialSlot), isFree: existingFree(initialSlot ?? emptyMealForm().slot) }}
               freeAllowedFor={freeAllowedFor}
+              mealIsFreeFor={existingFree}
               lockedSlot={initialSlot !== undefined}
               freeMealCap={settings.freeMealCap}
               submitLabel="Aggiungi piatto"
@@ -154,6 +156,7 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
       <MealForm
         initial={mealToForm(meal)}
         freeAllowedFor={(slot) => !hasFreeMealInWeek(days, { date: meal.date, slot })}
+        mealIsFreeFor={(slot) => isMealFree(days.find((d) => d.date === meal.date)?.meals ?? [], slot, meal.id)}
         freeMealCap={settings.freeMealCap}
         submitLabel="Salva"
         onSubmit={save}

@@ -10,6 +10,8 @@ interface MealFormProps {
   initial: MealFormValues;
   /** Dice se il pasto di quella fascia può essere libero (false se la settimana ha già un altro pasto libero). */
   freeAllowedFor: (slot: MealSlot) => boolean;
+  /** Dice se il pasto di quella fascia è già libero: scegliendo una fascia l'interruttore ne segue lo stato. */
+  mealIsFreeFor?: (slot: MealSlot) => boolean;
   /** La fascia è già stabilita (si aggiunge un piatto a un pasto) e non si sceglie. */
   lockedSlot?: boolean;
   /** Tetto di kcal del pasto libero, dalle impostazioni. */
@@ -33,7 +35,7 @@ const NUMERIC: { key: Exclude<MealFieldKey, "isFree">; label: string; required?:
 const input = "min-h-11 w-full rounded-xl bg-bg px-3 text-[17px] outline-none placeholder:text-muted focus:ring-2 focus:ring-accent";
 
 /** Modulo per aggiungere o modificare un pasto a mano. */
-export function MealForm({ initial, freeAllowedFor, lockedSlot = false, freeMealCap, submitLabel, onSubmit, onDelete, deleteName }: MealFormProps) {
+export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = false, freeMealCap, submitLabel, onSubmit, onDelete, deleteName }: MealFormProps) {
   const [values, setValues] = useState<MealFormValues>(initial);
   const [errors, setErrors] = useState<MealFormErrors>({});
   const [saving, setSaving] = useState(false);
@@ -99,7 +101,10 @@ export function MealForm({ initial, freeAllowedFor, lockedSlot = false, freeMeal
               type="button"
               role="radio"
               aria-checked={values.slot === s.value}
-              onClick={() => set("slot", s.value)}
+              onClick={() => {
+                set("slot", s.value);
+                if (mealIsFreeFor) set("isFree", mealIsFreeFor(s.value));
+              }}
               className={`min-h-11 rounded-lg px-1 text-[15px] font-semibold ${values.slot === s.value ? "bg-accent text-white" : "text-fg"}`}
             >
               {s.label}
@@ -157,7 +162,7 @@ export function MealForm({ initial, freeAllowedFor, lockedSlot = false, freeMeal
         <p id="free-help" className="pb-1 text-sm text-muted">
           {switchDisabled
             ? "Hai già usato il pasto libero in questa settimana: ce n'è uno solo."
-            : `Vale per tutto il ${slotName}: in totale conta al massimo ${formatNumber(freeMealCap)} kcal nel budget del giorno. Uno a settimana.`}
+            : `Vale per l'intero pasto (${slotName}): in totale conta al massimo ${formatNumber(freeMealCap)} kcal nel budget del giorno. Uno a settimana.`}
         </p>
         {errors.isFree && <p className="pb-1 text-sm font-medium text-bad">{errors.isFree}</p>}
       </div>
