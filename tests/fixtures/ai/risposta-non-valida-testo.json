@@ -1,0 +1,13 @@
+{
+  "descrizione": "Il modello risponde con testo libero invece che con lo schema.",
+  "richiesta": {
+    "text": "un caffè",
+    "localDate": "2026-01-08",
+    "localTime": "13:10"
+  },
+  "rispostaModello": "Mi dispiace, non posso aiutarti.",
+  "atteso": {
+    "stato": 502,
+    "codice": "non-valida"
+  }
+}

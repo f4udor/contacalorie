@@ -240,7 +240,7 @@ Vincoli di questa fase:
 - Le tabelle della sfida restano nel database (nessuna migrazione che le elimina).
 - I test e gli screenshot esistenti vengono aggiornati di conseguenza; il diario elenca cosa è stato tolto.
 
-### T4.1 Provider AI e stima lato server · da fare
+### T4.1 Provider AI e stima lato server · fatto
 - In `src/modules/ai`: interfaccia `AiProvider` con un'unica operazione "stima pasti da testo", implementazione Vertex AI (Gemini) e implementazione finta.
 - Una route del server riceve testo, data e ora locali ed eventuale stima precedente con correzione; richiede un utente con accesso; chiama il provider; restituisce la proposta.
 - Al modello va solo ciò che §4 consente. Il prompt è in un file a parte, in italiano, e chiede risposta in JSON con uno schema fisso.

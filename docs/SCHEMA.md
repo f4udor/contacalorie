@@ -14,6 +14,7 @@ Migrazioni in `supabase/migrations`. Ogni tabella ha `user_id` (tranne i piani d
 | `challenge_log` | (Non più usata dall'app dalla fase 4.) Registro giornaliero della sfida: per esercizio e data, fatto o saltato ed eventuali ripetizioni modificate. |
 | `ingest_tokens` | Token personali degli ingressi per i Comandi rapidi (solo l'impronta, mai il valore in chiaro). |
 | `ingest_log` | Registro delle chiamate agli ingressi, con esito e ora. |
+| `ai_usage` | Stime AI contate per utente e giorno (funzione `use_ai_estimate`), per il limite giornaliero. |
 
 Il piano di 30 giorni (`00000000-0000-4000-8000-000000000001`) è inserito come dato iniziale da `20260101000004_piano_iniziale.sql`.
 

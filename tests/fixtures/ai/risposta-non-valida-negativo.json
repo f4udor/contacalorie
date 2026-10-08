@@ -1,0 +1,33 @@
+{
+  "descrizione": "Valore negativo: la risposta è scartata.",
+  "richiesta": {
+    "text": "una banana",
+    "localDate": "2026-01-08",
+    "localTime": "13:10"
+  },
+  "rispostaModello": {
+    "meals": [
+      {
+        "slot": "spuntino",
+        "dishes": [
+          {
+            "name": "Banana",
+            "quantity": "1",
+            "quantityAssumed": true,
+            "kcal": -90,
+            "protein": 1,
+            "carbs": 23,
+            "fat": 0,
+            "fiber": 3,
+            "salt": 0,
+            "note": ""
+          }
+        ]
+      }
+    ]
+  },
+  "atteso": {
+    "stato": 502,
+    "codice": "non-valida"
+  }
+}

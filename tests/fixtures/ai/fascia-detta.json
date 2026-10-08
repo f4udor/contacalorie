@@ -1,0 +1,40 @@
+{
+  "descrizione": "La fascia è detta (cena) anche se sono le 10:05.",
+  "richiesta": {
+    "text": "ieri a cena ho mangiato una pizza margherita",
+    "localDate": "2026-01-08",
+    "localTime": "10:05"
+  },
+  "rispostaModello": {
+    "meals": [
+      {
+        "slot": "cena",
+        "dishes": [
+          {
+            "name": "Pizza margherita",
+            "quantity": "1",
+            "quantityAssumed": true,
+            "kcal": 850,
+            "protein": 35,
+            "carbs": 110,
+            "fat": 28,
+            "fiber": 6,
+            "salt": 3.5,
+            "note": ""
+          }
+        ]
+      }
+    ]
+  },
+  "atteso": {
+    "stato": 200,
+    "pasti": [
+      {
+        "fascia": "cena",
+        "piatti": [
+          "Pizza margherita"
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "descrizione": "Limite giornaliero già raggiunto: nessuna chiamata al modello.",
+  "richiesta": {
+    "text": "una pera",
+    "localDate": "2026-01-08",
+    "localTime": "13:10"
+  },
+  "utente": {
+    "limiteRaggiunto": true
+  },
+  "rispostaModello": {
+    "meals": [
+      {
+        "slot": "spuntino",
+        "dishes": [
+          {
+            "name": "Pera",
+            "quantity": "1",
+            "quantityAssumed": true,
+            "kcal": 80,
+            "protein": 0.5,
+            "carbs": 21,
+            "fat": 0.2,
+            "fiber": 4,
+            "salt": 0,
+            "note": ""
+          }
+        ]
+      }
+    ]
+  },
+  "atteso": {
+    "stato": 429,
+    "codice": "limite",
+    "modelloChiamato": false
+  }
+}
