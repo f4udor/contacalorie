@@ -9,9 +9,11 @@
     "lint": "eslint .",
     "test": "vitest run",
     "screens": "node tools/screens.mjs",
-    "fixtures": "node tests/fixtures/build-fixtures.mjs"
+    "fixtures": "node tests/fixtures/build-fixtures.mjs",
+    "setup-sql": "node tools/build-setup-sql.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.3",
     "next": "^16.4.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"

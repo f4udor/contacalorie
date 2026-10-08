@@ -4,8 +4,8 @@ Migrazioni in `supabase/migrations`. Ogni tabella ha `user_id` (tranne i piani d
 
 | Tabella | Descrizione |
 |---|---|
-| `settings` | Una riga per utente: profilo, obiettivi, regole di calcolo (null = default dell'app), piano e data di inizio della sfida. |
-| `meals` | Pasti del giorno: fascia, kcal, macro, fibre, sale, pasto libero e testo originale dettato. |
+| `settings` | Una riga per utente: profilo, obiettivi, regole di calcolo comprese le proteine per kg di peso (e di peso obiettivo), null = default dell'app; piano e data di inizio della sfida. |
+| `meals` | Piatti: una riga per piatto (data, fascia, nome, quantità, kcal, macro, fibre, sale, testo originale dettato). I piatti di una data e fascia formano un pasto; il segno `is_free` sta su tutti i piatti del pasto. |
 | `favorites` | Pasti salvati con i loro numeri, da riusare. |
 | `daily_activity` | Una riga per utente e data: passi, km e kcal bici, con fonte (`salute` o `manuale`) distinta per passi e bici. |
 | `weigh_ins` | Pesate, una per utente e data. |
@@ -16,3 +16,5 @@ Migrazioni in `supabase/migrations`. Ogni tabella ha `user_id` (tranne i piani d
 | `ingest_log` | Registro delle chiamate agli ingressi, con esito e ora. |
 
 Il piano di 30 giorni (`00000000-0000-4000-8000-000000000001`) è inserito come dato iniziale da `20260101000004_piano_iniziale.sql`.
+
+`supabase/setup.sql` è l'unione di tutte le migrazioni, in ordine, da incollare nell'editor SQL di Supabase (si rigenera con `npm run setup-sql`).

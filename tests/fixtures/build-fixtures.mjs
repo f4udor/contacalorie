@@ -276,6 +276,12 @@ add("pannello-pasto-libero-bloccato", "Un altro pasto della settimana è già li
   meal("2026-01-07", "pranzo", "Riso", 400, 8, 80, 3, 2, 0.2),
 ]), { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, { scrollTo: "Pasto libero" }] });
 
+// --- Errori di salvataggio (T3.3)
+add("salvataggio-fallito", "Il browser non riesce più a scrivere (memoria piena): il peso resta in memoria (proteine 125 g) e l'avviso in cima dice che non è stato salvato su questo dispositivo. Con Supabase lo stesso avviso compare per un salvataggio non riuscito e il pannello resta aperto per riprovare.", "2026-01-08", null, {
+  fisso: true, scritturaFallita: true,
+  passi: [apri, { click: "Pesata", exact: true }, { fill: ["Peso (kg)", "90"] }, { click: "Salva pesata" }, { wait: 500 }],
+});
+
 // --- Impostazioni (T2.7)
 const imp = (id, descrizione, oggi, dati, extra = {}) => scenarios.push({ id, descrizione, oggi, percorso: "/impostazioni", dati, scorre: true, ...extra });
 const salva = { click: "Salva", exact: true };

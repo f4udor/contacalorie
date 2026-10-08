@@ -27,6 +27,8 @@ export function ActivityForm({ existing, kcalPerKm, onSubmit }: { existing: Acti
     setSaving(true);
     try {
       await onSubmit(r.activity);
+    } catch {
+      // Salvataggio non riuscito: l'avviso in cima lo spiega e il modulo resta com'è, per riprovare.
     } finally {
       setSaving(false);
     }
@@ -69,6 +71,8 @@ export function WeightForm({ existingKg, onSubmit }: { existingKg: number | null
     setSaving(true);
     try {
       await onSubmit(r.weightKg);
+    } catch {
+      // Salvataggio non riuscito: l'avviso in cima lo spiega e il modulo resta com'è, per riprovare.
     } finally {
       setSaving(false);
     }

@@ -80,9 +80,13 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
   };
 
   const copyFromYesterday = async () => {
-    if ((await copyMealsFromYesterday(store, date)) === 0) {
-      setNote("Ieri non ci sono piatti da copiare.");
-      return;
+    try {
+      if ((await copyMealsFromYesterday(store, date)) === 0) {
+        setNote("Ieri non ci sono piatti da copiare.");
+        return;
+      }
+    } catch {
+      return; // non copiato (o copiato solo in parte): l'avviso in cima lo spiega
     }
     onChanged();
     onClose();

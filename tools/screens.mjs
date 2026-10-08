@@ -103,6 +103,14 @@ try {
             [STORAGE_KEY, typeof sc.dati === "string" ? sc.dati : JSON.stringify(sc.dati)],
           );
         }
+        if (sc.scritturaFallita) {
+          // Simula il browser che non riesce più a scrivere (memoria piena): dopo aver caricato i dati, ogni salvataggio fallisce.
+          await context.addInitScript(() => {
+            Storage.prototype.setItem = function () {
+              throw new DOMException("memoria piena", "QuotaExceededError");
+            };
+          });
+        }
         const page = await context.newPage();
         await page.goto(BASE + (sc.percorso ?? "/"), { waitUntil: "networkidle" });
         for (const step of sc.passi ?? []) {

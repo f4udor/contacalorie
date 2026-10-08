@@ -58,6 +58,8 @@ export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = 
     setSaving(true);
     try {
       await onSubmit(r.meal);
+    } catch {
+      // Salvataggio non riuscito: l'avviso in cima lo spiega e il modulo resta com'è, per riprovare.
     } finally {
       setSaving(false);
     }
@@ -69,7 +71,7 @@ export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = 
         <p className="text-[17px]">
           Eliminare <strong>{deleteName}</strong>? Non si può annullare.
         </p>
-        <button type="button" disabled={saving} onClick={async () => { setSaving(true); try { await onDelete(); } finally { setSaving(false); } }} className="min-h-12 rounded-xl bg-bad-fill px-4 text-[17px] font-semibold text-white disabled:opacity-50">
+        <button type="button" disabled={saving} onClick={async () => { setSaving(true); try { await onDelete(); } catch { /* l'avviso in cima lo spiega; si può riprovare */ } finally { setSaving(false); } }} className="min-h-12 rounded-xl bg-bad-fill px-4 text-[17px] font-semibold text-white disabled:opacity-50">
           Elimina
         </button>
         <button type="button" onClick={() => setConfirming(false)} className="min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent">

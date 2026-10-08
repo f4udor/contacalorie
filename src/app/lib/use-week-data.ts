@@ -15,9 +15,13 @@ export function useWeekData(date: DateKey | null): { data: WeekData | null; relo
   useEffect(() => {
     if (!store || !date) return;
     let cancelled = false;
-    loadWeekData(store, date).then((data) => {
-      if (!cancelled) setLoaded({ date, data });
-    });
+    loadWeekData(store, date)
+      .then((data) => {
+        if (!cancelled) setLoaded({ date, data });
+      })
+      .catch(() => {
+        // Lettura non riuscita: l'avviso in cima lo spiega.
+      });
     return () => {
       cancelled = true;
     };

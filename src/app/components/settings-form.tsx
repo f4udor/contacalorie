@@ -93,13 +93,19 @@ export function SettingsForm({ store, settings, weighIns, today, onChanged }: Pr
       await store.saveSettings(r.patch);
       onChanged(false);
       setStatus({ kind: "ok", text: "Salvato." });
+    } catch {
+      setStatus({ kind: "errore", text: "Non salvato: riprova tra poco." });
     } finally {
       setSaving(false);
     }
   };
 
   const reset = async () => {
-    await store.saveSettings(defaultsPatch());
+    try {
+      await store.saveSettings(defaultsPatch());
+    } catch {
+      return; // l'avviso in cima lo spiega; il pannello resta aperto per riprovare
+    }
     setConfirmReset(false);
     onChanged(true);
   };
