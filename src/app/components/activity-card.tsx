@@ -20,7 +20,7 @@ export function ActivityCard({ activity, settings, onEdit }: { activity: Activit
       <h2 className="px-1 pb-1.5 text-sm font-semibold uppercase tracking-wide text-muted">Attività</h2>
       <button type="button" onClick={onEdit} className="block min-h-14 w-full rounded-2xl bg-card px-4 py-3 text-left">
         {!hasSteps && !hasBike ? (
-          <span className="block py-1 text-[15px] text-muted">Nessuna attività. Tocca per inserire passi o bici.</span>
+          <span className="block py-1 text-[15px] text-muted">Nessuna attività</span>
         ) : (
           <span className="flex flex-col divide-y divide-line">
             {hasSteps && (

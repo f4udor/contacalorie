@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_SETTINGS } from "@/engine";
 import type { Activity, Day, Meal } from "@/engine";
-import { buildTodayView, currentWeight } from "./today-view";
+import { buildTodayView, currentWeight, hasCompositionDetail } from "./today-view";
 
 const s = DEFAULT_SETTINGS;
 const noAct: Activity = { steps: null, bikeKm: null, bikeKcalHealth: null };
@@ -151,5 +151,18 @@ describe("proteine sul peso obiettivo", () => {
   it("senza peso obiettivo: 1,4 × peso", () => {
     const v = buildTodayView({ date: "2026-01-05", days: week(), settings: s, weightKg: 100, targetWeightKg: null });
     expect(v.nutrients.find((n) => n.key === "protein")?.target).toBe(140);
+  });
+});
+
+describe("hasCompositionDetail (riga di composizione sotto l'anello)", () => {
+  const view = (days: Day[], date: string) => buildTodayView({ date, days, settings: s, weightKg: 100 });
+  it("solo la base: la riga non compare", () => {
+    const v = view(week(day("2026-01-05", [meal("a", 1500)])), "2026-01-05");
+    expect(hasCompositionDetail(v.composition)).toBe(false);
+  });
+  it("con bici, con passi o con recupero: compare", () => {
+    expect(hasCompositionDetail(view(week(day("2026-01-05", [], { bikeKm: 30 })), "2026-01-05").composition)).toBe(true);
+    expect(hasCompositionDetail(view(week(day("2026-01-05", [], { steps: 9000 })), "2026-01-05").composition)).toBe(true);
+    expect(hasCompositionDetail(view(week(day("2026-01-05", [meal("a", 3000)]), day("2026-01-06")), "2026-01-06").composition)).toBe(true);
   });
 });

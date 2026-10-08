@@ -307,7 +307,7 @@ Vincoli di questa fase:
 - Il campo di ricerca non ha più l'etichetta "Cerca" sopra (resta come testo nel campo). Sparisce la nota "Senza quantità".
 - Se la fascia è già fissata (dal pasto), la scelta della fascia non compare.
 
-### T4b.4 Oggi: testi ripuliti · da fare
+### T4b.4 Oggi: testi ripuliti · fatto
 - Sotto l'anello, la riga di composizione compare solo se oltre alla base ci sono bici, passi o recupero.
 - "kcal sopra di" diventa "kcal oltre".
 - Attività vuota: solo "Nessuna attività".
