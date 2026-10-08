@@ -141,7 +141,7 @@ Se **un'altra app** (per esempio Strava o l'app del ciclocomputer) scrive in Sal
 
 - **Niente arriva mai**: rifai la prova a mano (passo 4) e leggi la risposta. Se la risposta è corretta ma le automazioni non scrivono, controlla che siano attive e che il telefono sia sbloccato negli orari.
 - **I passi sono diversi da Salute**: Salute può mostrare la somma di più sorgenti (iPhone e Watch), l'app prende il valore del giorno che il comando le manda: controlla il tipo **Passi** e **Raggruppa per Giorno**.
-- **Un valore è sbagliato**: in **Settimana** toccando **Passi** o **Bici** si elimina un valore inserito a mano; un valore «da Salute» si corregge cambiandolo in Salute.
+- **Un valore è sbagliato**: in **Oggi** tocca la scheda **Attività** e correggilo. Da quel momento il valore risulta «manuale» e gli invii da Salute non lo sovrascrivono più.
 
 ## Come tornare indietro
 

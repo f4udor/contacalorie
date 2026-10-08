@@ -50,6 +50,14 @@ describe("docs/COLLEGA-SALUTE.md", () => {
     }
   });
 
+  it("la scheda Attività di Oggi citata esiste e mostra la fonte; la guida non manda a funzioni non ancora presenti", () => {
+    const card = read("src/app/components/activity-card.tsx");
+    expect(card).toContain("Attività");
+    expect(card).toContain("da Salute");
+    expect(guida).toContain("scheda **Attività**");
+    expect(guida).not.toMatch(/in \*\*Settimana\*\* toccando/);
+  });
+
   it("nessuna nuova variabile su Vercel e nessun codice scritto nella guida", () => {
     expect(guida).toMatch(/nessuna nuova variabile/i);
     expect(guida).not.toMatch(/\bph[0-9a-f]{40,}/);
