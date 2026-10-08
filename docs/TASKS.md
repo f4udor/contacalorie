@@ -202,7 +202,7 @@ Vincoli di questa fase:
 - Errori di rete: messaggio chiaro, nessun dato perso in silenzio; un salvataggio fallito resta visibile e si può riprovare.
 - Test con un client Supabase finto. Ciò che non si può provare senza Supabase vero va in "Non verificato".
 
-### T3.4 Accesso con email e codice · da fare
+### T3.4 Accesso con email e codice · fatto
 Solo quando Supabase è configurato.
 - Schermata "Accedi": email, poi codice di 6 cifre ricevuto per email. Niente link magico (vedi §7 del brief).
 - La sessione resta attiva: si accede una volta per dispositivo.
