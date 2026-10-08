@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m77",
+        "id": "m70",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Pranzo",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m78",
+        "id": "m71",
         "date": "2026-01-06",
         "slot": "pranzo",
         "name": "Pranzo",
@@ -38,7 +38,7 @@
         "originalText": null
       },
       {
-        "id": "m79",
+        "id": "m72",
         "date": "2026-01-07",
         "slot": "pranzo",
         "name": "Pranzo",

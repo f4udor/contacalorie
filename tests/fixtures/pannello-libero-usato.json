@@ -38,7 +38,10 @@
       }
     },
     {
-      "click": "Piatto a mano"
+      "clickRole": {
+        "role": "radio",
+        "name": "Manuale"
+      }
     },
     {
       "scrollTo": "Pasto libero"

@@ -287,7 +287,7 @@ Vincoli di questa fase:
 - Per ogni task si aggiornano gli scenari degli screenshot (390 px, tema chiaro e scuro): niente testo tagliato, sovrapposizioni o scorrimento orizzontale.
 - Nessun testo d'esempio nei campi ("es. …", "Facoltativo").
 
-### T4b.1 Pannello Aggiungi: AI | Manuale · da fare
+### T4b.1 Pannello Aggiungi: AI | Manuale · fatto
 - Accanto al titolo del pannello un selettore "AI | Manuale". Si apre sempre su AI.
 - AI: campo "Cosa hai mangiato?" vuoto, senza testo d'esempio e senza la frase sul microfono; pulsante "Stima". Se l'AI non è configurata, l'avviso invita a usare "Manuale".
 - Manuale: i campi del piatto a mano, con "Stima con AI" quando i numeri sono vuoti (come oggi).

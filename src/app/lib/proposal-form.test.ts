@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { draftsToProposal, hasDishes, proposalToDrafts, proposalToRecords, sumProposal } from "./proposal-form";
+import { draftsToProposal, forceSlot, hasDishes, proposalToDrafts, proposalToRecords, sumProposal } from "./proposal-form";
 
 const dish = (name: string, quantity: string | null, assumed: boolean, kcal: number) => ({ name, quantity, quantityAssumed: assumed, kcal, protein: 22.5, carbs: 18, fat: 14, fiber: 1, salt: 1.4, note: "nota" });
 const proposal = { meals: [{ slot: "cena" as const, dishes: [dish("Anelli di totano", "150 g", true, 280), dish("Insalata", null, false, 60)] }] };
@@ -61,5 +61,26 @@ describe("sumProposal", () => {
     const s = sumProposal(p);
     expect(s).toMatchObject({ kcal: 161, protein: 37.6, carbs: 54, fat: 42, fiber: 3, salt: 4.2 });
     expect(s.notes).toEqual(["uno", "tre"]);
+  });
+});
+
+describe("forceSlot", () => {
+  const due = { meals: [{ slot: "colazione" as const, dishes: [dish("Cappuccino", "1 tazza", true, 90)] }, { slot: "pranzo" as const, dishes: [dish("Panino", "1", true, 420), dish("Mela", "1", true, 95)] }] };
+  it("tutti i piatti, di qualunque fascia, finiscono in un solo pasto nella fascia fissata, nell'ordine proposto", () => {
+    const r = forceSlot(due, "cena");
+    expect(r.meals).toHaveLength(1);
+    expect(r.meals[0].slot).toBe("cena");
+    expect(r.meals[0].dishes.map((d) => d.name)).toEqual(["Cappuccino", "Panino", "Mela"]);
+  });
+  it("con una sola fascia diversa da quella fissata, la cambia", () => {
+    expect(forceSlot({ meals: [{ slot: "cena", dishes: [dish("Totano", "150 g", true, 280)] }] }, "pranzo").meals[0].slot).toBe("pranzo");
+  });
+  it("e poi i record da salvare stanno tutti nella fascia fissata", () => {
+    let n = 0;
+    const records = proposalToRecords(forceSlot(due, "spuntino"), "2026-01-08", "testo", () => `id${++n}`);
+    expect(records.map((r) => r.slot)).toEqual(["spuntino", "spuntino", "spuntino"]);
+  });
+  it("proposta senza piatti: non cambia", () => {
+    expect(forceSlot({ meals: [] }, "cena")).toEqual({ meals: [] });
   });
 });

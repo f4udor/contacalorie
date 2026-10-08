@@ -54,7 +54,10 @@
       }
     },
     {
-      "click": "Piatto a mano"
+      "clickRole": {
+        "role": "radio",
+        "name": "Manuale"
+      }
     },
     {
       "clickRole": {

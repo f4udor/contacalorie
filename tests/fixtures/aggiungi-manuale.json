@@ -1,6 +1,6 @@
 {
-  "id": "copia-ieri-vuoto",
-  "descrizione": "Copia da ieri quando ieri non ci sono pasti: lo dice.",
+  "id": "aggiungi-manuale",
+  "descrizione": "Pannello Aggiungi su Manuale: modulo del piatto con 'Stima con AI' (AI attiva) e sotto Preferiti, Attività a mano, Pesata.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -14,6 +14,9 @@
   },
   "scorre": true,
   "fisso": true,
+  "ai": {
+    "risposte": []
+  },
   "passi": [
     {
       "clickRole": {
@@ -23,7 +26,10 @@
       }
     },
     {
-      "click": "Copia da ieri"
+      "clickRole": {
+        "role": "radio",
+        "name": "Manuale"
+      }
     }
   ]
 }

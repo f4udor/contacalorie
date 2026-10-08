@@ -68,14 +68,14 @@ export function LoginScreen({ service, onSession }: { service: AuthService; onSe
 
       {step === "email" ? (
         <form onSubmit={sendCode} noValidate className="flex flex-col gap-4 rounded-2xl bg-card p-4">
-          <TextField id="login-email" label="Email" value={email} onChange={setEmail} inputMode="email" error={error} placeholder="nome@esempio.it" />
+          <TextField id="login-email" label="Email" value={email} onChange={setEmail} inputMode="email" error={error} />
           <button type="submit" disabled={busy} className={primary}>
             Invia il codice
           </button>
         </form>
       ) : (
         <form onSubmit={verify} noValidate className="flex flex-col gap-4 rounded-2xl bg-card p-4">
-          <TextField id="login-code" label="Codice" value={code} onChange={setCode} inputMode="numeric" error={error} hint={info} placeholder="123456" />
+          <TextField id="login-code" label="Codice" value={code} onChange={setCode} inputMode="numeric" error={error} hint={info} />
           <button type="submit" disabled={busy} className={primary}>
             Accedi
           </button>

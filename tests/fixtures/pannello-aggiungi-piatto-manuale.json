@@ -1,6 +1,6 @@
 {
-  "id": "pannello-aggiungi-piatto",
-  "descrizione": "'Aggiungi piatto' dentro il pranzo: si apre su AI con 'Pranzo' come titolo; sotto solo Preferiti.",
+  "id": "pannello-aggiungi-piatto-manuale",
+  "descrizione": "'Aggiungi piatto' dentro il pranzo, su Manuale: la fascia è già scelta e non si chiede; sotto solo Preferiti.",
   "oggi": "2026-01-05",
   "percorso": "/",
   "dati": {
@@ -48,6 +48,12 @@
   "passi": [
     {
       "click": "+ Aggiungi piatto"
+    },
+    {
+      "clickRole": {
+        "role": "radio",
+        "name": "Manuale"
+      }
     }
   ]
 }

@@ -8,7 +8,7 @@
     "settings": {},
     "meals": [
       {
-        "id": "m99",
+        "id": "m92",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Pizza",
@@ -22,7 +22,7 @@
         "originalText": null
       },
       {
-        "id": "m100",
+        "id": "m93",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Insalata",
