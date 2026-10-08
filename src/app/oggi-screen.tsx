@@ -13,7 +13,7 @@ import { DayHeader } from "./components/day-header";
 import { KcalRing } from "./components/kcal-ring";
 import { NutrientCard } from "./components/nutrient-card";
 import { formatNumber, formatSigned } from "./lib/format";
-import { currentWeight, buildTodayView } from "./lib/today-view";
+import { currentWeight, buildTodayView, hasCompositionDetail } from "./lib/today-view";
 import { useToday } from "./lib/use-today";
 import { useWeekData } from "./lib/use-week-data";
 
@@ -55,11 +55,13 @@ export function OggiScreen() {
         <div className="flex flex-col gap-3">
           <Card className="flex flex-col items-center pb-5 pt-6">
             <KcalRing remaining={view.remaining} progress={view.ringProgress} color={view.ringColor} eaten={view.eaten} target={view.target} empty={!view.hasMeals} />
+            {hasCompositionDetail(view.composition) && (
             <p className="mt-4 text-center text-sm text-muted" aria-label="Composizione dell'obiettivo">
               {view.composition
                 .map((c) => `${c.label} ${c.signed ? formatSigned(c.amount) : formatNumber(c.amount)}`)
                 .join(" · ")}
             </p>
+            )}
           </Card>
           <div className="grid grid-cols-2 gap-3">
             {view.nutrients.map((n, i) => (

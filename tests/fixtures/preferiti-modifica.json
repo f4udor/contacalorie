@@ -1,0 +1,138 @@
+{
+  "id": "preferiti-modifica",
+  "descrizione": "Modalità Modifica: niente +, ogni riga ha Elimina; il pulsante diventa Fine e la scelta della fascia sparisce.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": [],
+    "favoriteDishes": [
+      {
+        "id": "f1",
+        "name": "Spaghetti al pesto",
+        "quantity": "80 g di pasta",
+        "kcal": 480,
+        "protein": 15,
+        "carbs": 70,
+        "fat": 16,
+        "fiber": 4,
+        "salt": 1.3
+      },
+      {
+        "id": "f2",
+        "name": "Mela",
+        "quantity": "1 media",
+        "kcal": 95,
+        "protein": 0.5,
+        "carbs": 25,
+        "fat": 0.3,
+        "fiber": 4,
+        "salt": 0
+      },
+      {
+        "id": "f3",
+        "name": "Caffè con un cucchiaino di zucchero",
+        "quantity": null,
+        "kcal": 20,
+        "protein": 0.2,
+        "carbs": 5,
+        "fat": 0,
+        "fiber": 0,
+        "salt": 0
+      }
+    ],
+    "favoriteMeals": [
+      {
+        "id": "p1",
+        "name": "Cena leggera",
+        "slot": "cena",
+        "dishes": [
+          {
+            "name": "Anelli di totano",
+            "quantity": "150 g",
+            "kcal": 280,
+            "protein": 22,
+            "carbs": 18,
+            "fat": 14,
+            "fiber": 1,
+            "salt": 1.4
+          },
+          {
+            "name": "Insalata di pomodorini",
+            "quantity": "1 ciotola",
+            "kcal": 60,
+            "protein": 2,
+            "carbs": 8,
+            "fat": 2,
+            "fiber": 3,
+            "salt": 0.1
+          }
+        ]
+      },
+      {
+        "id": "p2",
+        "name": "Colazione solita con cappuccino e cornetto",
+        "slot": "colazione",
+        "dishes": [
+          {
+            "name": "Cappuccino",
+            "quantity": "1 tazza",
+            "kcal": 90,
+            "protein": 5,
+            "carbs": 8,
+            "fat": 4,
+            "fiber": 0,
+            "salt": 0.1
+          },
+          {
+            "name": "Cornetto",
+            "quantity": "1",
+            "kcal": 300,
+            "protein": 6,
+            "carbs": 38,
+            "fat": 14,
+            "fiber": 1,
+            "salt": 0.5
+          },
+          {
+            "name": "Spremuta",
+            "quantity": "200 ml",
+            "kcal": 90,
+            "protein": 1,
+            "carbs": 20,
+            "fat": 0,
+            "fiber": 0,
+            "salt": 0
+          }
+        ]
+      }
+    ]
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "click": "Preferiti",
+      "exact": true
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Modifica",
+        "exact": true
+      }
+    }
+  ]
+}

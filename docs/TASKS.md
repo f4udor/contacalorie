@@ -287,7 +287,7 @@ Vincoli di questa fase:
 - Per ogni task si aggiornano gli scenari degli screenshot (390 px, tema chiaro e scuro): niente testo tagliato, sovrapposizioni o scorrimento orizzontale.
 - Nessun testo d'esempio nei campi ("es. …", "Facoltativo").
 
-### T4b.1 Pannello Aggiungi: AI | Manuale · da fare
+### T4b.1 Pannello Aggiungi: AI | Manuale · fatto
 - Accanto al titolo del pannello un selettore "AI | Manuale". Si apre sempre su AI.
 - AI: campo "Cosa hai mangiato?" vuoto, senza testo d'esempio e senza la frase sul microfono; pulsante "Stima". Se l'AI non è configurata, l'avviso invita a usare "Manuale".
 - Manuale: i campi del piatto a mano, con "Stima con AI" quando i numeri sono vuoti (come oggi).
@@ -296,27 +296,27 @@ Vincoli di questa fase:
 - "+ Aggiungi piatto" sotto un pasto apre lo stesso pannello, su AI, con il nome della fascia come titolo e la fascia fissata: tutti i piatti proposti dall'AI vanno in quella fascia, anche se il modello ne indica un'altra. Sotto compare solo "Preferiti".
 - Test della logica che porta i piatti proposti nella fascia fissata.
 
-### T4b.2 Proposta della stima a righe compatte · da fare
+### T4b.2 Proposta della stima a righe compatte · fatto
 - Ogni piatto della proposta è una riga: nome, quantità (con "ipotizzata" se lo è), kcal.
 - Toccando la riga si aprono nome, quantità, nota del modello, kcal e nutrienti modificabili, e "Togli". Un piatto con un errore si apre da solo e la riga lo segnala.
 - Sparisce la frase iniziale "Controlla la stima…". Restano "Correggi", "Rifai la stima", "Conferma", "Annulla".
 
-### T4b.3 Preferiti: + e Modifica · da fare
+### T4b.3 Preferiti: + e Modifica · fatto
 - Ogni riga mostra a destra un + ben visibile: toccando la riga il preferito si aggiunge.
 - "Elimina" non compare più nella lista. Un pulsante "Modifica" accanto al campo di ricerca mostra "Elimina" (con conferma) su ogni riga e nasconde i +; "Fine" torna alla lista normale.
 - Il campo di ricerca non ha più l'etichetta "Cerca" sopra (resta come testo nel campo). Sparisce la nota "Senza quantità".
 - Se la fascia è già fissata (dal pasto), la scelta della fascia non compare.
 
-### T4b.4 Oggi: testi ripuliti · da fare
+### T4b.4 Oggi: testi ripuliti · fatto
 - Sotto l'anello, la riga di composizione compare solo se oltre alla base ci sono bici, passi o recupero.
 - "kcal sopra di" diventa "kcal oltre".
 - Attività vuota: solo "Nessuna attività".
 
-### T4b.5 Peso nella Settimana · da fare
+### T4b.5 Peso nella Settimana · fatto
 - Nuova scheda "Peso": ultima pesata della settimana e differenza in kg (una cifra decimale) con l'ultima pesata precedente al lunedì; se non ce n'è, con il peso del profilo, che è il peso di partenza e non viene mai sovrascritto dalle pesate.
 - Colore della differenza: verde se ci si avvicina al peso obiettivo, rosso se ci si allontana (vale anche quando l'obiettivo è salire), grigio senza peso obiettivo o senza variazione.
 - La scheda non compare se nella settimana non ci sono pesate.
 - La logica è una funzione pura con test: nessuna pesata nella settimana; confronto con la pesata precedente; confronto con il peso di partenza; obiettivo sotto e sopra; nessun obiettivo; variazione zero; pesate non ordinate.
 
-### T4b.6 Report di fase · da fare
+### T4b.6 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-4b.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici, elenca cosa provare sul telefono dopo la pubblicazione.

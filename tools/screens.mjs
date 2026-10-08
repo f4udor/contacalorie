@@ -143,7 +143,7 @@ try {
         for (const step of sc.passi ?? []) {
           if (step.click) await page.getByText(step.click, { exact: step.exact ?? true }).first().click();
           else if (step.clickRole) await page.getByRole(step.clickRole.role, { name: step.clickRole.name, exact: step.clickRole.exact }).first().click();
-          else if (step.fill) await page.getByLabel(step.fill[0]).fill(step.fill[1]);
+          else if (step.fill) await page.getByLabel(step.fill[0]).filter({ visible: true }).fill(step.fill[1]);
           else if (step.press) await page.keyboard.press(step.press);
           else if (step.scrollTo) await page.getByText(step.scrollTo).first().scrollIntoViewIfNeeded();
           await page.waitForTimeout(step.wait ?? 350);

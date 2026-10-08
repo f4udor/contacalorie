@@ -8,9 +8,9 @@ import type { SettingsFormErrors } from "../lib/settings-form";
 import { TextField } from "./field";
 
 const STEPS = [
-  { key: "weightKg", title: "Il tuo peso", text: "Serve per calcolare le proteine. Puoi cambiarlo quando vuoi in Impostazioni.", label: "Peso (kg)", placeholder: "es. 92,5" },
-  { key: "targetWeightKg", title: "Il tuo peso obiettivo", text: "Se lo indichi, le proteine si calcolano su questo peso. Puoi lasciarlo vuoto.", label: "Peso obiettivo (kg)", placeholder: "es. 82" },
-  { key: "baseKcal", title: "Le kcal di ogni giorno", text: "Le kcal di base della tua giornata. Sono già quelle predefinite: cambiale solo se sai quali ti servono.", label: "Kcal base", placeholder: "" },
+  { key: "weightKg", title: "Il tuo peso", text: "Serve per calcolare le proteine. Puoi cambiarlo quando vuoi in Impostazioni.", label: "Peso (kg)" },
+  { key: "targetWeightKg", title: "Il tuo peso obiettivo", text: "Se lo indichi, le proteine si calcolano su questo peso. Puoi lasciarlo vuoto.", label: "Peso obiettivo (kg)" },
+  { key: "baseKcal", title: "Le kcal di ogni giorno", text: "Le kcal di base della tua giornata. Sono già quelle predefinite: cambiale solo se sai quali ti servono.", label: "Kcal base" },
 ] as const;
 
 /** Primo avvio guidato: tre schermate brevi per chi non ha ancora nessuna impostazione. Compare sopra l'app e si può saltare. */
@@ -97,7 +97,6 @@ export function Onboarding() {
             value={values[current.key]}
             onChange={(v) => setValues((o) => ({ ...o, [current.key]: v }))}
             error={errors[current.key]}
-            placeholder={current.placeholder}
           />
         </div>
         <div className="mt-auto flex flex-col gap-2 pt-6">

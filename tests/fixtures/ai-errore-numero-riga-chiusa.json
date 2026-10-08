@@ -1,0 +1,107 @@
+{
+  "id": "ai-errore-numero-riga-chiusa",
+  "descrizione": "Kcal svuotate e riga richiusa: confermando la riga si riapre da sola, con l'errore accanto al campo; la riga dice 'da correggere'.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": [
+      {
+        "stato": 200,
+        "corpo": {
+          "proposal": {
+            "meals": [
+              {
+                "slot": "pranzo",
+                "dishes": [
+                  {
+                    "name": "Pasta al pomodoro",
+                    "quantity": "80 g",
+                    "quantityAssumed": true,
+                    "kcal": 420,
+                    "protein": 14,
+                    "carbs": 80,
+                    "fat": 6,
+                    "fiber": 5,
+                    "salt": 1.2,
+                    "note": ""
+                  },
+                  {
+                    "name": "Insalata",
+                    "quantity": "1 ciotola",
+                    "quantityAssumed": true,
+                    "kcal": 60,
+                    "protein": 2,
+                    "carbs": 8,
+                    "fat": 2,
+                    "fiber": 3,
+                    "salt": 0.1,
+                    "note": ""
+                  }
+                ]
+              }
+            ]
+          },
+          "originalText": "testo"
+        }
+      }
+    ]
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Cosa hai mangiato?",
+        "pasta al pomodoro e insalata"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Stima",
+        "exact": true
+      }
+    },
+    {
+      "wait": 600
+    },
+    {
+      "click": "Pasta al pomodoro"
+    },
+    {
+      "fill": [
+        "Kcal",
+        ""
+      ]
+    },
+    {
+      "click": "Pasta al pomodoro"
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Conferma",
+        "exact": true
+      }
+    },
+    {
+      "wait": 300
+    }
+  ]
+}

@@ -114,12 +114,12 @@ export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = 
     <form onSubmit={submit} noValidate className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="meal-name" className="text-sm font-semibold text-muted">Nome del piatto</label>
-        <input id="meal-name" type="text" autoComplete="off" value={values.name} onChange={(e) => set("name", e.target.value)} placeholder="Facoltativo" className={input} />
+        <input id="meal-name" type="text" autoComplete="off" value={values.name} onChange={(e) => set("name", e.target.value)} className={input} />
       </div>
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="meal-quantity" className="text-sm font-semibold text-muted">Quantità (facoltativa)</label>
-        <input id="meal-quantity" type="text" autoComplete="off" value={values.quantity} onChange={(e) => set("quantity", e.target.value)} placeholder="es. 100 g" className={input} />
+        <input id="meal-quantity" type="text" autoComplete="off" value={values.quantity} onChange={(e) => set("quantity", e.target.value)} className={input} />
       </div>
 
       {!lockedSlot && (

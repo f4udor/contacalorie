@@ -1,6 +1,6 @@
 {
   "id": "ai-errore-numero",
-  "descrizione": "Kcal svuotate prima di confermare: errore accanto al campo, nulla è salvato.",
+  "descrizione": "Kcal svuotate nella riga aperta prima di confermare: errore accanto al campo, nulla è salvato.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -68,6 +68,9 @@
     },
     {
       "wait": 600
+    },
+    {
+      "click": "Pasta al pomodoro"
     },
     {
       "fill": [

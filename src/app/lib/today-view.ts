@@ -29,6 +29,11 @@ export interface CompositionEntry {
   signed: boolean;
 }
 
+/** La riga di composizione dell'obiettivo ha senso solo se oltre alla base c'è bici, passi o recupero. */
+export function hasCompositionDetail(composition: readonly CompositionEntry[]): boolean {
+  return composition.length > 1;
+}
+
 export interface TodayView {
   hasMeals: boolean;
   /** Obiettivo kcal del giorno. */

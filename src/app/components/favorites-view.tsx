@@ -28,6 +28,8 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
   const [slot, setSlot] = useState<MealSlot>(initialSlot ?? "pranzo");
   const [busy, setBusy] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  // In modifica ogni riga mostra "Elimina" al posto del "+" e un tocco sulla riga non aggiunge nulla.
+  const [editing, setEditing] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
 
   const load = () =>
@@ -81,26 +83,47 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
   const dishes = filterByName(lists.dishes, query);
   const total = lists.meals.length + lists.dishes.length;
 
-  const row = (kind: "dish" | "meal", id: string, name: string, detail: string, kcal: number, onAdd: () => void) => (
-    <li key={`${kind}-${id}`} className="flex items-stretch border-t border-line first:border-t-0">
-      <button type="button" disabled={busy} onClick={onAdd} aria-label={`Aggiungi ${name}`} className="flex min-h-14 min-w-0 flex-1 items-center justify-between gap-3 px-4 py-2 text-left disabled:opacity-50">
-        <span className="min-w-0">
+  const plus = (
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true" className="shrink-0 text-accent">
+      <circle cx="12" cy="12" r="10" strokeWidth="1.8" />
+      <path d="M12 8v8M8 12h8" />
+    </svg>
+  );
+
+  const row = (kind: "dish" | "meal", id: string, name: string, detail: string | null, kcal: number, onAdd: () => void) => {
+    const text = (
+      <>
+        <span className="min-w-0 flex-1">
           <span className="block break-words text-[17px] font-semibold leading-snug">{name}</span>
-          <span className="block break-words text-sm text-muted">{detail}</span>
+          {detail && <span className="block break-words text-sm text-muted">{detail}</span>}
         </span>
         <span className="shrink-0 text-[16px] tabular-nums text-muted">{formatNumber(kcal)} kcal</span>
-      </button>
-      {confirmDelete === `${kind}-${id}` ? (
-        <button type="button" disabled={busy} onClick={() => remove(kind, id)} className="min-h-14 shrink-0 bg-bad-fill px-3 text-[15px] font-semibold text-white disabled:opacity-50">
-          Elimina davvero
-        </button>
-      ) : (
-        <button type="button" onClick={() => setConfirmDelete(`${kind}-${id}`)} aria-label={`Elimina ${name} dai preferiti`} className="min-h-14 min-w-11 shrink-0 px-3 text-[15px] font-semibold text-bad">
-          Elimina
-        </button>
-      )}
-    </li>
-  );
+      </>
+    );
+    return (
+      <li key={`${kind}-${id}`} className="flex items-stretch border-t border-line first:border-t-0">
+        {editing ? (
+          <>
+            <div className="flex min-h-14 min-w-0 flex-1 items-center justify-between gap-3 px-4 py-2">{text}</div>
+            {confirmDelete === `${kind}-${id}` ? (
+              <button type="button" disabled={busy} onClick={() => remove(kind, id)} className="min-h-14 shrink-0 bg-bad-fill px-3 text-[15px] font-semibold text-white disabled:opacity-50">
+                Elimina davvero
+              </button>
+            ) : (
+              <button type="button" onClick={() => setConfirmDelete(`${kind}-${id}`)} aria-label={`Elimina ${name} dai preferiti`} className="min-h-14 min-w-11 shrink-0 px-3 text-[15px] font-semibold text-bad">
+                Elimina
+              </button>
+            )}
+          </>
+        ) : (
+          <button type="button" disabled={busy} onClick={onAdd} aria-label={`Aggiungi ${name}`} className="flex min-h-14 min-w-0 flex-1 items-center justify-between gap-3 px-4 py-2 text-left disabled:opacity-50">
+            {text}
+            {plus}
+          </button>
+        )}
+      </li>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -110,24 +133,42 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
         </p>
       ) : (
         <>
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="fav-search" className="text-sm font-semibold text-muted">
-              Cerca
-            </label>
-            <input id="fav-search" type="search" autoComplete="off" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Nome del piatto o del pasto" className={input} />
+          <div className="flex items-center gap-2">
+            <input
+              id="fav-search"
+              type="search"
+              autoComplete="off"
+              aria-label="Cerca"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Cerca"
+              className={`${input} min-w-0 flex-1`}
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setEditing((v) => !v);
+                setConfirmDelete(null);
+              }}
+              className="min-h-11 shrink-0 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent"
+            >
+              {editing ? "Fine" : "Modifica"}
+            </button>
           </div>
-          <div className="flex flex-col gap-1.5">
-            <span id="fav-slot" className="text-sm font-semibold text-muted">
-              Aggiungi a
-            </span>
-            <div role="radiogroup" aria-labelledby="fav-slot" className="grid grid-cols-4 gap-1 rounded-xl bg-bg p-1">
-              {SLOTS.map((s) => (
-                <button key={s.value} type="button" role="radio" aria-checked={slot === s.value} onClick={() => setSlot(s.value)} className={`min-h-11 rounded-lg px-1 text-[15px] font-semibold ${slot === s.value ? "bg-accent text-white" : "text-fg"}`}>
-                  {s.label}
-                </button>
-              ))}
+          {!initialSlot && !editing && (
+            <div className="flex flex-col gap-1.5">
+              <span id="fav-slot" className="text-sm font-semibold text-muted">
+                Aggiungi a
+              </span>
+              <div role="radiogroup" aria-labelledby="fav-slot" className="grid grid-cols-4 gap-1 rounded-xl bg-bg p-1">
+                {SLOTS.map((s) => (
+                  <button key={s.value} type="button" role="radio" aria-checked={slot === s.value} onClick={() => setSlot(s.value)} className={`min-h-11 rounded-lg px-1 text-[15px] font-semibold ${slot === s.value ? "bg-accent text-white" : "text-fg"}`}>
+                    {s.label}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
           {meals.length > 0 && (
             <section aria-label="Pasti salvati" className="flex flex-col gap-2">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">Pasti</h3>
@@ -140,7 +181,7 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
             <section aria-label="Piatti salvati" className="flex flex-col gap-2">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">Piatti</h3>
               <ul className="overflow-hidden rounded-2xl bg-bg">
-                {dishes.map((f) => row("dish", f.id, f.name, f.quantity ?? "Senza quantità", f.kcal, () => add(recordsFromFavoriteDish(f, date, slot, newId))))}
+                {dishes.map((f) => row("dish", f.id, f.name, f.quantity, f.kcal, () => add(recordsFromFavoriteDish(f, date, slot, newId))))}
               </ul>
             </section>
           )}

@@ -1,6 +1,6 @@
 {
   "id": "ai-proposta-due-piatti",
-  "descrizione": "Proposta con due piatti nel pasto Cena: quantità con etichetta 'ipotizzata', note, numeri modificabili, 'Togli' per piatto.",
+  "descrizione": "Proposta con due piatti nel pasto Cena, uno per riga: nome, quantità con 'ipotizzata', kcal; i numeri compaiono toccando la riga.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {

@@ -8,11 +8,13 @@ interface SheetProps {
   open: boolean;
   onClose: () => void;
   title: string;
+  /** Elemento accanto al titolo (es. il selettore AI | Manuale). */
+  headerExtra?: ReactNode;
   children: ReactNode;
 }
 
 /** Pannello che sale dal basso. Si chiude con il tasto Chiudi, Esc, un tocco fuori o trascinando verso il basso. */
-export function Sheet({ open, onClose, title, children }: SheetProps) {
+export function Sheet({ open, onClose, title, headerExtra, children }: SheetProps) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ startY: number; startT: number } | null>(null);
@@ -76,6 +78,11 @@ export function Sheet({ open, onClose, title, children }: SheetProps) {
             <h2 id={titleId} className="text-xl font-bold">
               {title}
             </h2>
+            {headerExtra && (
+              <div className="ml-3 mr-auto" onPointerDown={(e) => e.stopPropagation()}>
+                {headerExtra}
+              </div>
+            )}
             <button
               type="button"
               onClick={onClose}

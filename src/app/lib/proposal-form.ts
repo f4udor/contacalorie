@@ -113,3 +113,9 @@ export function sumProposal(proposal: MealProposal): Record<DishNumberKey, numbe
   for (const k of DISH_NUMBER_KEYS) total[k] = k === "kcal" ? Math.round(total[k]) : Math.round(total[k] * 10) / 10;
   return { ...total, notes };
 }
+
+/** Con la fascia fissata (si è partiti da "Aggiungi piatto" di un pasto) tutti i piatti proposti vanno in quella fascia, anche se il modello ne ha indicata un'altra. */
+export function forceSlot(proposal: MealProposal, slot: MealSlot): MealProposal {
+  const dishes = proposal.meals.flatMap((m) => m.dishes);
+  return dishes.length === 0 ? proposal : { meals: [{ slot, dishes }] };
+}

@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m96",
+        "id": "m89",
         "date": "2026-01-05",
         "slot": "cena",
         "name": "Pizza",
@@ -38,7 +38,10 @@
       }
     },
     {
-      "click": "Piatto a mano"
+      "clickRole": {
+        "role": "radio",
+        "name": "Manuale"
+      }
     },
     {
       "clickRole": {
