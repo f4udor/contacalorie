@@ -433,7 +433,7 @@ Vincoli di questa fase:
 - Test: il prompt contiene le regole e gli esempi; la richiesta a Vertex ha temperatura 0; la validazione accetta quantità lunghe (limite ragionevole, scritto nel diario). Screenshot della proposta e di Oggi con una quantità di tre ingredienti.
 - Nel diario, sotto "Non verificato": la qualità delle stime con il modello vero.
 
-### T5b.3 Pasto libero nella proposta dell'AI · da fare
+### T5b.3 Pasto libero nella proposta dell'AI · fatto
 - Lo schema di risposta guadagna, sul pasto, un campo booleano che dice se l'utente lo ha indicato come libero. Il prompt spiega quando metterlo a vero ("pasto libero", "sgarro libero", "è il mio pasto libero") e che in ogni altro caso è falso.
 - Nella conferma ogni pasto proposto ha l'interruttore "Pasto libero", lo stesso componente e le stesse regole dell'inserimento a mano: disattivato, con la spiegazione, se la settimana ha già un pasto libero; acceso in partenza se il modello lo ha segnalato e la settimana lo consente; sempre modificabile prima di confermare.
 - Se la proposta contiene più pasti, se ne può segnare libero al massimo uno.
