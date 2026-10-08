@@ -137,7 +137,7 @@ Sezione in Oggi, usando `challengeDay` del motore e il piano di 30 giorni.
 - Prima dell'inizio e dopo il giorno 30: messaggio dedicato, nessuna lista.
 - Nota fissa in fondo: "Fermati se senti dolore a inguine o pube e salta l'esercizio."
 
-### T2.6 Settimana · da fare
+### T2.6 Settimana · fatto
 Schermata Settimana (§2 del brief), usando `weekSummary`.
 - Sette barre delle kcal mangiate con la linea dell'obiettivo di ogni giorno; colore secondo l'anello kcal.
 - Frecce per cambiare settimana.

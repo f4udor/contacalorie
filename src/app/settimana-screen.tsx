@@ -51,32 +51,30 @@ export function SettimanaScreen() {
   return (
     <main>
       <header className="pb-3 pt-4">
-        <div className="flex min-h-11 items-center justify-between gap-2">
-          <p className="text-sm font-semibold uppercase tracking-wide text-muted">
-            {formatDayMonth(monday)} – {formatDayMonth(sunday)}
-          </p>
-          <div className="flex items-center gap-2">
-            {!isCurrent && (
-              <Link href="/settimana" className="flex min-h-11 items-center rounded-full bg-card px-4 text-[15px] font-semibold text-accent">
-                Questa settimana
-              </Link>
-            )}
-            <Link href={href(addDays(monday, -7))} aria-label="Settimana precedente" className={btn}>
-              {arrow("M15 5l-7 7 7 7")}
+        <div className="flex min-h-11 items-center justify-end gap-2">
+          {!isCurrent && (
+            <Link href="/settimana" className="flex min-h-11 items-center whitespace-nowrap rounded-full bg-card px-4 text-[15px] font-semibold text-accent">
+              Questa settimana
             </Link>
-            <Link href={href(addDays(monday, 7))} aria-label="Settimana successiva" className={btn}>
-              {arrow("M9 5l7 7-7 7")}
-            </Link>
-          </div>
+          )}
+          <Link href={href(addDays(monday, -7))} aria-label="Settimana precedente" className={btn}>
+            {arrow("M15 5l-7 7 7 7")}
+          </Link>
+          <Link href={href(addDays(monday, 7))} aria-label="Settimana successiva" className={btn}>
+            {arrow("M9 5l7 7-7 7")}
+          </Link>
         </div>
         <h1 className="mt-1 text-[34px] font-bold leading-tight tracking-tight">Settimana</h1>
+        <p className="text-[17px] font-medium text-muted">
+          {formatDayMonth(monday)} – {formatDayMonth(sunday)}
+        </p>
       </header>
 
       {view && s && (
         <div className="flex flex-col gap-3">
           <Card className="pb-2">
             <WeekChart bars={view.bars} today={today} />
-            <p className="pt-1 text-center text-xs text-muted">La linea nera è l&apos;obiettivo del giorno. Tocca una barra per aprire il giorno.</p>
+            <p className="pt-1 text-center text-xs text-muted">La linea indica l&apos;obiettivo del giorno. Tocca una barra per aprire il giorno.</p>
           </Card>
 
           {view.isEmpty && (
