@@ -15,6 +15,7 @@ Una riga per task chiuso.
 - T1.8 · fatto · `challengeDay` con piano come dato (`DEFAULT_CHALLENGE_PLAN` in file a parte); aggiunta `daysBetween`.
 - T1.9 · fatto · 10 migrazioni/tabelle con RLS, piano di 30 giorni come dato iniziale, `docs/SCHEMA.md`. Provate solo su PostgreSQL locale con stand-in di Supabase (vedi Non verificato).
 - T1.10 · fatto · `docs/REPORT-FASE-1.md` scritto.
+- T2.0 · fatto · `src/data`: interfaccia `DataStore` async, implementazioni in memoria e nel browser (stessa classe a snapshot con versione del formato 1), avviso su dati illeggibili; regola di lint che vieta `localStorage` fuori da `src/data`.
 
 ## Decisioni da confermare
 

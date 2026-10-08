@@ -89,7 +89,7 @@ Regole valide per tutti i task con schermate:
 - Stati vuoti curati: un giorno senza pasti, una settimana vuota e un profilo senza peso devono avere una schermata sensata, non zeri o errori.
 - Se Playwright non riesce a installare il browser nell'ambiente, scrivilo in "Non verificato" e prosegui; non dichiarare verificato ciò che non hai visto.
 
-### T2.0 Sportello dei dati · da fare
+### T2.0 Sportello dei dati · fatto
 In `src/data`: un'interfaccia unica (`DataStore`) per leggere e scrivere impostazioni, pasti, attività del giorno, pesate e registro della sfida, con due implementazioni: in memoria (per i test) e nel browser (`localStorage`).
 - Le schermate useranno solo questa interfaccia; nessun altro file tocca `localStorage`.
 - I dati salvati hanno un numero di versione del formato, per poterli migrare in futuro.
