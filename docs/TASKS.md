@@ -365,7 +365,7 @@ Vincoli di questa fase:
 6. cosa controllare in Impostazioni.
 La guida dichiara che i nomi delle azioni non sono stati visti a schermo e possono essere diversi, avverte del doppio conteggio con altre app che scrivono in Salute e spiega che gli invii a telefono bloccato non riescono ed è normale.
 
-### T5.3 Nuova regola del recupero · da fare
+### T5.3 Nuova regola del recupero · fatto
 - Motore: §3.3 riscritto. Nuove impostazioni `recoveryMaxPerDay` (100), `recoveryMin` (25), `creditCap` (300) in `src/engine/defaults.ts`, salvate come le altre (nuove colonne per aggiunta).
 - **Questo task cambia una regola di calcolo: i test del motore si aggiornano ai nuovi valori di §3.6.** Cambiano i casi B, C e D; si aggiungono M, N, O, P, Q, R. Gli altri casi (A, E, F, G, H, I, J, K, L) devono restare identici e i loro test non si toccano.
 - Anteprima dei giorni futuri come in §3.3: una funzione pura che riceve qual è "oggi" come parametro (il motore non legge la data). Oggi, Settimana e la linea dell'obiettivo sulle sette barre usano questa funzione per i giorni dopo oggi.
