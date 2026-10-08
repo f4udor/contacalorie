@@ -78,6 +78,7 @@ Una riga per task chiuso.
 - Modalità dimostrativa dell'accesso: serve solo a mostrare le schermate di accesso negli screenshot senza Supabase. Si attiva solo se Supabase NON è configurato e nel browser esiste la chiave `personal-health:demo-auth`; accetta qualsiasi email e il codice 123456 e non dà accesso a nessun dato (i dati restano quelli del browser). Con Supabase configurato non ha nessun effetto.
 - Se la sessione scade mentre si usa l'app, compare l'avviso "Non hai effettuato l'accesso." e al cambio di sessione si torna alla schermata Accedi.
 - Ritocco fuori dall'accesso, scoperto guardando gli screenshot di T3.4: in Impostazioni, senza peso né peso obiettivo, il suggerimento delle proteine diceva due volte "serve il peso" ("Proposto dalla formula: serve il peso. Calcolato su serve il peso o il peso obiettivo."); ora dice una volta sola "Proposto dalla formula: serve il peso o il peso obiettivo." (`settings-form.tsx`, difetto introdotto in T3.2). Per questo sono stati rigenerati gli screenshot `impostazioni-predefinite` e `impostazioni-errori`.
+- Correzione a Impostazioni (T2.7): senza peso la formula di proposta dei grassi (che non dipende dal peso) risultava "serve il peso"; ora mostra il valore (70 g). Screenshot di Impostazioni rigenerati.
 
 ## Non verificato
 

@@ -53,10 +53,9 @@ export function SettingsForm({ store, settings, weighIns, today, onChanged }: Pr
   const merged = mergeSettings(settings as Record<string, unknown>);
   const weight = currentWeight(weighIns, today, settings.weightKg);
   const targetWeight = settings.targetWeightKg ?? null;
-  const proposed =
-    weight === null && targetWeight === null
-      ? null
-      : nutrientTargets(merged.baseKcal, weight ?? 0, { ...merged, proteinGramsManual: null, fatGramsManual: null }, targetWeight);
+  const proposed = nutrientTargets(merged.baseKcal, weight ?? 0, { ...merged, proteinGramsManual: null, fatGramsManual: null }, targetWeight);
+  // I grassi non dipendono dal peso; le proteine sì.
+  const proteinProposed = weight === null && targetWeight === null ? null : proposed.protein;
   const proteinBasis =
     targetWeight !== null
       ? `${formatNumber(merged.proteinPerKgTarget, 1)} g per kg del peso obiettivo (${formatNumber(targetWeight, 1)} kg)`
@@ -125,8 +124,8 @@ export function SettingsForm({ store, settings, weighIns, today, onChanged }: Pr
       <Section title="Obiettivi" intro="Da quante kcal parte ogni giorno e quanti grammi di nutrienti puntare. Lasciando un campo vuoto vale il valore suggerito.">
         {field("baseKcal", "Kcal base", { placeholder: formatNumber(D.baseKcal), hint: "Le kcal di un giorno senza bonus né recupero." })}
         {field("floorKcal", "Soglia minima (kcal)", { placeholder: formatNumber(D.floorKcal), hint: "La base non scende mai sotto questo valore. Il bonus si somma sopra." })}
-        {formulaRow("proteinGramsManual", "Proteine (g)", proposed?.protein ?? null)}
-        {formulaRow("fatGramsManual", "Grassi (g)", proposed?.fat ?? null)}
+        {formulaRow("proteinGramsManual", "Proteine (g)", proteinProposed)}
+        {formulaRow("fatGramsManual", "Grassi (g)", proposed.fat)}
         {field("fiberMin", "Fibre (g, minimo)", { placeholder: formatNumber(D.fiberMin) })}
         {field("saltMax", "Sale (g, massimo)", { placeholder: formatNumber(D.saltMax, 1) })}
         {field("margin", "Margine dei semafori (%)", { placeholder: pct(D.margin), hint: "Quanto ci si può allontanare dall'obiettivo restando in verde." })}
