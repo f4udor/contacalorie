@@ -347,7 +347,7 @@ Vincoli di questa fase:
 - Ogni chiamata finisce in `ingest_log` con esito e dettaglio breve. Limite di 200 chiamate al giorno per utente; oltre: 429 con messaggio chiaro.
 - Test: codice valido, sbagliato, revocato; tutti i formati elencati sopra; riga di tre giorni fa scartata; valore manuale non sovrascritto; invio ripetuto senza doppioni; valore aggiornato dal secondo invio; solo passi; solo bici; corpo vuoto o non JSON (400); limite superato; due utenti che non si vedono.
 
-### T5.1 Codice personale, stato e avviso · da fare
+### T5.1 Codice personale, stato e avviso · fatto
 - Impostazioni → Collegamenti, voce "Salute": senza codice, pulsante "Crea codice"; il codice compare una sola volta con "Copia" e l'indirizzo dell'ingresso da copiare. Con un codice già creato: "Rigenera" (con conferma, perché il Comando rapido smette di funzionare finché non si aggiorna) e "Disattiva".
 - Sotto: ultimo invio riuscito (data e ora) e i valori ricevuti per oggi e ieri; se l'ultimo tentativo è fallito, il motivo.
 - Senza accesso a Supabase (dati solo nel browser) la voce spiega in una riga che il collegamento richiede l'accesso.
