@@ -32,6 +32,7 @@ Una riga per task chiuso.
 - T3.4 · fatto · accesso con email e codice (`AuthService`: Supabase `signInWithOtp`/`verifyOtp`), schermata Accedi, 'Esci' con l'email in Impostazioni; nessuna schermata di accesso senza Supabase; accesso dimostrativo solo per gli screenshot. L'accesso vero non è provato.
 - T3.5 · fatto · importazione dei dati del browser nell'account (`importLocalData`: senza doppioni, unione tra dispositivi, nulla cancellato; proposta al primo accesso e voce in Impostazioni; i dati si tolgono dal dispositivo solo dopo conferma); `exportAll` nello sportello.
 - T3.6 · fatto · esportazione CSV di piatti e di pesate/attività da Impostazioni → Dati (`export-csv.ts` + test), con browser e con Supabase; letture a pagine con secondo ordinamento per id.
+- T3.7 · fatto · `docs/COLLEGA-SUPABASE.md`: dieci passi per chi non programma (progetto, setup.sql, codice via email, URL e chiave, Vercel, ripubblicare, accesso, importazione); test di coerenza con il codice. Nomi dei pulsanti di Supabase/Vercel non verificati.
 
 ## Decisioni da confermare
 

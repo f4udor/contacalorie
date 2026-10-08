@@ -218,7 +218,7 @@ Solo quando Supabase è configurato.
 ### T3.6 Esportazione dei dati · fatto
 Impostazioni → Dati → "Esporta": un file CSV dei piatti (data, pasto, nome, kcal, macro, fibre, sale, libero) e uno delle pesate e attività. Funziona sia con il browser sia con Supabase.
 
-### T3.7 Guida al collegamento · da fare
+### T3.7 Guida al collegamento · fatto
 `docs/COLLEGA-SUPABASE.md`: passi numerati per chi non sa programmare, uno per volta, ciascuno con cosa si vede a schermo:
 creare il progetto su Supabase, incollare `supabase/setup.sql`, attivare l'accesso con codice via email (modello dell'email con il codice), copiare URL e chiave pubblica, inserirle su Vercel, ripubblicare, accedere e importare.
 
