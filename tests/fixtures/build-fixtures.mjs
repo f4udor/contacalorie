@@ -492,6 +492,26 @@ scenarios.push({
   scorre: true,
   passi: [tocca("Passi medi"), { clickRole: { role: "button", name: "Elimina il valore di Giovedì 8 gennaio", exact: true } }, { wait: 400 }, { click: "Chiudi", exact: true }, { clickRole: { role: "link", name: "Oggi", exact: true } }, { wait: 600 }],
 });
+// --- Scorrimento a sinistra per le azioni (T5.5), con il tocco simulato del browser.
+const giornoConPiatti = data({
+  settings: { weightKg: 92.5 },
+  meals: [
+    meal("2026-01-08", "colazione", "Cappuccino e brioche", 320, 8, 48, 10, 1, 0.4),
+    meal("2026-01-08", "pranzo", "Pasta al pomodoro", 650, 22, 110, 12, 6, 1.8),
+    meal("2026-01-08", "pranzo", "Insalata di pomodorini", 90, 2, 10, 4, 3, 0.2),
+    meal("2026-01-08", "cena", "Frittata con zucchine", 420, 25, 8, 30, 3, 1.2),
+  ],
+});
+const sw = (text, dx = -140) => ({ swipe: { text, dx } });
+add("oggi-scorrimento-aperto", "Piatto scorso a sinistra: a destra compaiono «Preferiti» e il cestino.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro")] });
+add("oggi-scorrimento-due-righe", "Una sola riga aperta alla volta: scorrendo un secondo piatto il primo si richiude.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), sw("Frittata con zucchine")] });
+add("oggi-scorrimento-preferiti", "Dopo «Preferiti»: il piatto è salvato, la riga si richiude e compare la conferma.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), { click: "Preferiti", exact: true }, { wait: 500 }] });
+add("oggi-scorrimento-cestino", "Dopo il cestino: il piatto è eliminato subito, senza conferma, e i totali si ricalcolano.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), { clickRole: { role: "button", name: "Elimina Pasta al pomodoro", exact: true } }, { wait: 500 }] });
+add("oggi-scorrimento-a-destra", "Scorrimento verso destra: non succede nulla.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro", 140)] });
+settScheda("settimana-pesate-scorrimento", "Pannello Pesate: scorrendo una pesata compare solo il cestino.", settimanaPiena, [tocca("Peso"), sw("Giovedì 8 gennaio")]);
+settScheda("settimana-bici-scorrimento", "Pannello Bici: scorrendo il valore a mano di martedì compare il cestino; le righe da Salute non scorrono.", settimanaPiena, [tocca("Bici"), sw("Martedì 6 gennaio")]);
+settScheda("settimana-bici-scorrimento-salute", "Pannello Bici: una riga con fonte Salute non mostra nessuna azione.", settimanaPiena, [tocca("Bici"), sw("Lunedì 5 gennaio")]);
+
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");

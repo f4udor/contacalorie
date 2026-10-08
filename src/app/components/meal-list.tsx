@@ -1,8 +1,11 @@
+"use client";
+
 import { groupMeals, mealBudgetKcal, MEAL_SLOTS } from "@/engine";
 import type { MealSlot, Settings } from "@/engine";
 import type { MealRecord } from "@/data";
 import { formatNumber } from "../lib/format";
 import { SLOTS } from "../lib/meal-form";
+import { SwipeRow, trashIcon, useOpenRow } from "./swipe-row";
 
 const LABEL: Record<MealSlot, string> = Object.fromEntries(SLOTS.map((s) => [s.value, s.label])) as Record<MealSlot, string>;
 
@@ -14,10 +17,15 @@ interface MealListProps {
   onAddDish: (slot: MealSlot) => void;
   /** Tocco sull'intestazione di un pasto: salvarlo nei preferiti. */
   onSaveMeal: (slot: MealSlot) => void;
+  /** Scorrendo un piatto a sinistra: salvarlo nei preferiti. */
+  onFavoriteDish: (dish: MealRecord) => void;
+  /** Scorrendo un piatto a sinistra: eliminarlo subito, senza conferma. */
+  onDeleteDish: (dish: MealRecord) => void;
 }
 
 /** I pasti del giorno: una scheda per fascia, con totali, piatti elencati e "Aggiungi piatto". */
-export function MealList({ dishes, settings, onSelectDish, onAddDish, onSaveMeal }: MealListProps) {
+export function MealList({ dishes, settings, onSelectDish, onAddDish, onSaveMeal, onFavoriteDish, onDeleteDish }: MealListProps) {
+  const rows = useOpenRow();
   const byId = new Map(dishes.map((d) => [d.id, d]));
   const groups = groupMeals(dishes);
   const empty = MEAL_SLOTS.filter((slot) => !groups.some((g) => g.slot === slot));
@@ -50,13 +58,23 @@ export function MealList({ dishes, settings, onSelectDish, onAddDish, onSaveMeal
                 const dish = byId.get(d.id) ?? (d as MealRecord);
                 return (
                   <li key={d.id} className="border-t border-line">
-                    <button type="button" onClick={() => onSelectDish(dish)} className="flex min-h-12 w-full items-start justify-between gap-3 px-4 py-2.5 text-left">
-                      <span className="min-w-0">
-                        <span className="block break-words text-[16px] leading-snug">{d.name}</span>
-                        {dish.quantity && <span className="block break-words text-sm text-muted">{dish.quantity}</span>}
-                      </span>
-                      <span className="shrink-0 pt-px text-[16px] tabular-nums text-muted">{formatNumber(d.kcal)} kcal</span>
-                    </button>
+                    <SwipeRow
+                      id={d.id}
+                      openId={rows.openId}
+                      setOpen={rows.setOpen}
+                      actions={[
+                        { key: "preferiti", label: "Preferiti", tone: "accent", onClick: () => onFavoriteDish(dish) },
+                        { key: "elimina", label: `Elimina ${d.name}`, icon: trashIcon, tone: "danger", onClick: () => onDeleteDish(dish) },
+                      ]}
+                    >
+                      <button type="button" onClick={() => onSelectDish(dish)} className="flex min-h-12 w-full items-start justify-between gap-3 px-4 py-2.5 text-left">
+                        <span className="min-w-0">
+                          <span className="block break-words text-[16px] leading-snug">{d.name}</span>
+                          {dish.quantity && <span className="block break-words text-sm text-muted">{dish.quantity}</span>}
+                        </span>
+                        <span className="shrink-0 pt-px text-[16px] tabular-nums text-muted">{formatNumber(d.kcal)} kcal</span>
+                      </button>
+                    </SwipeRow>
                   </li>
                 );
               })}

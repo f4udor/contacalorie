@@ -10,6 +10,7 @@ import { activityRows, defaultWeighInDate, deleteActivityValue, freeMealOfWeek, 
 import type { ActivityKind, WeekMeal } from "../lib/week-actions";
 import { TextField } from "./field";
 import { Sheet } from "./sheet";
+import { SwipeRow, trashIcon, useOpenRow } from "./swipe-row";
 
 const SLOT_LABEL: Record<MealSlot, string> = { colazione: "Colazione", pranzo: "Pranzo", cena: "Cena", spuntino: "Spuntino" };
 
@@ -56,6 +57,7 @@ function useAction(onChanged: () => void) {
 export function WeightPanel({ store, data, dates, today, onChanged, onClose }: PanelProps) {
   const { busy, run } = useAction(onChanged);
   const list = weighInsInWeek(data.weighIns, dates[0], dates[6]);
+  const rows = useOpenRow();
   const [adding, setAdding] = useState(false);
   const [date, setDate] = useState<DateKey>(() => defaultWeighInDate(dates, today));
   const [value, setValue] = useState("");
@@ -81,12 +83,16 @@ export function WeightPanel({ store, data, dates, today, onChanged, onClose }: P
       ) : (
         <ul className="divide-y divide-line">
           {list.map((w) => (
-            <li key={w.date} className="flex min-h-14 items-center justify-between gap-3">
-              <span className="min-w-0">
-                <span className="block text-[17px] font-semibold tabular-nums">{formatNumber(w.weightKg, 1)} kg</span>
-                <span className="block text-sm text-muted">{formatDateLong(w.date)}</span>
-              </span>
-              <TrashButton label={`Elimina la pesata di ${formatDateLong(w.date)}`} disabled={busy} onClick={() => void run(() => store.deleteWeighIn(w.date))} />
+            <li key={w.date}>
+              <SwipeRow id={w.date} openId={rows.openId} setOpen={rows.setOpen} actions={[{ key: "elimina", label: `Elimina la pesata di ${formatDateLong(w.date)}`, icon: trashIcon, tone: "danger", onClick: () => void run(() => store.deleteWeighIn(w.date)) }]}>
+                <div className="flex min-h-14 items-center justify-between gap-3">
+                  <span className="min-w-0">
+                    <span className="block text-[17px] font-semibold tabular-nums">{formatNumber(w.weightKg, 1)} kg</span>
+                    <span className="block text-sm text-muted">{formatDateLong(w.date)}</span>
+                  </span>
+                  <TrashButton label={`Elimina la pesata di ${formatDateLong(w.date)}`} disabled={busy} onClick={() => void run(() => store.deleteWeighIn(w.date))} />
+                </div>
+              </SwipeRow>
             </li>
           ))}
         </ul>
@@ -128,6 +134,7 @@ export function WeightPanel({ store, data, dates, today, onChanged, onClose }: P
 export function ActivityWeekPanel({ kind, store, data, dates, onChanged, onClose }: PanelProps & { kind: ActivityKind }) {
   const { busy, run } = useAction(onChanged);
   const rows = activityRows(kind, data.activity, dates);
+  const open = useOpenRow();
   const value = (r: (typeof rows)[number]) => {
     if (kind === "passi") return r.steps === null ? null : formatNumber(r.steps);
     if (r.km !== null) return `${formatNumber(r.km, 1)} km`;
@@ -139,7 +146,14 @@ export function ActivityWeekPanel({ kind, store, data, dates, onChanged, onClose
         {rows.map((r) => {
           const v = value(r);
           return (
-            <li key={r.date} className="flex min-h-14 items-center justify-between gap-3">
+            <li key={r.date}>
+              <SwipeRow
+                id={r.date}
+                openId={open.openId}
+                setOpen={open.setOpen}
+                actions={r.canDelete ? [{ key: "elimina", label: `Elimina il valore di ${formatDateLong(r.date)}`, icon: trashIcon, tone: "danger", onClick: () => void run(() => deleteActivityValue(store, r.date, kind)) }] : []}
+              >
+              <div className="flex min-h-14 items-center justify-between gap-3">
               <span className="min-w-0 text-[17px]">{formatDateLong(r.date)}</span>
               <span className="flex items-center gap-2">
                 {v === null ? (
@@ -152,6 +166,8 @@ export function ActivityWeekPanel({ kind, store, data, dates, onChanged, onClose
                 )}
                 {r.canDelete && <TrashButton label={`Elimina il valore di ${formatDateLong(r.date)}`} disabled={busy} onClick={() => void run(() => deleteActivityValue(store, r.date, kind))} />}
               </span>
+              </div>
+              </SwipeRow>
             </li>
           );
         })}

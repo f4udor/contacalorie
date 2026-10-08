@@ -16,6 +16,7 @@
   --ok-fill: #34c759;
   --warn-fill: #ffcc00;
   --bad-fill: #ff3b30;
+  --bad-btn: #c8001a;
   --nav: rgba(249, 249, 249, 0.92);
   --scrim: rgba(0, 0, 0, 0.35);
   color-scheme: light dark;
@@ -36,6 +37,7 @@
     --ok-fill: #30d158;
     --warn-fill: #ffd60a;
     --bad-fill: #ff453a;
+    --bad-btn: #c8001a;
     --nav: rgba(28, 28, 30, 0.92);
     --scrim: rgba(0, 0, 0, 0.6);
   }
@@ -55,6 +57,7 @@
   --color-ok-fill: var(--ok-fill);
   --color-warn-fill: var(--warn-fill);
   --color-bad-fill: var(--bad-fill);
+  --color-bad-btn: var(--bad-btn);
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", sans-serif;
 }
 

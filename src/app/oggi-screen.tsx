@@ -13,6 +13,8 @@ import { DayHeader } from "./components/day-header";
 import { KcalRing } from "./components/kcal-ring";
 import { NutrientCard } from "./components/nutrient-card";
 import { formatNumber, formatSigned } from "./lib/format";
+import { favoriteForDish } from "./lib/favorites";
+import { newId } from "./lib/ids";
 import { currentWeight, buildTodayView, hasCompositionDetail } from "./lib/today-view";
 import { useToday } from "./lib/use-today";
 import { HealthWarning } from "./components/health-warning";
@@ -29,7 +31,30 @@ export function OggiScreen() {
   const store = useDataStore();
   const [panel, setPanel] = useState<{ kind: "add"; slot?: MealSlot } | { kind: "edit"; meal: MealRecord } | { kind: "activity" } | { kind: "saveMeal"; slot: MealSlot } | null>(null);
 
+  const [favoriteNote, setFavoriteNote] = useState<string | null>(null);
+
   if (!today || !date) return <main aria-busy="true" />;
+
+  const favoriteDish = async (dish: MealRecord) => {
+    if (!store) return;
+    try {
+      const { favorite, updated } = favoriteForDish(await store.listFavoriteDishes(), dish, newId);
+      await store.saveFavoriteDish(favorite);
+      setFavoriteNote(updated ? "Preferito aggiornato." : "Salvato nei preferiti.");
+      setTimeout(() => setFavoriteNote(null), 3000);
+    } catch {
+      // L'avviso in cima lo spiega; si può riprovare.
+    }
+  };
+  const deleteDish = async (dish: MealRecord) => {
+    if (!store) return;
+    try {
+      await store.deleteMeal(dish.id);
+      reload();
+    } catch {
+      // L'avviso in cima lo spiega; il piatto resta.
+    }
+  };
 
   const view = data
     ? buildTodayView({
@@ -71,7 +96,12 @@ export function OggiScreen() {
               <NutrientCard key={n.key} n={n} wide={i === view.nutrients.length - 1 && view.nutrients.length % 2 === 1} />
             ))}
           </div>
-          <MealList dishes={meals} settings={data!.settings} onSelectDish={(meal) => setPanel({ kind: "edit", meal })} onAddDish={(slot) => setPanel({ kind: "add", slot })} onSaveMeal={(slot) => setPanel({ kind: "saveMeal", slot })} />
+          <MealList dishes={meals} settings={data!.settings} onSelectDish={(meal) => setPanel({ kind: "edit", meal })} onAddDish={(slot) => setPanel({ kind: "add", slot })} onSaveMeal={(slot) => setPanel({ kind: "saveMeal", slot })} onFavoriteDish={favoriteDish} onDeleteDish={deleteDish} />
+          {favoriteNote && (
+            <p role="status" className="px-1 text-center text-sm font-semibold text-ok">
+              {favoriteNote}
+            </p>
+          )}
           <ActivityCard activity={activity} settings={data!.settings} onEdit={() => setPanel({ kind: "activity" })} />
         </div>
       )}
