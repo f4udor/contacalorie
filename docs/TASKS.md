@@ -392,6 +392,6 @@ La guida dichiara che i nomi delle azioni non sono stati visti a schermo e posso
 - Ritocco insieme a questo task: "Elimina davvero" con contrasto sufficiente in tema chiaro.
 - Test della logica del gesto (soglie, direzione, una riga aperta alla volta) e prova con il tocco simulato di Playwright. Nel diario, sotto "Non verificato": il gesto su un iPhone vero.
 
-### T5.6 Report di fase · da fare
+### T5.6 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-5.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: i controlli da fare sul telefono dopo la pubblicazione e, a parte, quelli da fare dopo aver collegato il Comando rapido.
 
