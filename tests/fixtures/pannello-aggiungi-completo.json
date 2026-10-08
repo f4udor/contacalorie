@@ -1,6 +1,6 @@
 {
   "id": "pannello-aggiungi-completo",
-  "descrizione": "Pannello Aggiungi con tutte le voci: Pasto a mano, Copia da ieri, Attività a mano, Pesata.",
+  "descrizione": "Pannello Aggiungi con tutte le voci: Piatto a mano, Copia da ieri, Attività a mano, Pesata.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": null,
@@ -10,7 +10,8 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Aggiungi"
+        "name": "Aggiungi",
+        "exact": true
       }
     }
   ]

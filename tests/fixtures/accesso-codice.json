@@ -1,0 +1,23 @@
+{
+  "id": "accesso-codice",
+  "descrizione": "Dopo aver chiesto il codice: si inserisce il codice di 6 cifre ricevuto per email.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "accessoDimostrativo": {
+    "session": null
+  },
+  "fisso": true,
+  "passi": [
+    {
+      "fill": [
+        "Email",
+        "mauro@esempio.it"
+      ]
+    },
+    {
+      "click": "Invia il codice",
+      "exact": true
+    }
+  ]
+}

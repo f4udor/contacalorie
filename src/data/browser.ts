@@ -6,6 +6,7 @@ import type { DataStore } from "./store";
 export interface StorageLike {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
+  removeItem?(key: string): void;
 }
 
 export const BROWSER_STORAGE_KEY = "personal-health:v1";
@@ -17,4 +18,9 @@ export function createBrowserDataStore(storage?: StorageLike, key: string = BROW
     write: (text) => (storage ?? window.localStorage).setItem(key, text),
   };
   return new SnapshotDataStore(persistence);
+}
+
+/** Toglie dal browser tutti i dati salvati dall'app (dopo un'importazione confermata). */
+export function clearBrowserData(storage?: StorageLike, key: string = BROWSER_STORAGE_KEY): void {
+  (storage ?? window.localStorage).removeItem?.(key);
 }

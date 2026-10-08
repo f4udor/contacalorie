@@ -10,7 +10,7 @@ export interface NutrientTargets {
 
 type NutrientSettings = Pick<
   Settings,
-  "proteinPerKg" | "fatShare" | "baseKcal" | "fiberMin" | "saltMax" | "proteinGramsManual" | "fatGramsManual"
+  "proteinPerKg" | "proteinPerKgTarget" | "fatShare" | "baseKcal" | "fiberMin" | "saltMax" | "proteinGramsManual" | "fatGramsManual"
 >;
 
 const KCAL_PER_G_PROTEIN = 4;
@@ -22,12 +22,20 @@ function roundTo5(n: number): number {
 }
 
 /**
- * Obiettivi dei nutrienti (§3.4) dato l'obiettivo kcal del giorno e il peso.
- * I grammi manuali di proteine e grassi sostituiscono la formula.
+ * Obiettivi dei nutrienti (§3.4) dato l'obiettivo kcal del giorno, il peso e il peso obiettivo.
+ * Proteine: con un peso obiettivo valido `proteinPerKgTarget × peso obiettivo`, altrimenti `proteinPerKg × peso`,
+ * arrotondate ai 5 g; i grammi manuali di proteine e grassi sostituiscono sempre la formula.
  * I carboidrati assorbono la differenza e non sono mai negativi.
  */
-export function nutrientTargets(dayKcal: number, weightKg: number, settings: NutrientSettings): NutrientTargets {
-  const protein = settings.proteinGramsManual ?? roundTo5(settings.proteinPerKg * weightKg);
+export function nutrientTargets(
+  dayKcal: number,
+  weightKg: number,
+  settings: NutrientSettings,
+  targetWeightKg: number | null = null,
+): NutrientTargets {
+  const hasTarget = targetWeightKg !== null && Number.isFinite(targetWeightKg) && targetWeightKg > 0;
+  const formula = hasTarget ? settings.proteinPerKgTarget * targetWeightKg : settings.proteinPerKg * weightKg;
+  const protein = settings.proteinGramsManual ?? roundTo5(formula);
   const fat = settings.fatGramsManual ?? roundTo5((settings.fatShare * settings.baseKcal) / KCAL_PER_G_FAT);
   const carbs = Math.max(
     0,

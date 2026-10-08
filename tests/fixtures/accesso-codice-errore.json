@@ -1,0 +1,36 @@
+{
+  "id": "accesso-codice-errore",
+  "descrizione": "Codice sbagliato: messaggio chiaro, si può riprovare o chiedere un nuovo codice.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "accessoDimostrativo": {
+    "session": null
+  },
+  "fisso": true,
+  "passi": [
+    {
+      "fill": [
+        "Email",
+        "mauro@esempio.it"
+      ]
+    },
+    {
+      "click": "Invia il codice",
+      "exact": true
+    },
+    {
+      "fill": [
+        "Codice",
+        "000000"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Accedi",
+        "exact": true
+      }
+    }
+  ]
+}

@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 import { BROWSER_STORAGE_KEY, createBrowserDataStore, NOTICE_UNKNOWN_VERSION, NOTICE_UNREADABLE, NOTICE_WRITE_FAILED } from "./index";
 import type { DataStore, MealRecord, StorageLike } from "./index";
 import { createMemoryDataStore } from "./memory";
+import { FakeSupabaseDb } from "./fake-supabase";
+import { SupabaseDataStore } from "./supabase";
 
 class FakeStorage implements StorageLike {
   items = new Map<string, string>();
@@ -20,6 +22,10 @@ function meal(id: string, date: string, kcal = 500): MealRecord {
 const factories: [string, () => DataStore][] = [
   ["in memoria", () => createMemoryDataStore()],
   ["nel browser", () => createBrowserDataStore(new FakeStorage())],
+  ["su Supabase (finto)", () => {
+    const client = new FakeSupabaseDb().client();
+    return new SupabaseDataStore(async () => client);
+  }],
 ];
 
 describe.each(factories)("DataStore %s", (_nome, make) => {
@@ -98,15 +104,34 @@ describe.each(factories)("DataStore %s", (_nome, make) => {
 
   it("registro sfida: una voce per data ed esercizio, eliminabile", async () => {
     const s = make();
-    await s.saveChallengeEntry({ date: "2026-01-05", exerciseId: "push", status: "fatto", reps: null });
-    await s.saveChallengeEntry({ date: "2026-01-05", exerciseId: "crunch", status: "saltato", reps: null });
-    await s.saveChallengeEntry({ date: "2026-01-05", exerciseId: "push", status: "fatto", reps: 3 });
+    await s.saveChallengeEntry({ date: "2026-01-05", exerciseId: "Push up", status: "fatto", reps: null });
+    await s.saveChallengeEntry({ date: "2026-01-05", exerciseId: "Crunch", status: "saltato", reps: null });
+    await s.saveChallengeEntry({ date: "2026-01-05", exerciseId: "Push up", status: "fatto", reps: 3 });
     const voci = await s.listChallengeLog("2026-01-05");
     expect(voci).toHaveLength(2);
-    expect(voci.find((v) => v.exerciseId === "push")?.reps).toBe(3);
+    expect(voci.find((v) => v.exerciseId === "Push up")?.reps).toBe(3);
     expect(await s.listChallengeLogBetween("2026-01-05", "2026-01-06")).toHaveLength(2);
-    await s.deleteChallengeEntry("2026-01-05", "push");
-    expect((await s.listChallengeLog("2026-01-05")).map((v) => v.exerciseId)).toEqual(["crunch"]);
+    await s.deleteChallengeEntry("2026-01-05", "Push up");
+    expect((await s.listChallengeLog("2026-01-05")).map((v) => v.exerciseId)).toEqual(["Crunch"]);
+  });
+
+  it("exportAll restituisce tutti i dati (copia)", async () => {
+    const s = make();
+    await s.saveSettings({ weightKg: 90 });
+    await s.saveMeal(meal("a", "2026-01-05"));
+    await s.saveMeal(meal("b", "2026-01-06"));
+    await s.saveActivity({ date: "2026-01-05", steps: 100, stepsSource: "manuale", bikeKm: null, bikeKcalHealth: null, bikeSource: null });
+    await s.saveWeighIn({ date: "2026-01-05", weightKg: 90 });
+    await s.saveChallengeEntry({ date: "2026-01-05", exerciseId: "Crunch", status: "saltato", reps: null });
+    const all = await s.exportAll();
+    expect(all.version).toBe(1);
+    expect(all.settings).toEqual({ weightKg: 90 });
+    expect(all.meals.map((m) => m.id).sort()).toEqual(["a", "b"]);
+    expect(all.activity).toHaveLength(1);
+    expect(all.weighIns).toEqual([{ date: "2026-01-05", weightKg: 90 }]);
+    expect(all.challengeLog).toEqual([{ date: "2026-01-05", exerciseId: "Crunch", status: "saltato", reps: null }]);
+    all.meals.pop();
+    expect((await s.exportAll()).meals).toHaveLength(2);
   });
 
   it("il messaggio si può cancellare", async () => {

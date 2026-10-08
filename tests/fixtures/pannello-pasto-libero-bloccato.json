@@ -1,0 +1,55 @@
+{
+  "id": "pannello-pasto-libero-bloccato",
+  "descrizione": "Un altro pasto della settimana è già libero: l'interruttore è spento e spiega perché.",
+  "oggi": "2026-01-07",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m97",
+        "date": "2026-01-06",
+        "slot": "cena",
+        "name": "Pizza",
+        "kcal": 1100,
+        "protein": 40,
+        "carbs": 130,
+        "fat": 42,
+        "fiber": 6,
+        "salt": 4.2,
+        "isFree": true,
+        "originalText": null
+      },
+      {
+        "id": "m98",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Riso",
+        "kcal": 400,
+        "protein": 8,
+        "carbs": 80,
+        "fat": 3,
+        "fiber": 2,
+        "salt": 0.2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "click": "+ Aggiungi piatto"
+    },
+    {
+      "scrollTo": "Pasto libero"
+    }
+  ]
+}

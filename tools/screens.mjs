@@ -1,5 +1,5 @@
 // Genera gli screenshot delle schermate da scenari in tests/fixtures/*.json.
-// Uso: npm run screens [-- --only <id>] [-- --width 390,375,430] [-- --out docs/screenshots]
+// Uso: npm run screens [-- --only <id>[,<id>…]] [-- --width 390,375,430] [-- --out docs/screenshots]
 // Per ogni scenario e per tema chiaro e scuro salva <id>-<chiaro|scuro>[-<larghezza>].png
 // e segnala scorrimento orizzontale e aree toccabili sotto i 44 px.
 import { spawn } from "node:child_process";
@@ -12,7 +12,8 @@ const opt = (name, fallback) => {
   const i = args.indexOf(`--${name}`);
   return i >= 0 && args[i + 1] ? args[i + 1] : fallback;
 };
-const only = opt("only", null);
+const only = opt("only", null); // uno o più id separati da virgola
+const onlyIds = only ? new Set(only.split(",")) : null;
 const widths = opt("width", "390").split(",").map(Number);
 const outDir = opt("out", "docs/screenshots");
 const PORT = Number(process.env.SCREENS_PORT ?? 3123);
@@ -70,7 +71,7 @@ try {
   const files = readdirSync(fixturesDir).filter((f) => f.endsWith(".json")).sort();
   for (const file of files) {
     const sc = JSON.parse(readFileSync(path.join(fixturesDir, file), "utf8"));
-    if (only && sc.id !== only) continue;
+    if (onlyIds && !onlyIds.has(sc.id)) continue;
     for (const width of widths) {
       for (const [scheme, label] of [["light", "chiaro"], ["dark", "scuro"]]) {
         const context = await browser.newContext({
@@ -102,6 +103,23 @@ try {
             },
             [STORAGE_KEY, typeof sc.dati === "string" ? sc.dati : JSON.stringify(sc.dati)],
           );
+        }
+        if (sc.accessoDimostrativo) {
+          // Accesso finto (solo senza Supabase): inizia senza sessione oppure già collegato.
+          await context.addInitScript(
+            ([key, value]) => {
+              if (!localStorage.getItem(key)) localStorage.setItem(key, value);
+            },
+            ["personal-health:demo-auth", JSON.stringify({ session: sc.accessoDimostrativo.session ?? null })],
+          );
+        }
+        if (sc.scritturaFallita) {
+          // Simula il browser che non riesce più a scrivere (memoria piena): dopo aver caricato i dati, ogni salvataggio fallisce.
+          await context.addInitScript(() => {
+            Storage.prototype.setItem = function () {
+              throw new DOMException("memoria piena", "QuotaExceededError");
+            };
+          });
         }
         const page = await context.newPage();
         await page.goto(BASE + (sc.percorso ?? "/"), { waitUntil: "networkidle" });

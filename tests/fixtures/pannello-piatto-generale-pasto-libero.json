@@ -1,0 +1,54 @@
+{
+  "id": "pannello-piatto-generale-pasto-libero",
+  "descrizione": "Dal + generale, scegliendo la cena che è già un pasto libero: l'interruttore si accende da solo, così il piatto non toglie il segno al pasto.",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m96",
+        "date": "2026-01-05",
+        "slot": "cena",
+        "name": "Pizza",
+        "kcal": 900,
+        "protein": 30,
+        "carbs": 120,
+        "fat": 30,
+        "fiber": 5,
+        "salt": 3.5,
+        "isFree": true,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "click": "Piatto a mano"
+    },
+    {
+      "clickRole": {
+        "role": "radio",
+        "name": "Cena"
+      }
+    },
+    {
+      "scrollTo": "Pasto libero"
+    }
+  ]
+}

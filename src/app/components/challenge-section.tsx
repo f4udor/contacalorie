@@ -49,7 +49,9 @@ export function ChallengeSection({ view, date, store, onChanged }: Props) {
   };
   const entry = (e: ExerciseView, status: ChallengeLogEntry["status"], reps: number | null): ChallengeLogEntry => ({ date, exerciseId: e.id, status, reps });
   const toggleDone = (e: ExerciseView) =>
-    write(() => (e.status === "fatto" ? store.deleteChallengeEntry(date, e.id) : store.saveChallengeEntry(entry(e, "fatto", e.reps === e.planReps ? null : e.reps))));
+    write(() => (e.status === "fatto" ? store.deleteChallengeEntry(date, e.id) : store.saveChallengeEntry(entry(e, "fatto", e.reps === e.planReps ? null : e.reps)))).catch(() => {
+      // Non salvato: l'avviso in cima lo spiega e la spunta resta com'era, per riprovare.
+    });
 
   return (
     <section aria-label="Sfida mattutina">
@@ -124,15 +126,27 @@ function ExercisePanel({
       setError("Inserisci un numero intero");
       return;
     }
-    await onSave("fatto", r === exercise.planReps ? null : r);
+    try {
+      await onSave("fatto", r === exercise.planReps ? null : r);
+    } catch {
+      return; // non salvato: l'avviso in cima lo spiega; il pannello resta aperto per riprovare
+    }
     onClose();
   };
   const skip = async () => {
-    await onSave("saltato", null);
+    try {
+      await onSave("saltato", null);
+    } catch {
+      return; // non salvato: l'avviso in cima lo spiega; il pannello resta aperto per riprovare
+    }
     onClose();
   };
   const clear = async () => {
-    await onClear();
+    try {
+      await onClear();
+    } catch {
+      return; // non salvato: l'avviso in cima lo spiega; il pannello resta aperto per riprovare
+    }
     onClose();
   };
 

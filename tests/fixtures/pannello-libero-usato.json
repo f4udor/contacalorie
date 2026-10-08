@@ -34,11 +34,12 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Aggiungi"
+        "name": "Aggiungi",
+        "exact": true
       }
     },
     {
-      "click": "Pasto a mano"
+      "click": "Piatto a mano"
     },
     {
       "scrollTo": "Pasto libero"

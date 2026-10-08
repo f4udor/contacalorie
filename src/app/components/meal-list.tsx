@@ -1,42 +1,81 @@
-import type { MealSlot } from "@/engine";
+import { groupMeals, mealBudgetKcal, MEAL_SLOTS } from "@/engine";
+import type { MealSlot, Settings } from "@/engine";
 import type { MealRecord } from "@/data";
 import { formatNumber } from "../lib/format";
 import { SLOTS } from "../lib/meal-form";
 
-/** Pasti del giorno raggruppati per fascia. Toccando un pasto si apre la modifica. */
-export function MealList({ meals, onSelect }: { meals: readonly MealRecord[]; onSelect: (meal: MealRecord) => void }) {
-  const bySlot = (slot: MealSlot) => meals.filter((m) => m.slot === slot);
+const LABEL: Record<MealSlot, string> = Object.fromEntries(SLOTS.map((s) => [s.value, s.label])) as Record<MealSlot, string>;
+
+interface MealListProps {
+  /** I piatti del giorno. */
+  dishes: readonly MealRecord[];
+  settings: Pick<Settings, "freeMealCap">;
+  onSelectDish: (dish: MealRecord) => void;
+  onAddDish: (slot: MealSlot) => void;
+}
+
+/** I pasti del giorno: una scheda per fascia, con totali, piatti elencati e "Aggiungi piatto". */
+export function MealList({ dishes, settings, onSelectDish, onAddDish }: MealListProps) {
+  const byId = new Map(dishes.map((d) => [d.id, d]));
+  const groups = groupMeals(dishes);
+  const empty = MEAL_SLOTS.filter((slot) => !groups.some((g) => g.slot === slot));
+
   return (
     <section aria-label="Pasti del giorno" className="flex flex-col gap-3">
-      {SLOTS.map(({ value, label }) => {
-        const list = bySlot(value);
-        if (list.length === 0) return null;
+      {groups.map((g) => {
+        const counted = mealBudgetKcal(g, settings);
         return (
-          <div key={value}>
-            <h2 className="px-1 pb-1.5 text-sm font-semibold uppercase tracking-wide text-muted">{label}</h2>
-            <ul className="overflow-hidden rounded-2xl bg-card">
-              {list.map((m, i) => (
-                <li key={m.id} className={i > 0 ? "border-t border-line" : ""}>
-                  <button type="button" onClick={() => onSelect(m)} className="flex min-h-14 w-full items-start justify-between gap-3 px-4 py-3 text-left">
-                    <span className="min-w-0">
-                      <span className="block break-words text-[17px] font-semibold leading-snug">{m.name}</span>
-                      <span className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted tabular-nums">
-                        <span>
-                          P {formatNumber(m.protein)} · C {formatNumber(m.carbs)} · G {formatNumber(m.fat)}
-                        </span>
-                        {m.isFree && <span className="rounded-full bg-track px-2 py-0.5 text-xs font-semibold text-accent">libero</span>}
+          <article key={g.slot} aria-label={LABEL[g.slot]} className="overflow-hidden rounded-2xl bg-card">
+            <header className="px-4 pb-2 pt-3">
+              <div className="flex items-start justify-between gap-3">
+                <h2 className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[17px] font-bold">
+                  {LABEL[g.slot]}
+                  {g.isFree && <span className="rounded-full bg-track px-2 py-0.5 text-xs font-semibold text-accent">libero</span>}
+                </h2>
+                <p className="shrink-0 text-[17px] font-bold tabular-nums">
+                  {formatNumber(g.kcal)} <span className="text-sm font-medium text-muted">kcal</span>
+                </p>
+              </div>
+              <p className="mt-0.5 text-sm text-muted tabular-nums">
+                P {formatNumber(g.protein)} · C {formatNumber(g.carbs)} · G {formatNumber(g.fat)}
+                {g.isFree && counted < g.kcal && ` · nel budget ${formatNumber(counted)} kcal`}
+              </p>
+            </header>
+            <ul>
+              {g.dishes.map((d) => {
+                const dish = byId.get(d.id) ?? (d as MealRecord);
+                return (
+                  <li key={d.id} className="border-t border-line">
+                    <button type="button" onClick={() => onSelectDish(dish)} className="flex min-h-12 w-full items-start justify-between gap-3 px-4 py-2.5 text-left">
+                      <span className="min-w-0">
+                        <span className="block break-words text-[16px] leading-snug">{d.name}</span>
+                        {dish.quantity && <span className="block break-words text-sm text-muted">{dish.quantity}</span>}
                       </span>
-                    </span>
-                    <span className="shrink-0 pt-px text-[17px] font-semibold tabular-nums">
-                      {formatNumber(m.kcal)} <span className="text-sm font-medium text-muted">kcal</span>
-                    </span>
-                  </button>
-                </li>
-              ))}
+                      <span className="shrink-0 pt-px text-[16px] tabular-nums text-muted">{formatNumber(d.kcal)} kcal</span>
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
-          </div>
+            <button type="button" onClick={() => onAddDish(g.slot)} className="flex min-h-11 w-full items-center border-t border-line px-4 text-[15px] font-semibold text-accent">
+              + Aggiungi piatto
+            </button>
+          </article>
         );
       })}
+      {groups.length === 0 && (
+        <p className="rounded-2xl bg-card px-4 py-4 text-center text-[15px] text-muted">Nessun pasto per questo giorno. Scegli una fascia o tocca +.</p>
+      )}
+      {empty.length > 0 && (
+        <div className="flex flex-wrap items-center gap-2 px-1" aria-label="Aggiungi un pasto">
+          <span className="text-sm text-muted">{groups.length === 0 ? "Aggiungi:" : "Anche:"}</span>
+          {empty.map((slot) => (
+            <button key={slot} type="button" onClick={() => onAddDish(slot)} className="min-h-11 rounded-full bg-card px-4 text-[15px] font-semibold text-accent">
+              + {LABEL[slot]}
+            </button>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

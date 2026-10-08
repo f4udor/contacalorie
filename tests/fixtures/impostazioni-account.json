@@ -1,0 +1,18 @@
+{
+  "id": "impostazioni-account",
+  "descrizione": "Impostazioni con l'accesso attivo: in fondo l'account con l'email e 'Esci'.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "scorre": true,
+  "accessoDimostrativo": {
+    "session": {
+      "email": "mauro@esempio.it"
+    }
+  },
+  "passi": [
+    {
+      "scrollTo": "Esci"
+    }
+  ]
+}

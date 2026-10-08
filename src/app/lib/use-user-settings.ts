@@ -13,9 +13,13 @@ export function useUserSettings(): { loaded: { settings: UserSettings; weighIns:
   useEffect(() => {
     if (!store) return;
     let cancelled = false;
-    Promise.all([store.getSettings(), store.listWeighIns()]).then(([settings, weighIns]) => {
-      if (!cancelled) setLoaded({ settings, weighIns });
-    });
+    Promise.all([store.getSettings(), store.listWeighIns()])
+      .then(([settings, weighIns]) => {
+        if (!cancelled) setLoaded({ settings, weighIns });
+      })
+      .catch(() => {
+        // Lettura non riuscita: l'avviso in cima lo spiega.
+      });
     return () => {
       cancelled = true;
     };

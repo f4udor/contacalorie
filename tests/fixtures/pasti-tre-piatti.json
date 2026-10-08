@@ -1,0 +1,63 @@
+{
+  "id": "pasti-tre-piatti",
+  "descrizione": "Un pasto con tre piatti: totale di kcal e macro in cima, piatti elencati sotto con le quantità.",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m81",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Riso integrale",
+        "kcal": 350,
+        "protein": 8,
+        "carbs": 74,
+        "fat": 3,
+        "fiber": 3,
+        "salt": 0.1,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "100 g"
+      },
+      {
+        "id": "m82",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Petto di pollo alla piastra",
+        "kcal": 330,
+        "protein": 62,
+        "carbs": 0,
+        "fat": 7,
+        "fiber": 0,
+        "salt": 0.4,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "200 g"
+      },
+      {
+        "id": "m83",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Zucchine e carote al vapore con un nome molto lungo per verificare che vada a capo",
+        "kcal": 90,
+        "protein": 3,
+        "carbs": 14,
+        "fat": 2,
+        "fiber": 5,
+        "salt": 0.1,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "250 g"
+      }
+    ],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true
+}

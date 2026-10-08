@@ -52,10 +52,27 @@ export function SettingsForm({ store, settings, weighIns, today, onChanged }: Pr
   // Valori proposti dalla formula, con le impostazioni salvate (non quelle in corso di modifica).
   const merged = mergeSettings(settings as Record<string, unknown>);
   const weight = currentWeight(weighIns, today, settings.weightKg);
-  const proposed = weight === null ? null : nutrientTargets(merged.baseKcal, weight, { ...merged, proteinGramsManual: null, fatGramsManual: null });
+  const targetWeight = settings.targetWeightKg ?? null;
+  const proposed = nutrientTargets(merged.baseKcal, weight ?? 0, { ...merged, proteinGramsManual: null, fatGramsManual: null }, targetWeight);
+  // I grassi non dipendono dal peso; le proteine sì.
+  const proteinProposed = weight === null && targetWeight === null ? null : proposed.protein;
+  const proteinBasis =
+    targetWeight !== null
+      ? `${formatNumber(merged.proteinPerKgTarget, 1)} g per kg del peso obiettivo (${formatNumber(targetWeight, 1)} kg)`
+      : weight !== null
+        ? `${formatNumber(merged.proteinPerKg, 1)} g per kg del peso (${formatNumber(weight, 1)} kg)`
+        : "serve il peso o il peso obiettivo";
   const formulaRow = (key: "proteinGramsManual" | "fatGramsManual", label: string, proposedValue: number | null) => (
     <div key={key} className="flex flex-col gap-1">
-      {field(key, label, { placeholder: "Formula", hint: proposedValue === null ? "Proposto dalla formula: serve il peso" : `Proposto dalla formula: ${formatNumber(proposedValue)} g` })}
+      {field(key, label, {
+        placeholder: "Formula",
+        hint:
+          proposedValue === null
+            ? key === "proteinGramsManual"
+              ? "Proposto dalla formula: serve il peso o il peso obiettivo."
+              : "Proposto dalla formula: serve il peso."
+            : `Proposto dalla formula: ${formatNumber(proposedValue)} g` + (key === "proteinGramsManual" ? `. Calcolato su ${proteinBasis}.` : ""),
+      })}
       {values[key] !== "" && (
         <button type="button" onClick={() => set(key)("")} className="-ml-2 min-h-11 w-fit px-2 text-[15px] font-semibold text-accent">
           Torna alla formula
@@ -78,13 +95,19 @@ export function SettingsForm({ store, settings, weighIns, today, onChanged }: Pr
       await store.saveSettings(r.patch);
       onChanged(false);
       setStatus({ kind: "ok", text: "Salvato." });
+    } catch {
+      setStatus({ kind: "errore", text: "Non salvato: riprova tra poco." });
     } finally {
       setSaving(false);
     }
   };
 
   const reset = async () => {
-    await store.saveSettings(defaultsPatch());
+    try {
+      await store.saveSettings(defaultsPatch());
+    } catch {
+      return; // l'avviso in cima lo spiega; il pannello resta aperto per riprovare
+    }
     setConfirmReset(false);
     onChanged(true);
   };
@@ -101,8 +124,8 @@ export function SettingsForm({ store, settings, weighIns, today, onChanged }: Pr
       <Section title="Obiettivi" intro="Da quante kcal parte ogni giorno e quanti grammi di nutrienti puntare. Lasciando un campo vuoto vale il valore suggerito.">
         {field("baseKcal", "Kcal base", { placeholder: formatNumber(D.baseKcal), hint: "Le kcal di un giorno senza bonus né recupero." })}
         {field("floorKcal", "Soglia minima (kcal)", { placeholder: formatNumber(D.floorKcal), hint: "La base non scende mai sotto questo valore. Il bonus si somma sopra." })}
-        {formulaRow("proteinGramsManual", "Proteine (g)", proposed?.protein ?? null)}
-        {formulaRow("fatGramsManual", "Grassi (g)", proposed?.fat ?? null)}
+        {formulaRow("proteinGramsManual", "Proteine (g)", proteinProposed)}
+        {formulaRow("fatGramsManual", "Grassi (g)", proposed.fat)}
         {field("fiberMin", "Fibre (g, minimo)", { placeholder: formatNumber(D.fiberMin) })}
         {field("saltMax", "Sale (g, massimo)", { placeholder: formatNumber(D.saltMax, 1) })}
         {field("margin", "Margine dei semafori (%)", { placeholder: pct(D.margin), hint: "Quanto ci si può allontanare dall'obiettivo restando in verde." })}

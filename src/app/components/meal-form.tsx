@@ -2,13 +2,18 @@
 
 import { useState } from "react";
 import { formatNumber } from "../lib/format";
+import type { MealSlot } from "@/engine";
 import { SLOTS, validateMealForm } from "../lib/meal-form";
 import type { MealFieldKey, MealFormErrors, MealFormValues, ParsedMeal } from "../lib/meal-form";
 
 interface MealFormProps {
   initial: MealFormValues;
-  /** false se nella settimana c'è già un altro pasto libero. */
-  freeAllowed: boolean;
+  /** Dice se il pasto di quella fascia può essere libero (false se la settimana ha già un altro pasto libero). */
+  freeAllowedFor: (slot: MealSlot) => boolean;
+  /** Dice se il pasto di quella fascia è già libero: scegliendo una fascia l'interruttore ne segue lo stato. */
+  mealIsFreeFor?: (slot: MealSlot) => boolean;
+  /** La fascia è già stabilita (si aggiunge un piatto a un pasto) e non si sceglie. */
+  lockedSlot?: boolean;
   /** Tetto di kcal del pasto libero, dalle impostazioni. */
   freeMealCap: number;
   submitLabel: string;
@@ -30,7 +35,7 @@ const NUMERIC: { key: Exclude<MealFieldKey, "isFree">; label: string; required?:
 const input = "min-h-11 w-full rounded-xl bg-bg px-3 text-[17px] outline-none placeholder:text-muted focus:ring-2 focus:ring-accent";
 
 /** Modulo per aggiungere o modificare un pasto a mano. */
-export function MealForm({ initial, freeAllowed, freeMealCap, submitLabel, onSubmit, onDelete, deleteName }: MealFormProps) {
+export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = false, freeMealCap, submitLabel, onSubmit, onDelete, deleteName }: MealFormProps) {
   const [values, setValues] = useState<MealFormValues>(initial);
   const [errors, setErrors] = useState<MealFormErrors>({});
   const [saving, setSaving] = useState(false);
@@ -38,7 +43,9 @@ export function MealForm({ initial, freeAllowed, freeMealCap, submitLabel, onSub
 
   const set = <K extends keyof MealFormValues>(key: K, value: MealFormValues[K]) => setValues((v) => ({ ...v, [key]: value }));
   // Se il pasto è già libero resta modificabile anche quando la settimana "ne ha" uno: è proprio quello.
+  const freeAllowed = freeAllowedFor(values.slot);
   const switchDisabled = !freeAllowed && !values.isFree;
+  const slotName = (SLOTS.find((x) => x.value === values.slot)?.label ?? "").toLowerCase();
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,6 +58,8 @@ export function MealForm({ initial, freeAllowed, freeMealCap, submitLabel, onSub
     setSaving(true);
     try {
       await onSubmit(r.meal);
+    } catch {
+      // Salvataggio non riuscito: l'avviso in cima lo spiega e il modulo resta com'è, per riprovare.
     } finally {
       setSaving(false);
     }
@@ -62,7 +71,7 @@ export function MealForm({ initial, freeAllowed, freeMealCap, submitLabel, onSub
         <p className="text-[17px]">
           Eliminare <strong>{deleteName}</strong>? Non si può annullare.
         </p>
-        <button type="button" disabled={saving} onClick={async () => { setSaving(true); try { await onDelete(); } finally { setSaving(false); } }} className="min-h-12 rounded-xl bg-bad-fill px-4 text-[17px] font-semibold text-white disabled:opacity-50">
+        <button type="button" disabled={saving} onClick={async () => { setSaving(true); try { await onDelete(); } catch { /* l'avviso in cima lo spiega; si può riprovare */ } finally { setSaving(false); } }} className="min-h-12 rounded-xl bg-bad-fill px-4 text-[17px] font-semibold text-white disabled:opacity-50">
           Elimina
         </button>
         <button type="button" onClick={() => setConfirming(false)} className="min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent">
@@ -75,10 +84,16 @@ export function MealForm({ initial, freeAllowed, freeMealCap, submitLabel, onSub
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
-        <label htmlFor="meal-name" className="text-sm font-semibold text-muted">Nome</label>
+        <label htmlFor="meal-name" className="text-sm font-semibold text-muted">Nome del piatto</label>
         <input id="meal-name" type="text" autoComplete="off" value={values.name} onChange={(e) => set("name", e.target.value)} placeholder="Facoltativo" className={input} />
       </div>
 
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="meal-quantity" className="text-sm font-semibold text-muted">Quantità (facoltativa)</label>
+        <input id="meal-quantity" type="text" autoComplete="off" value={values.quantity} onChange={(e) => set("quantity", e.target.value)} placeholder="es. 100 g" className={input} />
+      </div>
+
+      {!lockedSlot && (
       <div className="flex flex-col gap-1.5">
         <span id="slot-label" className="text-sm font-semibold text-muted">Fascia</span>
         <div role="radiogroup" aria-labelledby="slot-label" className="grid grid-cols-4 gap-1 rounded-xl bg-bg p-1">
@@ -88,7 +103,10 @@ export function MealForm({ initial, freeAllowed, freeMealCap, submitLabel, onSub
               type="button"
               role="radio"
               aria-checked={values.slot === s.value}
-              onClick={() => set("slot", s.value)}
+              onClick={() => {
+                set("slot", s.value);
+                if (mealIsFreeFor) set("isFree", mealIsFreeFor(s.value));
+              }}
               className={`min-h-11 rounded-lg px-1 text-[15px] font-semibold ${values.slot === s.value ? "bg-accent text-white" : "text-fg"}`}
             >
               {s.label}
@@ -96,6 +114,7 @@ export function MealForm({ initial, freeAllowed, freeMealCap, submitLabel, onSub
           ))}
         </div>
       </div>
+      )}
 
       <div className="grid grid-cols-2 gap-x-3 gap-y-4">
         {NUMERIC.map(({ key, label, required }) => (
@@ -145,7 +164,7 @@ export function MealForm({ initial, freeAllowed, freeMealCap, submitLabel, onSub
         <p id="free-help" className="pb-1 text-sm text-muted">
           {switchDisabled
             ? "Hai già usato il pasto libero in questa settimana: ce n'è uno solo."
-            : `Conta al massimo ${formatNumber(freeMealCap)} kcal nel budget del giorno. Uno a settimana.`}
+            : `Vale per l'intero pasto (${slotName}): in totale conta al massimo ${formatNumber(freeMealCap)} kcal nel budget del giorno. Uno a settimana.`}
         </p>
         {errors.isFree && <p className="pb-1 text-sm font-medium text-bad">{errors.isFree}</p>}
       </div>
@@ -155,7 +174,7 @@ export function MealForm({ initial, freeAllowed, freeMealCap, submitLabel, onSub
       </button>
       {onDelete && (
         <button type="button" onClick={() => setConfirming(true)} className="min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-bad">
-          Elimina pasto
+          Elimina piatto
         </button>
       )}
     </form>

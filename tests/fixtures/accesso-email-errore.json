@@ -1,0 +1,23 @@
+{
+  "id": "accesso-email-errore",
+  "descrizione": "Email non valida: messaggio accanto al campo.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "accessoDimostrativo": {
+    "session": null
+  },
+  "fisso": true,
+  "passi": [
+    {
+      "fill": [
+        "Email",
+        "non-una-email"
+      ]
+    },
+    {
+      "click": "Invia il codice",
+      "exact": true
+    }
+  ]
+}

@@ -173,20 +173,20 @@ Vincoli di questa fase:
 - I test del motore che riguardano il pasto libero possono essere aggiornati in T3.0, perché la regola cambia; vanno aggiornati solo quelli, e il diario dice quali.
 - Per le schermate valgono le regole della fase 2 (scenari, screenshot, formato italiano, stati vuoti).
 
-### T3.0 Motore: pasto libero sul pasto intero · da fare
+### T3.0 Motore: pasto libero sul pasto intero · fatto
 §3.1 del brief: il pasto libero vale per l'insieme dei piatti di una fascia in un giorno.
 - Un pasto è libero se è segnato libero; il tetto `freeMealCap` si applica alla somma dei suoi piatti, non al singolo piatto.
 - Caso L di §3.6; caso C ancora valido.
 - "Pasto libero già usato nella settimana" ragiona sui pasti, non sui piatti, e può escludere un pasto (serve in modifica).
 - Nel database, la scelta più semplice che non rinomina né elimina colonne (per esempio il segno libero su tutti i piatti del pasto, oppure una tabella nuova per i pasti); scrivi la scelta nel diario.
 
-### T3.1 Motore: proteine sul peso obiettivo · da fare
+### T3.1 Motore: proteine sul peso obiettivo · fatto
 §3.4 del brief.
 - Nuova impostazione `proteinPerKgTarget` (1,8) con default in `defaults.ts`.
 - Con peso obiettivo impostato: `proteinPerKgTarget × peso obiettivo`; senza: `proteinPerKg × peso`. Il valore manuale sostituisce sempre la formula.
 - Caso K di §3.6; caso con solo peso attuale (100 kg → 140 g) ancora valido.
 
-### T3.2 Schermate: pasti composti da piatti · da fare
+### T3.2 Schermate: pasti composti da piatti · fatto
 - In Oggi ogni pasto è una scheda con totale di kcal e macro e i piatti elencati sotto; un pasto vuoto non compare, salvo un invito discreto ad aggiungere.
 - "Aggiungi piatto" dentro ogni pasto, con la fascia già scelta; il + generale chiede la fascia.
 - Il pannello del piatto contiene nome, quantità facoltativa (testo libero, es. "100 g"), kcal e macro. In questa fase kcal resta obbligatorio; la stima dei numeri mancanti arriverà con l'AI.
@@ -195,32 +195,32 @@ Vincoli di questa fase:
 - In Impostazioni la scheda Proteine spiega su quale peso è calcolata ("1,8 g per kg del peso obiettivo").
 - Scenari: pasto con un piatto, pasto con tre piatti, pasto libero con più piatti, giornata con tutti e quattro i pasti.
 
-### T3.3 Sportello dati su Supabase · da fare
+### T3.3 Sportello dati su Supabase · fatto
 - Implementazione di `DataStore` su Supabase, con `@supabase/supabase-js` (motivo della dipendenza nel diario).
 - L'app sceglie Supabase solo se entrambe le variabili d'ambiente sono presenti; altrimenti usa il browser.
 - Migrazioni aggiornate per T3.0 e T3.1, solo per aggiunta. Un file unico `supabase/setup.sql` con tutto lo schema in ordine, da incollare nell'editor SQL di Supabase.
 - Errori di rete: messaggio chiaro, nessun dato perso in silenzio; un salvataggio fallito resta visibile e si può riprovare.
 - Test con un client Supabase finto. Ciò che non si può provare senza Supabase vero va in "Non verificato".
 
-### T3.4 Accesso con email e codice · da fare
+### T3.4 Accesso con email e codice · fatto
 Solo quando Supabase è configurato.
 - Schermata "Accedi": email, poi codice di 6 cifre ricevuto per email. Niente link magico (vedi §7 del brief).
 - La sessione resta attiva: si accede una volta per dispositivo.
 - "Esci" in Impostazioni, con l'email dell'account visibile.
 - Senza Supabase configurato, nessuna schermata di accesso.
 
-### T3.5 Importazione dei dati del browser · da fare
+### T3.5 Importazione dei dati del browser · fatto
 - Al primo accesso, se il browser contiene dati, l'app propone "Importa i dati di questo dispositivo" mostrando quanti giorni, piatti e pesate contiene.
 - L'importazione non crea doppioni se ripetuta (anche da un secondo dispositivo con dati diversi: si uniscono).
 - I dati del browser restano finché l'utente non conferma che l'importazione è andata a buon fine.
 - I pasti salvati prima di T3.0 (un piatto per voce) vengono importati come pasti di un solo piatto.
 
-### T3.6 Esportazione dei dati · da fare
+### T3.6 Esportazione dei dati · fatto
 Impostazioni → Dati → "Esporta": un file CSV dei piatti (data, pasto, nome, kcal, macro, fibre, sale, libero) e uno delle pesate e attività. Funziona sia con il browser sia con Supabase.
 
-### T3.7 Guida al collegamento · da fare
+### T3.7 Guida al collegamento · fatto
 `docs/COLLEGA-SUPABASE.md`: passi numerati per chi non sa programmare, uno per volta, ciascuno con cosa si vede a schermo:
 creare il progetto su Supabase, incollare `supabase/setup.sql`, attivare l'accesso con codice via email (modello dell'email con il codice), copiare URL e chiave pubblica, inserirle su Vercel, ripubblicare, accedere e importare.
 
-### T3.8 Report di fase · da fare
+### T3.8 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-3.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici, includi i controlli da fare sul telefono prima e dopo il collegamento di Supabase.

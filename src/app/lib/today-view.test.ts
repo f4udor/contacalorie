@@ -138,3 +138,18 @@ describe("buildTodayView", () => {
     expect(v.nutrients.find((n) => n.key === "protein")?.progress).toBe(1);
   });
 });
+
+describe("proteine sul peso obiettivo", () => {
+  it("con peso obiettivo impostato le proteine usano 1,8 × peso obiettivo (caso K: 105 → 85 kg = 155 g)", () => {
+    const v = buildTodayView({ date: "2026-01-05", days: week(), settings: s, weightKg: 105, targetWeightKg: 85 });
+    expect(v.nutrients.find((n) => n.key === "protein")?.target).toBe(155);
+  });
+  it("con il solo peso obiettivo non serve il peso attuale", () => {
+    const v = buildTodayView({ date: "2026-01-05", days: week(), settings: s, weightKg: null, targetWeightKg: 85 });
+    expect(v.nutrients.find((n) => n.key === "protein")).toMatchObject({ target: 155, needsWeight: false });
+  });
+  it("senza peso obiettivo: 1,4 × peso", () => {
+    const v = buildTodayView({ date: "2026-01-05", days: week(), settings: s, weightKg: 100, targetWeightKg: null });
+    expect(v.nutrients.find((n) => n.key === "protein")?.target).toBe(140);
+  });
+});

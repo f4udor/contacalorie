@@ -169,6 +169,10 @@ export class SnapshotDataStore implements DataStore {
     this.commit();
   }
 
+  async exportAll(): Promise<StoredData> {
+    return copy(this.data);
+  }
+
   async getNotice() {
     return this.notice;
   }

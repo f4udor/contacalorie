@@ -1,0 +1,353 @@
+{
+  "id": "importa-dopo-togli",
+  "descrizione": "Dopo aver tolto i dati dal dispositivo: nessuna nuova proposta (qui l'app mostra il giorno vuoto perché in questa prova l'archivio dell'account è finto).",
+  "oggi": "2026-01-11",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100,
+      "challengeStartDate": "2026-01-05"
+    },
+    "meals": [
+      {
+        "id": "m63",
+        "date": "2026-01-05",
+        "slot": "colazione",
+        "name": "Colazione",
+        "kcal": 350,
+        "protein": 12,
+        "carbs": 50,
+        "fat": 9,
+        "fiber": 3,
+        "salt": 0.6,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m64",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 800,
+        "protein": 40,
+        "carbs": 90,
+        "fat": 25,
+        "fiber": 8,
+        "salt": 2.1,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m65",
+        "date": "2026-01-05",
+        "slot": "cena",
+        "name": "Cena",
+        "kcal": 600,
+        "protein": 35,
+        "carbs": 60,
+        "fat": 20,
+        "fiber": 7,
+        "salt": 1.8,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m66",
+        "date": "2026-01-06",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1100,
+        "protein": 55,
+        "carbs": 120,
+        "fat": 35,
+        "fiber": 9,
+        "salt": 2.8,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m67",
+        "date": "2026-01-06",
+        "slot": "cena",
+        "name": "Cena",
+        "kcal": 700,
+        "protein": 40,
+        "carbs": 70,
+        "fat": 25,
+        "fiber": 6,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m68",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1300,
+        "protein": 60,
+        "carbs": 150,
+        "fat": 40,
+        "fiber": 10,
+        "salt": 3,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m69",
+        "date": "2026-01-07",
+        "slot": "cena",
+        "name": "Cena fuori",
+        "kcal": 1950,
+        "protein": 70,
+        "carbs": 200,
+        "fat": 90,
+        "fiber": 8,
+        "salt": 6.5,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m70",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1100,
+        "protein": 50,
+        "carbs": 120,
+        "fat": 30,
+        "fiber": 9,
+        "salt": 2.5,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m71",
+        "date": "2026-01-08",
+        "slot": "cena",
+        "name": "Cena",
+        "kcal": 800,
+        "protein": 45,
+        "carbs": 80,
+        "fat": 28,
+        "fiber": 7,
+        "salt": 2.2,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m72",
+        "date": "2026-01-09",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1200,
+        "protein": 55,
+        "carbs": 130,
+        "fat": 35,
+        "fiber": 9,
+        "salt": 2.6,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m73",
+        "date": "2026-01-09",
+        "slot": "cena",
+        "name": "Cena",
+        "kcal": 800,
+        "protein": 40,
+        "carbs": 85,
+        "fat": 28,
+        "fiber": 6,
+        "salt": 2.3,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m74",
+        "date": "2026-01-10",
+        "slot": "pranzo",
+        "name": "Pizza",
+        "kcal": 1100,
+        "protein": 40,
+        "carbs": 130,
+        "fat": 42,
+        "fiber": 6,
+        "salt": 4.2,
+        "isFree": true,
+        "originalText": null
+      },
+      {
+        "id": "m75",
+        "date": "2026-01-10",
+        "slot": "cena",
+        "name": "Cena",
+        "kcal": 900,
+        "protein": 50,
+        "carbs": 90,
+        "fat": 30,
+        "fiber": 8,
+        "salt": 2.4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m76",
+        "date": "2026-01-11",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1000,
+        "protein": 48,
+        "carbs": 110,
+        "fat": 30,
+        "fiber": 9,
+        "salt": 2.4,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [
+      {
+        "date": "2026-01-05",
+        "steps": 8000,
+        "stepsSource": "manuale",
+        "bikeKm": null,
+        "bikeKcalHealth": null,
+        "bikeSource": null
+      },
+      {
+        "date": "2026-01-06",
+        "steps": 7200,
+        "stepsSource": "manuale",
+        "bikeKm": 20,
+        "bikeKcalHealth": null,
+        "bikeSource": "manuale"
+      },
+      {
+        "date": "2026-01-07",
+        "steps": 9000,
+        "stepsSource": "manuale",
+        "bikeKm": null,
+        "bikeKcalHealth": null,
+        "bikeSource": null
+      },
+      {
+        "date": "2026-01-09",
+        "steps": 6500,
+        "stepsSource": "manuale",
+        "bikeKm": null,
+        "bikeKcalHealth": null,
+        "bikeSource": null
+      }
+    ],
+    "weighIns": [
+      {
+        "date": "2026-01-05",
+        "weightKg": 93
+      },
+      {
+        "date": "2026-01-09",
+        "weightKg": 92
+      }
+    ],
+    "challengeLog": [
+      {
+        "date": "2026-01-05",
+        "exerciseId": "Push up",
+        "status": "fatto",
+        "reps": null
+      },
+      {
+        "date": "2026-01-05",
+        "exerciseId": "Crunch",
+        "status": "fatto",
+        "reps": null
+      },
+      {
+        "date": "2026-01-05",
+        "exerciseId": "Crunch incrociati",
+        "status": "fatto",
+        "reps": null
+      },
+      {
+        "date": "2026-01-06",
+        "exerciseId": "Push up",
+        "status": "fatto",
+        "reps": null
+      },
+      {
+        "date": "2026-01-06",
+        "exerciseId": "Crunch",
+        "status": "fatto",
+        "reps": null
+      },
+      {
+        "date": "2026-01-06",
+        "exerciseId": "Crunch incrociati",
+        "status": "fatto",
+        "reps": null
+      },
+      {
+        "date": "2026-01-07",
+        "exerciseId": "Push up",
+        "status": "fatto",
+        "reps": null
+      },
+      {
+        "date": "2026-01-07",
+        "exerciseId": "Crunch",
+        "status": "fatto",
+        "reps": null
+      },
+      {
+        "date": "2026-01-07",
+        "exerciseId": "Crunch incrociati",
+        "status": "fatto",
+        "reps": null
+      },
+      {
+        "date": "2026-01-08",
+        "exerciseId": "Push up",
+        "status": "fatto",
+        "reps": null
+      }
+    ]
+  },
+  "accessoDimostrativo": {
+    "session": {
+      "email": "mauro@esempio.it"
+    }
+  },
+  "fisso": false,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Importa",
+        "exact": true
+      }
+    },
+    {
+      "wait": 800
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Tutto a posto: togli i dati da questo dispositivo",
+        "exact": true
+      }
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Togli da questo dispositivo",
+        "exact": true
+      }
+    },
+    {
+      "wait": 600
+    }
+  ],
+  "scorre": true
+}

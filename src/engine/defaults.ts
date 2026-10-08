@@ -10,6 +10,7 @@ export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
   stepThreshold: 6000,
   freeMealCap: 800,
   proteinPerKg: 1.4,
+  proteinPerKgTarget: 1.8,
   fatShare: 0.3,
   fiberMin: 30,
   saltMax: 5,

@@ -47,4 +47,34 @@ describe("nutrientTargets", () => {
     expect(t.fiber).toBe(25);
     expect(t.salt).toBe(6);
   });
+
+  it("caso K: peso 105 kg, peso obiettivo 85 kg → proteine 155 g (1,8 × 85 = 153, ai 5 g)", () => {
+    expect(nutrientTargets(2100, 105, s, 85).protein).toBe(155);
+  });
+
+  it("con il peso obiettivo il peso attuale non conta", () => {
+    expect(nutrientTargets(2100, 60, s, 85).protein).toBe(155);
+    expect(nutrientTargets(2100, 0, s, 85).protein).toBe(155);
+  });
+
+  it("senza peso obiettivo (assente, null, zero o negativo) resta 1,4 × peso attuale: 100 kg → 140 g", () => {
+    expect(nutrientTargets(2100, 100, s).protein).toBe(140);
+    expect(nutrientTargets(2100, 100, s, null).protein).toBe(140);
+    expect(nutrientTargets(2100, 100, s, 0).protein).toBe(140);
+    expect(nutrientTargets(2100, 100, s, -5).protein).toBe(140);
+    expect(nutrientTargets(2100, 100, s, NaN).protein).toBe(140);
+  });
+
+  it("il valore manuale sostituisce sempre la formula, anche con il peso obiettivo", () => {
+    expect(nutrientTargets(2100, 100, { ...s, proteinGramsManual: 120 }, 85).protein).toBe(120);
+  });
+
+  it("i carboidrati seguono le proteine calcolate sul peso obiettivo", () => {
+    // proteine 155, grassi 70: (2100 − 620 − 630) / 4 = 212,5 → 213
+    expect(nutrientTargets(2100, 105, s, 85).carbs).toBe(213);
+  });
+
+  it("il coefficiente per il peso obiettivo viene dalle impostazioni", () => {
+    expect(nutrientTargets(2100, 100, { ...s, proteinPerKgTarget: 2 }, 80).protein).toBe(160);
+  });
 });

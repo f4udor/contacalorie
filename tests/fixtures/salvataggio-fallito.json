@@ -1,0 +1,35 @@
+{
+  "id": "salvataggio-fallito",
+  "descrizione": "Il browser non riesce più a scrivere (memoria piena): il peso resta in memoria (proteine 125 g) e l'avviso in cima dice che non è stato salvato su questo dispositivo. Con Supabase lo stesso avviso compare per un salvataggio non riuscito e il pannello resta aperto per riprovare.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "fisso": true,
+  "scritturaFallita": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "click": "Pesata",
+      "exact": true
+    },
+    {
+      "fill": [
+        "Peso (kg)",
+        "90"
+      ]
+    },
+    {
+      "click": "Salva pesata"
+    },
+    {
+      "wait": 500
+    }
+  ]
+}

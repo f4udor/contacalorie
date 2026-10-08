@@ -1,0 +1,12 @@
+{
+  "id": "accesso-email",
+  "descrizione": "Accedi: prima si scrive l'email, niente password.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "accessoDimostrativo": {
+    "session": null
+  },
+  "fisso": true,
+  "passi": []
+}

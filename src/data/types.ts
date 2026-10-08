@@ -10,9 +10,11 @@ export interface UserSettings extends Partial<Settings> {
   challengeStartDate?: DateKey;
 }
 
-/** Pasto salvato (tabella `meals`). */
+/** Piatto salvato (tabella `meals`, una riga per piatto). I piatti di una data e fascia formano un pasto. */
 export interface MealRecord extends Meal {
   date: DateKey;
+  /** Quantità in testo libero (es. "100 g"); assente o null se non indicata. */
+  quantity?: string | null;
   /** Testo dettato o scritto da cui è nata la stima; null per l'inserimento manuale. */
   originalText: string | null;
 }

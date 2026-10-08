@@ -1,0 +1,78 @@
+{
+  "id": "dopo-aggiungi-piatto",
+  "descrizione": "Dopo aver aggiunto 'Insalata' (80 kcal, 150 g) al pranzo: il totale del pasto passa da 800 a 880 kcal.",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m93",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 650,
+        "protein": 22,
+        "carbs": 110,
+        "fat": 12,
+        "fiber": 6,
+        "salt": 1.8,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "100 g"
+      },
+      {
+        "id": "m94",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pane",
+        "kcal": 150,
+        "protein": 5,
+        "carbs": 30,
+        "fat": 1,
+        "fiber": 2,
+        "salt": 0.8,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "50 g"
+      }
+    ],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "passi": [
+    {
+      "click": "+ Aggiungi piatto"
+    },
+    {
+      "fill": [
+        "Nome del piatto",
+        "Insalata"
+      ]
+    },
+    {
+      "fill": [
+        "Quantità",
+        "150 g"
+      ]
+    },
+    {
+      "fill": [
+        "Kcal",
+        "80"
+      ]
+    },
+    {
+      "click": "Aggiungi piatto",
+      "exact": true
+    },
+    {
+      "wait": 600
+    }
+  ]
+}

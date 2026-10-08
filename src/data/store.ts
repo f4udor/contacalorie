@@ -1,5 +1,5 @@
 import type { DateKey } from "@/engine";
-import type { ActivityRecord, ChallengeLogEntry, MealRecord, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, ChallengeLogEntry, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 
 /**
  * Unico punto d'accesso ai dati per le schermate.
@@ -36,6 +36,9 @@ export interface DataStore {
   /** Una sola voce per data ed esercizio: sostituisce quella esistente. */
   saveChallengeEntry(entry: ChallengeLogEntry): Promise<void>;
   deleteChallengeEntry(date: DateKey, exerciseId: string): Promise<void>;
+
+  /** Tutti i dati salvati (per l'importazione e l'esportazione). */
+  exportAll(): Promise<StoredData>;
 
   /** Messaggio da mostrare se al caricamento i dati erano illeggibili o non salvabili; null se tutto bene. */
   getNotice(): Promise<string | null>;
