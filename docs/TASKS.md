@@ -270,7 +270,7 @@ Vincoli di questa fase:
 - Alla fine si arriva in Oggi. Le stesse voci restano modificabili in Impostazioni.
 - In Impostazioni, sezione "Collegamenti": stato dell'AI ("attiva" o "non configurata").
 
-### T4.6 Guida al collegamento di Vertex AI · da fare
+### T4.6 Guida al collegamento di Vertex AI · fatto
 `docs/COLLEGA-VERTEX.md`, stesso stile della guida di Supabase, passi numerati con cosa si vede a schermo:
 attivare l'API di Vertex AI nel progetto Google Cloud, creare un account di servizio con il ruolo minimo necessario per chiamare i modelli, scaricare la chiave JSON, scegliere regione europea e modello verificandone la disponibilità, impostare un avviso di budget, inserire le variabili su Vercel (solo lato server), ripubblicare, provare una stima.
 La guida avverte che i nomi dei pulsanti possono essere cambiati e che la chiave JSON non va mai incollata in chat né nel repository.
