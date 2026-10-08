@@ -334,7 +334,7 @@ Vincoli di questa fase:
 - Per le schermate valgono le regole della fase 2 e della 4b (scenari, screenshot a 390 px in chiaro e scuro, formato italiano, stati vuoti, nessun testo d'esempio nei campi).
 - Nessuna funzione oltre a quelle elencate. In particolare: niente email, niente velocità media, niente obiettivo del giorno modificabile a mano (§9).
 
-### T5.0 Ingresso dei dati da Salute · da fare
+### T5.0 Ingresso dei dati da Salute · fatto
 - Route del server `POST /api/ingest/health`. Il codice personale arriva nell'intestazione `Authorization: Bearer …`. Codice assente, sbagliato o revocato: 401, senza dire quale dei tre.
 - Corpo JSON con due campi facoltativi, `passi` e `bici_km`. Ciascuno è un testo con una riga per giorno, `data;valore` (per esempio `2026-10-08;8123`), oppure un elenco di oggetti `{ "data": "2026-10-08", "valore": 8123 }`. Il testo è scritto a mano dentro un Comando rapido, quindi la lettura deve essere tollerante:
   - separatore `;`, `,` seguito da spazio, tabulazione o più spazi; righe vuote ignorate;
