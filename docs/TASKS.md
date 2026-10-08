@@ -115,7 +115,7 @@ Parte alta della schermata Oggi (§2 del brief, punti 1-3).
 - Peso per le proteine: ultima pesata se presente, altrimenti peso del profilo. Senza nessuno dei due, la scheda proteine invita a inserire il peso.
 - Scenari: giorno vuoto, giorno normale, caso B del brief (giovedì con recupero), giorno di bici (caso E).
 
-### T2.3 Pasti · da fare
+### T2.3 Pasti · fatto
 Lista dei pasti e pannello Aggiungi con inserimento manuale.
 - Pasti raggruppati per fascia; per ciascuno nome, kcal, macro ed etichetta "libero".
 - Pulsante + sempre visibile che apre il pannello Aggiungi.

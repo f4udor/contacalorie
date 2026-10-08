@@ -18,6 +18,7 @@ Una riga per task chiuso.
 - T2.0 · fatto · `src/data`: interfaccia `DataStore` async, implementazioni in memoria e nel browser (stessa classe a snapshot con versione del formato 1), avviso su dati illeggibili; regola di lint che vieta `localStorage` fuori da `src/data`.
 - T2.1 · fatto · guscio: barra in basso, variabili CSS chiaro/scuro, manifest e icone, pannello dal basso (`Sheet`), avviso dati, `npm run screens` con scenari in `tests/fixtures/`. Cose non provabili in 'Non verificato'.
 - T2.2 · fatto · Oggi: data con frecce, anello kcal, composizione, cinque schede nutrienti (`today-view.ts` + test); scenari vuoto, normale, caso B, bici, sforato, giorno passato. Formati italiani in `format.ts`.
+- T2.3 · fatto · Oggi: lista pasti per fascia, pulsante +, pannello Aggiungi (pasto a mano, Copia da ieri, segnaposto voce), modifica/eliminazione con conferma, interruttore pasto libero. Stato vuoto senza zeri. Tolta la pagina di prova del pannello.
 
 ## Decisioni da confermare
 
