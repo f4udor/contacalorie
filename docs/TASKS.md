@@ -374,7 +374,7 @@ La guida dichiara che i nomi delle azioni non sono stati visti a schermo e posso
 - Impostazioni → Obiettivi: "Recupero massimo al giorno" e "Margine massimo della settimana", con una riga di spiegazione ciascuno. `recoveryMin` non ha un campo.
 - Test: tutti i casi di §3.6; debito che si estingue in più giorni; margine che assorbe uno sgarro successivo; giorni senza pasti che non entrano nel saldo; lunedì che azzera; soglia minima con `recoveryMaxPerDay` alto.
 
-### T5.4 Schede della Settimana toccabili · da fare
+### T5.4 Schede della Settimana toccabili · fatto
 - **Peso**: la scheda c'è sempre; senza pesate nella settimana dice "Nessuna pesata". Toccandola: pannello con le pesate, dalla più recente, e "Aggiungi pesata". Ogni pesata si elimina.
 - **Bici** e **Passi**: toccandole, pannello con i sette giorni della settimana, valore e fonte. Le righe con fonte `manuale` si eliminano; quelle `salute` no. Eliminare un valore a mano lascia il giorno vuoto: il prossimo invio da Salute potrà riempirlo.
 - **Pasto libero**: se nella settimana c'è, il pannello mostra giorno, fascia e kcal, con "Togli pasto libero" (il pasto resta e torna normale, cioè conta per intero). Se non c'è, elenco dei pasti della settimana con "Segna come libero".
