@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { BottomNav } from "./components/nav";
+import { NoticeBanner } from "./components/notice-banner";
 import { DataProvider } from "./data-provider";
 
 export const metadata: Metadata = {
@@ -25,7 +26,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="it">
       <body>
         <DataProvider>
-          <div className="mx-auto min-h-dvh w-full max-w-xl px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-[env(safe-area-inset-top)]">
+          <div className="mx-auto flex min-h-dvh w-full flex-col max-w-xl px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-[env(safe-area-inset-top)]">
+            <NoticeBanner />
             {children}
           </div>
           <BottomNav />

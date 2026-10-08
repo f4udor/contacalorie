@@ -5,11 +5,23 @@ import type { ReactNode } from "react";
 import { createBrowserDataStore } from "@/data";
 import type { DataStore } from "@/data";
 
-const DataContext = createContext<DataStore | null>(null);
+interface DataValue {
+  store: DataStore | null;
+  notice: string | null;
+  dismissNotice: () => void;
+}
+
+const DataContext = createContext<DataValue>({ store: null, notice: null, dismissNotice: () => {} });
 
 /** Lo sportello dei dati, creato nel browser dopo il caricamento (null finché non è pronto). */
 export function useDataStore(): DataStore | null {
-  return useContext(DataContext);
+  return useContext(DataContext).store;
+}
+
+/** Messaggio sullo stato dei dati salvati (illeggibili, non salvabili) e modo per chiuderlo. */
+export function useDataNotice() {
+  const { notice, dismissNotice } = useContext(DataContext);
+  return { notice, dismissNotice };
 }
 
 let clientStore: DataStore | null = null;
@@ -28,24 +40,10 @@ export function DataProvider({ children }: { children: ReactNode }) {
     store?.getNotice().then(setNotice);
   }, [store]);
 
-  return (
-    <DataContext.Provider value={store}>
-      {notice && (
-        <div role="alert" className="mx-auto flex max-w-xl items-start justify-between gap-3 bg-warn-fill px-4 py-3 text-sm font-medium text-black">
-          <span>{notice}</span>
-          <button
-            type="button"
-            className="-my-2 -mr-2 min-h-11 min-w-11 rounded-full px-3 font-semibold"
-            onClick={() => {
-              store?.clearNotice();
-              setNotice(null);
-            }}
-          >
-            Ok
-          </button>
-        </div>
-      )}
-      {children}
-    </DataContext.Provider>
-  );
+  const dismissNotice = () => {
+    store?.clearNotice();
+    setNotice(null);
+  };
+
+  return <DataContext.Provider value={{ store, notice, dismissNotice }}>{children}</DataContext.Provider>;
 }

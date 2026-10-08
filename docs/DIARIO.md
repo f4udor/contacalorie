@@ -28,8 +28,13 @@ Una riga per task chiuso.
 - Piano della sfida come piano di sistema (`user_id` null, uguale per tutti) scelto da `settings.challenge_plan_id`; la data di inizio è in `settings.challenge_start_date`.
 - Il vincolo "un solo pasto libero a settimana" non è nel database (si controlla nell'app con `hasFreeMealInWeek`).
 - Token degli ingressi: nel database solo l'impronta (hash).
+- Pagina di prova `/prova/pannello` per mostrare il pannello dal basso; da togliere in T2.3 quando il pannello Aggiungi lo usa davvero.
+- Pagine Oggi, Settimana e Impostazioni sono segnaposto fino ai task che le riempiono; Grafici resta "In arrivo".
 
 ## Non verificato
 
 - T1.0: la regola di lint `no-restricted-imports` non copre `require()` né `import()` dinamico.
 - T1.9: le migrazioni sono state eseguite solo su un PostgreSQL 16 locale con uno stand-in di `auth.users`/`auth.uid()` e del ruolo `authenticated`; non su Supabase reale. Verificato lì: creazione di tutte le tabelle, dato iniziale (1 piano, 12 esercizi), isolamento tra due utenti (lettura, modifica, inserimento altrui rifiutati), piano di sistema non modificabile, unicità attività per utente e data. Non verificato: comportamento con il vero `auth.uid()` di Supabase, grant dei ruoli Supabase, `gen_random_uuid()` su Supabase.
+- T2.1: installazione sulla Home dell'iPhone, schermo intero e aree sicure reali (notch, barra home) non si possono provare nell'ambiente: il codice usa `viewport-fit=cover` e `env(safe-area-inset-*)`, ma gli screenshot li hanno a zero.
+- T2.1: pannello dal basso provato in un browser headless con il mouse (Esc, Chiudi, tocco fuori, trascinamento corto e lungo: tutto come atteso), non con il tocco di un iPhone. Nessun test automatico oltre a `shouldCloseOnDrag`.
+- T2.1: `npm run screens` a 390 px, chiaro e scuro: 10 screenshot, nessuna segnalazione (niente scorrimento orizzontale, aree toccabili ≥ 44 px, pagine entro 844 px).

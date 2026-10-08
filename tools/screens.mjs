@@ -129,6 +129,7 @@ try {
           return { overflowX, small };
         });
         const notes = [];
+        if (full > HEIGHT && !sc.scorre) notes.push(`la pagina è alta ${full} px: oltre ${HEIGHT} scorre in verticale (se è voluto, "scorre": true nello scenario)`);
         if (report.overflowX) notes.push("SCORRIMENTO ORIZZONTALE");
         if (report.small.length) notes.push(`aree toccabili < 44 px: ${report.small.join("; ")}`);
         console.log(`${notes.length ? "!!" : "ok"} ${name}${notes.length ? "  " + notes.join(" | ") : ""}`);
