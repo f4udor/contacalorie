@@ -1,6 +1,6 @@
 {
-  "id": "preferiti-lista",
-  "descrizione": "Preferiti salvati: pasti (con numero di piatti e kcal totali) e piatti, ogni riga con un + a destra; campo di ricerca (senza il pulsante Modifica); scelta della fascia.",
+  "id": "preferiti-scorrimento-pasto",
+  "descrizione": "Preferiti: anche un pasto salvato ('Cena leggera') si scorre e mostra il cestino.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -126,6 +126,12 @@
     {
       "click": "Preferiti",
       "exact": true
+    },
+    {
+      "swipe": {
+        "text": "Cena leggera",
+        "dx": -140
+      }
     }
   ]
 }

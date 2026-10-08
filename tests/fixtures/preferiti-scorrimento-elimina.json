@@ -1,6 +1,6 @@
 {
-  "id": "preferiti-elimina",
-  "descrizione": "In modifica, primo tocco su Elimina: il pulsante diventa 'Elimina davvero'.",
+  "id": "preferiti-scorrimento-elimina",
+  "descrizione": "Dopo il cestino su 'Mela': il preferito è eliminato subito, senza conferma; restano gli altri.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -128,17 +128,20 @@
       "exact": true
     },
     {
-      "clickRole": {
-        "role": "button",
-        "name": "Modifica",
-        "exact": true
+      "swipe": {
+        "text": "Mela",
+        "dx": -140
       }
     },
     {
       "clickRole": {
         "role": "button",
-        "name": "Elimina Mela dai preferiti"
+        "name": "Elimina Mela dai preferiti",
+        "exact": true
       }
+    },
+    {
+      "wait": 500
     }
   ]
 }

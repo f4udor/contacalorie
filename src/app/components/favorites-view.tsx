@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import type { DateKey, Meal, MealSlot } from "@/engine";
 import type { DataStore, FavoriteDish, FavoriteMeal, MealRecord } from "@/data";
-import { filterByName, mealTotalKcal, recordsFromFavoriteDish, recordsFromFavoriteMeal } from "../lib/favorites";
+import { deleteFavorite, filterByName, mealTotalKcal, recordsFromFavoriteDish, recordsFromFavoriteMeal } from "../lib/favorites";
 import { formatNumber } from "../lib/format";
 import { newId } from "../lib/ids";
 import { SLOTS } from "../lib/meal-form";
 import { isMealFree, saveDish } from "../lib/save-dish";
 import { plural } from "../lib/plural";
+import { SwipeRow, trashIcon, useOpenRow } from "./swipe-row";
 
 interface Props {
   store: DataStore;
@@ -27,9 +28,7 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
   const [query, setQuery] = useState("");
   const [slot, setSlot] = useState<MealSlot>(initialSlot ?? "pranzo");
   const [busy, setBusy] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
-  // In modifica ogni riga mostra "Elimina" al posto del "+" e un tocco sulla riga non aggiunge nulla.
-  const [editing, setEditing] = useState(false);
+  const rows = useOpenRow();
   const [loadFailed, setLoadFailed] = useState(false);
 
   const load = () =>
@@ -65,9 +64,7 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
   const remove = async (kind: "dish" | "meal", id: string) => {
     setBusy(true);
     try {
-      if (kind === "dish") await store.deleteFavoriteDish(id);
-      else await store.deleteFavoriteMeal(id);
-      setConfirmDelete(null);
+      await deleteFavorite(store, kind, id);
       await load();
     } catch {
       // L'avviso in cima lo spiega.
@@ -90,40 +87,26 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
     </svg>
   );
 
-  const row = (kind: "dish" | "meal", id: string, name: string, detail: string | null, kcal: number, onAdd: () => void) => {
-    const text = (
-      <>
-        <span className="min-w-0 flex-1">
-          <span className="block break-words text-[17px] font-semibold leading-snug">{name}</span>
-          {detail && <span className="block break-words text-sm text-muted">{detail}</span>}
-        </span>
-        <span className="shrink-0 text-[16px] tabular-nums text-muted">{formatNumber(kcal)} kcal</span>
-      </>
-    );
-    return (
-      <li key={`${kind}-${id}`} className="flex items-stretch border-t border-line first:border-t-0">
-        {editing ? (
-          <>
-            <div className="flex min-h-14 min-w-0 flex-1 items-center justify-between gap-3 px-4 py-2">{text}</div>
-            {confirmDelete === `${kind}-${id}` ? (
-              <button type="button" disabled={busy} onClick={() => remove(kind, id)} className="min-h-14 shrink-0 bg-bad-btn px-3 text-[15px] font-semibold text-white disabled:opacity-50">
-                Elimina davvero
-              </button>
-            ) : (
-              <button type="button" onClick={() => setConfirmDelete(`${kind}-${id}`)} aria-label={`Elimina ${name} dai preferiti`} className="min-h-14 min-w-11 shrink-0 px-3 text-[15px] font-semibold text-bad">
-                Elimina
-              </button>
-            )}
-          </>
-        ) : (
-          <button type="button" disabled={busy} onClick={onAdd} aria-label={`Aggiungi ${name}`} className="flex min-h-14 min-w-0 flex-1 items-center justify-between gap-3 px-4 py-2 text-left disabled:opacity-50">
-            {text}
-            {plus}
-          </button>
-        )}
-      </li>
-    );
-  };
+  const row = (kind: "dish" | "meal", id: string, name: string, detail: string | null, kcal: number, onAdd: () => void) => (
+    <li key={`${kind}-${id}`} className="border-t border-line first:border-t-0">
+      <SwipeRow
+        id={`${kind}-${id}`}
+        openId={rows.openId}
+        setOpen={rows.setOpen}
+        className="bg-bg"
+        actions={[{ key: "elimina", label: `Elimina ${name} dai preferiti`, icon: trashIcon, tone: "danger", onClick: () => void remove(kind, id) }]}
+      >
+        <button type="button" disabled={busy} onClick={onAdd} aria-label={`Aggiungi ${name}`} className="flex min-h-14 w-full min-w-0 items-center justify-between gap-3 bg-bg px-4 py-2 text-left disabled:opacity-50">
+          <span className="min-w-0 flex-1">
+            <span className="block break-words text-[17px] font-semibold leading-snug">{name}</span>
+            {detail && <span className="block break-words text-sm text-muted">{detail}</span>}
+          </span>
+          <span className="shrink-0 text-[16px] tabular-nums text-muted">{formatNumber(kcal)} kcal</span>
+          {plus}
+        </button>
+      </SwipeRow>
+    </li>
+  );
 
   return (
     <div className="flex flex-col gap-4">
@@ -144,18 +127,8 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
               placeholder="Cerca"
               className={`${input} min-w-0 flex-1`}
             />
-            <button
-              type="button"
-              onClick={() => {
-                setEditing((v) => !v);
-                setConfirmDelete(null);
-              }}
-              className="min-h-11 shrink-0 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent"
-            >
-              {editing ? "Fine" : "Modifica"}
-            </button>
           </div>
-          {!initialSlot && !editing && (
+          {!initialSlot && (
             <div className="flex flex-col gap-1.5">
               <span id="fav-slot" className="text-sm font-semibold text-muted">
                 Aggiungi a

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { FavoriteDish, FavoriteMeal, MealRecord } from "@/data";
-import { defaultMealName, favoriteForDish, favoriteForMeal, filterByName, mealTotalKcal, normalizeText, recordsFromFavoriteDish, recordsFromFavoriteMeal, sameDish } from "./favorites";
+import { createMemoryDataStore } from "@/data";
+import { defaultMealName, deleteFavorite, favoriteForDish, favoriteForMeal, filterByName, mealTotalKcal, normalizeText, recordsFromFavoriteDish, recordsFromFavoriteMeal, sameDish } from "./favorites";
 
 const dish = (name: string, quantity: string | null = null, kcal = 100): MealRecord => ({ id: `d-${name}`, date: "2026-01-07", slot: "cena", name, quantity, kcal, protein: 10, carbs: 20, fat: 5, fiber: 2, salt: 0.5, isFree: true, originalText: "testo" });
 const ids = () => {
@@ -69,5 +70,33 @@ describe("aggiungere un preferito al giorno", () => {
     const records = recordsFromFavoriteMeal(meal, "2026-01-08", "spuntino", ids());
     expect(records.map((r) => [r.id, r.slot, r.name, r.isFree])).toEqual([["id1", "spuntino", "Pasta", false], ["id2", "spuntino", "Insalata", false]]);
     expect(mealTotalKcal(meal)).toBe(540);
+  });
+});
+
+describe("eliminare un preferito (T5b.5)", () => {
+  const fav = (id: string, name: string) => ({ id, name, quantity: null, kcal: 100, protein: 1, carbs: 2, fat: 3, fiber: 0, salt: 0 });
+  it("un piatto: sparisce subito, gli altri e i pasti restano", async () => {
+    const store = createMemoryDataStore();
+    await store.saveFavoriteDish(fav("a", "Mela"));
+    await store.saveFavoriteDish(fav("b", "Pera"));
+    await store.saveFavoriteMeal({ id: "m1", name: "Cena", slot: "cena", dishes: [] });
+    await deleteFavorite(store, "dish", "a");
+    expect((await store.listFavoriteDishes()).map((f) => f.id)).toEqual(["b"]);
+    expect(await store.listFavoriteMeals()).toHaveLength(1);
+  });
+  it("un pasto: sparisce subito, i piatti restano", async () => {
+    const store = createMemoryDataStore();
+    await store.saveFavoriteDish(fav("a", "Mela"));
+    await store.saveFavoriteMeal({ id: "m1", name: "Cena", slot: "cena", dishes: [] });
+    await store.saveFavoriteMeal({ id: "m2", name: "Pranzo", slot: "pranzo", dishes: [] });
+    await deleteFavorite(store, "meal", "m1");
+    expect((await store.listFavoriteMeals()).map((f) => f.id)).toEqual(["m2"]);
+    expect(await store.listFavoriteDishes()).toHaveLength(1);
+  });
+  it("un id che non esiste non fa danni", async () => {
+    const store = createMemoryDataStore();
+    await store.saveFavoriteDish(fav("a", "Mela"));
+    await deleteFavorite(store, "dish", "zzz");
+    expect(await store.listFavoriteDishes()).toHaveLength(1);
   });
 });

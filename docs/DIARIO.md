@@ -61,6 +61,7 @@ Una riga per task chiuso.
 - T5b.2 · fatto (respinto una volta: campo Quantità a riga singola, corretto) · `SYSTEM_PROMPT` riscritto (nome = solo piatto; quantità = ingredienti principali con i grammi; crudo/cotto con interpretazione scritta; tre esempi), temperatura 0, quantità fino a 500 caratteri, riga del piatto in Oggi e della proposta su due righe al massimo con i puntini, campo Quantità a più righe (si legge per intero), provider finto con quantità nel nuovo formato.
 - T5b.3 · fatto · campo `freeMeal` sul pasto nello schema e nel prompt (con esempio); validazione tollerante (assente = falso, non booleano = non valida); interruttore «Pasto libero» su ogni pasto proposto (componente `FreeMealSwitch`, lo stesso del piatto a mano): acceso in partenza se segnalato e la settimana lo consente, disattivato con la spiegazione se la settimana ne ha già uno o se un altro pasto della proposta lo è, sempre modificabile; con la fascia fissata segue il pasto esistente; cambiando fascia ne segue lo stato. 5 scenari.
 - T5b.4 · fatto · `src/engine/coherence.ts` (`kcalFromMacros`, `needsKcalCheck`, costanti `kcalCheckShare` 0,20 e `kcalCheckMin` 40 in `defaults.ts`); casi T, U, V, soglie esatte, numeri a zero. Nella proposta il piatto segnalato ha «⚠ controlla» sulla riga e, aperto, la frase breve; nel piatto a mano stimato con l'AI la stessa frase sotto la nota. Non blocca, non cambia i numeri, si ricalcola a ogni ritocco. 4 scenari.
+- T5b.5 · in attesa di revisione · preferiti (piatti e pasti) con `SwipeRow`: scorrendo a sinistra compare il cestino, che elimina subito senza conferma (`deleteFavorite`); tolta la modalità «Modifica» (con «Elimina» / «Elimina davvero»); il + e il tocco sulla riga aggiungono come prima. `npm run prova-scorrimento` ora prova anche i preferiti (20 controlli). Scenari `preferiti-modifica` e `preferiti-elimina` sostituiti da 3 scenari di scorrimento.
 
 ## Decisioni da confermare
 
@@ -152,6 +153,7 @@ Una riga per task chiuso.
 - Quantità (T5b.2): limite di 500 caratteri (oltre si tronca; prima 200). Nessuna modifica al database.
 - Pasto libero nella proposta (T5b.3): con la fascia fissata il segnale del modello è ignorato (l'interruttore parte dallo stato del pasto esistente, ma si può cambiare). Dopo «Rifai la stima» l'interruttore riparte dalle regole iniziali (le scelte fatte a mano sull'interruttore non si conservano).
 - Controllo di coerenza (T5b.4): soglie esatte non segnalate (serve superarle entrambe). Nel piatto a mano il controllo compare solo dopo «Stima con AI» (non sui numeri scritti a mano) e vale sui numeri correnti del modulo; se il modello divide il piatto in più piatti il controllo è sulla somma. La frase è la stessa nella proposta e nel piatto a mano.
+- Preferiti (T5b.5): nei preferiti il cestino è solo nello scorrimento (a differenza dei pannelli della Settimana non c'è un cestino sempre visibile), come da brief.
 
 ## Non verificato
 
@@ -181,3 +183,4 @@ Una riga per task chiuso.
 - T5.5: il gesto è provato con il tocco simulato di Playwright su Chromium (eventi touch veri del browser), solo in Oggi; nei pannelli della Settimana è visto negli screenshot. **Non provato su un iPhone vero** (Safari: scorrimento, rimbalzo della pagina, gesto «indietro» del bordo, tastiera).
 - T5b.0: la migrazione 0013 e `ingest_health` sono provate a mano su PostgreSQL 16 locale con stand-in di Supabase (vecchi valori a mano spostati, passi che sostituiscono il manuale, parte a mano intatta dopo un invio); non c'è un test automatico che esegua l'SQL (i test controllano solo il testo) e nulla è provato su Supabase vero.
 - T5b.2: la qualità delle stime del modello vero (ricetta nella quantità, regola del crudo, stesse frasi → stesse stime con temperatura 0) non è verificata: il prompt è provato solo con test sul testo e la richiesta a Vertex solo con una `fetch` finta.
+- T5b.5: lo scorrimento dei preferiti è provato con il tocco simulato di Playwright su Chromium, non su un iPhone vero (anche dentro il pannello che sale dal basso).

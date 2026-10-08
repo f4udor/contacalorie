@@ -1,6 +1,6 @@
 {
-  "id": "preferiti-modifica",
-  "descrizione": "Modalità Modifica: niente +, ogni riga ha Elimina; il pulsante diventa Fine e la scelta della fascia sparisce.",
+  "id": "preferiti-scorrimento-aperto",
+  "descrizione": "Preferiti: la riga 'Mela' scorsa a sinistra mostra il cestino; il + e il tocco sulla riga restano come prima.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -128,10 +128,9 @@
       "exact": true
     },
     {
-      "clickRole": {
-        "role": "button",
-        "name": "Modifica",
-        "exact": true
+      "swipe": {
+        "text": "Mela",
+        "dx": -140
       }
     }
   ]
