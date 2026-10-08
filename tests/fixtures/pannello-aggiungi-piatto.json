@@ -1,6 +1,6 @@
 {
   "id": "pannello-aggiungi-piatto",
-  "descrizione": "'Aggiungi piatto' dentro il pranzo: la fascia è già scelta e non si chiede.",
+  "descrizione": "'Aggiungi piatto' dentro il pranzo: si apre sulla stima con l'AI, titolo 'Pranzo', solo Preferiti sotto.",
   "oggi": "2026-01-05",
   "percorso": "/",
   "dati": {
@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m93",
+        "id": "m86",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -25,7 +25,7 @@
         "quantity": "100 g"
       },
       {
-        "id": "m94",
+        "id": "m87",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Pane",

@@ -113,3 +113,12 @@ export function sumProposal(proposal: MealProposal): Record<DishNumberKey, numbe
   for (const k of DISH_NUMBER_KEYS) total[k] = k === "kcal" ? Math.round(total[k]) : Math.round(total[k] * 10) / 10;
   return { ...total, notes };
 }
+
+/**
+ * Quando si aggiunge a un pasto già scelto, tutti i piatti proposti finiscono in quella fascia,
+ * in un solo pasto e nell'ordine in cui il modello li ha dati.
+ */
+export function lockProposalSlot(p: MealProposal, slot: MealSlot): MealProposal {
+  const dishes = p.meals.flatMap((m) => m.dishes);
+  return { meals: dishes.length > 0 ? [{ slot, dishes }] : [] };
+}

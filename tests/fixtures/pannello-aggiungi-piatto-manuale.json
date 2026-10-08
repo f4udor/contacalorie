@@ -1,0 +1,59 @@
+{
+  "id": "pannello-aggiungi-piatto-manuale",
+  "descrizione": "'Aggiungi piatto' dentro il pranzo, su Manuale: la fascia è già scelta e non si chiede.",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m86",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 650,
+        "protein": 22,
+        "carbs": 110,
+        "fat": 12,
+        "fiber": 6,
+        "salt": 1.8,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "100 g"
+      },
+      {
+        "id": "m87",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pane",
+        "kcal": 150,
+        "protein": 5,
+        "carbs": 30,
+        "fat": 1,
+        "fiber": 2,
+        "salt": 0.8,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "50 g"
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "click": "+ Aggiungi piatto"
+    },
+    {
+      "clickRole": {
+        "role": "radio",
+        "name": "Manuale"
+      }
+    }
+  ]
+}

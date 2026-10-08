@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m95",
+        "id": "m88",
         "date": "2026-01-05",
         "slot": "cena",
         "name": "Pizza",
@@ -32,6 +32,12 @@
   "passi": [
     {
       "click": "+ Aggiungi piatto"
+    },
+    {
+      "clickRole": {
+        "role": "radio",
+        "name": "Manuale"
+      }
     },
     {
       "scrollTo": "Pasto libero"

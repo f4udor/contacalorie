@@ -10,6 +10,7 @@ import { formatDayMonth, formatNumber, formatSigned } from "./lib/format";
 import { useToday } from "./lib/use-today";
 import { useWeekData } from "./lib/use-week-data";
 import { buildWeekView } from "./lib/week-view";
+import { weekWeight } from "./lib/week-weight";
 
 const DATE_PARAM = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -19,12 +20,14 @@ const arrow = (d: string) => (
   </svg>
 );
 
-function Stat({ label, value, hint, wide }: { label: string; value: string; hint?: string; wide?: boolean }) {
+const TONE = { ok: "font-semibold text-ok", bad: "font-semibold text-bad", neutro: "text-muted" } as const;
+
+function Stat({ label, value, hint, hintTone = "neutro", wide }: { label: string; value: string; hint?: string; hintTone?: keyof typeof TONE; wide?: boolean }) {
   return (
     <div className={`rounded-2xl bg-card p-3.5 ${wide ? "col-span-2" : ""}`}>
       <h3 className="text-sm font-semibold text-muted">{label}</h3>
       <p className="mt-1 text-[22px] font-bold leading-tight tabular-nums">{value}</p>
-      {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
+      {hint && <p className={`mt-0.5 text-xs tabular-nums ${TONE[hintTone]}`}>{hint}</p>}
     </div>
   );
 }
@@ -47,6 +50,7 @@ export function SettimanaScreen() {
   const btn = "flex min-h-11 min-w-11 items-center justify-center rounded-full bg-card text-accent";
   const view = data ? buildWeekView({ date: monday, days: data.days, settings: data.settings }) : null;
   const s = view?.summary;
+  const weight = data ? weekWeight(data.weighIns, monday, data.userSettings.weightKg ?? null, data.userSettings.targetWeightKg ?? null) : null;
 
   return (
     <main>
@@ -92,7 +96,15 @@ export function SettimanaScreen() {
             <Stat label="Media kcal" value={s.avgKcal === null ? dash : `${formatNumber(s.avgKcal)} kcal`} hint="sui giorni con pasti" />
             <Stat label="Bici" value={s.totalKm === null ? dash : `${formatNumber(s.totalKm, 1)} km`} />
             <Stat label="Passi medi" value={s.avgSteps === null ? dash : formatNumber(s.avgSteps)} hint="sui giorni con passi" />
-            <Stat label="Pasto libero" value={s.freeMealUsed ? "usato" : "non usato"} wide />
+            <Stat label="Pasto libero" value={s.freeMealUsed ? "usato" : "non usato"} wide={weight === null} />
+            {weight && (
+              <Stat
+                label="Peso"
+                value={`${formatNumber(weight.kg, 1)} kg`}
+                hint={weight.diff === null ? undefined : `${formatSigned(weight.diff, 1)} kg`}
+                hintTone={weight.tone}
+              />
+            )}
           </div>
 
           <Card>

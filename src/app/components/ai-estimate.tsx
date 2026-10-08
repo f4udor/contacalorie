@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import type { ReactNode } from "react";
-import type { DateKey, Meal } from "@/engine";
+import type { DateKey, Meal, MealSlot } from "@/engine";
 import type { DataStore } from "@/data";
 import type { MealProposal } from "@/modules/ai";
 import { useAuth } from "../auth-provider";
 import { requestEstimate } from "../lib/ai-client";
 import { newId } from "../lib/ids";
 import { SLOTS } from "../lib/meal-form";
-import { DISH_NUMBER_KEYS, draftsToProposal, hasDishes, proposalToDrafts, proposalToRecords } from "../lib/proposal-form";
+import { DISH_NUMBER_KEYS, draftsToProposal, hasDishes, lockProposalSlot, proposalToDrafts, proposalToRecords } from "../lib/proposal-form";
 import type { DishDraft, DishNumberKey, DraftErrors, MealDraft } from "../lib/proposal-form";
 import { isMealFree, saveDish } from "../lib/save-dish";
 import { useAiAvailable } from "../lib/use-ai";
@@ -21,6 +21,8 @@ interface Props {
   dayDishes: readonly Pick<Meal, "id" | "slot" | "isFree">[];
   onChanged: () => void;
   onClose: () => void;
+  /** Se presente, tutti i piatti proposti vanno in questa fascia (si aggiunge a un pasto già scelto). */
+  lockedSlot?: MealSlot;
   /** Il resto del menu: compare solo finché non c'è una proposta da controllare. */
   children: ReactNode;
 }
@@ -31,7 +33,7 @@ const primary = "min-h-12 rounded-xl bg-accent px-4 text-[17px] font-semibold te
 const secondary = "min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent disabled:opacity-50";
 
 /** Campo "Cosa hai mangiato?" in cima al pannello Aggiungi, con la proposta da controllare e confermare. */
-export function AiEstimate({ store, date, dayDishes, onChanged, onClose, children }: Props) {
+export function AiEstimate({ store, date, dayDishes, lockedSlot, onChanged, onClose, children }: Props) {
   const { getAccessToken } = useAuth();
   const available = useAiAvailable();
   const [text, setText] = useState("");
@@ -42,10 +44,13 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, childre
   const [original, setOriginal] = useState<{ proposal: MealProposal; text: string } | null>(null);
   const [correction, setCorrection] = useState("");
   const [errors, setErrors] = useState<DraftErrors>({});
+  // I piatti aperti per la modifica; gli altri restano su una riga.
+  const [open, setOpen] = useState<Set<string>>(new Set());
 
   const start = (proposal: MealProposal, originalText: string) => {
     setOriginal({ proposal, text: originalText });
-    setDrafts(proposalToDrafts(proposal));
+    setDrafts(proposalToDrafts(lockedSlot ? lockProposalSlot(proposal, lockedSlot) : proposal));
+    setOpen(new Set());
     setErrors({});
     setCorrection("");
   };
@@ -119,16 +124,11 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, childre
             rows={3}
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="es. anelli di totano e un'insalata di pomodorini"
-            aria-describedby="ai-hint"
             className="w-full resize-none rounded-xl bg-bg px-3 py-2.5 text-[17px] outline-none placeholder:text-muted focus:ring-2 focus:ring-accent"
           />
-          <p id="ai-hint" className="text-sm text-muted">
-            Puoi dettare con il microfono della tastiera.
-          </p>
           {available === false && (
             <p role="status" className="rounded-xl bg-bg px-3 py-2.5 text-[15px] font-medium">
-              Stima automatica non disponibile. Puoi inserire il piatto a mano.
+              Stima automatica non disponibile: usa Manuale.
             </p>
           )}
           {error && (
@@ -145,74 +145,115 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, childre
     );
   }
 
+  const toggle = (dishKey: string) =>
+    setOpen((o) => {
+      const n = new Set(o);
+      if (n.has(dishKey)) n.delete(dishKey);
+      else n.add(dishKey);
+      return n;
+    });
+
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-[15px] text-muted">
-        Controlla la stima: puoi cambiare ogni numero. Non è salvato finché non confermi.
-      </p>
       {drafts.map((meal) => (
-        <section key={meal.key} aria-label={`Pasto ${meal.slot}`} className="flex flex-col gap-3 rounded-2xl bg-bg p-3">
-          <div className="flex items-center justify-between gap-3">
-            <label htmlFor={`slot-${meal.key}`} className="text-sm font-semibold text-muted">
-              Fascia
-            </label>
-            <select
-              id={`slot-${meal.key}`}
-              value={meal.slot}
-              onChange={(e) => setDrafts((ds) => ds && ds.map((m) => (m.key === meal.key ? { ...m, slot: e.target.value as MealDraft["slot"] } : m)))}
-              className="min-h-11 rounded-xl bg-card px-3 text-[17px] font-semibold outline-none focus:ring-2 focus:ring-accent"
-            >
-              {SLOTS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          {meal.dishes.map((d) => (
-            <div key={d.key} className="flex flex-col gap-3 rounded-xl bg-card p-3">
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor={`name-${d.key}`} className="text-sm font-semibold text-muted">
-                  Piatto
-                </label>
-                <input id={`name-${d.key}`} type="text" autoComplete="off" value={d.name} onChange={(e) => setDish(meal.key, d.key, { name: e.target.value })} className={`${input} bg-bg`} />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor={`qty-${d.key}`} className="flex items-center gap-2 text-sm font-semibold text-muted">
-                  Quantità
-                  {d.quantityAssumed && <span className="rounded-md bg-bg px-1.5 py-0.5 text-xs font-semibold text-warn">ipotizzata</span>}
-                </label>
-                <input id={`qty-${d.key}`} type="text" autoComplete="off" value={d.quantity} placeholder="es. 100 g" onChange={(e) => setDish(meal.key, d.key, { quantity: e.target.value, quantityAssumed: false })} className={`${input} bg-bg`} />
-                {d.note && <p className="text-sm text-muted">{d.note}</p>}
-              </div>
-              <div className="grid grid-cols-2 gap-x-3 gap-y-3">
-                {DISH_NUMBER_KEYS.map((k) => {
-                  const err = errors[d.key]?.[k];
-                  return (
-                    <div key={k} className={`flex flex-col gap-1.5 ${k === "kcal" ? "col-span-2" : ""}`}>
-                      <label htmlFor={`${k}-${d.key}`} className="text-sm font-semibold text-muted">
-                        {NUMBER_LABELS[k]}
-                      </label>
-                      <input
-                        id={`${k}-${d.key}`}
-                        type="text"
-                        inputMode="decimal"
-                        autoComplete="off"
-                        value={d[k]}
-                        onChange={(e) => setDish(meal.key, d.key, { [k]: e.target.value })}
-                        aria-invalid={err ? true : undefined}
-                        className={`${input} bg-bg ${err ? "ring-2 ring-bad" : ""}`}
-                      />
-                      {err && <p className="text-sm font-medium text-bad">{err}</p>}
-                    </div>
-                  );
-                })}
-              </div>
-              <button type="button" onClick={() => removeDish(meal.key, d.key)} className="min-h-11 rounded-xl bg-bg px-3 text-[15px] font-semibold text-bad">
-                Togli {d.name.trim() || "il piatto"}
-              </button>
+        <section key={meal.key} aria-label={`Pasto ${meal.slot}`} className="overflow-hidden rounded-2xl bg-bg">
+          {lockedSlot ? (
+            <h3 className="px-4 pb-1 pt-3 text-sm font-semibold text-muted">{SLOTS.find((s) => s.value === meal.slot)?.label}</h3>
+          ) : (
+            <div className="flex items-center justify-between gap-3 px-4 pb-1 pt-2">
+              <label htmlFor={`slot-${meal.key}`} className="text-sm font-semibold text-muted">
+                Fascia
+              </label>
+              <select
+                id={`slot-${meal.key}`}
+                value={meal.slot}
+                onChange={(e) => setDrafts((ds) => ds && ds.map((m) => (m.key === meal.key ? { ...m, slot: e.target.value as MealDraft["slot"] } : m)))}
+                className="min-h-11 rounded-xl bg-transparent px-1 text-right text-[17px] font-semibold text-accent outline-none focus:ring-2 focus:ring-accent"
+              >
+                {SLOTS.map((s) => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
             </div>
-          ))}
+          )}
+          {meal.dishes.map((d) => {
+            const dishErrors = errors[d.key];
+            const isOpen = open.has(d.key) || dishErrors !== undefined;
+            return (
+              <div key={d.key} className="border-t border-line">
+                <button
+                  type="button"
+                  onClick={() => toggle(d.key)}
+                  aria-expanded={isOpen}
+                  className="flex min-h-14 w-full items-center justify-between gap-3 px-4 py-2.5 text-left"
+                >
+                  <span className="min-w-0">
+                    <span className="block text-[17px] font-semibold">{d.name.trim() || "Piatto"}</span>
+                    {(d.quantity.trim() !== "" || dishErrors) && (
+                      <span className="flex flex-wrap items-center gap-x-2 text-sm text-muted">
+                        {d.quantity.trim() !== "" && <span>{d.quantity}</span>}
+                        {d.quantityAssumed && <span className="font-semibold text-warn">ipotizzata</span>}
+                        {dishErrors && <span className="font-semibold text-bad">da correggere</span>}
+                      </span>
+                    )}
+                  </span>
+                  <span className="flex shrink-0 items-center gap-2">
+                    <span className="text-[17px] tabular-nums">
+                      {d.kcal.trim() || "–"} <span className="text-sm text-muted">kcal</span>
+                    </span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={`text-muted transition-transform ${isOpen ? "rotate-90" : ""}`}>
+                      <path d="M9 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </button>
+                {isOpen && (
+                  <div className="flex flex-col gap-3 px-4 pb-4">
+                    <div className="flex flex-col gap-1.5">
+                      <label htmlFor={`name-${d.key}`} className="text-sm font-semibold text-muted">
+                        Piatto
+                      </label>
+                      <input id={`name-${d.key}`} type="text" autoComplete="off" value={d.name} onChange={(e) => setDish(meal.key, d.key, { name: e.target.value })} className={`${input} bg-card`} />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label htmlFor={`qty-${d.key}`} className="text-sm font-semibold text-muted">
+                        Quantità
+                      </label>
+                      <input id={`qty-${d.key}`} type="text" autoComplete="off" value={d.quantity} onChange={(e) => setDish(meal.key, d.key, { quantity: e.target.value, quantityAssumed: false })} className={`${input} bg-card`} />
+                      {d.note && <p className="text-sm text-muted">{d.note}</p>}
+                    </div>
+                    <div className="grid grid-cols-2 gap-x-3 gap-y-3">
+                      {DISH_NUMBER_KEYS.map((k) => {
+                        const err = dishErrors?.[k];
+                        return (
+                          <div key={k} className={`flex flex-col gap-1.5 ${k === "kcal" ? "col-span-2" : ""}`}>
+                            <label htmlFor={`${k}-${d.key}`} className="text-sm font-semibold text-muted">
+                              {NUMBER_LABELS[k]}
+                            </label>
+                            <input
+                              id={`${k}-${d.key}`}
+                              type="text"
+                              inputMode="decimal"
+                              autoComplete="off"
+                              value={d[k]}
+                              onChange={(e) => setDish(meal.key, d.key, { [k]: e.target.value })}
+                              aria-invalid={err ? true : undefined}
+                              className={`${input} bg-card ${err ? "ring-2 ring-bad" : ""}`}
+                            />
+                            {err && <p className="text-sm font-medium text-bad">{err}</p>}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <button type="button" onClick={() => removeDish(meal.key, d.key)} className="min-h-11 rounded-xl bg-card px-3 text-[15px] font-semibold text-bad">
+                      Togli {d.name.trim() || "il piatto"}
+                    </button>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </section>
       ))}
 
@@ -223,7 +264,7 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, childre
           <label htmlFor="ai-correction" className="text-sm font-semibold text-muted">
             Correggi
           </label>
-          <input id="ai-correction" type="text" autoComplete="off" value={correction} onChange={(e) => setCorrection(e.target.value)} placeholder="es. il totano era di più" className={input} />
+          <input id="ai-correction" type="text" autoComplete="off" value={correction} onChange={(e) => setCorrection(e.target.value)} className={input} />
           <button type="button" onClick={refine} disabled={busy || correction.trim() === ""} className={secondary}>
             {busy ? "Sto stimando…" : "Rifai la stima"}
           </button>

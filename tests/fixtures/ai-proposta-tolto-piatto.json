@@ -99,6 +99,9 @@
       "wait": 600
     },
     {
+      "click": "Cornetto"
+    },
+    {
       "clickRole": {
         "role": "button",
         "name": "Togli Cornetto"

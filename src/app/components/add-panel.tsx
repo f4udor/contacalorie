@@ -4,7 +4,6 @@ import { useState } from "react";
 import { hasFreeMealInWeek } from "@/engine";
 import type { DateKey, Day, MealSlot, Settings } from "@/engine";
 import type { ActivityRecord, DataStore, MealRecord } from "@/data";
-import { copyMealsFromYesterday } from "../lib/copy-meals";
 import { defaultMealName, favoriteForDish, favoriteForMeal } from "../lib/favorites";
 import { newId } from "../lib/ids";
 import { isMealFree, saveDish } from "../lib/save-dish";
@@ -38,29 +37,55 @@ const chevron = (
   </svg>
 );
 
-function MenuRow({ title, hint, onClick }: { title: string; hint: string; onClick: () => void }) {
+function MenuRow({ title, onClick }: { title: string; onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} className="flex min-h-14 w-full items-center justify-between gap-3 px-4 py-2 text-left">
-      <span>
-        <span className="block text-[17px] font-semibold">{title}</span>
-        <span className="block text-sm text-muted">{hint}</span>
-      </span>
+    <button type="button" onClick={onClick} className="flex min-h-12 w-full items-center justify-between gap-3 px-4 py-2 text-left">
+      <span className="text-[17px] font-semibold">{title}</span>
       {chevron}
     </button>
   );
 }
 
-const SLOT_NAME: Record<MealSlot, string> = { colazione: "Colazione", pranzo: "Pranzo", cena: "Cena", spuntino: "Spuntino" };
-const TITLES = { menu: "Aggiungi", pasto: "Piatto a mano", attivita: "Attività a mano", pesata: "Pesata", preferiti: "Preferiti" } as const;
+type Mode = "ai" | "manuale";
 
-/** Pannello "Aggiungi", dal pulsante +. */
+/** Selettore AI | Manuale accanto al titolo del pannello. */
+function ModeSwitch({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void }) {
+  const options: { value: Mode; label: string }[] = [
+    { value: "ai", label: "AI" },
+    { value: "manuale", label: "Manuale" },
+  ];
+  return (
+    <div role="radiogroup" aria-label="Modo di inserimento" className="flex gap-0.5 rounded-lg bg-bg p-0.5">
+      {options.map((o) => (
+        <button
+          key={o.value}
+          type="button"
+          role="radio"
+          aria-checked={mode === o.value}
+          onClick={() => onChange(o.value)}
+          className={`min-h-9 rounded-md px-3 text-[15px] font-semibold ${mode === o.value ? "bg-card text-fg shadow-sm" : "text-muted"}`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+const SLOT_NAME: Record<MealSlot, string> = { colazione: "Colazione", pranzo: "Pranzo", cena: "Cena", spuntino: "Spuntino" };
+const TITLES = { menu: "Aggiungi", attivita: "Attività a mano", pesata: "Pesata", preferiti: "Preferiti" } as const;
+
+/**
+ * Pannello "Aggiungi", dal pulsante + o da "Aggiungi piatto" sotto un pasto (initialSlot).
+ * Si apre sempre sulla stima con l'AI; "Manuale" mostra i campi del piatto.
+ */
 export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
   const { store, date, days, settings, activity, weightKg, onChanged, onClose, initialSlot } = ctx;
-  const [view, setView] = useState<"menu" | "pasto" | "attivita" | "pesata" | "preferiti">(initialSlot ? "pasto" : "menu");
+  const [view, setView] = useState<"menu" | "attivita" | "pesata" | "preferiti">("menu");
+  const [mode, setMode] = useState<Mode>("ai");
   const freeAllowedFor = (slot: MealSlot) => !hasFreeMealInWeek(days, { date, slot });
   const dayDishes = days.find((d) => d.date === date)?.meals ?? [];
   const existingFree = (slot: MealSlot) => isMealFree(dayDishes, slot);
-  const [note, setNote] = useState<string | null>(null);
 
   const saveMeal = async (parsed: ParsedMeal) => {
     const { isFree, ...dishFields } = parsed;
@@ -82,61 +107,49 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
     onClose();
   };
 
-  const copyFromYesterday = async () => {
-    try {
-      if ((await copyMealsFromYesterday(store, date)) === 0) {
-        setNote("Ieri non ci sono piatti da copiare.");
-        return;
-      }
-    } catch {
-      return; // non copiato (o copiato solo in parte): l'avviso in cima lo spiega
-    }
-    onChanged();
-    onClose();
-  };
+  const menuRows = (
+    <div className="flex flex-col gap-4">
+      <div className="overflow-hidden rounded-2xl bg-bg">
+        <MenuRow title="Preferiti" onClick={() => setView("preferiti")} />
+      </div>
+      {!initialSlot && (
+        <div className="overflow-hidden rounded-2xl bg-bg">
+          <MenuRow title="Attività a mano" onClick={() => setView("attivita")} />
+          <div className="border-t border-line" />
+          <MenuRow title="Pesata" onClick={() => setView("pesata")} />
+        </div>
+      )}
+    </div>
+  );
+
+  const title = view === "menu" ? (initialSlot ? SLOT_NAME[initialSlot] : TITLES.menu) : TITLES[view];
 
   return (
-    <Sheet open onClose={onClose} title={initialSlot && view === "pasto" ? `Piatto · ${SLOT_NAME[initialSlot]}` : TITLES[view]}>
-      {view === "menu" ? (
-        <AiEstimate store={store} date={date} dayDishes={dayDishes} onChanged={onChanged} onClose={onClose}>
-          <div className="flex flex-col gap-4">
-            <div className="overflow-hidden rounded-2xl bg-bg">
-              <MenuRow title="Preferiti" hint="Piatti e pasti che hai salvato" onClick={() => setView("preferiti")} />
-              <div className="border-t border-line" />
-              <MenuRow title="Piatto a mano" hint="Scrivi tu nome, kcal e nutrienti" onClick={() => setView("pasto")} />
-              <div className="border-t border-line" />
-              <MenuRow title="Copia da ieri" hint="Rimetti i piatti di ieri, come pasto normale" onClick={copyFromYesterday} />
-            </div>
-            <div className="overflow-hidden rounded-2xl bg-bg">
-              <MenuRow title="Attività a mano" hint="Passi, km e kcal della bici" onClick={() => setView("attivita")} />
-              <div className="border-t border-line" />
-              <MenuRow title="Pesata" hint="Il tuo peso di oggi, in kg" onClick={() => setView("pesata")} />
-            </div>
-            {note && (
-              <p role="status" className="rounded-xl bg-bg px-4 py-3 text-[15px] font-medium">
-                {note}
-              </p>
-            )}
-          </div>
+    <Sheet open onClose={onClose} title={title} accessory={view === "menu" ? <ModeSwitch mode={mode} onChange={setMode} /> : undefined}>
+      {view === "menu" && mode === "ai" && (
+        <AiEstimate store={store} date={date} dayDishes={dayDishes} lockedSlot={initialSlot} onChanged={onChanged} onClose={onClose}>
+          {menuRows}
         </AiEstimate>
-      ) : (
+      )}
+      {view === "menu" && mode === "manuale" && (
+        <div className="flex flex-col gap-6">
+          <MealForm
+            initial={{ ...emptyMealForm(initialSlot), isFree: existingFree(initialSlot ?? emptyMealForm().slot) }}
+            freeAllowedFor={freeAllowedFor}
+            mealIsFreeFor={existingFree}
+            lockedSlot={initialSlot !== undefined}
+            freeMealCap={settings.freeMealCap}
+            submitLabel="Aggiungi piatto"
+            onSubmit={saveMeal}
+          />
+          {menuRows}
+        </div>
+      )}
+      {view !== "menu" && (
         <div className="flex flex-col gap-3">
-          {!(initialSlot && view === "pasto") && (
-            <button type="button" onClick={() => setView("menu")} className="-ml-2 flex min-h-11 w-fit items-center px-2 text-[17px] font-semibold text-accent">
-              ‹ Indietro
-            </button>
-          )}
-          {view === "pasto" && (
-            <MealForm
-              initial={{ ...emptyMealForm(initialSlot), isFree: existingFree(initialSlot ?? emptyMealForm().slot) }}
-              freeAllowedFor={freeAllowedFor}
-              mealIsFreeFor={existingFree}
-              lockedSlot={initialSlot !== undefined}
-              freeMealCap={settings.freeMealCap}
-              submitLabel="Aggiungi piatto"
-              onSubmit={saveMeal}
-            />
-          )}
+          <button type="button" onClick={() => setView("menu")} className="-ml-2 flex min-h-11 w-fit items-center px-2 text-[17px] font-semibold text-accent">
+            ‹ Indietro
+          </button>
           {view === "preferiti" && <FavoritesView store={store} date={date} initialSlot={initialSlot} dayDishes={dayDishes} onChanged={onChanged} onClose={onClose} />}
           {view === "attivita" && <ActivityForm existing={activity} kcalPerKm={settings.kcalPerKm} onSubmit={saveActivity} />}
           {view === "pesata" && <WeightForm existingKg={weightKg} onSubmit={saveWeight} />}

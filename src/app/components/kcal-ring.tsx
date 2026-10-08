@@ -45,7 +45,7 @@ export function KcalRing({ remaining, progress, color, eaten, target, empty }: K
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
           <span className="text-5xl font-bold leading-none tracking-tight tabular-nums">{formatNumber(Math.abs(remaining))}</span>
-          <span className="mt-1 text-sm font-medium text-muted">{over ? "kcal sopra di" : "kcal rimaste"}</span>
+          <span className="mt-1 text-sm font-medium text-muted">{over ? "kcal oltre" : "kcal rimaste"}</span>
         </div>
       </div>
       <p className="mt-3 text-sm text-muted">

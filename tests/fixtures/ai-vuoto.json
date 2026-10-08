@@ -1,6 +1,6 @@
 {
   "id": "ai-vuoto",
-  "descrizione": "Pannello Aggiungi con la stima attiva: campo 'Cosa hai mangiato?' con il suggerimento del microfono, Stima disattivata finché il campo è vuoto.",
+  "descrizione": "Pannello Aggiungi con la stima attiva: campo 'Cosa hai mangiato?' vuoto, Stima disattivata finché il campo è vuoto.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {

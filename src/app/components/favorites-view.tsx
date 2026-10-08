@@ -28,6 +28,8 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
   const [slot, setSlot] = useState<MealSlot>(initialSlot ?? "pranzo");
   const [busy, setBusy] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  // In modifica le righe non aggiungono: mostrano solo "Elimina".
+  const [editing, setEditing] = useState(false);
   const [loadFailed, setLoadFailed] = useState(false);
 
   const load = () =>
@@ -81,26 +83,46 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
   const dishes = filterByName(lists.dishes, query);
   const total = lists.meals.length + lists.dishes.length;
 
-  const row = (kind: "dish" | "meal", id: string, name: string, detail: string, kcal: number, onAdd: () => void) => (
-    <li key={`${kind}-${id}`} className="flex items-stretch border-t border-line first:border-t-0">
-      <button type="button" disabled={busy} onClick={onAdd} aria-label={`Aggiungi ${name}`} className="flex min-h-14 min-w-0 flex-1 items-center justify-between gap-3 px-4 py-2 text-left disabled:opacity-50">
-        <span className="min-w-0">
-          <span className="block break-words text-[17px] font-semibold leading-snug">{name}</span>
-          <span className="block break-words text-sm text-muted">{detail}</span>
-        </span>
-        <span className="shrink-0 text-[16px] tabular-nums text-muted">{formatNumber(kcal)} kcal</span>
-      </button>
-      {confirmDelete === `${kind}-${id}` ? (
-        <button type="button" disabled={busy} onClick={() => remove(kind, id)} className="min-h-14 shrink-0 bg-bad-fill px-3 text-[15px] font-semibold text-white disabled:opacity-50">
-          Elimina davvero
-        </button>
-      ) : (
-        <button type="button" onClick={() => setConfirmDelete(`${kind}-${id}`)} aria-label={`Elimina ${name} dai preferiti`} className="min-h-14 min-w-11 shrink-0 px-3 text-[15px] font-semibold text-bad">
-          Elimina
-        </button>
-      )}
-    </li>
-  );
+  const row = (kind: "dish" | "meal", id: string, name: string, detail: string | null, kcal: number, onAdd: () => void) => {
+    const text = (
+      <span className="min-w-0">
+        <span className="block break-words text-[17px] font-semibold leading-snug">{name}</span>
+        {detail && <span className="block break-words text-sm text-muted">{detail}</span>}
+      </span>
+    );
+    const kcalText = <span className="shrink-0 text-[16px] tabular-nums text-muted">{formatNumber(kcal)} kcal</span>;
+    if (!editing) {
+      return (
+        <li key={`${kind}-${id}`} className="border-t border-line first:border-t-0">
+          <button type="button" disabled={busy} onClick={onAdd} aria-label={`Aggiungi ${name}`} className="flex min-h-14 w-full items-center justify-between gap-3 py-2 pl-4 pr-3 text-left disabled:opacity-50">
+            {text}
+            <span className="flex shrink-0 items-center gap-3">
+              {kcalText}
+              <span aria-hidden="true" className="flex h-7 w-7 items-center justify-center rounded-full bg-accent text-white">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </span>
+            </span>
+          </button>
+        </li>
+      );
+    }
+    return (
+      <li key={`${kind}-${id}`} className="flex min-h-14 items-center justify-between gap-3 border-t border-line pl-4 first:border-t-0">
+        {text}
+        {confirmDelete === `${kind}-${id}` ? (
+          <button type="button" disabled={busy} onClick={() => remove(kind, id)} className="min-h-14 shrink-0 bg-bad-fill px-3 text-[15px] font-semibold text-white disabled:opacity-50">
+            Elimina davvero
+          </button>
+        ) : (
+          <button type="button" onClick={() => setConfirmDelete(`${kind}-${id}`)} aria-label={`Elimina ${name} dai preferiti`} className="min-h-14 min-w-11 shrink-0 px-3 text-[15px] font-semibold text-bad">
+            Elimina
+          </button>
+        )}
+      </li>
+    );
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -110,12 +132,20 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
         </p>
       ) : (
         <>
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="fav-search" className="text-sm font-semibold text-muted">
-              Cerca
-            </label>
-            <input id="fav-search" type="search" autoComplete="off" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Nome del piatto o del pasto" className={input} />
+          <div className="flex items-center gap-2">
+            <input id="fav-search" type="search" autoComplete="off" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Cerca" aria-label="Cerca nei preferiti" className={input} />
+            <button
+              type="button"
+              onClick={() => {
+                setEditing((e) => !e);
+                setConfirmDelete(null);
+              }}
+              className="-mr-2 min-h-11 shrink-0 px-2 text-[17px] font-semibold text-accent"
+            >
+              {editing ? "Fine" : "Modifica"}
+            </button>
           </div>
+          {!initialSlot && !editing && (
           <div className="flex flex-col gap-1.5">
             <span id="fav-slot" className="text-sm font-semibold text-muted">
               Aggiungi a
@@ -128,6 +158,7 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
               ))}
             </div>
           </div>
+          )}
           {meals.length > 0 && (
             <section aria-label="Pasti salvati" className="flex flex-col gap-2">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">Pasti</h3>
@@ -140,7 +171,7 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
             <section aria-label="Piatti salvati" className="flex flex-col gap-2">
               <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">Piatti</h3>
               <ul className="overflow-hidden rounded-2xl bg-bg">
-                {dishes.map((f) => row("dish", f.id, f.name, f.quantity ?? "Senza quantità", f.kcal, () => add(recordsFromFavoriteDish(f, date, slot, newId))))}
+                {dishes.map((f) => row("dish", f.id, f.name, f.quantity, f.kcal, () => add(recordsFromFavoriteDish(f, date, slot, newId))))}
               </ul>
             </section>
           )}

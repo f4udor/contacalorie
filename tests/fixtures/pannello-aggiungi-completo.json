@@ -1,6 +1,6 @@
 {
   "id": "pannello-aggiungi-completo",
-  "descrizione": "Pannello Aggiungi con tutte le voci: Piatto a mano, Copia da ieri, Attività a mano, Pesata.",
+  "descrizione": "Pannello Aggiungi: selettore AI | Manuale (si apre su AI), campo vuoto senza esempio, poi Preferiti, Attività a mano, Pesata.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": null,

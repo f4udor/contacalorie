@@ -114,12 +114,12 @@ export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = 
     <form onSubmit={submit} noValidate className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="meal-name" className="text-sm font-semibold text-muted">Nome del piatto</label>
-        <input id="meal-name" type="text" autoComplete="off" value={values.name} onChange={(e) => set("name", e.target.value)} placeholder="Facoltativo" className={input} />
+        <input id="meal-name" type="text" autoComplete="off" value={values.name} onChange={(e) => set("name", e.target.value)} className={input} />
       </div>
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="meal-quantity" className="text-sm font-semibold text-muted">Quantità (facoltativa)</label>
-        <input id="meal-quantity" type="text" autoComplete="off" value={values.quantity} onChange={(e) => set("quantity", e.target.value)} placeholder="es. 100 g" className={input} />
+        <input id="meal-quantity" type="text" autoComplete="off" value={values.quantity} onChange={(e) => set("quantity", e.target.value)} className={input} />
       </div>
 
       {!lockedSlot && (
@@ -147,7 +147,7 @@ export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = 
 
       {aiAvailable && values.kcal.trim() === "" && (
         <div className="flex flex-col gap-2 rounded-xl bg-bg p-3">
-          <p className="text-[15px] text-muted">Non conosci i numeri? Scrivi nome e quantità: li stima l&apos;AI e tu li controlli.</p>
+          <p className="text-[15px] text-muted">Non sai i numeri? Scrivi nome e quantità: li stima l&apos;AI.</p>
           <button type="button" onClick={estimate} disabled={aiBusy} className="min-h-12 rounded-xl bg-card px-4 text-[17px] font-semibold text-accent disabled:opacity-50">
             {aiBusy ? "Sto stimando…" : "Stima con AI"}
           </button>

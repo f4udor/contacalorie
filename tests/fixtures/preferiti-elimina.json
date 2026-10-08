@@ -1,6 +1,6 @@
 {
   "id": "preferiti-elimina",
-  "descrizione": "Primo tocco su Elimina: il pulsante diventa 'Elimina davvero'.",
+  "descrizione": "In Modifica, primo tocco su Elimina: il pulsante diventa 'Elimina davvero'.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -126,6 +126,13 @@
     {
       "click": "Preferiti",
       "exact": true
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Modifica",
+        "exact": true
+      }
     },
     {
       "clickRole": {

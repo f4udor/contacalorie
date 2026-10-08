@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { draftsToProposal, hasDishes, proposalToDrafts, proposalToRecords, sumProposal } from "./proposal-form";
+import { draftsToProposal, hasDishes, lockProposalSlot, proposalToDrafts, proposalToRecords, sumProposal } from "./proposal-form";
 
 const dish = (name: string, quantity: string | null, assumed: boolean, kcal: number) => ({ name, quantity, quantityAssumed: assumed, kcal, protein: 22.5, carbs: 18, fat: 14, fiber: 1, salt: 1.4, note: "nota" });
 const proposal = { meals: [{ slot: "cena" as const, dishes: [dish("Anelli di totano", "150 g", true, 280), dish("Insalata", null, false, 60)] }] };
@@ -61,5 +61,18 @@ describe("sumProposal", () => {
     const s = sumProposal(p);
     expect(s).toMatchObject({ kcal: 161, protein: 37.6, carbs: 54, fat: 42, fiber: 3, salt: 4.2 });
     expect(s.notes).toEqual(["uno", "tre"]);
+  });
+});
+
+describe("lockProposalSlot", () => {
+  it("porta tutti i piatti nella fascia scelta, in un solo pasto e nello stesso ordine", () => {
+    const two = { meals: [proposal.meals[0], { slot: "pranzo" as const, dishes: [dish("Mela", "1", false, 95)] }] };
+    const r = lockProposalSlot(two, "spuntino");
+    expect(r.meals).toHaveLength(1);
+    expect(r.meals[0].slot).toBe("spuntino");
+    expect(r.meals[0].dishes.map((d) => d.name)).toEqual(["Anelli di totano", "Insalata", "Mela"]);
+  });
+  it("una proposta vuota resta vuota", () => {
+    expect(lockProposalSlot({ meals: [] }, "cena")).toEqual({ meals: [] });
   });
 });

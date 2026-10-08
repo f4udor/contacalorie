@@ -8,11 +8,13 @@ interface SheetProps {
   open: boolean;
   onClose: () => void;
   title: string;
+  /** Comando accanto al titolo (es. il selettore AI | Manuale). */
+  accessory?: ReactNode;
   children: ReactNode;
 }
 
 /** Pannello che sale dal basso. Si chiude con il tasto Chiudi, Esc, un tocco fuori o trascinando verso il basso. */
-export function Sheet({ open, onClose, title, children }: SheetProps) {
+export function Sheet({ open, onClose, title, accessory, children }: SheetProps) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ startY: number; startT: number } | null>(null);
@@ -72,10 +74,15 @@ export function Sheet({ open, onClose, title, children }: SheetProps) {
           onPointerCancel={onPointerUp}
         >
           <div className="mx-auto h-1.5 w-10 rounded-full bg-track" aria-hidden="true" />
-          <div className="flex min-h-11 items-center justify-between pt-1">
-            <h2 id={titleId} className="text-xl font-bold">
+          <div className="flex min-h-11 items-center justify-between gap-3 pt-1">
+            <h2 id={titleId} className="min-w-0 truncate text-xl font-bold">
               {title}
             </h2>
+            {accessory && (
+              <div className="ml-auto shrink-0" onPointerDown={(e) => e.stopPropagation()}>
+                {accessory}
+              </div>
+            )}
             <button
               type="button"
               onClick={onClose}
