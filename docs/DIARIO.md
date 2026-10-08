@@ -33,6 +33,7 @@ Una riga per task chiuso.
 - T3.5 · fatto · importazione dei dati del browser nell'account (`importLocalData`: senza doppioni, unione tra dispositivi, nulla cancellato; proposta al primo accesso e voce in Impostazioni; i dati si tolgono dal dispositivo solo dopo conferma); `exportAll` nello sportello.
 - T3.6 · fatto · esportazione CSV di piatti e di pesate/attività da Impostazioni → Dati (`export-csv.ts` + test), con browser e con Supabase; letture a pagine con secondo ordinamento per id.
 - T3.7 · fatto · `docs/COLLEGA-SUPABASE.md`: dieci passi per chi non programma (progetto, setup.sql, codice via email, URL e chiave, Vercel, ripubblicare, accesso, importazione); test di coerenza con il codice. Nomi dei pulsanti di Supabase/Vercel non verificati.
+- T3.8 · fatto · `docs/REPORT-FASE-3.md` scritto, con i controlli da fare sul telefono prima e dopo il collegamento di Supabase.
 
 ## Decisioni da confermare
 

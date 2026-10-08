@@ -222,5 +222,5 @@ Impostazioni → Dati → "Esporta": un file CSV dei piatti (data, pasto, nome, 
 `docs/COLLEGA-SUPABASE.md`: passi numerati per chi non sa programmare, uno per volta, ciascuno con cosa si vede a schermo:
 creare il progetto su Supabase, incollare `supabase/setup.sql`, attivare l'accesso con codice via email (modello dell'email con il codice), copiare URL e chiave pubblica, inserirle su Vercel, ripubblicare, accedere e importare.
 
-### T3.8 Report di fase · da fare
+### T3.8 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-3.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici, includi i controlli da fare sul telefono prima e dopo il collegamento di Supabase.
