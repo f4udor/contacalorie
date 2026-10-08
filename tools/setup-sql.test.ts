@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 // @ts-expect-error file .mjs senza tipi
-import { buildSetupSql } from "./build-setup-sql.mjs";
+import { UPDATE_HEADER_PHASE_5, buildSetupSql, buildUpdateSql } from "./build-setup-sql.mjs";
 
 const root = path.resolve(__dirname, "..");
 
@@ -31,5 +31,20 @@ describe("supabase/setup.sql", () => {
     const names = [...onDisk.matchAll(/-- ===== (\S+\.sql) =====/g)].map((m) => m[1]);
     expect(names).toEqual([...names].sort());
     expect(names.length).toBeGreaterThanOrEqual(5);
+  });
+
+  it("aggiornamento-fase-5.sql è aggiornato e contiene solo le migrazioni dalla 10", () => {
+    const update = readFileSync(path.join(root, "supabase/aggiornamento-fase-5.sql"), "utf8");
+    expect(update).toBe(buildUpdateSql(path.join(root, "supabase/migrations"), 10, UPDATE_HEADER_PHASE_5));
+    const names = [...update.matchAll(/-- ===== (\S+\.sql) =====/g)].map((m) => m[1]);
+    expect(names[0]).toBe("20260101000010_ingresso_salute.sql");
+    expect(names.every((n) => Number(n.slice(0, 14)) >= 20260101000010)).toBe(true);
+  });
+
+  it("l'ingresso dei dati da Salute: funzione chiamabile senza sessione, solo impronta del codice", () => {
+    expect(onDisk).toContain("create function public.ingest_health(");
+    expect(onDisk).toContain("to anon, authenticated");
+    expect(onDisk).toContain("sha256(convert_to(p_code");
+    expect(onDisk).toContain("t.revoked_at is null");
   });
 });

@@ -14,8 +14,23 @@ export function buildSetupSql(dir) {
   return HEADER + parts.join("");
 }
 
+export const UPDATE_HEADER_PHASE_5 = `-- Aggiornamento per chi ha già eseguito setup.sql e aggiornamento-fase-4.sql (migrazioni 1-9).
+-- Da eseguire UNA volta sola nell'editor SQL di Supabase (SQL Editor → New query).
+-- File generato da supabase/migrations con \`npm run setup-sql\`: non modificarlo a mano.
+`;
+
+/** Come buildSetupSql, ma solo le migrazioni dalla numero \`from\` in poi. */
+export function buildUpdateSql(dir, from, header) {
+  const files = readdirSync(dir)
+    .filter((f) => f.endsWith(".sql") && Number(f.slice(0, 14)) >= 20260101000000 + from)
+    .sort();
+  const parts = files.map((f) => `\n-- ===== ${f} =====\n${readFileSync(path.join(dir, f), "utf8").trimEnd()}\n`);
+  return header + parts.join("");
+}
+
 if (process.argv[1] && import.meta.url.endsWith(path.basename(process.argv[1]))) {
   const root = process.cwd();
   writeFileSync(path.join(root, "supabase/setup.sql"), buildSetupSql(path.join(root, "supabase/migrations")));
-  console.log("supabase/setup.sql scritto");
+  writeFileSync(path.join(root, "supabase/aggiornamento-fase-5.sql"), buildUpdateSql(path.join(root, "supabase/migrations"), 10, UPDATE_HEADER_PHASE_5));
+  console.log("supabase/setup.sql e supabase/aggiornamento-fase-5.sql scritti");
 }
