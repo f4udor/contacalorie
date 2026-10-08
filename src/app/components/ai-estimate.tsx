@@ -186,7 +186,7 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
                   <span className="min-w-0">
                     <span className="block break-words text-[17px] font-semibold leading-snug">{d.name.trim() || "Piatto"}</span>
                     <span className="flex flex-wrap items-center gap-x-2 text-sm text-muted">
-                      {d.quantity.trim() !== "" && <span className="break-words">{d.quantity.trim()}</span>}
+                      {d.quantity.trim() !== "" && <span className="line-clamp-2 break-words">{d.quantity.trim()}</span>}
                       {d.quantityAssumed && <span className="font-semibold text-warn">ipotizzata</span>}
                       {hasError && <span className="font-semibold text-bad">da correggere</span>}
                     </span>

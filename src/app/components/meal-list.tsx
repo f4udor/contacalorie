@@ -70,7 +70,7 @@ export function MealList({ dishes, settings, onSelectDish, onAddDish, onSaveMeal
                       <button type="button" onClick={() => onSelectDish(dish)} className="flex min-h-12 w-full items-start justify-between gap-3 px-4 py-2.5 text-left">
                         <span className="min-w-0">
                           <span className="block break-words text-[16px] leading-snug">{d.name}</span>
-                          {dish.quantity && <span className="block break-words text-sm text-muted">{dish.quantity}</span>}
+                          {dish.quantity && <span className="line-clamp-2 break-words text-sm text-muted">{dish.quantity}</span>}
                         </span>
                         <span className="shrink-0 pt-px text-[16px] tabular-nums text-muted">{formatNumber(d.kcal)} kcal</span>
                       </button>

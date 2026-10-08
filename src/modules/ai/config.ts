@@ -37,6 +37,6 @@ function demoResponse(request: { text: string; localTime: string }) {
   const hour = Number(request.localTime.slice(0, 2));
   const slot = hour < 10 ? "colazione" : hour < 16 ? "pranzo" : hour < 18 ? "spuntino" : "cena";
   return {
-    meals: [{ slot, dishes: [{ name: request.text.slice(0, 60), quantity: "1 porzione", quantityAssumed: true, kcal: 400, protein: 20, carbs: 45, fat: 15, fiber: 5, salt: 1.5, note: "Stima di prova (provider finto)." }] }],
+    meals: [{ slot, dishes: [{ name: request.text.slice(0, 60), quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", quantityAssumed: true, kcal: 400, protein: 20, carbs: 45, fat: 15, fiber: 5, salt: 1.5, note: "Stima di prova (provider finto)." }] }],
   };
 }

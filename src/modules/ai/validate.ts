@@ -6,6 +6,8 @@ import type { EstimatedDish, EstimatedMeal, MealProposal } from "./types";
 const MAX_KCAL = 5000;
 const MAX_GRAMS = 1000;
 const MAX_TEXT = 200;
+/** Quantità: l'elenco degli ingredienti principali con i grammi. */
+const MAX_QUANTITY = 500;
 
 function isObject(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
@@ -22,7 +24,7 @@ function dish(raw: unknown): EstimatedDish | null {
   const name = typeof raw.name === "string" ? raw.name.trim() : "";
   if (name === "" || name.length > MAX_TEXT) return null;
   if (raw.quantity !== null && raw.quantity !== undefined && typeof raw.quantity !== "string") return null;
-  const quantity = typeof raw.quantity === "string" && raw.quantity.trim() !== "" ? raw.quantity.trim().slice(0, MAX_TEXT) : null;
+  const quantity = typeof raw.quantity === "string" && raw.quantity.trim() !== "" ? raw.quantity.trim().slice(0, MAX_QUANTITY) : null;
   if (typeof raw.quantityAssumed !== "boolean") return null;
   if (raw.note !== undefined && typeof raw.note !== "string") return null;
   const kcal = amount(raw.kcal, MAX_KCAL, 0);

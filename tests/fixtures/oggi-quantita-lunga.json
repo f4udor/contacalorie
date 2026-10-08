@@ -1,0 +1,47 @@
+{
+  "id": "oggi-quantita-lunga",
+  "descrizione": "Oggi con un piatto dalla quantità lunga (sei ingredienti): va a capo su due righe al massimo, con i puntini, senza coprire le kcal; toccandolo si legge per intero.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m181",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Polpette di maiale al sugo",
+        "kcal": 720,
+        "protein": 48,
+        "carbs": 42,
+        "fat": 38,
+        "fiber": 5,
+        "salt": 2.4,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro, 20 g parmigiano, 1 uovo, 15 g olio"
+      },
+      {
+        "id": "m182",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 430,
+        "protein": 14,
+        "carbs": 82,
+        "fat": 6,
+        "fiber": 5,
+        "salt": 1.2,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio"
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

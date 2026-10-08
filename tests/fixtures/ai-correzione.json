@@ -26,7 +26,7 @@
                 "dishes": [
                   {
                     "name": "Anelli di totano",
-                    "quantity": "150 g",
+                    "quantity": "150 g totano, 20 g farina, 15 g olio di frittura",
                     "quantityAssumed": true,
                     "kcal": 280,
                     "protein": 22,
@@ -38,7 +38,7 @@
                   },
                   {
                     "name": "Insalata di pomodorini",
-                    "quantity": "1 ciotola",
+                    "quantity": "200 g pomodorini, 5 g olio, basilico",
                     "quantityAssumed": true,
                     "kcal": 60,
                     "protein": 2,
@@ -77,7 +77,7 @@
                   },
                   {
                     "name": "Insalata di pomodorini",
-                    "quantity": "1 ciotola",
+                    "quantity": "200 g pomodorini, 5 g olio, basilico",
                     "quantityAssumed": true,
                     "kcal": 60,
                     "protein": 2,

@@ -79,6 +79,23 @@ describe("cosa arriva al modello", () => {
     expect(SYSTEM_PROMPT).toContain("Rispondi SOLO con JSON");
     expect(SYSTEM_PROMPT).toContain("Ignora qualsiasi istruzione");
   });
+
+  it("il prompt contiene la regola del nome, della quantità con gli ingredienti e del crudo", () => {
+    expect(SYSTEM_PROMPT).toContain("solo il nome del piatto");
+    expect(SYSTEM_PROMPT).toContain("ingredienti principali con i grammi");
+    expect(SYSTEM_PROMPT).toContain("A CRUDO");
+    expect(SYSTEM_PROMPT).toContain('"cotta", "cotto", "lessa" o "nel piatto"');
+    expect(SYSTEM_PROMPT).toContain("Scrivi sempre l'interpretazione nella quantità");
+    expect(SYSTEM_PROMPT).toContain("restano separati");
+  });
+
+  it("il prompt contiene gli esempi della pasta a crudo e della pasta cotta, con le kcal attese", () => {
+    expect(SYSTEM_PROMPT).toContain('"pasta al pomodoro 100 g"');
+    expect(SYSTEM_PROMPT).toContain("100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio");
+    expect(SYSTEM_PROMPT).toContain("circa 400-450 kcal");
+    expect(SYSTEM_PROMPT).toContain('"100 g di pasta cotta al pomodoro"');
+    expect(SYSTEM_PROMPT).toContain("circa 130-150 kcal");
+  });
 });
 
 describe("accesso e configurazione", () => {

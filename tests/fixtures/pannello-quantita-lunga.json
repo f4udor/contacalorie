@@ -1,0 +1,41 @@
+{
+  "id": "pannello-quantita-lunga",
+  "descrizione": "Toccando il piatto con la quantità lunga si legge per intero nel campo Quantità.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m183",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Polpette di maiale al sugo",
+        "kcal": 720,
+        "protein": 48,
+        "carbs": 42,
+        "fat": 38,
+        "fiber": 5,
+        "salt": 2.4,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro, 20 g parmigiano, 1 uovo, 15 g olio"
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "click": "Polpette di maiale al sugo"
+    },
+    {
+      "scrollTo": "Quantità"
+    }
+  ]
+}

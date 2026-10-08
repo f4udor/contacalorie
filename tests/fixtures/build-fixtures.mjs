@@ -307,7 +307,7 @@ add("salvataggio-fallito", "Il browser non riesce più a scrivere (memoria piena
 // --- Inserimento con l'AI (T4.2): le risposte del server sono finte (`ai`), nessuna rete
 const dish = (name, quantity, assumed, kcal, p, c, f, fi, salt, note = "") => ({ name, quantity, quantityAssumed: assumed, kcal, protein: p, carbs: c, fat: f, fiber: fi, salt, note });
 const prop = (...meals) => ({ stato: 200, corpo: { proposal: { meals }, originalText: "testo" } });
-const cena = { slot: "cena", dishes: [dish("Anelli di totano", "150 g", true, 280, 22, 18, 14, 1, 1.4, "Ho ipotizzato 150 g di totano fritto."), dish("Insalata di pomodorini", "1 ciotola", true, 60, 2, 8, 2, 3, 0.1, "Una ciotola piccola con un filo d'olio.")] };
+const cena = { slot: "cena", dishes: [dish("Anelli di totano", "150 g totano, 20 g farina, 15 g olio di frittura", true, 280, 22, 18, 14, 1, 1.4, "Ho ipotizzato 150 g di totano fritto."), dish("Insalata di pomodorini", "200 g pomodorini, 5 g olio, basilico", true, 60, 2, 8, 2, 3, 0.1, "Una ciotola piccola con un filo d'olio.")] };
 const colPranzo = [{ slot: "colazione", dishes: [dish("Cappuccino", "1 tazza", true, 90, 5, 8, 4, 0, 0.1), dish("Cornetto", "1", true, 300, 6, 38, 14, 1, 0.5)] }, { slot: "pranzo", dishes: [dish("Panino con prosciutto", "1", true, 420, 20, 50, 14, 3, 2.2, "Panino da 100 g con 40 g di prosciutto.")] }];
 const scrivi = (t) => ({ fill: ["Cosa hai mangiato?", t] });
 const stima = btn("Stima");
@@ -337,8 +337,20 @@ add("aggiungi-manuale", "Pannello Aggiungi su Manuale: modulo del piatto con 'St
 add("ai-fascia-fissata", "'+ Aggiungi piatto' del Pranzo: titolo 'Pranzo', il modello ha indicato la Cena ma i piatti restano nel Pranzo (nessuna scelta della fascia).", "2026-01-05", pranzo2, { fisso: true, ai: { risposte: [prop(cenaTotano)] }, passi: [{ clickRole: { role: "button", name: "+ Aggiungi piatto", exact: false } }, { fill: ["Cosa hai mangiato?", "anelli di totano e un'insalata di pomodorini"] }, { clickRole: { role: "button", name: "Stima", exact: true } }, { wait: 600 }] });
 add("ai-fascia-fissata-conferma", "Dopo Conferma con la fascia fissata sul Pranzo: i due piatti sono nel Pranzo di oggi, non nella Cena.", "2026-01-05", pranzo2, { ai: { risposte: [prop(cenaTotano)] }, passi: [{ clickRole: { role: "button", name: "+ Aggiungi piatto", exact: false } }, { fill: ["Cosa hai mangiato?", "anelli di totano e un'insalata di pomodorini"] }, { clickRole: { role: "button", name: "Stima", exact: true } }, { wait: 600 }, { clickRole: { role: "button", name: "Conferma", exact: true } }, { wait: 700 }] });
 
+// --- Ricetta nella quantità (T5b.2)
+const polpette = "200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro, 20 g parmigiano, 1 uovo, 15 g olio";
+add("oggi-quantita-lunga", "Oggi con un piatto dalla quantità lunga (sei ingredienti): va a capo su due righe al massimo, con i puntini, senza coprire le kcal; toccandolo si legge per intero.", "2026-01-08", data({
+  settings: { weightKg: 100 },
+  meals: [meal("2026-01-08", "pranzo", "Polpette di maiale al sugo", 720, 48, 42, 38, 5, 2.4, { quantity: polpette }), meal("2026-01-08", "pranzo", "Pasta al pomodoro", 430, 14, 82, 6, 5, 1.2, { quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio" })],
+}));
+add("pannello-quantita-lunga", "Toccando il piatto con la quantità lunga si legge per intero nel campo Quantità.", "2026-01-08", data({
+  settings: { weightKg: 100 },
+  meals: [meal("2026-01-08", "pranzo", "Polpette di maiale al sugo", 720, 48, 42, 38, 5, 2.4, { quantity: polpette })],
+}), { fisso: true, passi: [{ click: "Polpette di maiale al sugo" }, { scrollTo: "Quantità" }] });
+aiScen("ai-proposta-ricetta", "Proposta con tre piatti dalla quantità lunga e la regola del crudo scritta nella quantità: la riga va a capo (al massimo due righe) senza coprire le kcal.", { risposte: [prop({ slot: "pranzo", dishes: [dish("Polpette di maiale al sugo", polpette, true, 720, 48, 42, 38, 5, 2.4, "Ho ipotizzato quattro polpette."), dish("Pasta al pomodoro", "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", false, 430, 14, 82, 6, 5, 1.2, "100 g di pasta intesi a crudo.")] })] }, [scrivi("polpette al sugo e pasta al pomodoro 100 g"), stima, { wait: 600 }]);
+
 // --- Piatto a mano con stima (T4.3)
-const pesto = prop({ slot: "pranzo", dishes: [dish("Spaghetti al pesto", "80 g di pasta", false, 480, 15, 70, 16, 4, 1.3, "Pasta con circa 20 g di pesto alla genovese.")] });
+const pesto = prop({ slot: "pranzo", dishes: [dish("Spaghetti al pesto", "80 g pasta a crudo, 20 g pesto alla genovese", false, 480, 15, 70, 16, 4, 1.3, "Pasta con circa 20 g di pesto alla genovese.")] });
 const aMano = [manuale, { fill: ["Nome del piatto", "Spaghetti al pesto"] }, { fill: ["Quantità (facoltativa)", "80 g di pasta"] }];
 aiScen("piatto-stima-vuoto", "Piatto a mano con l'AI attiva: nome e quantità scritti, kcal vuote; compare 'Stima con AI' e il campo Kcal non ha più l'asterisco.", { risposte: [pesto] }, aMano);
 aiScen("piatto-stima-fatto", "Dopo 'Stima con AI': kcal e macro riempiti, riga 'Stimato con l'AI: controlla i numeri' con la nota del modello.", { risposte: [pesto] }, [...aMano, btn("Stima con AI"), { wait: 600 }]);
@@ -540,3 +552,4 @@ sett("settimana-colori-barre", "Settimana con i quattro colori delle barre: acce
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");
 console.log(`${scenarios.length} scenari scritti in ${dir}`);
+

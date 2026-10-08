@@ -4,6 +4,17 @@ import { parseProposal } from "./validate";
 const dish = { name: " Riso ", quantity: " 100 g ", quantityAssumed: false, kcal: 130.4, protein: 2.66, carbs: 28, fat: 0.3, fiber: 0.4, salt: 0, note: "ok" };
 const meal = (d: unknown, slot = "pranzo") => ({ meals: [{ slot, dishes: [d] }] });
 
+describe("quantità lunghe (T5b.2)", () => {
+  const many = "200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro, 20 g parmigiano, 15 g olio, 1 uovo, sale e prezzemolo q.b., 30 g cipolla, 50 g pane";
+  it("accetta una quantità di tre o più ingredienti, per intero", () => {
+    expect(parseProposal({ meals: [{ slot: "pranzo", dishes: [{ ...dish, quantity: many }] }] })?.meals[0].dishes[0].quantity).toBe(many);
+  });
+  it("oltre 500 caratteri la quantità viene troncata, la risposta resta valida", () => {
+    const q = parseProposal({ meals: [{ slot: "pranzo", dishes: [{ ...dish, quantity: "x".repeat(900) }] }] })?.meals[0].dishes[0].quantity;
+    expect(q).toHaveLength(500);
+  });
+});
+
 describe("parseProposal", () => {
   it("accetta e pulisce: spazi tolti, kcal intere, grammi a un decimale", () => {
     const p = parseProposal(meal(dish));
