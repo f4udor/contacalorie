@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_CHALLENGE_PLAN as plan } from "@/engine";
 import type { ChallengeLogEntry } from "@/data";
-import { buildChallengeView } from "./challenge-view";
+import { buildChallengeView, isChallengeDayDone } from "./challenge-view";
 
 const START = "2026-01-05";
 const entry = (date: string, exerciseId: string, status: "fatto" | "saltato", reps: number | null = null): ChallengeLogEntry => ({ date, exerciseId, status, reps });
@@ -61,5 +61,21 @@ describe("buildChallengeView", () => {
     const v = buildChallengeView({ plan, startDate: "2025-12-10", date: "2026-01-08", log: [] });
     expect(v.kind === "in-corso" && v.day).toBe(30);
     expect(v.kind === "in-corso" && v.exercises).toHaveLength(12);
+  });
+});
+
+describe("isChallengeDayDone", () => {
+  const all1 = ["Push up", "Crunch", "Crunch incrociati"].map((n) => entry("2026-01-05", n, "fatto"));
+  it("completato quando ogni esercizio del giorno è fatto", () => {
+    expect(isChallengeDayDone(plan, START, "2026-01-05", all1)).toBe(true);
+  });
+  it("non completato se ne manca uno o uno è saltato", () => {
+    expect(isChallengeDayDone(plan, START, "2026-01-05", all1.slice(0, 2))).toBe(false);
+    expect(isChallengeDayDone(plan, START, "2026-01-05", [...all1.slice(0, 2), entry("2026-01-05", "Crunch incrociati", "saltato")])).toBe(false);
+  });
+  it("mai completato senza data di inizio, prima dell'inizio o dopo la fine", () => {
+    expect(isChallengeDayDone(plan, undefined, "2026-01-05", all1)).toBe(false);
+    expect(isChallengeDayDone(plan, START, "2026-01-04", all1)).toBe(false);
+    expect(isChallengeDayDone(plan, "2025-11-01", "2026-01-05", all1)).toBe(false);
   });
 });

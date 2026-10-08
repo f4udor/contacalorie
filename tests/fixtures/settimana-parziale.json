@@ -1,0 +1,69 @@
+{
+  "id": "settimana-parziale",
+  "descrizione": "Settimana a metà (oggi mercoledì): giorni futuri vuoti, medie sui soli giorni con pasti.",
+  "oggi": "2026-01-07",
+  "percorso": "/settimana",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m77",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1750,
+        "protein": 90,
+        "carbs": 200,
+        "fat": 60,
+        "fiber": 20,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m78",
+        "date": "2026-01-06",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1800,
+        "protein": 100,
+        "carbs": 210,
+        "fat": 65,
+        "fiber": 22,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m79",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 900,
+        "protein": 45,
+        "carbs": 100,
+        "fat": 30,
+        "fiber": 9,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [
+      {
+        "date": "2026-01-06",
+        "steps": 9500,
+        "stepsSource": "manuale",
+        "bikeKm": null,
+        "bikeKcalHealth": null,
+        "bikeSource": null
+      }
+    ],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true
+}

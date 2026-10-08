@@ -189,6 +189,49 @@ add("dopo-esercizio-fatto", "Dopo aver toccato la spunta del Crunch: 'fatti 1 su
   passi: [{ clickRole: { role: "checkbox", name: "Crunch: fatto" } }, { wait: 500 }, { scrollTo: "Fermati se senti dolore" }],
 });
 
+// --- Settimana (T2.6)
+const sett = (id, descrizione, oggi, dati, extra = {}) => scenarios.push({ id, descrizione, oggi, percorso: "/settimana", dati, scorre: true, ...extra });
+const esercizi1 = (date) => ["Push up", "Crunch", "Crunch incrociati"].map((e) => voce(date, e, "fatto"));
+const settimanaCompleta = data({
+  settings: { weightKg: 100, challengeStartDate: "2026-01-05" },
+  meals: [
+    meal("2026-01-05", "colazione", "Colazione", 350, 12, 50, 9, 3, 0.6),
+    meal("2026-01-05", "pranzo", "Pranzo", 800, 40, 90, 25, 8, 2.1),
+    meal("2026-01-05", "cena", "Cena", 600, 35, 60, 20, 7, 1.8),
+    meal("2026-01-06", "pranzo", "Pranzo", 1100, 55, 120, 35, 9, 2.8),
+    meal("2026-01-06", "cena", "Cena", 700, 40, 70, 25, 6, 2.0),
+    meal("2026-01-07", "pranzo", "Pranzo", 1300, 60, 150, 40, 10, 3.0),
+    meal("2026-01-07", "cena", "Cena fuori", 1950, 70, 200, 90, 8, 6.5),
+    meal("2026-01-08", "pranzo", "Pranzo", 1100, 50, 120, 30, 9, 2.5),
+    meal("2026-01-08", "cena", "Cena", 800, 45, 80, 28, 7, 2.2),
+    meal("2026-01-09", "pranzo", "Pranzo", 1200, 55, 130, 35, 9, 2.6),
+    meal("2026-01-09", "cena", "Cena", 800, 40, 85, 28, 6, 2.3),
+    meal("2026-01-10", "pranzo", "Pizza", 1100, 40, 130, 42, 6, 4.2, { isFree: true }),
+    meal("2026-01-10", "cena", "Cena", 900, 50, 90, 30, 8, 2.4),
+    meal("2026-01-11", "pranzo", "Pranzo", 1000, 48, 110, 30, 9, 2.4),
+  ],
+  activity: [
+    activity("2026-01-05", { steps: 8000, stepsSource: "manuale" }),
+    activity("2026-01-06", { steps: 7200, stepsSource: "manuale", bikeKm: 20, bikeSource: "manuale" }),
+    activity("2026-01-07", { steps: 9000, stepsSource: "manuale" }),
+    activity("2026-01-09", { steps: 6500, stepsSource: "manuale" }),
+  ],
+  challengeLog: [...esercizi1("2026-01-05"), ...esercizi1("2026-01-06"), ...esercizi1("2026-01-07"), voce("2026-01-08", "Push up", "fatto")],
+});
+sett("settimana-completa", "Settimana completa: sforamento mercoledì (rosso), bici martedì, pasto libero sabato, tre giorni di sfida.", "2026-01-11", settimanaCompleta);
+sett("settimana-parziale", "Settimana a metà (oggi mercoledì): giorni futuri vuoti, medie sui soli giorni con pasti.", "2026-01-07", data({
+  settings: { weightKg: 100 },
+  meals: [
+    meal("2026-01-05", "pranzo", "Pranzo", 1750, 90, 200, 60, 20, 4),
+    meal("2026-01-06", "pranzo", "Pranzo", 1800, 100, 210, 65, 22, 4),
+    meal("2026-01-07", "pranzo", "Pranzo", 900, 45, 100, 30, 9, 2),
+  ],
+  activity: [activity("2026-01-06", { steps: 9500, stepsSource: "manuale" })],
+}));
+sett("settimana-vuota", "Settimana senza dati: barre vuote con i soli obiettivi, valori '–', messaggio.", "2026-01-08", null);
+sett("settimana-precedente", "Settimana precedente (vuota) aperta con la freccia: compare 'Questa settimana'.", "2026-01-11", settimanaCompleta, { passi: [{ clickRole: { role: "link", name: "Settimana precedente" } }] });
+sett("settimana-tocco-barra", "Toccando la barra di mercoledì si apre quel giorno in Oggi.", "2026-01-11", settimanaCompleta, { percorso: "/settimana", passi: [{ clickRole: { role: "link", name: "Mercoledì 7 gennaio" } }], scorre: true });
+
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");

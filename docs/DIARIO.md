@@ -46,6 +46,9 @@ Una riga per task chiuso.
 - In Oggi l'ordine è anello, nutrienti, pasti, attività (poi la sfida, T2.5).
 - Sfida: nel registro l'esercizio è identificato dal suo nome nel piano; togliere la spunta di un esercizio cancella la sua voce (anche le ripetizioni modificate). Senza data di inizio la sezione invita a impostarla (la data si potrà cambiare in T2.7); la nota sul dolore compare con la lista degli esercizi e nel pannello dell'esercizio.
 - Ripetizioni modificate: si cambiano toccando l'esercizio ("Fatto" le salva e segna l'esercizio come fatto); "Salta" lo segna saltato; "Rimetti da fare" cancella la voce.
+- Settimana: il colore di ogni barra usa il budget contro l'obiettivo (come l'anello), l'altezza le kcal reali; la linea dell'obiettivo è un tratto per ogni giorno; i giorni futuri mostrano solo il tratto. Il saldo include anche il giorno in corso, con i pasti ancora da mangiare che risultano "vantaggio" (è il calcolo del motore, T1.7).
+- Giorno di sfida "completato" = ogni esercizio del giorno è "fatto"; un esercizio saltato non conta. Nella schermata Settimana "0 giorni" è mostrato come "–".
+- La settimana mostrata sta nell'indirizzo (`/settimana?w=AAAA-MM-GG`, un giorno qualsiasi di quella settimana).
 
 ## Non verificato
 

@@ -52,3 +52,12 @@ export function buildChallengeView(input: {
   });
   return { kind: "in-corso", day, totalDays: plan.durationDays, done: exercises.filter((e) => e.status === "fatto").length, exercises };
 }
+
+/**
+ * Giorno di sfida completato: la sfida è in corso quel giorno e ogni esercizio del giorno è "fatto"
+ * (un esercizio saltato non conta come fatto).
+ */
+export function isChallengeDayDone(plan: ChallengePlan, startDate: DateKey | undefined, date: DateKey, log: readonly ChallengeLogEntry[]): boolean {
+  const view = buildChallengeView({ plan, startDate, date, log });
+  return view.kind === "in-corso" && view.exercises.length > 0 && view.exercises.every((e) => e.status === "fatto");
+}

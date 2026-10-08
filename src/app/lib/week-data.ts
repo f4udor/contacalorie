@@ -1,5 +1,6 @@
-import { mergeSettings, weekDates } from "@/engine";
+import { DEFAULT_CHALLENGE_PLAN, mergeSettings, weekDates } from "@/engine";
 import type { DateKey, Day, Settings } from "@/engine";
+import { isChallengeDayDone } from "./challenge-view";
 import type { ActivityRecord, ChallengeLogEntry, DataStore, MealRecord, UserSettings, WeighIn } from "@/data";
 
 /** Tutto ciò che serve alle schermate per mostrare la settimana che contiene una data. */
@@ -38,7 +39,7 @@ export async function loadWeekData(store: DataStore, date: DateKey): Promise<Wee
       date: d,
       meals: meals.filter((m) => m.date === d),
       activity: { steps: a?.steps ?? null, bikeKm: a?.bikeKm ?? null, bikeKcalHealth: a?.bikeKcalHealth ?? null },
-      challengeDone: challenge.some((e) => e.date === d && e.status === "fatto"),
+      challengeDone: isChallengeDayDone(DEFAULT_CHALLENGE_PLAN, userSettings.challengeStartDate, d, challenge),
     };
   });
 

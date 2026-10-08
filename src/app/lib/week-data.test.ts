@@ -22,8 +22,10 @@ describe("loadWeekData", () => {
     await s.saveMeal(meal("a", "2026-01-06", 500));
     await s.saveMeal(meal("fuori", "2026-01-12", 900));
     await s.saveActivity({ date: "2026-01-07", steps: 9000, stepsSource: "manuale", bikeKm: 12, bikeKcalHealth: null, bikeSource: "manuale" });
-    await s.saveChallengeEntry({ date: "2026-01-08", exerciseId: "x", status: "fatto", reps: null });
-    await s.saveChallengeEntry({ date: "2026-01-09", exerciseId: "x", status: "saltato", reps: null });
+    await s.saveSettings({ challengeStartDate: "2026-01-08" });
+    // giorno 1 della sfida (3 esercizi): tutti fatti; il giorno dopo ne manca uno
+    for (const ex of ["Push up", "Crunch", "Crunch incrociati"]) await s.saveChallengeEntry({ date: "2026-01-08", exerciseId: ex, status: "fatto", reps: null });
+    await s.saveChallengeEntry({ date: "2026-01-09", exerciseId: "Push up", status: "fatto", reps: null });
     const w = await loadWeekData(s, "2026-01-11");
     expect(w.days[1].meals).toHaveLength(1);
     expect(w.days[2].activity).toEqual({ steps: 9000, bikeKm: 12, bikeKcalHealth: null });
