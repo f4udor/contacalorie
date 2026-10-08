@@ -46,8 +46,17 @@ export class VertexProvider implements AiProvider {
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `grant_type=${encodeURIComponent("urn:ietf:params:oauth:grant-type:jwt-bearer")}&assertion=${encodeURIComponent(assertion)}`,
     });
-    const body = (await res.json()) as { access_token?: string; expires_in?: number };
-    if (!res.ok || !body.access_token) throw new AiError("rete");
+    const body = (await res.json().catch(() => ({}))) as {
+      access_token?: string;
+      expires_in?: number;
+      error?: string;
+      error_description?: string;
+    };
+    if (!res.ok || !body.access_token) {
+      // Solo stato e messaggio di Google: niente chiave, niente testo del pasto.
+      console.error("[vertex] token rifiutato", res.status, body.error ?? "", body.error_description ?? "");
+      throw new AiError("rete");
+    }
     this.token = { value: body.access_token, expires: this.now() + (body.expires_in ?? 3600) * 1000 };
     return body.access_token;
   }
@@ -68,9 +77,15 @@ export class VertexProvider implements AiProvider {
       });
     } catch (e) {
       if (e instanceof AiError) throw e;
+      console.error("[vertex] rete", e instanceof Error ? e.message : String(e));
       throw new AiError("rete");
     }
-    if (!res.ok) throw new AiError("rete");
+    if (!res.ok) {
+      const err = (await res.json().catch(() => null)) as { error?: { status?: string; message?: string } } | null;
+      // Solo stato e messaggio di Google: niente chiave, niente testo del pasto.
+      console.error("[vertex] risposta", res.status, err?.error?.status ?? "", err?.error?.message ?? "");
+      throw new AiError("rete");
+    }
     const body = (await res.json().catch(() => null)) as { candidates?: { content?: { parts?: { text?: string }[] } }[] } | null;
     const text = body?.candidates?.[0]?.content?.parts?.map((p) => p.text ?? "").join("");
     if (!text) throw new AiError("non-valida");
