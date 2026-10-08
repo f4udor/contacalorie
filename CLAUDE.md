@@ -23,6 +23,7 @@ Questa è la regola più importante del progetto: si devono poter aggiungere mod
 ```
 src/engine/      motore dei calcoli: funzioni pure, nessun import da UI, database o rete
 src/modules/     un modulo per funzione: meals, activity, weight, challenge, ai, reminders
+src/data/        sportello dei dati: unica interfaccia per leggere e scrivere (browser oggi, Supabase poi)
 src/app/         schermate e route
 supabase/migrations/   schema del database
 docs/            brief, task, diario
@@ -30,6 +31,7 @@ docs/            brief, task, diario
 
 - `src/engine` non importa nulla dal resto del progetto e non legge data, ora o rete: riceve tutto come parametri.
 - Un modulo non importa da un altro modulo. Se due moduli devono parlarsi, passano dal motore o da tipi condivisi.
+- Le schermate leggono e scrivono solo tramite `src/data`. Nessun altro file tocca `localStorage` o il database.
 - Ogni chiamata al modello AI passa da `src/modules/ai` tramite un'interfaccia unica (`AiProvider`). Nessun altro file conosce Gemini.
 - Il database cresce per aggiunte: nuove tabelle e nuove colonne. Mai rinominare o eliminare colonne esistenti.
 - Nessun numero di regola scritto nel codice delle schermate: le costanti stanno nelle impostazioni, con i default in `src/engine/defaults.ts`.
