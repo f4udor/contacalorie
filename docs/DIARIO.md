@@ -20,6 +20,7 @@ Una riga per task chiuso.
 - T2.2 · fatto · Oggi: data con frecce, anello kcal, composizione, cinque schede nutrienti (`today-view.ts` + test); scenari vuoto, normale, caso B, bici, sforato, giorno passato. Formati italiani in `format.ts`.
 - T2.3 · fatto · Oggi: lista pasti per fascia, pulsante +, pannello Aggiungi (pasto a mano, Copia da ieri, segnaposto voce), modifica/eliminazione con conferma, interruttore pasto libero. Stato vuoto senza zeri. Tolta la pagina di prova del pannello.
 - T2.4 · fatto · Oggi: scheda Attività (fonte manuale / da Salute), pannelli Attività a mano e Pesata con controlli sui campi; obiettivo e proteine si aggiornano subito. Accento scuro più saturo per il contrasto.
+- T2.5 · fatto · Oggi: sezione Sfida mattutina (Giorno N/30 · fatti X su Y, spunta, ripetizioni modificabili, Salta, 'per lato', 'nuovo', messaggi prima/dopo, nota sul dolore); `challenge-view.ts` con test. Scelte in 'Decisioni da confermare'.
 
 ## Decisioni da confermare
 

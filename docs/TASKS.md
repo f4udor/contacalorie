@@ -130,7 +130,7 @@ Lista dei pasti e pannello Aggiungi con inserimento manuale.
 - Dal pannello Aggiungi: "Attività a mano" (passi, km, kcal facoltative) e "Pesata" (kg, una per giorno; una seconda pesata nello stesso giorno sostituisce la prima).
 - L'obiettivo del giorno si aggiorna subito dopo il salvataggio.
 
-### T2.5 Sfida mattutina · da fare
+### T2.5 Sfida mattutina · fatto
 Sezione in Oggi, usando `challengeDay` del motore e il piano di 30 giorni.
 - Esercizi del giorno con spunta "fatto", ripetizioni modificabili, "Salta"; indicazione "per lato" ed etichetta "nuovo" il giorno in cui un esercizio entra.
 - Intestazione "Giorno N/30 · fatti X su Y".
