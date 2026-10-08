@@ -458,7 +458,7 @@ Vincoli di questa fase:
 - Sul grafico a sette barre: linea tratteggiata orizzontale alla media, con etichetta "media 2.040" che non copre le barre né l'etichetta dell'obiettivo. Colore neutro, diverso dalla linea dell'obiettivo. Senza media la linea non compare.
 - Test: casi W, X e Y di §3.8. Screenshot in chiaro e scuro: media sopra l'obiettivo, sotto, molto vicina (le due etichette non si sovrappongono), assente.
 
-### T5b.7 Segno della variazione di peso · da fare
+### T5b.7 Segno della variazione di peso · fatto
 - Ovunque si mostri la variazione di peso: sempre segno e un decimale, con il meno tipografico ("−0,4 kg", "+0,3 kg"). Solo una differenza che arrotondata vale 0,0 si scrive "0,0 kg", in grigio.
 - Il colore resta quello già in uso (verde se ci si avvicina al peso obiettivo, rosso se ci si allontana, grigio senza peso obiettivo o a pari distanza): va solo controllato che valga anche per chi vuole aumentare di peso.
 - Test: −0,04 → "0,0 kg"; −0,4; −1,2; +0,3; obiettivo più alto del peso attuale con variazione positiva (verde) e negativa (rossa).
