@@ -1,0 +1,108 @@
+{
+  "id": "ai-proposta-tolto-piatto",
+  "descrizione": "Dopo aver tolto il cornetto: resta il cappuccino e il pranzo.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": [
+      {
+        "stato": 200,
+        "corpo": {
+          "proposal": {
+            "meals": [
+              {
+                "slot": "colazione",
+                "dishes": [
+                  {
+                    "name": "Cappuccino",
+                    "quantity": "1 tazza",
+                    "quantityAssumed": true,
+                    "kcal": 90,
+                    "protein": 5,
+                    "carbs": 8,
+                    "fat": 4,
+                    "fiber": 0,
+                    "salt": 0.1,
+                    "note": ""
+                  },
+                  {
+                    "name": "Cornetto",
+                    "quantity": "1",
+                    "quantityAssumed": true,
+                    "kcal": 300,
+                    "protein": 6,
+                    "carbs": 38,
+                    "fat": 14,
+                    "fiber": 1,
+                    "salt": 0.5,
+                    "note": ""
+                  }
+                ]
+              },
+              {
+                "slot": "pranzo",
+                "dishes": [
+                  {
+                    "name": "Panino con prosciutto",
+                    "quantity": "1",
+                    "quantityAssumed": true,
+                    "kcal": 420,
+                    "protein": 20,
+                    "carbs": 50,
+                    "fat": 14,
+                    "fiber": 3,
+                    "salt": 2.2,
+                    "note": "Panino da 100 g con 40 g di prosciutto."
+                  }
+                ]
+              }
+            ]
+          },
+          "originalText": "testo"
+        }
+      }
+    ]
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Cosa hai mangiato?",
+        "a colazione un cappuccino e un cornetto e a pranzo un panino con prosciutto"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Stima",
+        "exact": true
+      }
+    },
+    {
+      "wait": 600
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Togli Cornetto"
+      }
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "id": "piatto-stima-errore",
+  "descrizione": "Limite raggiunto durante la stima: messaggio chiaro, il modulo resta com'è.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": [
+      {
+        "stato": 429,
+        "corpo": {
+          "error": {
+            "code": "limite",
+            "message": "Hai raggiunto il limite di stime di oggi. Riprova domani o inserisci i numeri a mano."
+          }
+        }
+      }
+    ]
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "click": "Piatto a mano"
+    },
+    {
+      "fill": [
+        "Nome del piatto",
+        "Spaghetti al pesto"
+      ]
+    },
+    {
+      "fill": [
+        "Quantità (facoltativa)",
+        "80 g di pasta"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Stima con AI",
+        "exact": true
+      }
+    },
+    {
+      "wait": 500
+    }
+  ]
+}

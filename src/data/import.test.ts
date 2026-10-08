@@ -8,14 +8,15 @@ const dish = (id: string, date: string, slot: MealRecord["slot"] = "pranzo", isF
   id, date, slot, name: id, quantity: null, kcal, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0, isFree, originalText: null,
 });
 const act = (date: string, o: Partial<ActivityRecord> = {}): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, ...o });
-const data = (o: Partial<StoredData> = {}): StoredData => ({ version: 1, settings: {}, meals: [], activity: [], weighIns: [], challengeLog: [], ...o });
+const data = (o: Partial<StoredData> = {}): StoredData => ({ version: 1, settings: {}, meals: [], activity: [], weighIns: [], favoriteDishes: [], favoriteMeals: [], ...o });
 
 async function filled(d: StoredData): Promise<DataStore> {
   const s = createMemoryDataStore();
   for (const m of d.meals) await s.saveMeal(m);
   for (const a of d.activity) await s.saveActivity(a);
   for (const w of d.weighIns) await s.saveWeighIn(w);
-  for (const e of d.challengeLog) await s.saveChallengeEntry(e);
+  for (const f of d.favoriteDishes) await s.saveFavoriteDish(f);
+  for (const f of d.favoriteMeals) await s.saveFavoriteMeal(f);
   if (Object.keys(d.settings).length) await s.saveSettings(d.settings);
   return s;
 }
@@ -26,9 +27,12 @@ describe("summarize / isEmptyData", () => {
       meals: [dish("a", "2026-01-05"), dish("b", "2026-01-05"), dish("c", "2026-01-06")],
       activity: [act("2026-01-06", { steps: 1 }), act("2026-01-07", { steps: 2 })],
       weighIns: [{ date: "2026-01-05", weightKg: 90 }],
-      challengeLog: [{ date: "2026-01-08", exerciseId: "Push up", status: "fatto", reps: null }],
     });
-    expect(summarize(d)).toEqual({ days: 4, dishes: 3, weighIns: 1 });
+    expect(summarize(d)).toEqual({ days: 3, dishes: 3, weighIns: 1 });
+  });
+  it("il solo segno del primo avvio non è un dato da importare", () => {
+    expect(isEmptyData(data({ settings: { onboardingDone: true } }))).toBe(true);
+    expect(isEmptyData(data({ settings: { onboardingDone: true, weightKg: 90 } }))).toBe(false);
   });
   it("archivio vuoto", () => {
     expect(isEmptyData(data())).toBe(true);
@@ -56,19 +60,40 @@ describe("normalizeFreeFlags (pasti salvati prima dei pasti composti)", () => {
   });
 });
 
+describe("importLocalData: preferiti", () => {
+  const body = { name: "Pasta al pesto", quantity: "80 g", kcal: 480, protein: 15, carbs: 70, fat: 16, fiber: 4, salt: 1.3 };
+  const local = data({ favoriteDishes: [{ id: "f1", ...body }], favoriteMeals: [{ id: "p1", name: "Cena leggera", slot: "cena", dishes: [body, { ...body, name: "Insalata", quantity: null, kcal: 60 }] }] });
+
+  it("porta i preferiti, senza doppioni se ripetuta o con un secondo dispositivo", async () => {
+    const remote = createMemoryDataStore();
+    const first = await importLocalData(local, remote);
+    expect(first).toMatchObject({ addedFavorites: 2, alreadyThere: 0 });
+    const again = await importLocalData(local, remote);
+    expect(again).toMatchObject({ addedFavorites: 0, alreadyThere: 2 });
+    const second = await importLocalData(data({ favoriteDishes: [{ id: "f2", ...body, name: "Altro" }] }), remote);
+    expect(second.addedFavorites).toBe(1);
+    const all = await remote.exportAll();
+    expect(all.favoriteDishes.map((f) => f.id)).toEqual(["f1", "f2"]);
+    expect(all.favoriteMeals).toHaveLength(1);
+  });
+
+  it("un archivio con soli preferiti non è vuoto", () => {
+    expect(isEmptyData(local)).toBe(false);
+  });
+});
+
 describe("importLocalData", () => {
   const local = data({
     settings: { weightKg: 92, baseKcal: 2000 },
     meals: [dish("a", "2026-01-05"), dish("b", "2026-01-05", "cena", true, 900)],
     activity: [act("2026-01-05", { steps: 9000, stepsSource: "manuale" })],
     weighIns: [{ date: "2026-01-05", weightKg: 92 }],
-    challengeLog: [{ date: "2026-01-05", exerciseId: "Push up", status: "fatto", reps: null }],
   });
 
   it("in un account vuoto porta tutto", async () => {
     const remote = createMemoryDataStore();
     const r = await importLocalData(local, remote);
-    expect(r).toMatchObject({ addedDishes: 2, addedWeighIns: 1, addedActivityDays: 1, addedChallengeEntries: 1, alreadyThere: 0 });
+    expect(r).toMatchObject({ addedDishes: 2, addedWeighIns: 1, addedActivityDays: 1, alreadyThere: 0 });
     const all = await remote.exportAll();
     expect(all.meals.map((m) => m.id).sort()).toEqual(["a", "b"]);
     expect(all.settings).toEqual({ weightKg: 92, baseKcal: 2000 });
@@ -79,12 +104,11 @@ describe("importLocalData", () => {
     const remote = createMemoryDataStore();
     await importLocalData(local, remote);
     const again = await importLocalData(local, remote);
-    expect(again).toMatchObject({ addedDishes: 0, addedWeighIns: 0, addedActivityDays: 0, addedChallengeEntries: 0, alreadyThere: 5 });
+    expect(again).toMatchObject({ addedDishes: 0, addedWeighIns: 0, addedActivityDays: 0, alreadyThere: 4 });
     const all = await remote.exportAll();
     expect(all.meals).toHaveLength(2);
     expect(all.activity).toHaveLength(1);
     expect(all.weighIns).toHaveLength(1);
-    expect(all.challengeLog).toHaveLength(1);
   });
 
   it("da un secondo dispositivo con dati diversi le due raccolte si uniscono", async () => {

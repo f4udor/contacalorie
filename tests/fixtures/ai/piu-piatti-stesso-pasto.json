@@ -1,0 +1,53 @@
+{
+  "descrizione": "Due piatti nello stesso pasto.",
+  "richiesta": {
+    "text": "anelli di totano e un'insalata di pomodorini",
+    "localDate": "2026-01-08",
+    "localTime": "20:30"
+  },
+  "rispostaModello": {
+    "meals": [
+      {
+        "slot": "cena",
+        "dishes": [
+          {
+            "name": "Anelli di totano",
+            "quantity": "150 g",
+            "quantityAssumed": true,
+            "kcal": 280,
+            "protein": 22,
+            "carbs": 18,
+            "fat": 14,
+            "fiber": 1,
+            "salt": 1.4,
+            "note": ""
+          },
+          {
+            "name": "Insalata di pomodorini",
+            "quantity": "1 ciotola",
+            "quantityAssumed": true,
+            "kcal": 60,
+            "protein": 2,
+            "carbs": 8,
+            "fat": 2,
+            "fiber": 3,
+            "salt": 0.1,
+            "note": ""
+          }
+        ]
+      }
+    ]
+  },
+  "atteso": {
+    "stato": 200,
+    "pasti": [
+      {
+        "fascia": "cena",
+        "piatti": [
+          "Anelli di totano",
+          "Insalata di pomodorini"
+        ]
+      }
+    ]
+  }
+}

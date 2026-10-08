@@ -1,0 +1,33 @@
+{
+  "descrizione": "Fascia non ammessa.",
+  "richiesta": {
+    "text": "un tramezzino",
+    "localDate": "2026-01-08",
+    "localTime": "13:10"
+  },
+  "rispostaModello": {
+    "meals": [
+      {
+        "slot": "brunch",
+        "dishes": [
+          {
+            "name": "Tramezzino",
+            "quantity": "1",
+            "quantityAssumed": true,
+            "kcal": 250,
+            "protein": 9,
+            "carbs": 28,
+            "fat": 11,
+            "fiber": 2,
+            "salt": 1.2,
+            "note": ""
+          }
+        ]
+      }
+    ]
+  },
+  "atteso": {
+    "stato": 502,
+    "codice": "non-valida"
+  }
+}

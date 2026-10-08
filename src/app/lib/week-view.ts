@@ -18,7 +18,7 @@ export interface WeekBar {
 export interface WeekView {
   summary: WeekSummary;
   bars: WeekBar[];
-  /** Nessun pasto, attività o sfida in tutta la settimana. */
+  /** Nessun pasto, o attività in tutta la settimana. */
   isEmpty: boolean;
 }
 
@@ -36,6 +36,6 @@ export function buildWeekView(input: { date: DateKey; days: readonly Day[]; sett
     targetRatio: d.target / top,
   }));
   const isEmpty =
-    summary.balance === null && summary.totalKm === null && summary.avgSteps === null && summary.challengeDaysDone === 0;
+    summary.balance === null && summary.totalKm === null && summary.avgSteps === null;
   return { summary, bars, isEmpty };
 }

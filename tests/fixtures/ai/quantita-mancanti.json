@@ -1,0 +1,57 @@
+{
+  "descrizione": "Quantità mancanti: ipotizzate e segnate come tali.",
+  "richiesta": {
+    "text": "una mela e delle noci",
+    "localDate": "2026-01-08",
+    "localTime": "16:20"
+  },
+  "rispostaModello": {
+    "meals": [
+      {
+        "slot": "spuntino",
+        "dishes": [
+          {
+            "name": "Mela",
+            "quantity": "1 media (180 g)",
+            "quantityAssumed": true,
+            "kcal": 95,
+            "protein": 0.5,
+            "carbs": 25,
+            "fat": 0.3,
+            "fiber": 4,
+            "salt": 0,
+            "note": "Mela media."
+          },
+          {
+            "name": "Noci",
+            "quantity": "30 g",
+            "quantityAssumed": true,
+            "kcal": 195,
+            "protein": 4.5,
+            "carbs": 4,
+            "fat": 19,
+            "fiber": 2,
+            "salt": 0,
+            "note": "Una manciata."
+          }
+        ]
+      }
+    ]
+  },
+  "atteso": {
+    "stato": 200,
+    "pasti": [
+      {
+        "fascia": "spuntino",
+        "piatti": [
+          "Mela",
+          "Noci"
+        ]
+      }
+    ],
+    "ipotizzate": [
+      true,
+      true
+    ]
+  }
+}

@@ -35,7 +35,6 @@ describe.each(factories)("DataStore %s", (_nome, make) => {
     expect(await s.listMeals("2026-01-05")).toEqual([]);
     expect(await s.getActivity("2026-01-05")).toBeNull();
     expect(await s.listWeighIns()).toEqual([]);
-    expect(await s.listChallengeLog("2026-01-05")).toEqual([]);
     expect(await s.getNotice()).toBeNull();
   });
 
@@ -102,19 +101,6 @@ describe.each(factories)("DataStore %s", (_nome, make) => {
     expect(await s.listWeighIns()).toEqual([{ date: "2026-01-07", weightKg: 98.5 }]);
   });
 
-  it("registro sfida: una voce per data ed esercizio, eliminabile", async () => {
-    const s = make();
-    await s.saveChallengeEntry({ date: "2026-01-05", exerciseId: "Push up", status: "fatto", reps: null });
-    await s.saveChallengeEntry({ date: "2026-01-05", exerciseId: "Crunch", status: "saltato", reps: null });
-    await s.saveChallengeEntry({ date: "2026-01-05", exerciseId: "Push up", status: "fatto", reps: 3 });
-    const voci = await s.listChallengeLog("2026-01-05");
-    expect(voci).toHaveLength(2);
-    expect(voci.find((v) => v.exerciseId === "Push up")?.reps).toBe(3);
-    expect(await s.listChallengeLogBetween("2026-01-05", "2026-01-06")).toHaveLength(2);
-    await s.deleteChallengeEntry("2026-01-05", "Push up");
-    expect((await s.listChallengeLog("2026-01-05")).map((v) => v.exerciseId)).toEqual(["Crunch"]);
-  });
-
   it("exportAll restituisce tutti i dati (copia)", async () => {
     const s = make();
     await s.saveSettings({ weightKg: 90 });
@@ -122,16 +108,43 @@ describe.each(factories)("DataStore %s", (_nome, make) => {
     await s.saveMeal(meal("b", "2026-01-06"));
     await s.saveActivity({ date: "2026-01-05", steps: 100, stepsSource: "manuale", bikeKm: null, bikeKcalHealth: null, bikeSource: null });
     await s.saveWeighIn({ date: "2026-01-05", weightKg: 90 });
-    await s.saveChallengeEntry({ date: "2026-01-05", exerciseId: "Crunch", status: "saltato", reps: null });
     const all = await s.exportAll();
     expect(all.version).toBe(1);
     expect(all.settings).toEqual({ weightKg: 90 });
     expect(all.meals.map((m) => m.id).sort()).toEqual(["a", "b"]);
     expect(all.activity).toHaveLength(1);
     expect(all.weighIns).toEqual([{ date: "2026-01-05", weightKg: 90 }]);
-    expect(all.challengeLog).toEqual([{ date: "2026-01-05", exerciseId: "Crunch", status: "saltato", reps: null }]);
     all.meals.pop();
     expect((await s.exportAll()).meals).toHaveLength(2);
+  });
+
+  it("preferiti: piatti e pasti, sostituzione per id, eliminazione, e compaiono in exportAll", async () => {
+    const s = make();
+    expect(await s.listFavoriteDishes()).toEqual([]);
+    expect(await s.listFavoriteMeals()).toEqual([]);
+    const body = { name: "Pasta al pesto", quantity: "80 g", kcal: 480, protein: 15, carbs: 70, fat: 16, fiber: 4, salt: 1.3 };
+    await s.saveFavoriteDish({ id: "f1", ...body });
+    await s.saveFavoriteDish({ id: "f2", ...body, name: "Mela", quantity: null, kcal: 95 });
+    await s.saveFavoriteDish({ id: "f1", ...body, kcal: 500 });
+    expect((await s.listFavoriteDishes()).map((f) => [f.id, f.kcal])).toEqual([["f1", 500], ["f2", 95]]);
+    const pasto = { id: "p1", name: "Cena leggera", slot: "cena" as const, dishes: [body, { ...body, name: "Insalata", quantity: null, kcal: 60 }] };
+    await s.saveFavoriteMeal(pasto);
+    expect(await s.listFavoriteMeals()).toEqual([pasto]);
+    const all = await s.exportAll();
+    expect(all.favoriteDishes).toHaveLength(2);
+    expect(all.favoriteMeals).toEqual([pasto]);
+    await s.deleteFavoriteDish("f1");
+    await s.deleteFavoriteMeal("p1");
+    expect((await s.listFavoriteDishes()).map((f) => f.id)).toEqual(["f2"]);
+    expect(await s.listFavoriteMeals()).toEqual([]);
+  });
+
+  it("il segno 'primo avvio fatto' si salva e si rilegge", async () => {
+    const s = make();
+    await s.saveSettings({ onboardingDone: true });
+    expect(await s.getSettings()).toEqual({ onboardingDone: true });
+    await s.saveSettings({ weightKg: 90 });
+    expect(await s.getSettings()).toEqual({ onboardingDone: true, weightKg: 90 });
   });
 
   it("il messaggio si può cancellare", async () => {
@@ -154,12 +167,31 @@ describe("sportello nel browser", () => {
     expect(await b.getNotice()).toBeNull();
   });
 
+  it("dati salvati prima della rimozione della sfida: si leggono e il registro della sfida viene lasciato da parte", async () => {
+    const storage = new FakeStorage();
+    const vecchio = { version: 1, settings: { weightKg: 90, challengeStartDate: "2026-01-05" }, meals: [], activity: [], weighIns: [{ date: "2026-01-05", weightKg: 90 }], challengeLog: [{ date: "2026-01-05", exerciseId: "Crunch", status: "fatto", reps: null }] };
+    storage.setItem(BROWSER_STORAGE_KEY, JSON.stringify(vecchio));
+    const s = createBrowserDataStore(storage);
+    expect(await s.getNotice()).toBeNull();
+    expect(await s.listWeighIns()).toHaveLength(1);
+    expect("challengeLog" in (await s.exportAll())).toBe(false);
+  });
+
+  it("dati salvati prima dei preferiti: si leggono e i preferiti partono vuoti", async () => {
+    const storage = new FakeStorage();
+    storage.setItem(BROWSER_STORAGE_KEY, JSON.stringify({ version: 1, settings: { weightKg: 90 }, meals: [], activity: [], weighIns: [] }));
+    const s = createBrowserDataStore(storage);
+    expect(await s.getNotice()).toBeNull();
+    expect(await s.listFavoriteDishes()).toEqual([]);
+    expect(await s.listFavoriteMeals()).toEqual([]);
+  });
+
   it.each([
     ["testo non JSON", "{{non json"],
     ["JSON che non è un oggetto", "[1,2,3]"],
     ["null", "null"],
     ["campi mancanti", JSON.stringify({ version: 1, meals: [] })],
-    ["righe senza data", JSON.stringify({ version: 1, settings: {}, meals: [{ id: "x" }], activity: [], weighIns: [], challengeLog: [] })],
+    ["righe senza data", JSON.stringify({ version: 1, settings: {}, meals: [{ id: "x" }], activity: [], weighIns: [] })],
   ])("dati corrotti (%s): si riparte vuoti con messaggio", async (_nome, testo) => {
     const storage = new FakeStorage();
     storage.setItem(BROWSER_STORAGE_KEY, testo);

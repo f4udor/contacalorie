@@ -1,0 +1,16 @@
+{
+  "descrizione": "Testo vuoto: richiesta non valida, nessuna chiamata al modello.",
+  "richiesta": {
+    "text": "   ",
+    "localDate": "2026-01-08",
+    "localTime": "13:10"
+  },
+  "rispostaModello": {
+    "meals": []
+  },
+  "atteso": {
+    "stato": 400,
+    "codice": "richiesta",
+    "modelloChiamato": false
+  }
+}

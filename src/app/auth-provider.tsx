@@ -12,9 +12,11 @@ interface AuthValue {
   signOut: (() => Promise<void>) | null;
   /** "supabase" = accesso vero; "demo" = accesso finto solo per gli screenshot; null = nessun accesso richiesto. */
   kind: "supabase" | "demo" | null;
+  /** Chiave di accesso da mandare al server per le stime AI; null se l'accesso non è richiesto o non c'è. */
+  getAccessToken: (() => Promise<string | null>) | null;
 }
 
-const AuthContext = createContext<AuthValue>({ email: null, signOut: null, kind: null });
+const AuthContext = createContext<AuthValue>({ email: null, signOut: null, kind: null, getAccessToken: null });
 
 /** Account collegato e uscita, solo quando l'accesso è attivo. */
 export function useAuth(): AuthValue {
@@ -53,5 +55,5 @@ export function AuthGate({ children }: { children: ReactNode }) {
   if (auth === null) return <>{children}</>;
   if (session === undefined) return <div aria-busy="true" className="min-h-dvh" />;
   if (session === null) return <LoginScreen service={auth} onSession={setSession} />;
-  return <AuthContext.Provider value={{ email: session.email, signOut: () => auth.signOut(), kind: auth.kind }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ email: session.email, signOut: () => auth.signOut(), kind: auth.kind, getAccessToken: () => auth.getAccessToken() }}>{children}</AuthContext.Provider>;
 }

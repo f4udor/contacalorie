@@ -1,4 +1,4 @@
-import type { DateKey, Meal, Settings } from "@/engine";
+import type { DateKey, Meal, MealSlot, Settings } from "@/engine";
 
 /** Impostazioni dell'utente: solo i valori che ha cambiato (il resto è default) più il profilo. */
 export interface UserSettings extends Partial<Settings> {
@@ -6,8 +6,8 @@ export interface UserSettings extends Partial<Settings> {
   heightCm?: number;
   ageYears?: number;
   targetWeightKg?: number;
-  /** Data di inizio della sfida mattutina. */
-  challengeStartDate?: DateKey;
+  /** Il primo avvio guidato è stato fatto o saltato. */
+  onboardingDone?: boolean;
 }
 
 /** Piatto salvato (tabella `meals`, una riga per piatto). I piatti di una data e fascia formano un pasto. */
@@ -37,13 +37,30 @@ export interface WeighIn {
   weightKg: number;
 }
 
-/** Voce del registro della sfida (tabella `challenge_log`): una per data ed esercizio. */
-export interface ChallengeLogEntry {
-  date: DateKey;
-  exerciseId: string;
-  status: "fatto" | "saltato";
-  /** Ripetizioni modificate dall'utente; null = quelle del piano. */
-  reps: number | null;
+/** Numeri di un piatto, senza data né fascia: ciò che si salva nei preferiti. */
+export interface DishBody {
+  name: string;
+  /** Quantità in testo libero; null se non indicata. */
+  quantity: string | null;
+  kcal: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  salt: number;
+}
+
+/** Piatto preferito (tabella `favorites`). */
+export interface FavoriteDish extends DishBody {
+  id: string;
+}
+
+/** Pasto preferito (tabella `favorite_meals`): un nome, la fascia in cui era e tutti i suoi piatti. */
+export interface FavoriteMeal {
+  id: string;
+  name: string;
+  slot: MealSlot | null;
+  dishes: DishBody[];
 }
 
 /** Forma dei dati salvati. `version` serve a migrare il formato in futuro. */
@@ -53,7 +70,8 @@ export interface StoredData {
   meals: MealRecord[];
   activity: ActivityRecord[];
   weighIns: WeighIn[];
-  challengeLog: ChallengeLogEntry[];
+  favoriteDishes: FavoriteDish[];
+  favoriteMeals: FavoriteMeal[];
 }
 
 export const STORAGE_VERSION = 1;

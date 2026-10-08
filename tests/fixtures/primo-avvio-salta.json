@@ -1,0 +1,21 @@
+{
+  "id": "primo-avvio-salta",
+  "descrizione": "Dopo Salta: si arriva in Oggi con tutto predefinito; riaprendo l'app il primo avvio non ricompare.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "primoAvvio": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Salta",
+        "exact": true
+      }
+    },
+    {
+      "wait": 1200
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "id": "primo-avvio-3",
+  "descrizione": "Schermata 3 di 3: le kcal base già precompilate a 2.100, pulsante Fine.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "primoAvvio": true,
+  "fisso": true,
+  "passi": [
+    {
+      "fill": [
+        "Peso (kg)",
+        "92,5"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Avanti",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Peso obiettivo (kg)",
+        "82"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Avanti",
+        "exact": true
+      }
+    }
+  ]
+}

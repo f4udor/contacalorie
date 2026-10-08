@@ -1,0 +1,40 @@
+{
+  "descrizione": "Un piatto, fascia dedotta dall'ora (13:10 → pranzo).",
+  "richiesta": {
+    "text": "un piatto di pasta al pomodoro",
+    "localDate": "2026-01-08",
+    "localTime": "13:10"
+  },
+  "rispostaModello": {
+    "meals": [
+      {
+        "slot": "pranzo",
+        "dishes": [
+          {
+            "name": "Pasta al pomodoro",
+            "quantity": "80 g di pasta",
+            "quantityAssumed": true,
+            "kcal": 420,
+            "protein": 14,
+            "carbs": 80,
+            "fat": 6,
+            "fiber": 5,
+            "salt": 1.2,
+            "note": "Ho ipotizzato 80 g di pasta cruda."
+          }
+        ]
+      }
+    ]
+  },
+  "atteso": {
+    "stato": 200,
+    "pasti": [
+      {
+        "fascia": "pranzo",
+        "piatti": [
+          "Pasta al pomodoro"
+        ]
+      }
+    ]
+  }
+}

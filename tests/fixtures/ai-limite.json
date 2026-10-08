@@ -1,0 +1,55 @@
+{
+  "id": "ai-limite",
+  "descrizione": "Limite giornaliero raggiunto: messaggio chiaro, il testo resta.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": [
+      {
+        "stato": 429,
+        "corpo": {
+          "error": {
+            "code": "limite",
+            "message": "Hai raggiunto il limite di stime di oggi. Riprova domani o inserisci i numeri a mano."
+          }
+        }
+      }
+    ]
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Cosa hai mangiato?",
+        "una pera"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Stima",
+        "exact": true
+      }
+    },
+    {
+      "wait": 500
+    }
+  ]
+}

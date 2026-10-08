@@ -19,9 +19,9 @@ const arrow = (d: string) => (
   </svg>
 );
 
-function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
+function Stat({ label, value, hint, wide }: { label: string; value: string; hint?: string; wide?: boolean }) {
   return (
-    <div className="rounded-2xl bg-card p-3.5">
+    <div className={`rounded-2xl bg-card p-3.5 ${wide ? "col-span-2" : ""}`}>
       <h3 className="text-sm font-semibold text-muted">{label}</h3>
       <p className="mt-1 text-[22px] font-bold leading-tight tabular-nums">{value}</p>
       {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
@@ -92,8 +92,7 @@ export function SettimanaScreen() {
             <Stat label="Media kcal" value={s.avgKcal === null ? dash : `${formatNumber(s.avgKcal)} kcal`} hint="sui giorni con pasti" />
             <Stat label="Bici" value={s.totalKm === null ? dash : `${formatNumber(s.totalKm, 1)} km`} />
             <Stat label="Passi medi" value={s.avgSteps === null ? dash : formatNumber(s.avgSteps)} hint="sui giorni con passi" />
-            <Stat label="Pasto libero" value={s.freeMealUsed ? "usato" : "non usato"} />
-            <Stat label="Sfida" value={s.challengeDaysDone === 0 ? dash : `${s.challengeDaysDone} ${s.challengeDaysDone === 1 ? "giorno" : "giorni"}`} hint="completati" />
+            <Stat label="Pasto libero" value={s.freeMealUsed ? "usato" : "non usato"} wide />
           </div>
 
           <Card>

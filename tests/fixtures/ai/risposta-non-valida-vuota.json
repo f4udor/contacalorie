@@ -1,0 +1,15 @@
+{
+  "descrizione": "Nessun pasto nella risposta.",
+  "richiesta": {
+    "text": "boh",
+    "localDate": "2026-01-08",
+    "localTime": "13:10"
+  },
+  "rispostaModello": {
+    "meals": []
+  },
+  "atteso": {
+    "stato": 502,
+    "codice": "non-valida"
+  }
+}

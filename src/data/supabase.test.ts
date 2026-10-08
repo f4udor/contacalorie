@@ -45,24 +45,34 @@ describe("SupabaseDataStore: dati", () => {
 
   it("impostazioni: scrive tutte le colonne note, toglie i campi rimossi e include la nuova proteinPerKgTarget", async () => {
     const { db, store } = setup();
-    await store.saveSettings({ weightKg: 92.5, baseKcal: 2000, proteinPerKgTarget: 2, challengeStartDate: "2026-01-05" });
+    await store.saveSettings({ weightKg: 92.5, baseKcal: 2000, proteinPerKgTarget: 2 });
     expect(db.rows("settings")).toHaveLength(1);
-    expect(db.rows("settings")[0]).toMatchObject({ user_id: "utente-1", weight_kg: 92.5, base_kcal: 2000, protein_per_kg_target: 2, challenge_start_date: "2026-01-05", margin: null });
+    expect(db.rows("settings")[0]).toMatchObject({ user_id: "utente-1", weight_kg: 92.5, base_kcal: 2000, protein_per_kg_target: 2, margin: null });
     await store.saveSettings({ baseKcal: undefined, margin: 0.12 });
-    expect(await store.getSettings()).toEqual({ weightKg: 92.5, proteinPerKgTarget: 2, challengeStartDate: "2026-01-05", margin: 0.12 });
+    expect(await store.getSettings()).toEqual({ weightKg: 92.5, proteinPerKgTarget: 2, margin: 0.12 });
     expect(db.rows("settings")).toHaveLength(1);
   });
 
-  it("registro sfida: l'esercizio si salva con il suo id nel database e si rilegge per nome", async () => {
+});
+
+describe("SupabaseDataStore: preferiti", () => {
+  const body = { name: "Pasta al pesto", quantity: "80 g", kcal: 480, protein: 15, carbs: 70, fat: 16, fiber: 4, salt: 1.3 };
+
+  it("il piatto preferito sta in `favorites`, con la quantità; il pasto in `favorite_meals`, con i piatti in un campo solo", async () => {
     const { db, store } = setup();
-    await store.saveChallengeEntry({ date: "2026-01-08", exerciseId: "Crunch", status: "fatto", reps: 25 });
-    expect(db.rows("challenge_log")[0]).toMatchObject({ exercise_id: "ex-2", status: "fatto", reps: 25, user_id: "utente-1" });
-    expect(await store.listChallengeLog("2026-01-08")).toEqual([{ date: "2026-01-08", exerciseId: "Crunch", status: "fatto", reps: 25 }]);
+    await store.saveFavoriteDish({ id: "f1", ...body });
+    await store.saveFavoriteMeal({ id: "p1", name: "Cena leggera", slot: "cena", dishes: [body, { ...body, name: "Insalata", quantity: null }] });
+    expect(db.rows("favorites")[0]).toMatchObject({ id: "f1", user_id: "utente-1", name: "Pasta al pesto", quantity: "80 g", slot: null, kcal: 480 });
+    expect(db.rows("favorite_meals")[0]).toMatchObject({ id: "p1", user_id: "utente-1", name: "Cena leggera", slot: "cena" });
+    expect(db.rows("favorite_meals")[0].dishes).toHaveLength(2);
+    expect(await store.listFavoriteDishes()).toEqual([{ id: "f1", ...body }]);
+    expect((await store.listFavoriteMeals())[0].dishes[1]).toMatchObject({ name: "Insalata", quantity: null });
   });
 
-  it("registro sfida: un esercizio sconosciuto non si salva e dà un errore chiaro", async () => {
-    const { store } = setup();
-    await expect(store.saveChallengeEntry({ date: "2026-01-08", exerciseId: "Sconosciuto", status: "fatto", reps: null })).rejects.toBeInstanceOf(DataStoreError);
+  it("numeri che il database restituisce come testo (numeric) tornano numeri", async () => {
+    const { db, store } = setup();
+    db.rows("favorites").push({ id: "f9", user_id: "utente-1", name: "Mela", quantity: null, kcal: "95", protein: "0.5", carbs: "25", fat: "0.3", fiber: "4", salt: "0" });
+    expect(await store.listFavoriteDishes()).toEqual([{ id: "f9", name: "Mela", quantity: null, kcal: 95, protein: 0.5, carbs: 25, fat: 0.3, fiber: 4, salt: 0 }]);
   });
 });
 
@@ -127,12 +137,12 @@ describe("SupabaseDataStore: errori", () => {
     await expect(store.getSettings()).rejects.toMatchObject({ kind: "accesso" });
   });
 
-  it("l'elenco degli esercizi non resta in cache dopo un errore", async () => {
+  it("dopo un errore di rete la richiesta successiva funziona", async () => {
     const { db, store } = setup();
     db.offline = true;
-    await expect(store.listChallengeLog("2026-01-08")).rejects.toBeInstanceOf(DataStoreError);
+    await expect(store.listMeals("2026-01-08")).rejects.toBeInstanceOf(DataStoreError);
     db.offline = false;
-    await expect(store.listChallengeLog("2026-01-08")).resolves.toEqual([]);
+    await expect(store.listMeals("2026-01-08")).resolves.toEqual([]);
   });
 });
 

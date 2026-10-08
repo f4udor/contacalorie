@@ -1,0 +1,29 @@
+{
+  "id": "ai-vuoto",
+  "descrizione": "Pannello Aggiungi con la stima attiva: campo 'Cosa hai mangiato?' con il suggerimento del microfono, Stima disattivata finché il campo è vuoto.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": []
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    }
+  ]
+}

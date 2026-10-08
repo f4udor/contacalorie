@@ -1,0 +1,40 @@
+{
+  "descrizione": "Nessuna fascia detta, ore 07:45 → colazione; l'ora arriva al modello.",
+  "richiesta": {
+    "text": "yogurt greco con miele",
+    "localDate": "2026-01-08",
+    "localTime": "07:45"
+  },
+  "rispostaModello": {
+    "meals": [
+      {
+        "slot": "colazione",
+        "dishes": [
+          {
+            "name": "Yogurt greco con miele",
+            "quantity": "170 g + 1 cucchiaino",
+            "quantityAssumed": true,
+            "kcal": 190,
+            "protein": 15,
+            "carbs": 18,
+            "fat": 6,
+            "fiber": 0,
+            "salt": 0.2,
+            "note": ""
+          }
+        ]
+      }
+    ]
+  },
+  "atteso": {
+    "stato": 200,
+    "pasti": [
+      {
+        "fascia": "colazione",
+        "piatti": [
+          "Yogurt greco con miele"
+        ]
+      }
+    ]
+  }
+}

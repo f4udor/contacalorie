@@ -16,15 +16,15 @@ describe("validateSettingsForm", () => {
   });
 
   it("valori validi con virgola, percentuali convertite in frazioni", () => {
-    const r = validateSettingsForm(form({ weightKg: "92,5", baseKcal: "2.000".replace(".", ""), margin: "12,5", bonusShare: "40", kcalPerStep: "0,04", ageYears: "42", challengeStartDate: "2026-01-05" }));
+    const r = validateSettingsForm(form({ weightKg: "92,5", baseKcal: "2.000".replace(".", ""), margin: "12,5", bonusShare: "40", kcalPerStep: "0,04", ageYears: "42" }));
     expect(r.ok).toBe(true);
     if (r.ok) {
-      expect(r.patch).toMatchObject({ weightKg: 92.5, baseKcal: 2000, margin: 0.125, bonusShare: 0.4, kcalPerStep: 0.04, ageYears: 42, challengeStartDate: "2026-01-05" });
+      expect(r.patch).toMatchObject({ weightKg: 92.5, baseKcal: 2000, margin: 0.125, bonusShare: 0.4, kcalPerStep: 0.04, ageYears: 42 });
     }
   });
 
   it("valori non validi: errore accanto al campo, nessun patch", () => {
-    const r = validateSettingsForm(form({ weightKg: "novanta", baseKcal: "-5", ageYears: "40,5", saltMax: "0", margin: "80", challengeStartDate: "2026-02-30", kcalPerStep: "2", heightCm: "1000" }));
+    const r = validateSettingsForm(form({ weightKg: "novanta", baseKcal: "-5", ageYears: "40,5", saltMax: "0", margin: "80", kcalPerStep: "2", heightCm: "1000" }));
     expect(r.ok).toBe(false);
     if (!r.ok) {
       expect(r.errors).toEqual({
@@ -33,7 +33,6 @@ describe("validateSettingsForm", () => {
         ageYears: "Inserisci un numero intero",
         saltMax: "Deve essere maggiore di zero",
         margin: "Al massimo 50 %",
-        challengeStartDate: "Data non valida",
         kcalPerStep: "Al massimo 1",
         heightCm: "Al massimo 300",
       });
@@ -67,18 +66,18 @@ describe("settingsToForm", () => {
     expect(Object.values(settingsToForm({})).every((v) => v === "")).toBe(true);
   });
   it("numeri come testo italiano, percentuali in punti percentuali", () => {
-    const f = settingsToForm({ weightKg: 92.5, margin: 0.125, bonusShare: 0.5, kcalPerStep: 0.05, challengeStartDate: "2026-01-05", baseKcal: 2000 });
-    expect(f).toMatchObject({ weightKg: "92,5", margin: "12,5", bonusShare: "50", kcalPerStep: "0,05", challengeStartDate: "2026-01-05", baseKcal: "2000" });
+    const f = settingsToForm({ weightKg: 92.5, margin: 0.125, bonusShare: 0.5, kcalPerStep: 0.05, baseKcal: 2000 });
+    expect(f).toMatchObject({ weightKg: "92,5", margin: "12,5", bonusShare: "50", kcalPerStep: "0,05", baseKcal: "2000" });
   });
   it("andata e ritorno senza perdere valori", () => {
-    const saved = { weightKg: 92.5, heightCm: 178, margin: 0.1, bonusShare: 0.35, kcalPerKm: 27.5, proteinGramsManual: 150, challengeStartDate: "2026-01-05" };
+    const saved = { weightKg: 92.5, heightCm: 178, margin: 0.1, bonusShare: 0.35, kcalPerKm: 27.5, proteinGramsManual: 150 };
     const r = validateSettingsForm(settingsToForm(saved));
     expect(r.ok && r.patch).toMatchObject(saved);
   });
 });
 
 describe("defaultsPatch", () => {
-  it("toglie le regole ma non profilo e data della sfida", () => {
+  it("toglie le regole ma non il profilo", () => {
     const p = defaultsPatch();
     for (const k of PERSONAL_KEYS) expect(k in p).toBe(false);
     expect(Object.keys(p)).toHaveLength(FIELD_KEYS.length - PERSONAL_KEYS.length);

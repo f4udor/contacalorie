@@ -28,6 +28,8 @@ export interface AuthService {
   /** "supabase": accesso vero; "demo": finto locale per provare le schermate (solo senza Supabase). */
   readonly kind: "supabase" | "demo";
   getSession(): Promise<AuthSession | null>;
+  /** Chiave di accesso della sessione, da mandare al server per le stime AI; null se non c'è (accesso dimostrativo o nessuna sessione). */
+  getAccessToken(): Promise<string | null>;
   /** Manda il codice all'email. */
   requestCode(email: string): Promise<void>;
   /** Controlla il codice e apre la sessione. */
@@ -67,7 +69,7 @@ interface AuthErrorLike {
 /** La parte del client Supabase che serve all'accesso (permette un finto nei test). */
 export interface SupabaseAuthLike {
   auth: {
-    getSession(): Promise<{ data: { session: { user: { email?: string | null } } | null } }>;
+    getSession(): Promise<{ data: { session: { access_token?: string; user: { email?: string | null } } | null } }>;
     signInWithOtp(params: { email: string; options?: { shouldCreateUser?: boolean } }): Promise<{ error: AuthErrorLike | null }>;
     verifyOtp(params: { email: string; token: string; type: "email" }): Promise<{ data: { session: { user: { email?: string | null } } | null }; error: AuthErrorLike | null }>;
     signOut(): Promise<{ error: AuthErrorLike | null }>;
@@ -104,6 +106,14 @@ export class SupabaseAuthService implements AuthService {
       return await this.call(async (c) => toSession((await c.auth.getSession()).data.session));
     } catch {
       return null; // senza rete la sessione salvata non si legge: si ricomincia dall'accesso
+    }
+  }
+
+  async getAccessToken() {
+    try {
+      return await this.call(async (c) => (await c.auth.getSession()).data.session?.access_token ?? null);
+    } catch {
+      return null;
     }
   }
 
@@ -183,6 +193,9 @@ export class DemoAuthService implements AuthService {
 
   async getSession() {
     return this.read();
+  }
+  async getAccessToken() {
+    return null;
   }
   async requestCode(email: string) {
     if (!isValidEmail(email)) throw new AuthError(AUTH_MESSAGES.email, "email");

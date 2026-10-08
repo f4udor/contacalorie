@@ -1,4 +1,4 @@
-import type { ActivityRecord, ChallengeLogEntry, MealRecord, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, DishBody, FavoriteDish, FavoriteMeal, MealRecord, UserSettings, WeighIn } from "./types";
 
 type Row = Record<string, unknown>;
 
@@ -24,7 +24,7 @@ export const SETTINGS_COLUMNS: readonly (readonly [keyof UserSettings, string])[
   ["overLimit", "over_limit"],
   ["proteinGramsManual", "protein_grams_manual"],
   ["fatGramsManual", "fat_grams_manual"],
-  ["challengeStartDate", "challenge_start_date"],
+  ["onboardingDone", "onboarding_done"],
 ];
 
 const num = (v: unknown): number => (typeof v === "string" ? Number(v) : (v as number));
@@ -32,12 +32,12 @@ const numOrNull = (v: unknown): number | null => (v === null || v === undefined 
 
 /** Riga di `settings` → impostazioni (le colonne vuote non compaiono). */
 export function rowToSettings(row: Row | null): UserSettings {
-  const out: Record<string, number | string> = {};
+  const out: Record<string, number | boolean> = {};
   if (!row) return out as UserSettings;
   for (const [key, column] of SETTINGS_COLUMNS) {
     const v = row[column];
     if (v === null || v === undefined) continue;
-    out[key] = key === "challengeStartDate" ? String(v) : num(v);
+    out[key] = key === "onboardingDone" ? Boolean(v) : num(v);
   }
   return out as UserSettings;
 }
@@ -113,13 +113,26 @@ export function activityToRow(a: ActivityRecord, userId: string): Row {
 export const rowToWeighIn = (r: Row): WeighIn => ({ date: String(r.date), weightKg: num(r.weight_kg) });
 export const weighInToRow = (w: WeighIn, userId: string): Row => ({ user_id: userId, date: w.date, weight_kg: w.weightKg });
 
-/** Voce del registro della sfida: nel database l'esercizio è un id, qui il suo nome nel piano. */
-export function rowToChallengeEntry(r: Row, nameById: ReadonlyMap<string, string>): ChallengeLogEntry | null {
-  const exerciseId = nameById.get(String(r.exercise_id));
-  if (exerciseId === undefined) return null;
-  return { date: String(r.date), exerciseId, status: r.status as ChallengeLogEntry["status"], reps: numOrNull(r.reps) };
+export function rowToFavoriteDish(r: Row): FavoriteDish {
+  return { id: String(r.id), name: String(r.name), quantity: (r.quantity as string | null | undefined) ?? null, kcal: num(r.kcal), protein: num(r.protein), carbs: num(r.carbs), fat: num(r.fat), fiber: num(r.fiber), salt: num(r.salt) };
 }
 
-export function challengeEntryToRow(e: ChallengeLogEntry, userId: string, exerciseUuid: string): Row {
-  return { user_id: userId, date: e.date, exercise_id: exerciseUuid, status: e.status, reps: e.reps };
+export function favoriteDishToRow(f: FavoriteDish, userId: string): Row {
+  return { id: f.id, user_id: userId, name: f.name, quantity: f.quantity, slot: null, kcal: f.kcal, protein: f.protein, carbs: f.carbs, fat: f.fat, fiber: f.fiber, salt: f.salt };
+}
+
+function bodyFromJson(raw: unknown): DishBody | null {
+  if (typeof raw !== "object" || raw === null) return null;
+  const d = raw as Record<string, unknown>;
+  if (typeof d.name !== "string") return null;
+  return { name: d.name, quantity: typeof d.quantity === "string" ? d.quantity : null, kcal: num(d.kcal), protein: num(d.protein), carbs: num(d.carbs), fat: num(d.fat), fiber: num(d.fiber), salt: num(d.salt) };
+}
+
+export function rowToFavoriteMeal(r: Row): FavoriteMeal {
+  const dishes = Array.isArray(r.dishes) ? r.dishes.map(bodyFromJson).filter((d): d is DishBody => d !== null) : [];
+  return { id: String(r.id), name: String(r.name), slot: (r.slot as FavoriteMeal["slot"]) ?? null, dishes };
+}
+
+export function favoriteMealToRow(f: FavoriteMeal, userId: string): Row {
+  return { id: f.id, user_id: userId, name: f.name, slot: f.slot, dishes: f.dishes };
 }

@@ -15,7 +15,7 @@ describe("supabase/setup.sql", () => {
   });
 
   it("contiene tutte le tabelle previste dal brief, ognuna con la sicurezza per riga attiva", () => {
-    for (const t of ["settings", "meals", "favorites", "daily_activity", "weigh_ins", "challenge_plans", "challenge_exercises", "challenge_log", "ingest_tokens", "ingest_log"]) {
+    for (const t of ["settings", "meals", "favorites", "daily_activity", "weigh_ins", "challenge_plans", "challenge_exercises", "challenge_log", "ingest_tokens", "ingest_log", "ai_usage", "favorite_meals"]) {
       expect(onDisk).toContain(`create table public.${t} `);
       expect(onDisk).toContain(`alter table public.${t} enable row level security`);
     }

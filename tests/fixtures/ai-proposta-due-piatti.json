@@ -1,0 +1,85 @@
+{
+  "id": "ai-proposta-due-piatti",
+  "descrizione": "Proposta con due piatti nel pasto Cena: quantità con etichetta 'ipotizzata', note, numeri modificabili, 'Togli' per piatto.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": [
+      {
+        "stato": 200,
+        "corpo": {
+          "proposal": {
+            "meals": [
+              {
+                "slot": "cena",
+                "dishes": [
+                  {
+                    "name": "Anelli di totano",
+                    "quantity": "150 g",
+                    "quantityAssumed": true,
+                    "kcal": 280,
+                    "protein": 22,
+                    "carbs": 18,
+                    "fat": 14,
+                    "fiber": 1,
+                    "salt": 1.4,
+                    "note": "Ho ipotizzato 150 g di totano fritto."
+                  },
+                  {
+                    "name": "Insalata di pomodorini",
+                    "quantity": "1 ciotola",
+                    "quantityAssumed": true,
+                    "kcal": 60,
+                    "protein": 2,
+                    "carbs": 8,
+                    "fat": 2,
+                    "fiber": 3,
+                    "salt": 0.1,
+                    "note": "Una ciotola piccola con un filo d'olio."
+                  }
+                ]
+              }
+            ]
+          },
+          "originalText": "testo"
+        }
+      }
+    ]
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Cosa hai mangiato?",
+        "anelli di totano e un'insalata di pomodorini"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Stima",
+        "exact": true
+      }
+    },
+    {
+      "wait": 600
+    }
+  ]
+}

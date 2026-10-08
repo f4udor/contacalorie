@@ -12,7 +12,7 @@ const meal = (date, slot, name, kcal, p, c, f, fib, salt, extra = {}) => ({
   id: `m${++n}`, date, slot, name, kcal, protein: p, carbs: c, fat: f, fiber: fib, salt, isFree: false, originalText: null, ...extra,
 });
 const activity = (date, a) => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, ...a });
-const data = (parts = {}) => ({ version: 1, settings: {}, meals: [], activity: [], weighIns: [], challengeLog: [], ...parts });
+const data = (parts = {}) => ({ version: 1, settings: {}, meals: [], activity: [], weighIns: [], ...parts });
 
 const scenarios = [];
 // "scorre": la schermata è più lunga di 844 px e scorre in verticale (voluto): lo screenshot la mostra intera.
@@ -20,7 +20,7 @@ const add = (id, descrizione, oggi, dati, extra = {}) => scenarios.push({ id, de
 
 // --- Guscio e avvisi (T2.1)
 scenarios.push({ id: "grafici-in-arrivo", descrizione: "Grafici mostra solo 'In arrivo'.", oggi: "2026-01-08", percorso: "/grafici", dati: null });
-scenarios.push({ id: "avviso-dati-illeggibili", descrizione: "Dati salvati corrotti: l'app riparte vuota e mostra l'avviso.", oggi: "2026-01-08", percorso: "/", dati: "{{non json", scorre: true });
+scenarios.push({ id: "avviso-dati-illeggibili", descrizione: "Dati salvati corrotti: l'app riparte vuota e mostra l'avviso (il primo avvio guidato compare dopo aver chiuso l'avviso).", oggi: "2026-01-08", percorso: "/", dati: "{{non json", scorre: true });
 
 // --- Oggi: anello e nutrienti (T2.2)
 add("oggi-vuoto", "Giorno senza pasti e profilo senza peso: anello pieno di kcal rimaste, barrette neutre, invito a inserire il peso.", "2026-01-08", null);
@@ -172,28 +172,10 @@ add("dopo-attivita", "Dopo aver salvato 9.000 passi: obiettivo 2.175, composizio
   passi: [apri, { click: "Attività a mano" }, { fill: ["Passi", "9000"] }, { click: "Salva attività" }, { wait: 600 }],
 });
 
-// --- Sfida mattutina (T2.5)
-const sfida = (start, extra = {}) => data({ settings: { weightKg: 100, challengeStartDate: start }, ...extra });
-const voce = (date, exerciseId, status, reps = null) => ({ date, exerciseId, status, reps });
-add("sfida-giorno-4", "Sfida giorno 4/30: push up 4, crunch, crunch incrociati, dead bug nuovo; uno fatto, uno saltato, uno con ripetizioni modificate.", "2026-01-08",
-  sfida("2026-01-05", { challengeLog: [voce("2026-01-08", "Push up", "fatto"), voce("2026-01-08", "Crunch", "fatto", 25), voce("2026-01-08", "Crunch incrociati", "saltato")] }), { passi: [{ scrollTo: "Fermati se senti dolore" }] });
-add("sfida-giorno-1", "Sfida giorno 1/30: tre esercizi, tutti nuovi, niente fatto.", "2026-01-05", sfida("2026-01-05"), { passi: [{ scrollTo: "Fermati se senti dolore" }] });
-add("sfida-giorno-30", "Sfida giorno 30/30: dodici esercizi.", "2026-01-08", sfida("2025-12-10"), { passi: [{ scrollTo: "Fermati se senti dolore" }] });
-add("sfida-non-iniziata", "Prima dell'inizio: messaggio con la data di partenza, nessuna lista.", "2026-01-08", sfida("2026-01-12"), { passi: [{ scrollTo: "non è ancora iniziata" }] });
-add("sfida-completata", "Dopo il giorno 30: messaggio di sfida completata, nessuna lista.", "2026-01-08", sfida("2025-11-01"), { passi: [{ scrollTo: "Sfida completata" }] });
-add("sfida-senza-data", "Nessuna data di inizio: invito a impostarla.", "2026-01-08", null, { passi: [{ scrollTo: "non ha una data" }] });
-add("pannello-esercizio", "Esercizio toccato: ripetizioni modificabili (previste dal piano), Fatto, Salta.", "2026-01-08", sfida("2025-12-10"), { fisso: true, passi: [{ click: "Plank con tocco spalla" }] });
-add("pannello-esercizio-errore", "Ripetizioni non valide: errore accanto al campo.", "2026-01-08", sfida("2025-12-10"), { fisso: true, passi: [{ click: "Plank con tocco spalla" }, { fill: ["Ripetizioni per lato", "dieci"] }, { click: "Fatto", exact: true }] });
-add("pannello-esercizio-saltato", "Esercizio già saltato: compare 'Rimetti da fare'.", "2026-01-08", sfida("2026-01-05", { challengeLog: [voce("2026-01-08", "Dead bug", "saltato")] }), { fisso: true, passi: [{ click: "Dead bug", exact: false }] });
-add("dopo-esercizio-fatto", "Dopo aver toccato la spunta del Crunch: 'fatti 1 su 4'.", "2026-01-08", sfida("2026-01-05"), {
-  passi: [{ clickRole: { role: "checkbox", name: "Crunch: fatto" } }, { wait: 500 }, { scrollTo: "Fermati se senti dolore" }],
-});
-
 // --- Settimana (T2.6)
 const sett = (id, descrizione, oggi, dati, extra = {}) => scenarios.push({ id, descrizione, oggi, percorso: "/settimana", dati, scorre: true, ...extra });
-const esercizi1 = (date) => ["Push up", "Crunch", "Crunch incrociati"].map((e) => voce(date, e, "fatto"));
 const settimanaCompleta = data({
-  settings: { weightKg: 100, challengeStartDate: "2026-01-05" },
+  settings: { weightKg: 100 },
   meals: [
     meal("2026-01-05", "colazione", "Colazione", 350, 12, 50, 9, 3, 0.6),
     meal("2026-01-05", "pranzo", "Pranzo", 800, 40, 90, 25, 8, 2.1),
@@ -216,9 +198,8 @@ const settimanaCompleta = data({
     activity("2026-01-07", { steps: 9000, stepsSource: "manuale" }),
     activity("2026-01-09", { steps: 6500, stepsSource: "manuale" }),
   ],
-  challengeLog: [...esercizi1("2026-01-05"), ...esercizi1("2026-01-06"), ...esercizi1("2026-01-07"), voce("2026-01-08", "Push up", "fatto")],
 });
-sett("settimana-completa", "Settimana completa: sforamento mercoledì (rosso), bici martedì, pasto libero sabato, tre giorni di sfida.", "2026-01-11", settimanaCompleta);
+sett("settimana-completa", "Settimana completa: sforamento mercoledì (rosso), bici martedì, pasto libero sabato.", "2026-01-11", settimanaCompleta);
 sett("settimana-parziale", "Settimana a metà (oggi mercoledì): giorni futuri vuoti, medie sui soli giorni con pasti.", "2026-01-07", data({
   settings: { weightKg: 100 },
   meals: [
@@ -318,12 +299,93 @@ add("salvataggio-fallito", "Il browser non riesce più a scrivere (memoria piena
   passi: [apri, { click: "Pesata", exact: true }, { fill: ["Peso (kg)", "90"] }, { click: "Salva pesata" }, { wait: 500 }],
 });
 
+// --- Inserimento con l'AI (T4.2): le risposte del server sono finte (`ai`), nessuna rete
+const dish = (name, quantity, assumed, kcal, p, c, f, fi, salt, note = "") => ({ name, quantity, quantityAssumed: assumed, kcal, protein: p, carbs: c, fat: f, fiber: fi, salt, note });
+const prop = (...meals) => ({ stato: 200, corpo: { proposal: { meals }, originalText: "testo" } });
+const cena = { slot: "cena", dishes: [dish("Anelli di totano", "150 g", true, 280, 22, 18, 14, 1, 1.4, "Ho ipotizzato 150 g di totano fritto."), dish("Insalata di pomodorini", "1 ciotola", true, 60, 2, 8, 2, 3, 0.1, "Una ciotola piccola con un filo d'olio.")] };
+const colPranzo = [{ slot: "colazione", dishes: [dish("Cappuccino", "1 tazza", true, 90, 5, 8, 4, 0, 0.1), dish("Cornetto", "1", true, 300, 6, 38, 14, 1, 0.5)] }, { slot: "pranzo", dishes: [dish("Panino con prosciutto", "1", true, 420, 20, 50, 14, 3, 2.2, "Panino da 100 g con 40 g di prosciutto.")] }];
+const scrivi = (t) => ({ fill: ["Cosa hai mangiato?", t] });
+const stima = btn("Stima");
+const aiScen = (id, descrizione, ai, passi, extra = {}) => add(id, descrizione, "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, ai, passi: [apri, ...passi], ...extra });
+aiScen("ai-vuoto", "Pannello Aggiungi con la stima attiva: campo 'Cosa hai mangiato?' con il suggerimento del microfono, Stima disattivata finché il campo è vuoto.", { risposte: [] }, []);
+aiScen("ai-non-disponibile", "AI non configurata: avviso 'Stima automatica non disponibile', il testo scritto resta e Stima è disattivata; le altre voci funzionano.", { disponibile: false, risposte: [] }, [scrivi("pasta al pomodoro")]);
+aiScen("ai-caricamento", "Durante la stima: pulsante 'Sto stimando…' disattivato, testo conservato.", { risposte: [{ ritardo: 8000, ...prop(cena) }] }, [scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 500 }]);
+aiScen("ai-proposta-due-piatti", "Proposta con due piatti nel pasto Cena: quantità con etichetta 'ipotizzata', note, numeri modificabili, 'Togli' per piatto.", { risposte: [prop(cena)] }, [scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 600 }]);
+aiScen("ai-proposta-conferma", "Fondo della proposta: Correggi, Rifai la stima, Conferma, Annulla.", { risposte: [prop(cena)] }, [scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 600 }, { scrollTo: "Annulla" }]);
+aiScen("ai-proposta-due-pasti", "Una frase con due pasti: Colazione (due piatti) e Pranzo, con la fascia modificabile.", { risposte: [prop(...colPranzo)] }, [scrivi("a colazione un cappuccino e un cornetto e a pranzo un panino con prosciutto"), stima, { wait: 600 }]);
+aiScen("ai-proposta-tolto-piatto", "Dopo aver tolto il cornetto: resta il cappuccino e il pranzo.", { risposte: [prop(...colPranzo)] }, [scrivi("a colazione un cappuccino e un cornetto e a pranzo un panino con prosciutto"), stima, { wait: 600 }, { clickRole: { role: "button", name: "Togli Cornetto" } }]);
+aiScen("ai-correzione", "Dopo la correzione 'il totano era di più': la stima è rifatta (totano 300 g, 560 kcal, quantità non più ipotizzata).", { risposte: [prop(cena), prop({ slot: "cena", dishes: [dish("Anelli di totano", "300 g", false, 560, 44, 36, 28, 2, 2.8), cena.dishes[1]] })] }, [scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 600 }, { fill: ["Correggi", "il totano era di più"] }, btn("Rifai la stima"), { wait: 600 }]);
+aiScen("ai-errore-numero", "Kcal svuotate prima di confermare: errore accanto al campo, nulla è salvato.", { risposte: [prop({ slot: "pranzo", dishes: [dish("Pasta al pomodoro", "80 g", true, 420, 14, 80, 6, 5, 1.2)] })] }, [scrivi("pasta al pomodoro"), stima, { wait: 600 }, { fill: ["Kcal", ""] }, btn("Conferma"), { wait: 300 }]);
+aiScen("ai-errore-rete", "Servizio non raggiungibile: messaggio chiaro, il testo scritto resta.", { risposte: [{ stato: 502, corpo: { error: { code: "rete", message: "Non riesco a raggiungere il servizio di stima: controlla la connessione e riprova." } } }] }, [scrivi("una pera"), stima, { wait: 500 }]);
+aiScen("ai-limite", "Limite giornaliero raggiunto: messaggio chiaro, il testo resta.", { risposte: [{ stato: 429, corpo: { error: { code: "limite", message: "Hai raggiunto il limite di stime di oggi. Riprova domani o inserisci i numeri a mano." } } }] }, [scrivi("una pera"), stima, { wait: 500 }]);
+aiScen("ai-risposta-non-valida", "Risposta del modello non utilizzabile: messaggio chiaro, nulla salvato.", { risposte: [{ stato: 502, corpo: { error: { code: "non-valida", message: "La stima ricevuta non è utilizzabile. Riprova, magari con parole diverse." } } }] }, [scrivi("una pera"), stima, { wait: 500 }]);
+add("ai-dopo-conferma", "Dopo Conferma: i due piatti sono nel pasto Cena di oggi (con totale), il pannello è chiuso.", "2026-01-08", giornoPasti({ meals: [] }), {
+  ai: { risposte: [prop(cena)] },
+  passi: [apri, scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 600 }, btn("Conferma"), { wait: 700 }],
+});
+
+// --- Piatto a mano con stima (T4.3)
+const pesto = prop({ slot: "pranzo", dishes: [dish("Spaghetti al pesto", "80 g di pasta", false, 480, 15, 70, 16, 4, 1.3, "Pasta con circa 20 g di pesto alla genovese.")] });
+const aMano = [{ click: "Piatto a mano" }, { fill: ["Nome del piatto", "Spaghetti al pesto"] }, { fill: ["Quantità (facoltativa)", "80 g di pasta"] }];
+aiScen("piatto-stima-vuoto", "Piatto a mano con l'AI attiva: nome e quantità scritti, kcal vuote; compare 'Stima con AI' e il campo Kcal non ha più l'asterisco.", { risposte: [pesto] }, aMano);
+aiScen("piatto-stima-fatto", "Dopo 'Stima con AI': kcal e macro riempiti, riga 'Stimato con l'AI: controlla i numeri' con la nota del modello.", { risposte: [pesto] }, [...aMano, btn("Stima con AI"), { wait: 600 }]);
+aiScen("piatto-stima-senza-kcal", "Salvataggio con le kcal vuote e l'AI attiva: errore accanto al campo che indica anche la stima.", { risposte: [pesto] }, [...aMano, btn("Aggiungi piatto"), { wait: 300 }]);
+aiScen("piatto-stima-errore", "Limite raggiunto durante la stima: messaggio chiaro, il modulo resta com'è.", { risposte: [{ stato: 429, corpo: { error: { code: "limite", message: "Hai raggiunto il limite di stime di oggi. Riprova domani o inserisci i numeri a mano." } } }] }, [...aMano, btn("Stima con AI"), { wait: 500 }]);
+aiScen("piatto-stima-senza-nome", "'Stima con AI' senza il nome del piatto: invita a scriverlo.", { risposte: [pesto] }, [{ click: "Piatto a mano" }, btn("Stima con AI"), { wait: 300 }]);
+
+// --- Preferiti (T4.4)
+const fav = (id, name, quantity, kcal, p, c, f, fi, salt) => ({ id, name, quantity, kcal, protein: p, carbs: c, fat: f, fiber: fi, salt });
+const body = (f) => Object.fromEntries(Object.entries(f).filter(([k]) => k !== "id"));
+const pesto2 = fav("f1", "Spaghetti al pesto", "80 g di pasta", 480, 15, 70, 16, 4, 1.3);
+const mela = fav("f2", "Mela", "1 media", 95, 0.5, 25, 0.3, 4, 0);
+const caffe = fav("f3", "Caffè con un cucchiaino di zucchero", null, 20, 0.2, 5, 0, 0, 0);
+const preferiti = { favoriteDishes: [pesto2, mela, caffe], favoriteMeals: [
+  { id: "p1", name: "Cena leggera", slot: "cena", dishes: [body(fav("x", "Anelli di totano", "150 g", 280, 22, 18, 14, 1, 1.4)), body(fav("y", "Insalata di pomodorini", "1 ciotola", 60, 2, 8, 2, 3, 0.1))] },
+  { id: "p2", name: "Colazione solita con cappuccino e cornetto", slot: "colazione", dishes: [body(fav("z", "Cappuccino", "1 tazza", 90, 5, 8, 4, 0, 0.1)), body(fav("w", "Cornetto", "1", 300, 6, 38, 14, 1, 0.5)), body(fav("v", "Spremuta", "200 ml", 90, 1, 20, 0, 0, 0))] },
+] };
+const apriPreferiti = [apri, { click: "Preferiti", exact: true }];
+const favScen = (id, descrizione, dati, passi, extra = {}) => add(id, descrizione, "2026-01-08", dati, { fisso: true, passi, ...extra });
+favScen("preferiti-vuoto", "Nessun preferito: spiega come salvarli.", giornoPasti({ meals: [] }), apriPreferiti);
+favScen("preferiti-lista", "Preferiti salvati: pasti (con numero di piatti e kcal totali) e piatti, scelta della fascia, Cerca, Elimina per riga.", giornoPasti({ meals: [], ...preferiti }), apriPreferiti);
+favScen("preferiti-ricerca", "Ricerca 'caff': trova il pasto e il piatto con quel nome (senza accenti né maiuscole).", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, { fill: ["Cerca", "caff"] }]);
+favScen("preferiti-nessun-risultato", "Ricerca senza risultati: messaggio.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, { fill: ["Cerca", "zzz"] }]);
+favScen("preferiti-elimina", "Primo tocco su Elimina: il pulsante diventa 'Elimina davvero'.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, { clickRole: { role: "button", name: "Elimina Mela dai preferiti" } }]);
+add("preferiti-dopo-aggiunta", "Dopo un tocco su 'Cena leggera' con la fascia Spuntino: i due piatti compaiono nello Spuntino di oggi.", "2026-01-08", giornoPasti({ meals: [], ...preferiti }), {
+  passi: [...apriPreferiti, { clickRole: { role: "radio", name: "Spuntino" } }, { clickRole: { role: "button", name: "Aggiungi Cena leggera" } }, { wait: 700 }],
+});
+add("preferiti-dopo-aggiunta-piatto", "Dopo un tocco su 'Mela' con la fascia predefinita (Pranzo): la mela è nel Pranzo di oggi.", "2026-01-08", giornoPasti({ ...preferiti }), {
+  passi: [...apriPreferiti, { clickRole: { role: "button", name: "Aggiungi Mela" } }, { wait: 700 }],
+});
+favScen("preferiti-salva-piatto", "Piatto toccato: in fondo al modulo 'Salva nei preferiti'.", giornoPasti(), [{ click: "Petto di pollo e verdure" }, { scrollTo: "Salva nei preferiti" }]);
+favScen("preferiti-piatto-salvato", "Dopo 'Salva nei preferiti': conferma 'Salvato nei preferiti.'", giornoPasti(), [{ click: "Petto di pollo e verdure" }, btn("Salva nei preferiti"), { wait: 400 }, { scrollTo: "Salvato nei preferiti" }]);
+favScen("preferiti-salva-pasto", "Intestazione del pasto toccata: pannello 'Salva pasto' con il nome proposto (i nomi dei piatti).", giornoPasti(), [{ clickRole: { role: "button", name: "Pranzo: salva il pasto nei preferiti" } }]);
+favScen("preferiti-pasto-salvato", "Dopo 'Salva pasto' con un nome scelto: conferma 'Pasto salvato nei preferiti.'", giornoPasti(), [{ clickRole: { role: "button", name: "Pranzo: salva il pasto nei preferiti" } }, { fill: ["Nome del pasto", "Pranzo del lunedì"] }, btn("Salva pasto"), { wait: 400 }]);
+
+// --- Primo avvio guidato e Collegamenti (T4.5)
+scenarios.push({ id: "primo-avvio-dopo-avviso", descrizione: "Dati illeggibili e nessuna impostazione: prima l'avviso, il primo avvio compare dopo aver chiuso l'avviso.", oggi: "2026-01-08", percorso: "/", dati: "{{non json", primoAvvio: true, fisso: true, passi: [{ clickRole: { role: "button", name: "Ok", exact: true } }] });
+const pa = (id, descrizione, passi, extra = {}) => scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/", dati: null, primoAvvio: true, fisso: true, passi, ...extra });
+const avanti = btn("Avanti");
+pa("primo-avvio-1", "Primo avvio, schermata 1 di 3: il peso (campo vuoto), Salta in alto, Avanti.", []);
+pa("primo-avvio-2", "Schermata 2 di 3: il peso obiettivo, con Indietro.", [{ fill: ["Peso (kg)", "92,5"] }, avanti]);
+pa("primo-avvio-3", "Schermata 3 di 3: le kcal base già precompilate a 2.100, pulsante Fine.", [{ fill: ["Peso (kg)", "92,5"] }, avanti, { fill: ["Peso obiettivo (kg)", "82"] }, avanti]);
+pa("primo-avvio-errore", "Peso non valido: errore accanto al campo, non si va avanti.", [{ fill: ["Peso (kg)", "novanta"] }, avanti]);
+add("primo-avvio-fine", "Dopo Fine con peso 92,5 kg e obiettivo 82 kg: si arriva in Oggi e le proteine sono 1,8 × 82 = 150 g.", "2026-01-08", null, {
+  primoAvvio: true,
+  passi: [{ fill: ["Peso (kg)", "92,5"] }, avanti, { fill: ["Peso obiettivo (kg)", "82"] }, avanti, btn("Fine"), { wait: 1200 }],
+});
+add("primo-avvio-salta", "Dopo Salta: si arriva in Oggi con tutto predefinito; riaprendo l'app il primo avvio non ricompare.", "2026-01-08", null, {
+  primoAvvio: true,
+  passi: [btn("Salta"), { wait: 1200 }],
+});
+scenarios.push({ id: "impostazioni-collegamenti-attiva", descrizione: "Impostazioni → Collegamenti: stima automatica 'attiva'.", oggi: "2026-01-08", percorso: "/impostazioni", dati: null, scorre: true, ai: { risposte: [] }, passi: [{ scrollTo: "Collegamenti" }] });
+scenarios.push({ id: "impostazioni-collegamenti-spenta", descrizione: "Impostazioni → Collegamenti: stima automatica 'non configurata', con l'indicazione di dove si attiva.", oggi: "2026-01-08", percorso: "/impostazioni", dati: null, scorre: true, ai: { disponibile: false, risposte: [] }, passi: [{ scrollTo: "Collegamenti" }] });
+
 // --- Impostazioni (T2.7)
 const imp = (id, descrizione, oggi, dati, extra = {}) => scenarios.push({ id, descrizione, oggi, percorso: "/impostazioni", dati, scorre: true, ...extra });
 const salva = { click: "Salva", exact: true };
 imp("impostazioni-predefinite", "Nessuna impostazione salvata: i campi sono vuoti e mostrano i valori predefiniti; senza peso la formula chiede il peso.", "2026-01-08", null);
 imp("impostazioni-compilate", "Profilo, proteine manuali (150 g) con la formula visibile e 'Torna alla formula', altre regole cambiate.", "2026-01-08", data({
-  settings: { weightKg: 92.5, heightCm: 178, ageYears: 41, targetWeightKg: 82, baseKcal: 2000, floorKcal: 1700, proteinGramsManual: 150, margin: 0.12, bonusShare: 0.4, kcalPerStep: 0.04, freeMealCap: 900, challengeStartDate: "2026-01-05" },
+  settings: { weightKg: 92.5, heightCm: 178, ageYears: 41, targetWeightKg: 82, baseKcal: 2000, floorKcal: 1700, proteinGramsManual: 150, margin: 0.12, bonusShare: 0.4, kcalPerStep: 0.04, freeMealCap: 900 },
 }));
 imp("impostazioni-errori", "Valori non validi: errori accanto ai campi, nulla viene salvato.", "2026-01-08", null, {
   passi: [{ fill: ["Peso (kg)", "novanta"] }, { fill: ["Età (anni)", "40,5"] }, { fill: ["Kcal base", "-5"] }, { fill: ["Margine dei semafori (%)", "80"] }, { fill: ["Soglia passi", "tanti"] }, { fill: ["Tetto di kcal", "-1"] }, salva, { scrollTo: "Controlla i campi" }],
@@ -335,18 +397,13 @@ imp("impostazioni-ripristina", "Ripristina valori predefiniti: chiede conferma e
   fisso: true,
   passi: [{ click: "Ripristina valori predefiniti" }],
 });
-imp("impostazioni-dopo-ripristino", "Dopo il ripristino: regole di nuovo vuote (predefinite), peso del profilo mantenuto.", "2026-01-08", data({ settings: { weightKg: 92.5, baseKcal: 2000, margin: 0.12, challengeStartDate: "2026-01-05" } }), {
+imp("impostazioni-dopo-ripristino", "Dopo il ripristino: regole di nuovo vuote (predefinite), peso del profilo mantenuto.", "2026-01-08", data({ settings: { weightKg: 92.5, baseKcal: 2000, margin: 0.12 } }), {
   passi: [{ click: "Ripristina valori predefiniti" }, { clickRole: { role: "button", name: "Ripristina", exact: true } }, { wait: 500 }],
 });
 add("dopo-kcal-base", "Kcal base cambiata a 2.000 nelle Impostazioni: Oggi mostra obiettivo 2.000.", "2026-01-08", null, {
   percorso: "/impostazioni",
   passi: [{ fill: ["Kcal base", "2000"] }, salva, { wait: 500 }, { click: "Oggi", exact: true }, { wait: 500 }],
 });
-add("dopo-data-sfida", "Data di inizio della sfida impostata al 5 gennaio: Oggi mostra Giorno 4/30.", "2026-01-08", null, {
-  percorso: "/impostazioni",
-  passi: [{ fill: ["Inizio della sfida", "2026-01-05"] }, salva, { wait: 500 }, { click: "Oggi", exact: true }, { wait: 500 }, { scrollTo: "Fermati se senti dolore" }],
-});
-
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");

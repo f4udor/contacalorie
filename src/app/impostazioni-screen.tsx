@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { DataSection } from "./components/data-section";
+import { LinksSection } from "./components/links-section";
 import { PageTitle } from "./components/page-title";
 import { SettingsForm } from "./components/settings-form";
 import { useAuth } from "./auth-provider";
@@ -33,6 +34,7 @@ export function ImpostazioniScreen() {
           }}
         />
       )}
+      <LinksSection />
       <DataSection />
       {email !== null && signOut && (
         <section className="mt-3 rounded-2xl bg-card p-4" aria-label="Account">

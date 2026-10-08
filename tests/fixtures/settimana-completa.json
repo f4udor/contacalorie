@@ -1,13 +1,12 @@
 {
   "id": "settimana-completa",
-  "descrizione": "Settimana completa: sforamento mercoledì (rosso), bici martedì, pasto libero sabato, tre giorni di sfida.",
+  "descrizione": "Settimana completa: sforamento mercoledì (rosso), bici martedì, pasto libero sabato.",
   "oggi": "2026-01-11",
   "percorso": "/settimana",
   "dati": {
     "version": 1,
     "settings": {
-      "weightKg": 100,
-      "challengeStartDate": "2026-01-05"
+      "weightKg": 100
     },
     "meals": [
       {
@@ -241,69 +240,7 @@
         "bikeSource": null
       }
     ],
-    "weighIns": [],
-    "challengeLog": [
-      {
-        "date": "2026-01-05",
-        "exerciseId": "Push up",
-        "status": "fatto",
-        "reps": null
-      },
-      {
-        "date": "2026-01-05",
-        "exerciseId": "Crunch",
-        "status": "fatto",
-        "reps": null
-      },
-      {
-        "date": "2026-01-05",
-        "exerciseId": "Crunch incrociati",
-        "status": "fatto",
-        "reps": null
-      },
-      {
-        "date": "2026-01-06",
-        "exerciseId": "Push up",
-        "status": "fatto",
-        "reps": null
-      },
-      {
-        "date": "2026-01-06",
-        "exerciseId": "Crunch",
-        "status": "fatto",
-        "reps": null
-      },
-      {
-        "date": "2026-01-06",
-        "exerciseId": "Crunch incrociati",
-        "status": "fatto",
-        "reps": null
-      },
-      {
-        "date": "2026-01-07",
-        "exerciseId": "Push up",
-        "status": "fatto",
-        "reps": null
-      },
-      {
-        "date": "2026-01-07",
-        "exerciseId": "Crunch",
-        "status": "fatto",
-        "reps": null
-      },
-      {
-        "date": "2026-01-07",
-        "exerciseId": "Crunch incrociati",
-        "status": "fatto",
-        "reps": null
-      },
-      {
-        "date": "2026-01-08",
-        "exerciseId": "Push up",
-        "status": "fatto",
-        "reps": null
-      }
-    ]
+    "weighIns": []
   },
   "scorre": true
 }

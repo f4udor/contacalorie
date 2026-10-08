@@ -8,13 +8,11 @@
     "settings": {
       "weightKg": 92.5,
       "baseKcal": 2000,
-      "margin": 0.12,
-      "challengeStartDate": "2026-01-05"
+      "margin": 0.12
     },
     "meals": [],
     "activity": [],
-    "weighIns": [],
-    "challengeLog": []
+    "weighIns": []
   },
   "scorre": true,
   "passi": [

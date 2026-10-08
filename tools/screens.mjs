@@ -96,12 +96,19 @@ try {
           }
           globalThis.Date = FixedDate;
         }, new Date(`${sc.oggi}T09:00:00+01:00`).getTime());
-        if (sc.dati) {
+        // Il primo avvio guidato compare solo per chi non ha nessuna impostazione: gli altri scenari partono come se fosse già fatto
+        // (`primoAvvio: true` lo lascia comparire).
+        let dati = sc.dati;
+        if (!sc.primoAvvio && typeof dati !== "string") {
+          const base = dati ?? { version: 1, settings: {}, meals: [], activity: [], weighIns: [] };
+          dati = Object.keys(base.settings ?? {}).length === 0 ? { ...base, settings: { onboardingDone: true } } : base;
+        }
+        if (dati) {
           await context.addInitScript(
             ([key, data]) => {
               if (!localStorage.getItem(key)) localStorage.setItem(key, data);
             },
-            [STORAGE_KEY, typeof sc.dati === "string" ? sc.dati : JSON.stringify(sc.dati)],
+            [STORAGE_KEY, typeof dati === "string" ? dati : JSON.stringify(dati)],
           );
         }
         if (sc.accessoDimostrativo) {
@@ -119,6 +126,16 @@ try {
             Storage.prototype.setItem = function () {
               throw new DOMException("memoria piena", "QuotaExceededError");
             };
+          });
+        }
+        if (sc.ai) {
+          // Stima automatica finta: disponibilità e risposte in ordine (l'ultima si ripete). `ritardo` = millisecondi di attesa.
+          const risposte = [...(sc.ai.risposte ?? [])];
+          await context.route("**/api/estimate", async (route) => {
+            if (route.request().method() === "GET") return route.fulfill({ json: { available: sc.ai.disponibile !== false } });
+            const r = risposte.length > 1 ? risposte.shift() : risposte[0];
+            if (r?.ritardo) await new Promise((res) => setTimeout(res, r.ritardo));
+            return route.fulfill({ status: r?.stato ?? 200, json: r?.corpo ?? {} });
           });
         }
         const page = await context.newPage();
