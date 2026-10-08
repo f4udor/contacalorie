@@ -463,5 +463,5 @@ Vincoli di questa fase:
 - Il colore resta quello già in uso (verde se ci si avvicina al peso obiettivo, rosso se ci si allontana, grigio senza peso obiettivo o a pari distanza): va solo controllato che valga anche per chi vuole aumentare di peso.
 - Test: −0,04 → "0,0 kg"; −0,4; −1,2; +0,3; obiettivo più alto del peso attuale con variazione positiva (verde) e negativa (rossa).
 
-### T5b.8 Report di fase · da fare
+### T5b.8 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-5b.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: l'istruzione SQL da eseguire su Supabase prima del merge e l'elenco dei controlli da fare sul telefono, uno per task.
