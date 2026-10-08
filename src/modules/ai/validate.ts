@@ -43,6 +43,8 @@ export function parseProposal(raw: unknown): MealProposal | null {
   const meals: EstimatedMeal[] = [];
   for (const m of raw.meals) {
     if (!isObject(m) || typeof m.slot !== "string" || !(MEAL_SLOTS as readonly string[]).includes(m.slot)) return null;
+    // `freeMeal` può mancare (stime precedenti più vecchie): vale falso. Se c'è, deve essere un booleano.
+    if (m.freeMeal !== undefined && typeof m.freeMeal !== "boolean") return null;
     if (!Array.isArray(m.dishes) || m.dishes.length === 0) return null;
     const dishes: EstimatedDish[] = [];
     for (const d of m.dishes) {
@@ -50,7 +52,7 @@ export function parseProposal(raw: unknown): MealProposal | null {
       if (!ok) return null;
       dishes.push(ok);
     }
-    meals.push({ slot: m.slot as MealSlot, dishes });
+    meals.push({ slot: m.slot as MealSlot, freeMeal: m.freeMeal === true, dishes });
   }
   return { meals };
 }

@@ -349,6 +349,15 @@ add("pannello-quantita-lunga", "Toccando il piatto con la quantità lunga si leg
 }), { fisso: true, passi: [{ click: "Polpette di maiale al sugo" }, { scrollTo: "Quantità" }] });
 aiScen("ai-proposta-ricetta", "Proposta con tre piatti dalla quantità lunga e la regola del crudo scritta nella quantità: la riga va a capo (al massimo due righe) senza coprire le kcal.", { risposte: [prop({ slot: "pranzo", dishes: [dish("Polpette di maiale al sugo", polpette, true, 720, 48, 42, 38, 5, 2.4, "Ho ipotizzato quattro polpette."), dish("Pasta al pomodoro", "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", false, 430, 14, 82, 6, 5, 1.2, "100 g di pasta intesi a crudo.")] })] }, [scrivi("polpette al sugo e pasta al pomodoro 100 g"), stima, { wait: 600 }]);
 
+// --- Pasto libero nella proposta (T5b.3)
+const pizzaBirra = (freeMeal, slot = "cena") => ({ slot, freeMeal, dishes: [dish("Pizza margherita", "1 pizza, 350 g", false, 850, 32, 110, 28, 5, 3.4), dish("Birra", "1 bottiglia, 330 ml", false, 140, 1, 12, 0, 0, 0)] });
+const scrivi2 = scrivi("pasto libero: pizza margherita e una birra");
+aiScen("ai-libero-acceso", "Il modello ha segnalato il pasto libero e la settimana lo consente: l'interruttore 'Pasto libero' è già acceso, modificabile.", { risposte: [prop(pizzaBirra(true))] }, [scrivi2, stima, { wait: 600 }, { scrollTo: "Pasto libero" }]);
+aiScen("ai-libero-spento", "Il modello non ha segnalato il pasto libero: l'interruttore è spento (si può accendere).", { risposte: [prop(pizzaBirra(false))] }, [scrivi("pizza margherita e una birra"), stima, { wait: 600 }, { scrollTo: "Pasto libero" }]);
+add("ai-libero-disattivato", "La settimana ha già un pasto libero (spuntino di oggi): anche se il modello lo segnala l'interruttore è spento e disattivato, con la spiegazione.", "2026-01-08", giornoPasti(), { fisso: true, ai: { risposte: [prop(pizzaBirra(true, "cena"))] }, passi: [apri, scrivi2, stima, { wait: 600 }, { scrollTo: "Pasto libero" }] });
+aiScen("ai-libero-due-pasti", "Due pasti proposti, entrambi segnalati: se ne accende uno solo (il primo); l'altro è disattivato con la spiegazione.", { risposte: [prop(pizzaBirra(true, "pranzo"), pizzaBirra(true, "cena"))] }, [scrivi("pasto libero a pranzo e pasto libero a cena"), stima, { wait: 600 }, { scrollTo: "Annulla" }]);
+aiScen("ai-libero-conferma", "Dopo Conferma con l'interruttore acceso: il pasto di oggi è etichettato 'libero' e conta al massimo il tetto.", { risposte: [prop(pizzaBirra(true))] }, [scrivi2, stima, { wait: 600 }, btn("Conferma"), { wait: 700 }]);
+
 // --- Piatto a mano con stima (T4.3)
 const pesto = prop({ slot: "pranzo", dishes: [dish("Spaghetti al pesto", "80 g pasta a crudo, 20 g pesto alla genovese", false, 480, 15, 70, 16, 4, 1.3, "Pasta con circa 20 g di pesto alla genovese.")] });
 const aMano = [manuale, { fill: ["Nome del piatto", "Spaghetti al pesto"] }, { fill: ["Quantità (facoltativa)", "80 g di pasta"] }];

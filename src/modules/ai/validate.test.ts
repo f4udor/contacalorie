@@ -4,6 +4,19 @@ import { parseProposal } from "./validate";
 const dish = { name: " Riso ", quantity: " 100 g ", quantityAssumed: false, kcal: 130.4, protein: 2.66, carbs: 28, fat: 0.3, fiber: 0.4, salt: 0, note: "ok" };
 const meal = (d: unknown, slot = "pranzo") => ({ meals: [{ slot, dishes: [d] }] });
 
+describe("pasto libero (T5b.3)", () => {
+  const withFlag = (freeMeal: unknown) => ({ meals: [{ slot: "pranzo", freeMeal, dishes: [dish] }] });
+  it("campo vero e falso", () => {
+    expect(parseProposal(withFlag(true))?.meals[0].freeMeal).toBe(true);
+    expect(parseProposal(withFlag(false))?.meals[0].freeMeal).toBe(false);
+  });
+  it("campo assente: falso; non booleano: risposta non valida", () => {
+    expect(parseProposal(meal(dish))?.meals[0].freeMeal).toBe(false);
+    expect(parseProposal(withFlag("sì"))).toBeNull();
+    expect(parseProposal(withFlag(1))).toBeNull();
+  });
+});
+
 describe("quantità lunghe (T5b.2)", () => {
   const many = "200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro, 20 g parmigiano, 15 g olio, 1 uovo, sale e prezzemolo q.b., 30 g cipolla, 50 g pane";
   it("accetta una quantità di tre o più ingredienti, per intero", () => {

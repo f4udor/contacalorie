@@ -133,7 +133,7 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
       {/* La parte principale resta montata (nascosta) quando si apre una sotto-schermata: il testo scritto e la proposta non si perdono. */}
       <div className={view === "main" ? "" : "hidden"}>
         <div className={mode === "ai" ? "" : "hidden"}>
-          <AiEstimate store={store} date={date} dayDishes={dayDishes} onChanged={onChanged} onClose={onClose} fixedSlot={initialSlot}>
+          <AiEstimate store={store} date={date} free={{ freeAllowedFor, mealIsFreeFor: existingFree }} freeMealCap={settings.freeMealCap} onChanged={onChanged} onClose={onClose} fixedSlot={initialSlot}>
             {menu}
           </AiEstimate>
         </div>

@@ -7,6 +7,7 @@ Regole:
 - Rispondi SOLO con JSON nello schema richiesto, senza testo prima o dopo.
 - Dividi quanto descritto in pasti per fascia: "colazione", "pranzo", "cena" o "spuntino". Se la persona nomina la fascia ("a colazione", "a cena"), usa quella. Se non la nomina, deducila dall'ora locale indicata: fino alle 10:30 colazione; dalle 10:30 alle 15:30 pranzo; dalle 15:30 alle 18:00 spuntino; dalle 18:00 cena; dopo le 21:30 spuntino.
 - Frasi che descrivono più pasti ("a colazione… e a pranzo…") diventano più pasti.
+- Pasto libero: per ogni pasto indica freeMeal. Mettilo a true solo se la persona dice espressamente che è un pasto libero ("pasto libero", "sgarro libero", "è il mio pasto libero"); in ogni altro caso è false, anche se il pasto è abbondante. Non cambiare le stime per questo: lo riconosci soltanto.
 - Dentro un pasto, i piatti distinti restano separati: "anelli di totano e un'insalata di pomodorini" sono due piatti, ognuno con la sua stima.
 - Nome: solo il nome del piatto ("Polpette di maiale al sugo"), senza grammi né ingredienti.
 - Quantità: l'elenco degli ingredienti principali con i grammi, come testo libero ("200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro"). Per un alimento semplice basta la sua quantità ("1 mela, 180 g").
@@ -22,7 +23,8 @@ Regole:
 Esempi (ingresso → piatto restituito):
 - "pasta al pomodoro 100 g" → nome "Pasta al pomodoro", quantità "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", quantityAssumed false, circa 400-450 kcal.
 - "100 g di pasta cotta al pomodoro" → nome "Pasta al pomodoro", quantità "100 g pasta cotta, 40 g sugo di pomodoro, 3 g olio", quantityAssumed false, circa 130-150 kcal.
-- "una mela" → nome "Mela", quantità "1 mela, 180 g", quantityAssumed true, circa 90 kcal.`;
+- "una mela" → nome "Mela", quantità "1 mela, 180 g", quantityAssumed true, circa 90 kcal.
+- "pasto libero: pizza margherita e una birra" → un solo pasto con freeMeal true e due piatti, "Pizza margherita" e "Birra". "ho mangiato una pizza" → freeMeal false.`;
 
 const toJson = (p: MealProposal) => JSON.stringify(p);
 
@@ -47,6 +49,7 @@ export const RESPONSE_SCHEMA = {
         type: "OBJECT",
         properties: {
           slot: { type: "STRING", enum: ["colazione", "pranzo", "cena", "spuntino"] },
+          freeMeal: { type: "BOOLEAN" },
           dishes: {
             type: "ARRAY",
             items: {
@@ -67,7 +70,7 @@ export const RESPONSE_SCHEMA = {
             },
           },
         },
-        required: ["slot", "dishes"],
+        required: ["slot", "freeMeal", "dishes"],
       },
     },
   },

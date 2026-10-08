@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { handleEstimate } from "./estimate";
 import type { AccessGate } from "./estimate";
 import { createFakeProvider } from "./fake";
-import { SYSTEM_PROMPT, buildUserMessage } from "./prompt";
+import { RESPONSE_SCHEMA, SYSTEM_PROMPT, buildUserMessage } from "./prompt";
 
 interface Fixture {
   descrizione: string;
@@ -87,6 +87,14 @@ describe("cosa arriva al modello", () => {
     expect(SYSTEM_PROMPT).toContain('"cotta", "cotto", "lessa" o "nel piatto"');
     expect(SYSTEM_PROMPT).toContain("Scrivi sempre l'interpretazione nella quantità");
     expect(SYSTEM_PROMPT).toContain("restano separati");
+  });
+
+  it("il prompt spiega quando mettere il pasto libero a vero e che altrimenti è falso; lo schema lo richiede", () => {
+    expect(SYSTEM_PROMPT).toContain("freeMeal");
+    expect(SYSTEM_PROMPT).toContain('"pasto libero", "sgarro libero", "è il mio pasto libero"');
+    expect(SYSTEM_PROMPT).toContain("in ogni altro caso è false");
+    expect(RESPONSE_SCHEMA.properties.meals.items.properties.freeMeal.type).toBe("BOOLEAN");
+    expect(RESPONSE_SCHEMA.properties.meals.items.required).toContain("freeMeal");
   });
 
   it("il prompt contiene gli esempi della pasta a crudo e della pasta cotta, con le kcal attese", () => {

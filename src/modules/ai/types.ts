@@ -20,6 +20,8 @@ export interface EstimatedDish {
 /** I piatti stimati di una fascia. */
 export interface EstimatedMeal {
   slot: MealSlot;
+  /** Vero se la persona ha detto espressamente che è un pasto libero (assente = falso). Il tetto di kcal e il limite settimanale li applica il motore. */
+  freeMeal?: boolean;
   dishes: EstimatedDish[];
 }
 
