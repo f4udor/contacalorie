@@ -23,7 +23,7 @@
       }
     },
     {
-      "click": "Pasto a mano"
+      "click": "Piatto a mano"
     },
     {
       "fill": [
@@ -34,7 +34,7 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Aggiungi pasto"
+        "name": "Aggiungi piatto"
       }
     }
   ]

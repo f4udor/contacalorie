@@ -1,0 +1,107 @@
+{
+  "id": "pasti-quattro",
+  "descrizione": "Giornata con tutti e quattro i pasti.",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m87",
+        "date": "2026-01-05",
+        "slot": "colazione",
+        "name": "Latte",
+        "kcal": 120,
+        "protein": 8,
+        "carbs": 12,
+        "fat": 4,
+        "fiber": 0,
+        "salt": 0.2,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "250 ml"
+      },
+      {
+        "id": "m88",
+        "date": "2026-01-05",
+        "slot": "colazione",
+        "name": "Biscotti",
+        "kcal": 180,
+        "protein": 3,
+        "carbs": 30,
+        "fat": 6,
+        "fiber": 1,
+        "salt": 0.3,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "4"
+      },
+      {
+        "id": "m89",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 650,
+        "protein": 22,
+        "carbs": 110,
+        "fat": 12,
+        "fiber": 6,
+        "salt": 1.8,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "100 g"
+      },
+      {
+        "id": "m90",
+        "date": "2026-01-05",
+        "slot": "spuntino",
+        "name": "Yogurt greco",
+        "kcal": 150,
+        "protein": 15,
+        "carbs": 8,
+        "fat": 5,
+        "fiber": 0,
+        "salt": 0.2,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "170 g"
+      },
+      {
+        "id": "m91",
+        "date": "2026-01-05",
+        "slot": "cena",
+        "name": "Salmone al forno",
+        "kcal": 420,
+        "protein": 40,
+        "carbs": 0,
+        "fat": 28,
+        "fiber": 0,
+        "salt": 0.9,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "180 g"
+      },
+      {
+        "id": "m92",
+        "date": "2026-01-05",
+        "slot": "cena",
+        "name": "Insalata",
+        "kcal": 60,
+        "protein": 2,
+        "carbs": 8,
+        "fat": 2,
+        "fiber": 3,
+        "salt": 0.2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true
+}

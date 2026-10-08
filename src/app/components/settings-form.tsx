@@ -57,9 +57,20 @@ export function SettingsForm({ store, settings, weighIns, today, onChanged }: Pr
     weight === null && targetWeight === null
       ? null
       : nutrientTargets(merged.baseKcal, weight ?? 0, { ...merged, proteinGramsManual: null, fatGramsManual: null }, targetWeight);
+  const proteinBasis =
+    targetWeight !== null
+      ? `${formatNumber(merged.proteinPerKgTarget, 1)} g per kg del peso obiettivo (${formatNumber(targetWeight, 1)} kg)`
+      : weight !== null
+        ? `${formatNumber(merged.proteinPerKg, 1)} g per kg del peso (${formatNumber(weight, 1)} kg)`
+        : "serve il peso o il peso obiettivo";
   const formulaRow = (key: "proteinGramsManual" | "fatGramsManual", label: string, proposedValue: number | null) => (
     <div key={key} className="flex flex-col gap-1">
-      {field(key, label, { placeholder: "Formula", hint: proposedValue === null ? "Proposto dalla formula: serve il peso" : `Proposto dalla formula: ${formatNumber(proposedValue)} g` })}
+      {field(key, label, {
+        placeholder: "Formula",
+        hint:
+          (proposedValue === null ? "Proposto dalla formula: serve il peso" : `Proposto dalla formula: ${formatNumber(proposedValue)} g`) +
+          (key === "proteinGramsManual" ? `. Calcolato su ${proteinBasis}.` : ""),
+      })}
       {values[key] !== "" && (
         <button type="button" onClick={() => set(key)("")} className="-ml-2 min-h-11 w-fit px-2 text-[15px] font-semibold text-accent">
           Torna alla formula

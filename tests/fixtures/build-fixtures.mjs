@@ -110,25 +110,25 @@ const giornoPasti = (extra = {}) =>
   });
 add("oggi-pasti", "Giorno con pasti in quattro fasce, uno libero (1.100 kcal, conta 800) e un nome lungo.", "2026-01-08", giornoPasti());
 const apri = { clickRole: { role: "button", name: "Aggiungi" } };
-add("pannello-pasto-vuoto", "Inserimento manuale: modulo vuoto, solo le kcal sono obbligatorie.", "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, passi: [apri, { click: "Pasto a mano" }] });
+add("pannello-pasto-vuoto", "Inserimento manuale: modulo vuoto, solo le kcal sono obbligatorie.", "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, passi: [apri, { click: "Piatto a mano" }] });
 add("pannello-pasto-errori", "Inserimento manuale: kcal mancanti e un numero non valido, nessun salvataggio.", "2026-01-08", giornoPasti({ meals: [] }), {
   fisso: true,
-  passi: [apri, { click: "Pasto a mano" }, { fill: ["Proteine (g)", "venti"] }, { clickRole: { role: "button", name: "Aggiungi pasto" } }],
+  passi: [apri, { click: "Piatto a mano" }, { fill: ["Proteine (g)", "venti"] }, { clickRole: { role: "button", name: "Aggiungi piatto" } }],
 });
 add("pannello-pasto-compilato", "Inserimento manuale compilato, con la fascia Colazione.", "2026-01-08", giornoPasti({ meals: [] }), {
   fisso: true,
-  passi: [apri, { click: "Pasto a mano" }, { fill: ["Nome", "Toast e caffè"] }, { click: "Colazione" }, { fill: ["Kcal", "420"] }, { fill: ["Proteine (g)", "18,5"] }, { fill: ["Carboidrati (g)", "52"] }],
+  passi: [apri, { click: "Piatto a mano" }, { fill: ["Nome", "Toast e caffè"] }, { click: "Colazione" }, { fill: ["Kcal", "420"] }, { fill: ["Proteine (g)", "18,5"] }, { fill: ["Carboidrati (g)", "52"] }],
 });
 add("pannello-libero-usato", "La settimana ha già un pasto libero: l'interruttore è disattivato e spiega perché.", "2026-01-08", giornoPasti({ meals: [meal("2026-01-06", "cena", "Pizza", 1100, 40, 130, 42, 6, 4.2, { isFree: true })] }), {
   fisso: true,
-  passi: [apri, { click: "Pasto a mano" }, { scrollTo: "Pasto libero" }],
+  passi: [apri, { click: "Piatto a mano" }, { scrollTo: "Pasto libero" }],
 });
 add("pannello-modifica", "Modifica di un pasto già inserito.", "2026-01-08", giornoPasti(), { fisso: true, passi: [{ click: "Pasta al pomodoro" }] });
 add("pannello-modifica-libero", "Modifica del pasto libero: l'interruttore resta attivo, è proprio quello della settimana.", "2026-01-08", giornoPasti(), {
   fisso: true,
   passi: [{ click: "Pizza al taglio" }, { scrollTo: "Pasto libero" }],
 });
-add("pannello-elimina", "Eliminazione: chiede conferma prima di cancellare.", "2026-01-08", giornoPasti(), { fisso: true, passi: [{ click: "Pasta al pomodoro" }, { click: "Elimina pasto" }] });
+add("pannello-elimina", "Eliminazione: chiede conferma prima di cancellare.", "2026-01-08", giornoPasti(), { fisso: true, passi: [{ click: "Pasta al pomodoro" }, { click: "Elimina piatto" }] });
 add("copia-ieri-vuoto", "Copia da ieri quando ieri non ci sono pasti: lo dice.", "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, passi: [apri, { click: "Copia da ieri" }] });
 add("copia-ieri", "Copia da ieri: i pasti di ieri (anche quello libero) tornano come pasti normali.", "2026-01-08", data({
   settings: { weightKg: 100 },
@@ -149,7 +149,7 @@ add("oggi-attivita-salute", "Attività con kcal della bici da Salute (800 kcal):
   settings: { weightKg: 100 },
   activity: [activity("2026-01-05", { steps: 8000, stepsSource: "salute", bikeKm: 31, bikeKcalHealth: 800, bikeSource: "salute" })],
 }));
-add("pannello-aggiungi-completo", "Pannello Aggiungi con tutte le voci: Pasto a mano, Copia da ieri, Attività a mano, Pesata.", "2026-01-08", null, { fisso: true, passi: [apri] });
+add("pannello-aggiungi-completo", "Pannello Aggiungi con tutte le voci: Piatto a mano, Copia da ieri, Attività a mano, Pesata.", "2026-01-08", null, { fisso: true, passi: [apri] });
 add("pannello-attivita", "Attività a mano: modulo vuoto.", "2026-01-08", null, { fisso: true, passi: [apri, { click: "Attività a mano" }] });
 add("pannello-attivita-errori", "Attività a mano con valori non validi: errori accanto ai campi.", "2026-01-08", null, {
   fisso: true,
@@ -231,6 +231,47 @@ sett("settimana-parziale", "Settimana a metà (oggi mercoledì): giorni futuri v
 sett("settimana-vuota", "Settimana senza dati: barre vuote con i soli obiettivi, valori '–', messaggio.", "2026-01-08", null);
 sett("settimana-precedente", "Settimana precedente (vuota) aperta con la freccia: compare 'Questa settimana'.", "2026-01-11", settimanaCompleta, { passi: [{ clickRole: { role: "link", name: "Settimana precedente" } }] });
 sett("settimana-tocco-barra", "Toccando la barra di mercoledì si apre quel giorno in Oggi.", "2026-01-11", settimanaCompleta, { percorso: "/settimana", passi: [{ clickRole: { role: "link", name: "Mercoledì 7 gennaio" } }], scorre: true });
+
+// --- Pasti composti da piatti (T3.2)
+const q = (quantity) => ({ quantity });
+const giornoPiatti = (piatti, extra = {}) => data({ settings: { weightKg: 100 }, meals: piatti, ...extra });
+add("pasti-un-piatto", "Un pasto con un solo piatto (con quantità).", "2026-01-05", giornoPiatti([meal("2026-01-05", "pranzo", "Pasta al pomodoro", 650, 22, 110, 12, 6, 1.8, q("100 g"))]));
+add("pasti-tre-piatti", "Un pasto con tre piatti: totale di kcal e macro in cima, piatti elencati sotto con le quantità.", "2026-01-05", giornoPiatti([
+  meal("2026-01-05", "pranzo", "Riso integrale", 350, 8, 74, 3, 3, 0.1, q("100 g")),
+  meal("2026-01-05", "pranzo", "Petto di pollo alla piastra", 330, 62, 0, 7, 0, 0.4, q("200 g")),
+  meal("2026-01-05", "pranzo", "Zucchine e carote al vapore con un nome molto lungo per verificare che vada a capo", 90, 3, 14, 2, 5, 0.1, q("250 g")),
+]));
+add("pasti-libero-piu-piatti", "Cena libera di tre piatti (500, 400, 300 kcal): mangiate 1.200, nel budget 800 (caso L).", "2026-01-05", giornoPiatti([
+  meal("2026-01-05", "cena", "Antipasti misti", 500, 18, 30, 34, 2, 3.1, { isFree: true, ...q("1 porzione") }),
+  meal("2026-01-05", "cena", "Pizza", 400, 14, 60, 12, 3, 2.0, { isFree: true }),
+  meal("2026-01-05", "cena", "Tiramisù", 300, 6, 34, 15, 0, 0.2, { isFree: true }),
+]));
+add("pasti-quattro", "Giornata con tutti e quattro i pasti.", "2026-01-05", giornoPiatti([
+  meal("2026-01-05", "colazione", "Latte", 120, 8, 12, 4, 0, 0.2, q("250 ml")),
+  meal("2026-01-05", "colazione", "Biscotti", 180, 3, 30, 6, 1, 0.3, q("4")),
+  meal("2026-01-05", "pranzo", "Pasta al pomodoro", 650, 22, 110, 12, 6, 1.8, q("100 g")),
+  meal("2026-01-05", "spuntino", "Yogurt greco", 150, 15, 8, 5, 0, 0.2, q("170 g")),
+  meal("2026-01-05", "cena", "Salmone al forno", 420, 40, 0, 28, 0, 0.9, q("180 g")),
+  meal("2026-01-05", "cena", "Insalata", 60, 2, 8, 2, 3, 0.2),
+]));
+const pranzo2 = giornoPiatti([
+  meal("2026-01-05", "pranzo", "Pasta al pomodoro", 650, 22, 110, 12, 6, 1.8, q("100 g")),
+  meal("2026-01-05", "pranzo", "Pane", 150, 5, 30, 1, 2, 0.8, q("50 g")),
+]);
+add("pannello-aggiungi-piatto", "'Aggiungi piatto' dentro il pranzo: la fascia è già scelta e non si chiede.", "2026-01-05", pranzo2, { fisso: true, passi: [{ click: "+ Aggiungi piatto" }] });
+add("dopo-aggiungi-piatto", "Dopo aver aggiunto 'Insalata' (80 kcal, 150 g) al pranzo: il totale del pasto passa da 800 a 880 kcal.", "2026-01-05", pranzo2, {
+  passi: [{ click: "+ Aggiungi piatto" }, { fill: ["Nome del piatto", "Insalata"] }, { fill: ["Quantità", "150 g"] }, { fill: ["Kcal", "80"] }, { click: "Aggiungi piatto", exact: true }, { wait: 600 }],
+});
+add("pannello-aggiungi-piatto-libero", "Aggiungere un piatto a un pasto libero: l'interruttore è già attivo e vale per tutto il pasto.", "2026-01-05", giornoPiatti([
+  meal("2026-01-05", "cena", "Pizza", 900, 30, 120, 30, 5, 3.5, { isFree: true }),
+]), { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, { scrollTo: "Pasto libero" }] });
+add("dopo-pasto-libero", "Pasto libero attivato sul pranzo di due piatti: l'etichetta e il tetto valgono per tutto il pasto (800 su 800 kcal).", "2026-01-05", pranzo2, {
+  passi: [{ click: "Pasta al pomodoro" }, { clickRole: { role: "switch", name: "Pasto libero" } }, { click: "Salva", exact: true }, { wait: 600 }],
+});
+add("pannello-pasto-libero-bloccato", "Un altro pasto della settimana è già libero: l'interruttore è spento e spiega perché.", "2026-01-07", giornoPiatti([
+  meal("2026-01-06", "cena", "Pizza", 1100, 40, 130, 42, 6, 4.2, { isFree: true }),
+  meal("2026-01-07", "pranzo", "Riso", 400, 8, 80, 3, 2, 0.2),
+]), { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, { scrollTo: "Pasto libero" }] });
 
 // --- Impostazioni (T2.7)
 const imp = (id, descrizione, oggi, dati, extra = {}) => scenarios.push({ id, descrizione, oggi, percorso: "/impostazioni", dati, scorre: true, ...extra });

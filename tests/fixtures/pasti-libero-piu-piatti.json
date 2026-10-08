@@ -1,0 +1,61 @@
+{
+  "id": "pasti-libero-piu-piatti",
+  "descrizione": "Cena libera di tre piatti (500, 400, 300 kcal): mangiate 1.200, nel budget 800 (caso L).",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m84",
+        "date": "2026-01-05",
+        "slot": "cena",
+        "name": "Antipasti misti",
+        "kcal": 500,
+        "protein": 18,
+        "carbs": 30,
+        "fat": 34,
+        "fiber": 2,
+        "salt": 3.1,
+        "isFree": true,
+        "originalText": null,
+        "quantity": "1 porzione"
+      },
+      {
+        "id": "m85",
+        "date": "2026-01-05",
+        "slot": "cena",
+        "name": "Pizza",
+        "kcal": 400,
+        "protein": 14,
+        "carbs": 60,
+        "fat": 12,
+        "fiber": 3,
+        "salt": 2,
+        "isFree": true,
+        "originalText": null
+      },
+      {
+        "id": "m86",
+        "date": "2026-01-05",
+        "slot": "cena",
+        "name": "Tiramisù",
+        "kcal": 300,
+        "protein": 6,
+        "carbs": 34,
+        "fat": 15,
+        "fiber": 0,
+        "salt": 0.2,
+        "isFree": true,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true
+}

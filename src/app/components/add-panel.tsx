@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { hasFreeMealInWeek } from "@/engine";
-import type { DateKey, Day, Settings } from "@/engine";
+import type { DateKey, Day, MealSlot, Settings } from "@/engine";
 import type { ActivityRecord, DataStore, MealRecord } from "@/data";
 import { copyMealsFromYesterday } from "../lib/copy-meals";
 import { newId } from "../lib/ids";
+import { saveDish } from "../lib/save-dish";
 import { buildActivityRecord } from "../lib/activity-form";
 import type { ParsedActivity } from "../lib/activity-form";
 import { emptyMealForm, mealToForm } from "../lib/meal-form";
@@ -46,17 +47,21 @@ function MenuRow({ title, hint, onClick }: { title: string; hint: string; onClic
   );
 }
 
-const TITLES = { menu: "Aggiungi", pasto: "Pasto a mano", attivita: "Attività a mano", pesata: "Pesata" } as const;
+const SLOT_NAME: Record<MealSlot, string> = { colazione: "Colazione", pranzo: "Pranzo", cena: "Cena", spuntino: "Spuntino" };
+const TITLES = { menu: "Aggiungi", pasto: "Piatto a mano", attivita: "Attività a mano", pesata: "Pesata" } as const;
 
 /** Pannello "Aggiungi", dal pulsante +. */
-export function AddPanel(ctx: PanelContext) {
-  const { store, date, days, settings, activity, weightKg, onChanged, onClose } = ctx;
-  const [view, setView] = useState<"menu" | "pasto" | "attivita" | "pesata">("menu");
+export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
+  const { store, date, days, settings, activity, weightKg, onChanged, onClose, initialSlot } = ctx;
+  const [view, setView] = useState<"menu" | "pasto" | "attivita" | "pesata">(initialSlot ? "pasto" : "menu");
+  const freeAllowedFor = (slot: MealSlot) => !hasFreeMealInWeek(days, { date, slot });
+  const existingFree = (slot: MealSlot) => days.find((d) => d.date === date)?.meals.some((m) => m.slot === slot && m.isFree) ?? false;
   const [note, setNote] = useState<string | null>(null);
 
   const saveMeal = async (parsed: ParsedMeal) => {
-    const record: MealRecord = { id: newId(), date, originalText: null, ...parsed };
-    await store.saveMeal(record);
+    const { isFree, ...dishFields } = parsed;
+    const record: MealRecord = { id: newId(), date, originalText: null, isFree, ...dishFields };
+    await saveDish(store, record, isFree);
     onChanged();
     onClose();
   };
@@ -75,7 +80,7 @@ export function AddPanel(ctx: PanelContext) {
 
   const copyFromYesterday = async () => {
     if ((await copyMealsFromYesterday(store, date)) === 0) {
-      setNote("Ieri non ci sono pasti da copiare.");
+      setNote("Ieri non ci sono piatti da copiare.");
       return;
     }
     onChanged();
@@ -83,14 +88,14 @@ export function AddPanel(ctx: PanelContext) {
   };
 
   return (
-    <Sheet open onClose={onClose} title={TITLES[view]}>
+    <Sheet open onClose={onClose} title={initialSlot && view === "pasto" ? `Piatto · ${SLOT_NAME[initialSlot]}` : TITLES[view]}>
       {view === "menu" ? (
         <div className="flex flex-col gap-4">
           <div className="rounded-2xl bg-bg px-4 py-4 text-center text-[15px] text-muted">Inserimento a voce: in arrivo</div>
           <div className="overflow-hidden rounded-2xl bg-bg">
-            <MenuRow title="Pasto a mano" hint="Scrivi tu nome, kcal e nutrienti" onClick={() => setView("pasto")} />
+            <MenuRow title="Piatto a mano" hint="Scrivi tu nome, kcal e nutrienti" onClick={() => setView("pasto")} />
             <div className="border-t border-line" />
-            <MenuRow title="Copia da ieri" hint="Rimetti i pasti di ieri, come pasti normali" onClick={copyFromYesterday} />
+            <MenuRow title="Copia da ieri" hint="Rimetti i piatti di ieri, come pasto normale" onClick={copyFromYesterday} />
           </div>
           <div className="overflow-hidden rounded-2xl bg-bg">
             <MenuRow title="Attività a mano" hint="Passi, km e kcal della bici" onClick={() => setView("attivita")} />
@@ -105,15 +110,18 @@ export function AddPanel(ctx: PanelContext) {
         </div>
       ) : (
         <div className="flex flex-col gap-3">
-          <button type="button" onClick={() => setView("menu")} className="-ml-2 flex min-h-11 w-fit items-center px-2 text-[17px] font-semibold text-accent">
-            ‹ Indietro
-          </button>
+          {!(initialSlot && view === "pasto") && (
+            <button type="button" onClick={() => setView("menu")} className="-ml-2 flex min-h-11 w-fit items-center px-2 text-[17px] font-semibold text-accent">
+              ‹ Indietro
+            </button>
+          )}
           {view === "pasto" && (
             <MealForm
-              initial={emptyMealForm()}
-              freeAllowed={!hasFreeMealInWeek(days)}
+              initial={{ ...emptyMealForm(initialSlot), isFree: initialSlot ? existingFree(initialSlot) : false }}
+              freeAllowedFor={freeAllowedFor}
+              lockedSlot={initialSlot !== undefined}
               freeMealCap={settings.freeMealCap}
-              submitLabel="Aggiungi pasto"
+              submitLabel="Aggiungi piatto"
               onSubmit={saveMeal}
             />
           )}
@@ -130,7 +138,8 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
   const { store, days, settings, onChanged, onClose } = ctx;
 
   const save = async (parsed: ParsedMeal) => {
-    await store.saveMeal({ ...meal, ...parsed });
+    const { isFree, ...dishFields } = parsed;
+    await saveDish(store, { ...meal, isFree, ...dishFields }, isFree);
     onChanged();
     onClose();
   };
@@ -141,10 +150,10 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
   };
 
   return (
-    <Sheet open onClose={onClose} title="Modifica pasto">
+    <Sheet open onClose={onClose} title="Modifica piatto">
       <MealForm
         initial={mealToForm(meal)}
-        freeAllowed={!hasFreeMealInWeek(days, { date: meal.date, slot: meal.slot })}
+        freeAllowedFor={(slot) => !hasFreeMealInWeek(days, { date: meal.date, slot })}
         freeMealCap={settings.freeMealCap}
         submitLabel="Salva"
         onSubmit={save}

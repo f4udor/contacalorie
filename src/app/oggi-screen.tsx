@@ -3,6 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import type { MealRecord } from "@/data";
+import type { MealSlot } from "@/engine";
 import { useDataStore } from "./data-provider";
 import { ActivityCard } from "./components/activity-card";
 import { ChallengeSection } from "./components/challenge-section";
@@ -28,7 +29,7 @@ export function OggiScreen() {
   const date = param && DATE_PARAM.test(param) ? param : today;
   const { data, reload } = useWeekData(date);
   const store = useDataStore();
-  const [panel, setPanel] = useState<{ kind: "add" } | { kind: "edit"; meal: MealRecord } | { kind: "activity" } | null>(null);
+  const [panel, setPanel] = useState<{ kind: "add"; slot?: MealSlot } | { kind: "edit"; meal: MealRecord } | { kind: "activity" } | null>(null);
 
   if (!today || !date) return <main aria-busy="true" />;
 
@@ -72,13 +73,7 @@ export function OggiScreen() {
               <NutrientCard key={n.key} n={n} wide={i === view.nutrients.length - 1 && view.nutrients.length % 2 === 1} />
             ))}
           </div>
-          {meals.length > 0 ? (
-            <MealList meals={meals} onSelect={(meal) => setPanel({ kind: "edit", meal })} />
-          ) : (
-            <Card>
-              <p className="text-center text-[15px] text-muted">Nessun pasto per questo giorno. Tocca + per aggiungerne uno.</p>
-            </Card>
-          )}
+          <MealList dishes={meals} settings={data!.settings} onSelectDish={(meal) => setPanel({ kind: "edit", meal })} onAddDish={(slot) => setPanel({ kind: "add", slot })} />
           <ActivityCard activity={activity} settings={data!.settings} onEdit={() => setPanel({ kind: "activity" })} />
           {challenge && store && <ChallengeSection view={challenge} date={date} store={store} onChanged={reload} />}
         </div>
@@ -93,7 +88,7 @@ export function OggiScreen() {
           <path d="M12 5v14M5 12h14" />
         </svg>
       </button>
-      {panelContext && panel?.kind === "add" && <AddPanel {...panelContext} />}
+      {panelContext && panel?.kind === "add" && <AddPanel {...panelContext} initialSlot={panel.slot} />}
       {panelContext && panel?.kind === "activity" && <EditActivityPanel {...panelContext} />}
       {panelContext && panel?.kind === "edit" && <EditMealPanel {...panelContext} meal={panel.meal} />}
     </main>

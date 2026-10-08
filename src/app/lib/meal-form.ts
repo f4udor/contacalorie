@@ -3,6 +3,7 @@ import type { MealSlot } from "@/engine";
 /** Valori dei campi del modulo pasto, così come scritti dall'utente. */
 export interface MealFormValues {
   name: string;
+  quantity: string;
   slot: MealSlot;
   kcal: string;
   protein: string;
@@ -18,6 +19,8 @@ export type MealFormErrors = Partial<Record<MealFieldKey, string>>;
 
 export interface ParsedMeal {
   name: string;
+  /** Quantità in testo libero; null se non indicata. */
+  quantity: string | null;
   slot: MealSlot;
   kcal: number;
   protein: number;
@@ -35,17 +38,18 @@ export const SLOTS: { value: MealSlot; label: string }[] = [
   { value: "spuntino", label: "Spuntino" },
 ];
 
-export const DEFAULT_MEAL_NAME = "Pasto";
+export const DEFAULT_MEAL_NAME = "Piatto";
 
 export function emptyMealForm(slot: MealSlot = "pranzo"): MealFormValues {
-  return { name: "", slot, kcal: "", protein: "", carbs: "", fat: "", fiber: "", salt: "", isFree: false };
+  return { name: "", quantity: "", slot, kcal: "", protein: "", carbs: "", fat: "", fiber: "", salt: "", isFree: false };
 }
 
 const asText = (n: number) => String(n).replace(".", ",");
 
-export function mealToForm(m: ParsedMeal): MealFormValues {
+export function mealToForm(m: Omit<ParsedMeal, "quantity"> & { quantity?: string | null }): MealFormValues {
   return {
     name: m.name,
+    quantity: m.quantity ?? "",
     slot: m.slot,
     kcal: asText(m.kcal),
     protein: m.protein ? asText(m.protein) : "",
@@ -68,7 +72,7 @@ export function parseDecimal(text: string): number | "empty" | "invalid" {
 
 /**
  * Controlla il modulo. Solo le kcal sono obbligatorie; gli altri numeri vuoti valgono 0;
- * il nome vuoto diventa "Pasto". Il pasto libero è accettato solo se `freeAllowed`.
+ * il nome vuoto diventa "Piatto". Il pasto libero è accettato solo se `freeAllowed`.
  */
 export function validateMealForm(
   values: MealFormValues,
@@ -94,6 +98,6 @@ export function validateMealForm(
   if (Object.keys(errors).length > 0) return { ok: false, errors };
   return {
     ok: true,
-    meal: { name: values.name.trim() || DEFAULT_MEAL_NAME, slot: values.slot, isFree: values.isFree, ...nums },
+    meal: { name: values.name.trim() || DEFAULT_MEAL_NAME, quantity: values.quantity.trim() || null, slot: values.slot, isFree: values.isFree, ...nums },
   };
 }

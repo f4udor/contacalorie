@@ -26,11 +26,11 @@ describe("parseDecimal", () => {
 describe("validateMealForm", () => {
   const base = { ...emptyMealForm("cena"), kcal: "650" };
 
-  it("solo le kcal sono obbligatorie: gli altri campi vuoti valgono 0, nome vuoto → 'Pasto'", () => {
+  it("solo le kcal sono obbligatorie: gli altri campi vuoti valgono 0, nome vuoto → 'Piatto'", () => {
     const r = validateMealForm(base, true);
     expect(r).toEqual({
       ok: true,
-      meal: { name: "Pasto", slot: "cena", kcal: 650, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0, isFree: false },
+      meal: { name: "Piatto", quantity: null, slot: "cena", kcal: 650, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0, isFree: false },
     });
   });
 
@@ -54,6 +54,13 @@ describe("validateMealForm", () => {
     expect(r.ok).toBe(true);
   });
 
+  it("la quantità è facoltativa e libera: spazi tolti, vuota = null", () => {
+    const con = validateMealForm({ ...base, quantity: "  100 g  " }, true);
+    expect(con.ok && con.meal.quantity).toBe("100 g");
+    const senza = validateMealForm({ ...base, quantity: "   " }, true);
+    expect(senza.ok && senza.meal.quantity).toBeNull();
+  });
+
   it("decimali con la virgola", () => {
     const r = validateMealForm({ ...base, name: "  Yogurt ", salt: "0,4", protein: "7,5" }, true);
     expect(r.ok && r.meal).toMatchObject({ name: "Yogurt", salt: 0.4, protein: 7.5 });
@@ -68,11 +75,11 @@ describe("validateMealForm", () => {
 
 describe("mealToForm", () => {
   it("riporta i numeri come testo italiano, con i campi a zero vuoti", () => {
-    const f = mealToForm({ name: "Pizza", slot: "cena", kcal: 1100, protein: 40, carbs: 130.5, fat: 0, fiber: 0, salt: 0.4, isFree: true });
-    expect(f).toEqual({ name: "Pizza", slot: "cena", kcal: "1100", protein: "40", carbs: "130,5", fat: "", fiber: "", salt: "0,4", isFree: true });
+    const f = mealToForm({ name: "Pizza", quantity: "2 fette", slot: "cena", kcal: 1100, protein: 40, carbs: 130.5, fat: 0, fiber: 0, salt: 0.4, isFree: true });
+    expect(f).toEqual({ name: "Pizza", quantity: "2 fette", slot: "cena", kcal: "1100", protein: "40", carbs: "130,5", fat: "", fiber: "", salt: "0,4", isFree: true });
   });
   it("andata e ritorno senza perdere valori", () => {
-    const meal = { name: "X", slot: "pranzo" as const, kcal: 321.5, protein: 12, carbs: 40, fat: 9.5, fiber: 3, salt: 1.1, isFree: false };
+    const meal = { name: "X", quantity: "100 g", slot: "pranzo" as const, kcal: 321.5, protein: 12, carbs: 40, fat: 9.5, fiber: 3, salt: 1.1, isFree: false };
     const r = validateMealForm(mealToForm(meal), true);
     expect(r.ok && r.meal).toEqual(meal);
   });

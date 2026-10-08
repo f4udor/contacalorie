@@ -1,0 +1,41 @@
+{
+  "id": "pannello-aggiungi-piatto-libero",
+  "descrizione": "Aggiungere un piatto a un pasto libero: l'interruttore è già attivo e vale per tutto il pasto.",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m95",
+        "date": "2026-01-05",
+        "slot": "cena",
+        "name": "Pizza",
+        "kcal": 900,
+        "protein": 30,
+        "carbs": 120,
+        "fat": 30,
+        "fiber": 5,
+        "salt": 3.5,
+        "isFree": true,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "click": "+ Aggiungi piatto"
+    },
+    {
+      "scrollTo": "Pasto libero"
+    }
+  ]
+}
