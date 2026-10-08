@@ -85,3 +85,13 @@ describe("defaultsPatch", () => {
     expect("baseKcal" in p && "margin" in p && "proteinGramsManual" in p).toBe(true);
   });
 });
+
+describe("campi del recupero (T5.3)", () => {
+  it("recupero massimo e margine massimo: valori validi, vuoti = default, negativi respinti", () => {
+    const ok = validateSettingsForm(form({ recoveryMaxPerDay: "150", creditCap: "250" }));
+    expect(ok.ok && ok.patch).toMatchObject({ recoveryMaxPerDay: 150, creditCap: 250 });
+    const empty = validateSettingsForm(form({}));
+    expect(empty.ok && empty.patch).toMatchObject({ recoveryMaxPerDay: undefined, creditCap: undefined });
+    expect(validateSettingsForm(form({ creditCap: "-5" }))).toEqual({ ok: false, errors: { creditCap: "Non può essere negativo" } });
+  });
+});

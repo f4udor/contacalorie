@@ -284,3 +284,12 @@ describe("collegamento con Salute nel browser", () => {
     expect((await store.getHealthLink()).active).toBe(false);
   });
 });
+
+describe("SupabaseDataStore: impostazioni del recupero", () => {
+  it("salva e rilegge recupero massimo, soglia minima e margine massimo nelle colonne nuove", async () => {
+    const { db, store } = setup();
+    await store.saveSettings({ recoveryMaxPerDay: 150, recoveryMin: 30, creditCap: 200 });
+    expect(db.rows("settings")[0]).toMatchObject({ recovery_max_per_day: 150, recovery_min: 30, credit_cap: 200 });
+    expect(await store.getSettings()).toMatchObject({ recoveryMaxPerDay: 150, recoveryMin: 30, creditCap: 200 });
+  });
+});

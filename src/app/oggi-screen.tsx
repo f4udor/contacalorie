@@ -34,6 +34,7 @@ export function OggiScreen() {
   const view = data
     ? buildTodayView({
         date,
+        today,
         days: data.days,
         settings: data.settings,
         weightKg: currentWeight(data.weighIns, date, data.userSettings.weightKg),

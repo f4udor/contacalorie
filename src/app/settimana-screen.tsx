@@ -53,7 +53,7 @@ export function SettimanaScreen() {
   const isCurrent = monday === weekStart(today);
   const href = (d: DateKey) => (d === weekStart(today) ? "/settimana" : `/settimana?w=${d}`);
   const btn = "flex min-h-11 min-w-11 items-center justify-center rounded-full bg-card text-accent";
-  const view = data ? buildWeekView({ date: monday, days: data.days, settings: data.settings }) : null;
+  const view = data ? buildWeekView({ date: monday, days: data.days, settings: data.settings, today }) : null;
   const s = view?.summary;
   const weight = data ? weekWeight({ monday, sunday, weighIns: data.weighIns, profileWeightKg: data.userSettings.weightKg, targetWeightKg: data.userSettings.targetWeightKg }) : null;
   const stats: StatProps[] = s

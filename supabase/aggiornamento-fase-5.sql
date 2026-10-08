@@ -134,3 +134,9 @@ revoke all on function public.create_health_token() from public, anon;
 revoke all on function public.revoke_health_token() from public, anon;
 grant execute on function public.create_health_token() to authenticated;
 grant execute on function public.revoke_health_token() to authenticated;
+
+-- ===== 20260101000012_recupero.sql =====
+-- Fase 5: nuova regola del recupero (BRIEF §3.3). Solo aggiunte; null = valore predefinito dell'app.
+alter table public.settings add column recovery_max_per_day numeric check (recovery_max_per_day >= 0);
+alter table public.settings add column credit_cap numeric check (credit_cap >= 0);
+alter table public.settings add column recovery_min numeric check (recovery_min >= 0);

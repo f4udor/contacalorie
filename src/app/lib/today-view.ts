@@ -1,4 +1,4 @@
-import { dayTarget, kcalBudget, kcalEaten, lightCeiling, lightKcalRing, lightMinimum, lightRange, nutrientTargets } from "@/engine";
+import { dayTarget, previewDayTarget, kcalBudget, kcalEaten, lightCeiling, lightKcalRing, lightMinimum, lightRange, nutrientTargets } from "@/engine";
 import type { DateKey, Day, Light, RingColor, Settings } from "@/engine";
 import type { WeighIn } from "@/data";
 
@@ -74,6 +74,8 @@ export function buildTodayView(input: {
   weightKg: number | null;
   /** Peso obiettivo del profilo: se c'è, le proteine si calcolano su quello. */
   targetWeightKg?: number | null;
+  /** Oggi: per un giorno successivo si mostra l'anteprima dell'obiettivo (§3.3). */
+  today?: DateKey;
 }): TodayView {
   const { date, days, settings, weightKg } = input;
   const targetWeightKg = input.targetWeightKg ?? null;
@@ -82,7 +84,7 @@ export function buildTodayView(input: {
   const meals = day?.meals ?? [];
   const hasMeals = meals.length > 0;
 
-  const t = dayTarget(date, days, settings);
+  const t = input.today !== undefined && date > input.today ? previewDayTarget(date, input.today, days, settings) : dayTarget(date, days, settings);
   const eaten = kcalEaten(meals);
   const budget = kcalBudget(meals, settings);
 

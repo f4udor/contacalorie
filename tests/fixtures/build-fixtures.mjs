@@ -42,7 +42,7 @@ add(
 
 add(
   "oggi-caso-b",
-  "Caso B del brief: giovedì dopo lunedì 1.750, martedì 1.800 e mercoledì 3.250 kcal (9.000 passi): saldo −425, recupero −106, obiettivo 1.994.",
+  "Caso B del brief: giovedì dopo lunedì 1.750, martedì 1.800 e mercoledì 3.250 kcal (9.000 passi): margine fermo a 300, saldo −775, recupero −100, obiettivo 2.000.",
   "2026-01-08",
   data({
     settings: { weightKg: 100 },
@@ -438,6 +438,16 @@ oggiSalute("oggi-avviso-salute", "Oggi con codice attivo e ultimo invio 30 ore f
 oggiSalute("oggi-salute-recente", "Oggi con codice attivo e ultimo invio 1 ora fa: nessun avviso.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-08T07:00:00Z" });
 oggiSalute("oggi-salute-senza-codice", "Oggi senza codice: nessun avviso.", {});
 scenarios.push({ id: "oggi-avviso-salute-tocco", descrizione: "Toccando l'avviso si arriva a Impostazioni → Collegamenti.", oggi: "2026-01-08", percorso: "/", dati: null, scorre: true, salute: salute({ active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-07T02:00:00Z" }), passi: [{ click: "Nessun dato da Salute da ieri" }, { wait: 600 }] });
+
+// --- Nuova regola del recupero (T5.3). Debito di 250 kcal da lunedì; oggi è giovedì, ancora senza pasti.
+const debito250 = data({
+  settings: { weightKg: 100 },
+  meals: [meal("2026-01-05", "pranzo", "Pranzo", 2350, 90, 200, 60, 20, 4), meal("2026-01-06", "pranzo", "Pranzo", 2100, 100, 210, 65, 22, 4), meal("2026-01-07", "pranzo", "Pranzo", 2100, 100, 210, 65, 22, 4)],
+});
+add("oggi-anteprima-venerdi", "Giorno futuro (venerdì) con debito di 250 kcal da lunedì: l'anteprima dà 2.000 (−100), non il debito ripetuto.", "2026-01-08", debito250, { percorso: "/?d=2026-01-09" });
+add("oggi-anteprima-domenica", "Domenica in anteprima: il debito è stato estinto nei giorni intermedi, obiettivo 2.100 e nessuna riga di recupero.", "2026-01-08", debito250, { percorso: "/?d=2026-01-11" });
+add("oggi-debito-piccolo", "Lunedì 2.111 kcal (debito 11, sotto la soglia di 25): martedì obiettivo 2.100 e nessuna riga di recupero.", "2026-01-06", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", 2111, 90, 200, 60, 20, 4)] }));
+sett("settimana-anteprima", "Settimana con debito di 250 kcal e oggi giovedì: le linee dell'obiettivo dei giorni futuri sono 2.000, 2.000, 2.050, 2.100.", "2026-01-08", debito250);
 
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));

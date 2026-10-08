@@ -1,0 +1,59 @@
+{
+  "id": "oggi-anteprima-venerdi",
+  "descrizione": "Giorno futuro (venerdì) con debito di 250 kcal da lunedì: l'anteprima dà 2.000 (−100), non il debito ripetuto.",
+  "oggi": "2026-01-08",
+  "percorso": "/?d=2026-01-09",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m259",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2350,
+        "protein": 90,
+        "carbs": 200,
+        "fat": 60,
+        "fiber": 20,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m260",
+        "date": "2026-01-06",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2100,
+        "protein": 100,
+        "carbs": 210,
+        "fat": 65,
+        "fiber": 22,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m261",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2100,
+        "protein": 100,
+        "carbs": 210,
+        "fat": 65,
+        "fiber": 22,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

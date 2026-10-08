@@ -56,9 +56,9 @@ describe("weekSummary: settimana con dati", () => {
     expect(w.days[1].target).toBe(2100);
   });
 
-  it("saldo sui giorni con pasti", () => {
-    // lun +670; mar 2100−1900 = +200; mer 2100+135+100−1300 = +1035
-    expect(w.balance).toBe(670 + 200 + 1035);
+  it("saldo sui giorni con pasti, con il tetto al margine", () => {
+    // lun +670 → 300 (tetto); mar +200 → 300; mer +1035 → 300
+    expect(w.balance).toBe(300);
   });
 
   it("media kcal reali sui giorni con pasti (non i 7 giorni)", () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_SETTINGS } from "./defaults";
-import { dayTarget } from "./target";
+import { dayTarget, weekBalanceBefore } from "./target";
 import type { Activity, Day, Meal } from "./types";
 
 const s = DEFAULT_SETTINGS;
@@ -28,45 +28,104 @@ describe("dayTarget", () => {
     expect(t.total).toBe(2175);
   });
 
-  it("caso B: saldo −425, recupero −106,25, obiettivo giovedì 1.994", () => {
+  it("caso B: margine fermo a 300, saldo −775, recupero −100, obiettivo giovedì 2.000", () => {
     const days = [
       day(LUN, [meal("a", 1750)]),
       day(MAR, [meal("b", 1800)]),
       day(MER, [meal("c", 3250)], { steps: 9000 }),
       day(GIO, []),
     ];
+    expect(weekBalanceBefore(MER, days, s)).toBe(300); // il margine di lun e mar non supera il tetto
+    expect(weekBalanceBefore(GIO, days, s)).toBe(-775);
     const t = dayTarget(GIO, days, s);
-    expect(t.recovery).toBeCloseTo(-106.25, 10);
-    expect(t.base).toBeCloseTo(1993.75, 10);
-    expect(t.total).toBe(1994);
+    expect(t.recovery).toBe(-100);
+    expect(t.base).toBe(2000);
+    expect(t.total).toBe(2000);
   });
 
-  it("caso C: pasto libero → saldo positivo, obiettivo giovedì 2.100", () => {
+  it("caso C: pasto libero → kcalBudget 1.800, saldo 300 (tetto), obiettivo giovedì 2.100", () => {
     const days = [
       day(LUN, [meal("a", 1750)]),
       day(MAR, [meal("b", 1800)]),
       day(MER, [meal("col", 400), meal("pranzo", 2250, true), meal("cena", 600)], { steps: 9000 }),
       day(GIO, []),
     ];
+    expect(weekBalanceBefore(GIO, days, s)).toBe(300);
     const t = dayTarget(GIO, days, s);
     expect(t.recovery).toBe(0);
     expect(t.total).toBe(2100);
   });
 
-  it("caso D: lunedì 5.000 kcal → martedì limitato dalla soglia a 1.800", () => {
+  it("caso D: lunedì 5.000 kcal → saldo −2.900, recupero −100, martedì 2.000", () => {
     const days = [day(LUN, [meal("a", 5000)]), day(MAR, [])];
+    expect(weekBalanceBefore(MAR, days, s)).toBe(-2900);
     const t = dayTarget(MAR, days, s);
-    expect(t.recovery).toBeCloseTo(-483.33, 2);
+    expect(t.recovery).toBe(-100);
+    expect(t.base).toBe(2000);
+    expect(t.total).toBe(2000);
+  });
+
+  it("caso D con recoveryMaxPerDay 500: vale la soglia minima, martedì 1.800", () => {
+    const days = [day(LUN, [meal("a", 5000)]), day(MAR, [])];
+    const t = dayTarget(MAR, days, { ...s, recoveryMaxPerDay: 500 });
+    expect(t.recovery).toBe(-500);
     expect(t.base).toBe(1800);
     expect(t.total).toBe(1800);
   });
 
   it("caso H: un giorno senza pasti non entra nel saldo", () => {
-    // lun 2.500 (−400), mar vuoto: se martedì contasse (+2.100) il recupero sparirebbe.
+    // lun 2.500 (−400), mar vuoto: se martedì contasse (+2.100, tetto 300) il recupero sparirebbe.
     const days = [day(LUN, [meal("a", 2500)]), day(MAR, []), day(MER, [])];
+    expect(weekBalanceBefore(MER, days, s)).toBe(-400);
     const t = dayTarget(MER, days, s);
-    expect(t.recovery).toBeCloseTo(-80, 10);
-    expect(t.total).toBe(2020);
+    expect(t.recovery).toBe(-100);
+    expect(t.total).toBe(2000);
+  });
+
+  it("caso M: debito di 11 kcal, sotto recoveryMin: nessun recupero", () => {
+    const days = [day(LUN, [meal("a", 2111)]), day(MAR, [])];
+    expect(weekBalanceBefore(MAR, days, s)).toBe(-11);
+    const t = dayTarget(MAR, days, s);
+    expect(t.recovery).toBe(0);
+    expect(t.total).toBe(2100);
+  });
+
+  it("recoveryMin: un debito di 25 kcal si recupera (−25), uno di 24 no", () => {
+    expect(dayTarget(MAR, [day(LUN, [meal("a", 2125)]), day(MAR, [])], s).recovery).toBe(-25);
+    expect(dayTarget(MAR, [day(LUN, [meal("a", 2124)]), day(MAR, [])], s).recovery).toBe(0);
+  });
+
+  it("caso N: il debito si estingue in più giorni (−100, −100, poi 2.100)", () => {
+    const days = [day(LUN, [meal("a", 2300)]), day(MAR, [meal("b", 2000)]), day(MER, [meal("c", 2000)]), day(GIO, [])];
+    expect(dayTarget(MAR, days, s).total).toBe(2000);
+    expect(dayTarget(MER, days, s).total).toBe(2000);
+    expect(weekBalanceBefore(GIO, days, s)).toBe(0);
+    expect(dayTarget(GIO, days, s).total).toBe(2100);
+  });
+
+  it("caso O: il margine non supera 300 e assorbe lo sgarro successivo", () => {
+    const days = [day(LUN, [meal("a", 1800)]), day(MAR, [meal("b", 1800)]), day(MER, [meal("c", 1800)]), day(GIO, [meal("d", 2500)]), day("2026-01-09", [])];
+    expect(weekBalanceBefore(GIO, days, s)).toBe(300); // non 900
+    expect(dayTarget(GIO, days, s).total).toBe(2100);
+    expect(weekBalanceBefore("2026-01-09", days, s)).toBe(-100);
+    expect(dayTarget("2026-01-09", days, s).total).toBe(2000);
+  });
+
+  it("caso P: dopo una domenica di sgarro il lunedì riparte da zero", () => {
+    const days = [day("2026-01-11", [meal("a", 3000)]), day("2026-01-12", [])];
+    expect(weekBalanceBefore("2026-01-12", days, s)).toBe(0);
+    const t = dayTarget("2026-01-12", days, s);
+    expect(t.recovery).toBe(0);
+    expect(t.total).toBe(2100);
+  });
+
+  it("un saldo positivo non alza mai l'obiettivo, ma fa da cuscinetto", () => {
+    const days = [day(LUN, [meal("a", 500)]), day(MAR, [meal("b", 3000)]), day(MER, [])];
+    // lun +1.600 → 300; mar 2100−3000 = −900 → −600 → recupero −100
+    expect(weekBalanceBefore(MER, days, s)).toBe(-600);
+    const cushion = [day(LUN, [meal("a", 500)]), day(MAR, [meal("b", 2200)]), day(MER, [])];
+    expect(weekBalanceBefore(MER, cushion, s)).toBe(200); // 300 − 100
+    expect(dayTarget(MER, cushion, s).total).toBe(2100);
   });
 
   it("il lunedì il recupero è sempre 0, anche con giorni della settimana precedente", () => {
@@ -91,7 +150,7 @@ describe("dayTarget", () => {
 
   it("la base non scende sotto la soglia; il bonus si somma sopra", () => {
     const days = [day(LUN, [meal("a", 5000)]), day(MAR, [], { bikeKm: 30 })];
-    const t = dayTarget(MAR, days, s);
+    const t = dayTarget(MAR, days, { ...s, recoveryMaxPerDay: 500 });
     expect(t.base).toBe(1800);
     expect(t.bikeBonus).toBe(405);
     expect(t.total).toBe(2205);
@@ -103,9 +162,10 @@ describe("dayTarget", () => {
   });
 
   it("il saldo include i bonus attività dei giorni precedenti", () => {
-    // lun: 2100 + 405 − 2800 = −295 → mar: −295/6
+    // lun: 2100 + 405 − 2800 = −295 → debito 295, recupero al massimo 100
     const days = [day(LUN, [meal("a", 2800)], { bikeKm: 30 }), day(MAR, [])];
-    expect(dayTarget(MAR, days, s).recovery).toBeCloseTo(-295 / 6, 10);
+    expect(weekBalanceBefore(MAR, days, s)).toBe(-295);
+    expect(dayTarget(MAR, days, s).recovery).toBe(-100);
   });
 
   it("se la soglia minima è sopra la base, la base resta la base", () => {
@@ -117,8 +177,8 @@ describe("dayTarget", () => {
     expect(dayTarget(MER, [], s).total).toBe(2100);
   });
 
-  it("domenica: recupero diviso per 1", () => {
+  it("domenica: il recupero resta al massimo giornaliero", () => {
     const days = [day(LUN, [meal("a", 2300)]), day("2026-01-11", [])];
-    expect(dayTarget("2026-01-11", days, s).recovery).toBe(-200);
+    expect(dayTarget("2026-01-11", days, s).recovery).toBe(-100);
   });
 });
