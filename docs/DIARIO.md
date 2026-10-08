@@ -30,6 +30,7 @@ Una riga per task chiuso.
 
 - Pasti composti da piatti (T3.0): nel motore `Meal` resta il tipo del piatto (una riga della tabella `meals`); un pasto è l'insieme dei piatti di una fascia in un giorno (`MealGroup`, `groupMeals`). Nel database nessuna colonna rinominata o eliminata: il segno "libero" sta su **tutti i piatti** del pasto e un pasto è libero se almeno un piatto lo è. Il tetto `freeMealCap` si applica alla somma dei piatti del pasto.
 - `hasFreeMealInWeek` ora esclude un pasto per giorno e fascia (non più per id del piatto).
+- Test del motore aggiornati in T3.0 (solo quelli legati al pasto libero, come consentito): `src/engine/budget.test.ts` (l'helper `meal` prende la fascia; `mealBudgetKcal` ora riceve il pasto e non il piatto; `hasFreeMealInWeek` ora esclude per giorno e fascia; nel caso C e in `kcalEaten` i tre piatti stanno in tre fasce diverse, prima stavano per errore tutti nel pranzo) e `src/engine/week.test.ts` (il piatto "d" spostato in "cena", per lo stesso motivo). Aggiunti, senza toccare altro: caso L, tetto sulla somma dei piatti, pasto libero con più piatti (budget.test.ts) e `src/engine/meals.test.ts` (raggruppamento dei piatti in pasti).
 - Carboidrati arrotondati al grammo intero (§3.4 non lo specifica; gli esempi di §3.6 sono interi).
 - Soglia gialla dell'anello kcal (×1,05) è una costante `KCAL_RING_YELLOW_LIMIT` in `defaults.ts`, non un'impostazione modificabile: §3 non la elenca tra le impostazioni.
 - Semaforo "tetto" (sale): assunto esattamente uguale al tetto → giallo; rosso solo se supera il tetto.
