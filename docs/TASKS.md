@@ -407,7 +407,7 @@ Vincoli di questa fase:
 - Per le schermate valgono le regole delle fasi 2, 4b e 5. Si rigenerano solo gli screenshot degli scenari toccati dal task.
 - Nessuna funzione oltre a quelle elencate. In particolare: niente passi a mano, niente più uscite a mano nello stesso giorno, niente soglie dell'anello in Impostazioni, niente tabella di ingredienti (§9).
 
-### T5b.0 Passi in sola lettura, bici a mano che si somma · da fare
+### T5b.0 Passi in sola lettura, bici a mano che si somma · fatto
 - **Passi**: in Oggi la riga dei passi non è toccabile e non apre nessun pannello. Dal pannello Aggiungi sparisce l'inserimento dei passi: la voce diventa "Bici a mano". Nel pannello Passi della Settimana le righe sono in sola lettura; un vecchio valore con fonte `manuale` si può solo eliminare.
 - **Ingresso da Salute**: per i passi, l'invio sostituisce anche un valore con fonte `manuale` (la regola "il manuale non si tocca" non vale più per i passi). La risposta dell'ingresso non elenca più i passi tra le righe "lasciate perché inserite a mano".
 - **Bici**: `daily_activity` riceve, per aggiunta, le colonne della parte a mano (km e kcal facoltative). I km da Salute restano dove sono e non si modificano né si eliminano dall'app. La migrazione sposta nella parte a mano i valori di bici che oggi hanno fonte `manuale`, senza perdere nulla. Gli invii da Salute scrivono sempre la parte di Salute e non toccano mai quella a mano.
