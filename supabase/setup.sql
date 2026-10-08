@@ -287,3 +287,7 @@ create index favorite_meals_user_idx on public.favorite_meals (user_id);
 alter table public.favorite_meals enable row level security;
 create policy favorite_meals_own on public.favorite_meals for all to authenticated
   using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+-- ===== 20260101000008_primo_avvio.sql =====
+-- Fase 4, solo per aggiunta. Il primo avvio guidato è stato fatto o saltato (non si ripropone).
+alter table public.settings add column onboarding_done boolean;

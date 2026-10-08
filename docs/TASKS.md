@@ -265,7 +265,7 @@ Vincoli di questa fase:
 - Eliminazione di un preferito. Nuova tabella per i pasti preferiti, per aggiunta; i preferiti di piatti usano la tabella esistente.
 - Funziona sia con i dati nel browser sia con Supabase.
 
-### T4.5 Primo avvio guidato · da fare
+### T4.5 Primo avvio guidato · fatto
 - Al primo accesso di un utente senza impostazioni salvate: tre schermate brevi con peso, peso obiettivo e kcal base, precompilate con i valori predefiniti, più "Salta".
 - Alla fine si arriva in Oggi. Le stesse voci restano modificabili in Impostazioni.
 - In Impostazioni, sezione "Collegamenti": stato dell'AI ("attiva" o "non configurata").

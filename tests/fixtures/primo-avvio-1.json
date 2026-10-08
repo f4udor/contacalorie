@@ -1,0 +1,10 @@
+{
+  "id": "primo-avvio-1",
+  "descrizione": "Primo avvio, schermata 1 di 3: il peso (campo vuoto), Salta in alto, Avanti.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "primoAvvio": true,
+  "fisso": true,
+  "passi": []
+}

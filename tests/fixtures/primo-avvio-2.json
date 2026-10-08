@@ -1,0 +1,24 @@
+{
+  "id": "primo-avvio-2",
+  "descrizione": "Schermata 2 di 3: il peso obiettivo, con Indietro.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "primoAvvio": true,
+  "fisso": true,
+  "passi": [
+    {
+      "fill": [
+        "Peso (kg)",
+        "92,5"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Avanti",
+        "exact": true
+      }
+    }
+  ]
+}

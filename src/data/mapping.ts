@@ -24,6 +24,7 @@ export const SETTINGS_COLUMNS: readonly (readonly [keyof UserSettings, string])[
   ["overLimit", "over_limit"],
   ["proteinGramsManual", "protein_grams_manual"],
   ["fatGramsManual", "fat_grams_manual"],
+  ["onboardingDone", "onboarding_done"],
 ];
 
 const num = (v: unknown): number => (typeof v === "string" ? Number(v) : (v as number));
@@ -31,12 +32,12 @@ const numOrNull = (v: unknown): number | null => (v === null || v === undefined 
 
 /** Riga di `settings` → impostazioni (le colonne vuote non compaiono). */
 export function rowToSettings(row: Row | null): UserSettings {
-  const out: Record<string, number> = {};
+  const out: Record<string, number | boolean> = {};
   if (!row) return out as UserSettings;
   for (const [key, column] of SETTINGS_COLUMNS) {
     const v = row[column];
     if (v === null || v === undefined) continue;
-    out[key] = num(v);
+    out[key] = key === "onboardingDone" ? Boolean(v) : num(v);
   }
   return out as UserSettings;
 }

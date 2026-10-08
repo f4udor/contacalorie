@@ -20,7 +20,7 @@ const add = (id, descrizione, oggi, dati, extra = {}) => scenarios.push({ id, de
 
 // --- Guscio e avvisi (T2.1)
 scenarios.push({ id: "grafici-in-arrivo", descrizione: "Grafici mostra solo 'In arrivo'.", oggi: "2026-01-08", percorso: "/grafici", dati: null });
-scenarios.push({ id: "avviso-dati-illeggibili", descrizione: "Dati salvati corrotti: l'app riparte vuota e mostra l'avviso.", oggi: "2026-01-08", percorso: "/", dati: "{{non json", scorre: true });
+scenarios.push({ id: "avviso-dati-illeggibili", descrizione: "Dati salvati corrotti: l'app riparte vuota e mostra l'avviso (e, senza impostazioni, il primo avvio guidato sotto l'avviso).", oggi: "2026-01-08", percorso: "/", dati: "{{non json", scorre: true });
 
 // --- Oggi: anello e nutrienti (T2.2)
 add("oggi-vuoto", "Giorno senza pasti e profilo senza peso: anello pieno di kcal rimaste, barrette neutre, invito a inserire il peso.", "2026-01-08", null);
@@ -360,6 +360,24 @@ favScen("preferiti-salva-piatto", "Piatto toccato: in fondo al modulo 'Salva nei
 favScen("preferiti-piatto-salvato", "Dopo 'Salva nei preferiti': conferma 'Salvato nei preferiti.'", giornoPasti(), [{ click: "Petto di pollo e verdure" }, btn("Salva nei preferiti"), { wait: 400 }, { scrollTo: "Salvato nei preferiti" }]);
 favScen("preferiti-salva-pasto", "Intestazione del pasto toccata: pannello 'Salva pasto' con il nome proposto (i nomi dei piatti).", giornoPasti(), [{ clickRole: { role: "button", name: "Pranzo: salva il pasto nei preferiti" } }]);
 favScen("preferiti-pasto-salvato", "Dopo 'Salva pasto' con un nome scelto: conferma 'Pasto salvato nei preferiti.'", giornoPasti(), [{ clickRole: { role: "button", name: "Pranzo: salva il pasto nei preferiti" } }, { fill: ["Nome del pasto", "Pranzo del lunedì"] }, btn("Salva pasto"), { wait: 400 }]);
+
+// --- Primo avvio guidato e Collegamenti (T4.5)
+const pa = (id, descrizione, passi, extra = {}) => scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/", dati: null, primoAvvio: true, fisso: true, passi, ...extra });
+const avanti = btn("Avanti");
+pa("primo-avvio-1", "Primo avvio, schermata 1 di 3: il peso (campo vuoto), Salta in alto, Avanti.", []);
+pa("primo-avvio-2", "Schermata 2 di 3: il peso obiettivo, con Indietro.", [{ fill: ["Peso (kg)", "92,5"] }, avanti]);
+pa("primo-avvio-3", "Schermata 3 di 3: le kcal base già precompilate a 2.100, pulsante Fine.", [{ fill: ["Peso (kg)", "92,5"] }, avanti, { fill: ["Peso obiettivo (kg)", "82"] }, avanti]);
+pa("primo-avvio-errore", "Peso non valido: errore accanto al campo, non si va avanti.", [{ fill: ["Peso (kg)", "novanta"] }, avanti]);
+add("primo-avvio-fine", "Dopo Fine con peso 92,5 kg e obiettivo 82 kg: si arriva in Oggi e le proteine sono 1,8 × 82 = 150 g.", "2026-01-08", null, {
+  primoAvvio: true,
+  passi: [{ fill: ["Peso (kg)", "92,5"] }, avanti, { fill: ["Peso obiettivo (kg)", "82"] }, avanti, btn("Fine"), { wait: 1200 }],
+});
+add("primo-avvio-salta", "Dopo Salta: si arriva in Oggi con tutto predefinito; riaprendo l'app il primo avvio non ricompare.", "2026-01-08", null, {
+  primoAvvio: true,
+  passi: [btn("Salta"), { wait: 1200 }],
+});
+scenarios.push({ id: "impostazioni-collegamenti-attiva", descrizione: "Impostazioni → Collegamenti: stima automatica 'attiva'.", oggi: "2026-01-08", percorso: "/impostazioni", dati: null, scorre: true, ai: { risposte: [] }, passi: [{ scrollTo: "Collegamenti" }] });
+scenarios.push({ id: "impostazioni-collegamenti-spenta", descrizione: "Impostazioni → Collegamenti: stima automatica 'non configurata', con l'indicazione di dove si attiva.", oggi: "2026-01-08", percorso: "/impostazioni", dati: null, scorre: true, ai: { disponibile: false, risposte: [] }, passi: [{ scrollTo: "Collegamenti" }] });
 
 // --- Impostazioni (T2.7)
 const imp = (id, descrizione, oggi, dati, extra = {}) => scenarios.push({ id, descrizione, oggi, percorso: "/impostazioni", dati, scorre: true, ...extra });

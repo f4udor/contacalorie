@@ -96,12 +96,19 @@ try {
           }
           globalThis.Date = FixedDate;
         }, new Date(`${sc.oggi}T09:00:00+01:00`).getTime());
-        if (sc.dati) {
+        // Il primo avvio guidato compare solo per chi non ha nessuna impostazione: gli altri scenari partono come se fosse già fatto
+        // (`primoAvvio: true` lo lascia comparire).
+        let dati = sc.dati;
+        if (!sc.primoAvvio && typeof dati !== "string") {
+          const base = dati ?? { version: 1, settings: {}, meals: [], activity: [], weighIns: [] };
+          dati = Object.keys(base.settings ?? {}).length === 0 ? { ...base, settings: { onboardingDone: true } } : base;
+        }
+        if (dati) {
           await context.addInitScript(
             ([key, data]) => {
               if (!localStorage.getItem(key)) localStorage.setItem(key, data);
             },
-            [STORAGE_KEY, typeof sc.dati === "string" ? sc.dati : JSON.stringify(sc.dati)],
+            [STORAGE_KEY, typeof dati === "string" ? dati : JSON.stringify(dati)],
           );
         }
         if (sc.accessoDimostrativo) {

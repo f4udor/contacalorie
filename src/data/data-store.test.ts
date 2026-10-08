@@ -139,6 +139,14 @@ describe.each(factories)("DataStore %s", (_nome, make) => {
     expect(await s.listFavoriteMeals()).toEqual([]);
   });
 
+  it("il segno 'primo avvio fatto' si salva e si rilegge", async () => {
+    const s = make();
+    await s.saveSettings({ onboardingDone: true });
+    expect(await s.getSettings()).toEqual({ onboardingDone: true });
+    await s.saveSettings({ weightKg: 90 });
+    expect(await s.getSettings()).toEqual({ onboardingDone: true, weightKg: 90 });
+  });
+
   it("il messaggio si può cancellare", async () => {
     const s = make();
     await s.clearNotice();

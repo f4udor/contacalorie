@@ -6,6 +6,8 @@ export interface UserSettings extends Partial<Settings> {
   heightCm?: number;
   ageYears?: number;
   targetWeightKg?: number;
+  /** Il primo avvio guidato è stato fatto o saltato. */
+  onboardingDone?: boolean;
 }
 
 /** Piatto salvato (tabella `meals`, una riga per piatto). I piatti di una data e fascia formano un pasto. */

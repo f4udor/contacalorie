@@ -1,0 +1,47 @@
+{
+  "id": "primo-avvio-fine",
+  "descrizione": "Dopo Fine con peso 92,5 kg e obiettivo 82 kg: si arriva in Oggi e le proteine sono 1,8 × 82 = 150 g.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "primoAvvio": true,
+  "passi": [
+    {
+      "fill": [
+        "Peso (kg)",
+        "92,5"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Avanti",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Peso obiettivo (kg)",
+        "82"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Avanti",
+        "exact": true
+      }
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Fine",
+        "exact": true
+      }
+    },
+    {
+      "wait": 1200
+    }
+  ]
+}

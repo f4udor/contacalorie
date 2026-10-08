@@ -4,7 +4,7 @@ Migrazioni in `supabase/migrations`. Ogni tabella ha `user_id` (tranne i piani d
 
 | Tabella | Descrizione |
 |---|---|
-| `settings` | Una riga per utente: profilo, obiettivi, regole di calcolo comprese le proteine per kg di peso (e di peso obiettivo), null = default dell'app; le colonne del piano e della data di inizio della sfida non sono più usate. |
+| `settings` | Una riga per utente: profilo, obiettivi, regole di calcolo comprese le proteine per kg di peso (e di peso obiettivo), null = default dell'app; le colonne del piano e della data di inizio della sfida non sono più usate; `onboarding_done` dice che il primo avvio guidato è stato fatto o saltato. |
 | `meals` | Piatti: una riga per piatto (data, fascia, nome, quantità, kcal, macro, fibre, sale, testo originale dettato). I piatti di una data e fascia formano un pasto; il segno `is_free` sta su tutti i piatti del pasto. |
 | `favorites` | Piatti preferiti con i loro numeri e la quantità, da riusare. |
 | `favorite_meals` | Pasti preferiti: nome, fascia e tutti i piatti (con numeri e quantità) in un campo JSON. |
