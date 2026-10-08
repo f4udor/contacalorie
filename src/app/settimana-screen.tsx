@@ -10,6 +10,7 @@ import { formatDayMonth, formatNumber, formatSigned } from "./lib/format";
 import { useToday } from "./lib/use-today";
 import { useWeekData } from "./lib/use-week-data";
 import { buildWeekView } from "./lib/week-view";
+import { weekWeight } from "./lib/week-weight";
 
 const DATE_PARAM = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -19,12 +20,19 @@ const arrow = (d: string) => (
   </svg>
 );
 
-function Stat({ label, value, hint, wide }: { label: string; value: string; hint?: string; wide?: boolean }) {
+interface StatProps {
+  label: string;
+  value: string;
+  hint?: string;
+  hintTone?: "ok" | "bad" | "neutral";
+}
+
+function Stat({ label, value, hint, hintTone, wide }: StatProps & { wide?: boolean }) {
   return (
     <div className={`rounded-2xl bg-card p-3.5 ${wide ? "col-span-2" : ""}`}>
       <h3 className="text-sm font-semibold text-muted">{label}</h3>
       <p className="mt-1 text-[22px] font-bold leading-tight tabular-nums">{value}</p>
-      {hint && <p className="mt-0.5 text-xs text-muted">{hint}</p>}
+      {hint && <p className={`mt-0.5 text-xs ${hintTone === "ok" ? "font-semibold text-ok" : hintTone === "bad" ? "font-semibold text-bad" : "text-muted"}`}>{hint}</p>}
     </div>
   );
 }
@@ -47,6 +55,26 @@ export function SettimanaScreen() {
   const btn = "flex min-h-11 min-w-11 items-center justify-center rounded-full bg-card text-accent";
   const view = data ? buildWeekView({ date: monday, days: data.days, settings: data.settings }) : null;
   const s = view?.summary;
+  const weight = data ? weekWeight({ monday, sunday, weighIns: data.weighIns, profileWeightKg: data.userSettings.weightKg, targetWeightKg: data.userSettings.targetWeightKg }) : null;
+  const stats: StatProps[] = s
+    ? [
+        { label: "Saldo", value: s.balance === null ? dash : `${formatSigned(s.balance)} kcal`, hint: s.balance === null ? undefined : s.balance < 0 ? "da recuperare" : "di vantaggio" },
+        { label: "Media kcal", value: s.avgKcal === null ? dash : `${formatNumber(s.avgKcal)} kcal`, hint: "sui giorni con pasti" },
+        { label: "Bici", value: s.totalKm === null ? dash : `${formatNumber(s.totalKm, 1)} km` },
+        { label: "Passi medi", value: s.avgSteps === null ? dash : formatNumber(s.avgSteps), hint: "sui giorni con passi" },
+        ...(weight
+          ? [
+              {
+                label: "Peso",
+                value: `${formatNumber(weight.lastKg, 1)} kg`,
+                hint: weight.deltaKg === null ? undefined : `${formatSigned(weight.deltaKg, 1)} kg ${weight.comparedWith === "pesata" ? "dalla pesata precedente" : "dal peso di partenza"}`,
+                hintTone: weight.tone,
+              },
+            ]
+          : []),
+        { label: "Pasto libero", value: s.freeMealUsed ? "usato" : "non usato" },
+      ]
+    : [];
 
   return (
     <main>
@@ -77,22 +105,16 @@ export function SettimanaScreen() {
             <p className="pt-1 text-center text-xs text-muted">La linea indica l&apos;obiettivo del giorno. Tocca una barra per aprire il giorno.</p>
           </Card>
 
-          {view.isEmpty && (
+          {view.isEmpty && !weight && (
             <Card>
               <p className="text-center text-[15px] text-muted">Nessun dato in questa settimana.</p>
             </Card>
           )}
 
           <div className="grid grid-cols-2 gap-3">
-            <Stat
-              label="Saldo"
-              value={s.balance === null ? dash : `${formatSigned(s.balance)} kcal`}
-              hint={s.balance === null ? undefined : s.balance < 0 ? "da recuperare" : "di vantaggio"}
-            />
-            <Stat label="Media kcal" value={s.avgKcal === null ? dash : `${formatNumber(s.avgKcal)} kcal`} hint="sui giorni con pasti" />
-            <Stat label="Bici" value={s.totalKm === null ? dash : `${formatNumber(s.totalKm, 1)} km`} />
-            <Stat label="Passi medi" value={s.avgSteps === null ? dash : formatNumber(s.avgSteps)} hint="sui giorni con passi" />
-            <Stat label="Pasto libero" value={s.freeMealUsed ? "usato" : "non usato"} wide />
+            {stats.map((st, i) => (
+              <Stat key={st.label} {...st} wide={i === stats.length - 1 && stats.length % 2 === 1} />
+            ))}
           </div>
 
           <Card>

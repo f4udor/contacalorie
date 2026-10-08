@@ -312,7 +312,7 @@ Vincoli di questa fase:
 - "kcal sopra di" diventa "kcal oltre".
 - Attività vuota: solo "Nessuna attività".
 
-### T4b.5 Peso nella Settimana · da fare
+### T4b.5 Peso nella Settimana · fatto
 - Nuova scheda "Peso": ultima pesata della settimana e differenza in kg (una cifra decimale) con l'ultima pesata precedente al lunedì; se non ce n'è, con il peso del profilo, che è il peso di partenza e non viene mai sovrascritto dalle pesate.
 - Colore della differenza: verde se ci si avvicina al peso obiettivo, rosso se ci si allontana (vale anche quando l'obiettivo è salire), grigio senza peso obiettivo o senza variazione.
 - La scheda non compare se nella settimana non ci sono pesate.

@@ -1,0 +1,22 @@
+{
+  "id": "settimana-peso-solo",
+  "descrizione": "Settimana senza pasti né attività ma con una pesata: compare la scheda Peso e non il messaggio 'Nessun dato'.",
+  "oggi": "2026-01-11",
+  "percorso": "/settimana",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 92.5,
+      "targetWeightKg": 82
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": [
+      {
+        "date": "2026-01-07",
+        "weightKg": 91.6
+      }
+    ]
+  },
+  "scorre": true
+}
