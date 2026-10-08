@@ -77,6 +77,7 @@ class FakeTable implements SupabaseTable {
 class FakeQuery implements SupabaseQuery {
   private filters: ((r: Row) => boolean)[] = [];
   private orderBy: string | null = null;
+  private window: [number, number] | null = null;
 
   constructor(
     private readonly db: FakeSupabaseDb,
@@ -98,6 +99,10 @@ class FakeQuery implements SupabaseQuery {
   }
   order(column: string) {
     this.orderBy = column;
+    return this;
+  }
+  range(from: number, to: number) {
+    this.window = [from, to];
     return this;
   }
 
@@ -126,6 +131,7 @@ class FakeQuery implements SupabaseQuery {
       const col = this.orderBy;
       sorted.sort((a, b) => (a[col] === b[col] ? 0 : (a[col] as string | number) < (b[col] as string | number) ? -1 : 1));
     }
-    return { data: sorted.map((r) => ({ ...r })), error: null };
+    const page = this.window ? sorted.slice(this.window[0], this.window[1] + 1) : sorted;
+    return { data: page.map((r) => ({ ...r })), error: null };
   }
 }

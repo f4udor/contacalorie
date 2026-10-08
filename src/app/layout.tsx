@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { AuthGate } from "./auth-provider";
+import { ImportPrompt } from "./components/data-import";
 import { BottomNav } from "./components/nav";
 import { NoticeBanner } from "./components/notice-banner";
 import { DataProvider } from "./data-provider";
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
             </div>
             <BottomNav />
+            <ImportPrompt />
           </AuthGate>
         </DataProvider>
       </body>

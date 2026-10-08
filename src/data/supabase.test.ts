@@ -66,6 +66,18 @@ describe("SupabaseDataStore: dati", () => {
   });
 });
 
+describe("SupabaseDataStore: tante righe", () => {
+  it("exportAll e le pesate leggono a pagine: oltre le 1000 righe non se ne perde nessuna", async () => {
+    const { db, store } = setup();
+    for (let i = 0; i < 2500; i++) {
+      db.rows("meals").push({ id: `m${i}`, user_id: "utente-1", date: "2026-01-05", slot: "pranzo", name: `p${i}`, kcal: 1, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0, is_free: false, created_at: i });
+    }
+    for (let i = 0; i < 1200; i++) db.rows("weigh_ins").push({ id: `w${i}`, user_id: "utente-1", date: `2025-${String((i % 12) + 1).padStart(2, "0")}-${String((i % 28) + 1).padStart(2, "0")}#${i}`, weight_kg: 90 });
+    expect((await store.exportAll()).meals).toHaveLength(2500);
+    expect(await store.listWeighIns()).toHaveLength(1200);
+  });
+});
+
 describe("SupabaseDataStore: errori", () => {
   it("rete assente in scrittura: errore chiaro, nulla salvato", async () => {
     const { db, store } = setup();

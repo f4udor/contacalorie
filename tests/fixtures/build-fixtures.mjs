@@ -289,6 +289,20 @@ accesso("accesso-effettuato", "Codice giusto (123456 nella modalità dimostrativ
 scenarios.push({ id: "impostazioni-account", descrizione: "Impostazioni con l'accesso attivo: in fondo l'account con l'email e 'Esci'.", oggi: "2026-01-08", percorso: "/impostazioni", dati: null, scorre: true, accessoDimostrativo: { session: { email: "mauro@esempio.it" } }, passi: [{ scrollTo: "Esci" }] });
 scenarios.push({ id: "dopo-esci", descrizione: "Dopo 'Esci': si torna alla schermata Accedi.", oggi: "2026-01-08", percorso: "/impostazioni", dati: null, fisso: true, accessoDimostrativo: { session: { email: "mauro@esempio.it" } }, passi: [{ clickRole: { role: "button", name: "Esci", exact: true } }, { wait: 500 }] });
 
+// --- Importazione dei dati del dispositivo (T3.5): accesso dimostrativo + dati nel browser
+const datiImport = { ...settimanaCompleta, weighIns: [{ date: "2026-01-05", weightKg: 93 }, { date: "2026-01-09", weightKg: 92 }] };
+const importa = (id, descrizione, passi, extra = {}) =>
+  scenarios.push({ id, descrizione, oggi: "2026-01-11", percorso: "/", dati: datiImport, accessoDimostrativo: { session: { email: "mauro@esempio.it" } }, fisso: true, passi, ...extra });
+const btn = (name) => ({ clickRole: { role: "button", name, exact: true } });
+importa("importa-proposta", "Primo accesso con dati su questo dispositivo: l'app propone di importarli, con quanti giorni, piatti e pesate.", []);
+importa("importa-fatto", "Dopo 'Importa': riepilogo di cosa è stato aggiunto; i dati restano anche sul dispositivo finché non si conferma.", [btn("Importa"), { wait: 800 }]);
+importa("importa-conferma", "Prima di togliere i dati dal dispositivo chiede conferma e dice che restano nell'account.", [btn("Importa"), { wait: 800 }, btn("Tutto a posto: togli i dati da questo dispositivo")]);
+importa("importa-dopo-togli", "Dopo aver tolto i dati dal dispositivo: nessuna nuova proposta (qui l'app mostra il giorno vuoto perché in questa prova l'archivio dell'account è finto).", [btn("Importa"), { wait: 800 }, btn("Tutto a posto: togli i dati da questo dispositivo"), btn("Togli da questo dispositivo"), { wait: 600 }], { fisso: false, scorre: true });
+importa("importa-in-impostazioni", "Dopo 'Più tardi' la voce resta in Impostazioni → Dati, finché ci sono dati da importare.", [btn("Più tardi"), { wait: 400 }, { scrollTo: "Importa i dati di questo dispositivo" }], { percorso: "/impostazioni", fisso: false, scorre: true });
+importa("importa-pasti-misti", "Pasto con un piatto libero e uno normale insieme (salvati prima dei pasti composti): avviso che il pasto libero ora vale per tutti i piatti.", [], {
+  dati: data({ meals: [meal("2026-01-05", "pranzo", "Pizza", 900, 30, 120, 30, 5, 3.5, { isFree: true }), meal("2026-01-05", "pranzo", "Insalata", 100, 2, 8, 6, 3, 0.3)] }),
+});
+
 // --- Errori di salvataggio (T3.3)
 add("salvataggio-fallito", "Il browser non riesce più a scrivere (memoria piena): il peso resta in memoria (proteine 125 g) e l'avviso in cima dice che non è stato salvato su questo dispositivo. Con Supabase lo stesso avviso compare per un salvataggio non riuscito e il pannello resta aperto per riprovare.", "2026-01-08", null, {
   fisso: true, scritturaFallita: true,

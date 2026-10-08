@@ -13,7 +13,8 @@ import {
   weighInToRow,
 } from "./mapping";
 import type { DataStore } from "./store";
-import type { ActivityRecord, ChallengeLogEntry, MealRecord, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, ChallengeLogEntry, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
+import { STORAGE_VERSION } from "./types";
 
 type Row = Record<string, unknown>;
 interface QueryResult {
@@ -27,6 +28,7 @@ export interface SupabaseQuery extends PromiseLike<QueryResult> {
   gte(column: string, value: unknown): SupabaseQuery;
   lte(column: string, value: unknown): SupabaseQuery;
   order(column: string, options?: { ascending?: boolean }): SupabaseQuery;
+  range(from: number, to: number): SupabaseQuery;
 }
 
 export interface SupabaseTable {
@@ -74,6 +76,19 @@ export class SupabaseDataStore implements DataStore {
     const res = await build(client.from(table).select("*"));
     SupabaseDataStore.check(res.error);
     return res.data ?? [];
+  }
+
+  /** Tutte le righe di una tabella, a pagine (il server ne dà al massimo 1000 per volta). */
+  private async allRows(client: SupabaseLike, table: string, orderBy: string): Promise<Row[]> {
+    const PAGE = 1000;
+    const out: Row[] = [];
+    for (let from = 0; ; from += PAGE) {
+      const res = await client.from(table).select("*").order(orderBy).range(from, from + PAGE - 1);
+      SupabaseDataStore.check(res.error);
+      const page = res.data ?? [];
+      out.push(...page);
+      if (page.length < PAGE) return out;
+    }
   }
 
   private loadExercises() {
@@ -170,7 +185,7 @@ export class SupabaseDataStore implements DataStore {
   // --- pesate
 
   listWeighIns(): Promise<WeighIn[]> {
-    return this.run("lettura", async (c) => (await this.rows(c, "weigh_ins", (q) => q.order("date"))).map(rowToWeighIn));
+    return this.run("lettura", async (c) => (await this.allRows(c, "weigh_ins", "date")).map(rowToWeighIn));
   }
 
   saveWeighIn(weighIn: WeighIn): Promise<void> {
@@ -216,6 +231,30 @@ export class SupabaseDataStore implements DataStore {
       if (!uuid) return;
       const res = await c.from("challenge_log").delete().eq("date", date).eq("exercise_id", uuid);
       SupabaseDataStore.check(res.error);
+    });
+  }
+
+  // --- tutti i dati
+
+  exportAll(): Promise<StoredData> {
+    return this.run("lettura", async (c) => {
+      const uid = await this.userId(c);
+      const { nameById } = await this.loadExercises();
+      const [settings, meals, activity, weighIns, log] = await Promise.all([
+        this.rows(c, "settings", (q) => q.eq("user_id", uid)),
+        this.allRows(c, "meals", "created_at"),
+        this.allRows(c, "daily_activity", "date"),
+        this.allRows(c, "weigh_ins", "date"),
+        this.allRows(c, "challenge_log", "date"),
+      ]);
+      return {
+        version: STORAGE_VERSION,
+        settings: rowToSettings(settings[0] ?? null),
+        meals: meals.map(rowToMeal),
+        activity: activity.map(rowToActivity),
+        weighIns: weighIns.map(rowToWeighIn),
+        challengeLog: log.map((r) => rowToChallengeEntry(r, nameById)).filter((e): e is ChallengeLogEntry => e !== null),
+      };
     });
   }
 
