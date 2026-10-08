@@ -1,7 +1,13 @@
-export default function Home() {
+import { Card } from "./components/card";
+import { PageTitle } from "./components/page-title";
+
+export default function OggiPage() {
   return (
-    <main className="p-6">
-      <h1 className="text-4xl font-bold">Personal Health</h1>
+    <main>
+      <PageTitle>Oggi</PageTitle>
+      <Card>
+        <p className="text-muted">Qui compariranno anello delle kcal, nutrienti e pasti del giorno.</p>
+      </Card>
     </main>
   );
 }
