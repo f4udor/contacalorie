@@ -1,6 +1,6 @@
 {
-  "id": "oggi-attivita",
-  "descrizione": "Attività del giorno: passi da Salute (non toccabili) e bici con il totale (20,4 km) e il dettaglio '12,4 km da Salute + 8 km a mano'; si tocca solo la parte a mano.",
+  "id": "oggi-passi-sola-lettura",
+  "descrizione": "Toccando la riga dei passi non si apre nessun pannello.",
   "oggi": "2026-01-05",
   "percorso": "/",
   "dati": {
@@ -38,5 +38,14 @@
     ],
     "weighIns": []
   },
-  "scorre": true
+  "scorre": true,
+  "passi": [
+    {
+      "click": "Passi",
+      "exact": true
+    },
+    {
+      "wait": 400
+    }
+  ]
 }

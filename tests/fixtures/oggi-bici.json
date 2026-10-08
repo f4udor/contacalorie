@@ -1,6 +1,6 @@
 {
   "id": "oggi-bici",
-  "descrizione": "Caso E del brief: 30 km in bici a mano: bonus 405, obiettivo 2.505, carboidrati 329 g.",
+  "descrizione": "Caso E del brief: 30 km in bici inseriti a mano (solo parte a mano): bonus 405, obiettivo 2.505, carboidrati 329 g.",
   "oggi": "2026-01-05",
   "percorso": "/",
   "dati": {
@@ -43,9 +43,11 @@
         "date": "2026-01-05",
         "steps": null,
         "stepsSource": null,
-        "bikeKm": 30,
+        "bikeKm": null,
         "bikeKcalHealth": null,
-        "bikeSource": "manuale"
+        "bikeSource": null,
+        "bikeKmManual": 30,
+        "bikeKcalManual": null
       }
     ],
     "weighIns": []

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { bikeBonus, bikeKcal, stepsBonus } from "./activity";
+import { bikeBonus, bikeKcal, bikeKmTotal, stepsBonus } from "./activity";
+import type { Activity } from "./types";
 import { DEFAULT_SETTINGS } from "./defaults";
 
 const s = DEFAULT_SETTINGS;
@@ -62,5 +63,40 @@ describe("stepsBonus", () => {
   it("arrotonda (6.001 passi → 0,025 → 0; 6.100 → 2,5 → 3)", () => {
     expect(stepsBonus({ steps: 6001 }, s)).toBe(0);
     expect(stepsBonus({ steps: 6100 }, s)).toBe(3);
+  });
+});
+
+describe("bici: parte di Salute e parte a mano (T5b.0)", () => {
+  const s = { ...DEFAULT_SETTINGS };
+  const act = (a: Partial<Activity>): Activity => ({ steps: null, bikeKm: null, bikeKcalHealth: null, bikeKmManual: null, bikeKcalManual: null, ...a });
+
+  it("solo Salute: km × kcal per km", () => {
+    expect(bikeKmTotal(act({ bikeKm: 12 }))).toBe(12);
+    expect(bikeKcal(act({ bikeKm: 12 }), s)).toBe(324);
+  });
+  it("solo a mano: km a mano × kcal per km", () => {
+    expect(bikeKmTotal(act({ bikeKmManual: 8 }))).toBe(8);
+    expect(bikeKcal(act({ bikeKmManual: 8 }), s)).toBe(216);
+  });
+  it("entrambe: i km e le kcal si sommano", () => {
+    const a = act({ bikeKm: 10, bikeKmManual: 8 });
+    expect(bikeKmTotal(a)).toBe(18);
+    expect(bikeKcal(a, s)).toBe(10 * 27 + 8 * 27);
+    expect(bikeBonus(a, s)).toBe(Math.round(0.5 * 486));
+  });
+  it("kcal a mano presenti: sostituiscono km a mano × kcal per km, non toccano la parte di Salute", () => {
+    expect(bikeKcal(act({ bikeKm: 10, bikeKmManual: 8, bikeKcalManual: 300 }), s)).toBe(270 + 300);
+    expect(bikeKcal(act({ bikeKcalManual: 300 }), s)).toBe(300);
+  });
+  it("kcal a mano assenti: si calcolano dai km a mano", () => {
+    expect(bikeKcal(act({ bikeKmManual: 10, bikeKcalManual: null }), s)).toBe(270);
+  });
+  it("senza bici: nessun km e 0 kcal", () => {
+    expect(bikeKmTotal(act({}))).toBeNull();
+    expect(bikeKcal(act({}), s)).toBe(0);
+  });
+  it("giorni senza i campi nuovi (come nei test di E e F) funzionano come prima", () => {
+    expect(bikeKcal({ bikeKm: null, bikeKcalHealth: 800 }, s)).toBe(800);
+    expect(bikeKmTotal({ bikeKm: 30 })).toBe(30);
   });
 });

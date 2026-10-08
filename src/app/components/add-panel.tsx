@@ -7,11 +7,12 @@ import type { ActivityRecord, DataStore, MealRecord } from "@/data";
 import { defaultMealName, favoriteForDish, favoriteForMeal } from "../lib/favorites";
 import { newId } from "../lib/ids";
 import { isMealFree, saveDish } from "../lib/save-dish";
-import { buildActivityRecord } from "../lib/activity-form";
-import type { ParsedActivity } from "../lib/activity-form";
+import { hasManualBike } from "../lib/activity-form";
+import type { ParsedBike } from "../lib/activity-form";
+import { deleteActivityValue, saveManualBike } from "../lib/week-actions";
 import { emptyMealForm, mealToForm } from "../lib/meal-form";
 import type { ParsedMeal } from "../lib/meal-form";
-import { ActivityForm, WeightForm } from "./activity-forms";
+import { BikeForm, WeightForm } from "./activity-forms";
 import { AiEstimate } from "./ai-estimate";
 import { FavoritesView } from "./favorites-view";
 import { MealForm } from "./meal-form";
@@ -47,7 +48,7 @@ function MenuRow({ title, onClick }: { title: string; onClick: () => void }) {
 }
 
 const SLOT_NAME: Record<MealSlot, string> = { colazione: "Colazione", pranzo: "Pranzo", cena: "Cena", spuntino: "Spuntino" };
-const SUB_TITLES = { attivita: "Attività a mano", pesata: "Pesata", preferiti: "Preferiti" } as const;
+const SUB_TITLES = { bici: "Bici a mano", pesata: "Pesata", preferiti: "Preferiti" } as const;
 
 type Mode = "ai" | "manuale";
 
@@ -82,7 +83,7 @@ function ModeSwitch({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => voi
 export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
   const { store, date, days, settings, activity, weightKg, onChanged, onClose, initialSlot } = ctx;
   const [mode, setMode] = useState<Mode>("ai");
-  const [view, setView] = useState<"main" | "attivita" | "pesata" | "preferiti">("main");
+  const [view, setView] = useState<"main" | "bici" | "pesata" | "preferiti">("main");
   const freeAllowedFor = (slot: MealSlot) => !hasFreeMealInWeek(days, { date, slot });
   const dayDishes = days.find((d) => d.date === date)?.meals ?? [];
   const existingFree = (slot: MealSlot) => isMealFree(dayDishes, slot);
@@ -95,8 +96,13 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
     onClose();
   };
 
-  const saveActivity = async (parsed: ParsedActivity) => {
-    await store.saveActivity(buildActivityRecord(date, parsed, activity));
+  const saveBike = async (bike: ParsedBike) => {
+    await saveManualBike(store, date, bike);
+    onChanged();
+    onClose();
+  };
+  const removeBike = async () => {
+    await deleteActivityValue(store, date, "bici");
     onChanged();
     onClose();
   };
@@ -114,7 +120,7 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
       {!initialSlot && (
         <>
           <div className="border-t border-line" />
-          <MenuRow title="Attività a mano" onClick={() => setView("attivita")} />
+          <MenuRow title="Bici a mano" onClick={() => setView("bici")} />
           <div className="border-t border-line" />
           <MenuRow title="Pesata" onClick={() => setView("pesata")} />
         </>
@@ -150,7 +156,7 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
             ‹ Indietro
           </button>
           {view === "preferiti" && <FavoritesView store={store} date={date} initialSlot={initialSlot} dayDishes={dayDishes} onChanged={onChanged} onClose={onClose} />}
-          {view === "attivita" && <ActivityForm existing={activity} kcalPerKm={settings.kcalPerKm} onSubmit={saveActivity} />}
+          {view === "bici" && <BikeForm existing={activity} kcalPerKm={settings.kcalPerKm} onSubmit={saveBike} onDelete={hasManualBike(activity) ? removeBike : undefined} />}
           {view === "pesata" && <WeightForm existingKg={weightKg} onSubmit={saveWeight} />}
         </div>
       )}
@@ -213,17 +219,22 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
   );
 }
 
-/** Pannello di modifica dell'attività del giorno, aperto dalla scheda Attività. */
-export function EditActivityPanel(ctx: PanelContext) {
+/** Pannello della parte a mano della bici del giorno, aperto dalla scheda Attività: si modifica o si elimina. */
+export function EditBikePanel(ctx: PanelContext) {
   const { store, date, settings, activity, onChanged, onClose } = ctx;
-  const save = async (parsed: ParsedActivity) => {
-    await store.saveActivity(buildActivityRecord(date, parsed, activity));
+  const save = async (bike: ParsedBike) => {
+    await saveManualBike(store, date, bike);
+    onChanged();
+    onClose();
+  };
+  const remove = async () => {
+    await deleteActivityValue(store, date, "bici");
     onChanged();
     onClose();
   };
   return (
-    <Sheet open onClose={onClose} title="Attività a mano">
-      <ActivityForm existing={activity} kcalPerKm={settings.kcalPerKm} onSubmit={save} />
+    <Sheet open onClose={onClose} title="Bici a mano">
+      <BikeForm existing={activity} kcalPerKm={settings.kcalPerKm} onSubmit={save} onDelete={hasManualBike(activity) ? remove : undefined} />
     </Sheet>
   );
 }

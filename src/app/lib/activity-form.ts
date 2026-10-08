@@ -2,20 +2,19 @@ import type { DateKey } from "@/engine";
 import type { ActivityRecord } from "@/data";
 import { parseDecimal } from "./meal-form";
 
-/** Valori dei campi del modulo "Attività a mano", come scritti dall'utente. */
-export interface ActivityFormValues {
-  steps: string;
+/** Valori dei campi del modulo "Bici a mano", come scritti dall'utente. */
+export interface BikeFormValues {
   km: string;
   kcal: string;
 }
 
-export type ActivityFormErrors = Partial<Record<keyof ActivityFormValues, string>>;
+export type BikeFormErrors = Partial<Record<keyof BikeFormValues | "form", string>>;
 
-export interface ParsedActivity {
-  steps: number | null;
-  bikeKm: number | null;
-  /** Kcal della bici scritte a mano: sostituiscono km × kcal per km. */
-  bikeKcal: number | null;
+/** La parte a mano della bici: km e kcal, almeno uno dei due. */
+export interface ParsedBike {
+  km: number | null;
+  /** Kcal scritte a mano: sostituiscono km a mano × kcal per km. */
+  kcal: number | null;
 }
 
 /** Numero intero scritto con o senza punti delle migliaia ("9000", "9.000"). */
@@ -25,58 +24,58 @@ export function parseWhole(text: string): number | "empty" | "invalid" {
   return /^\d+$/.test(t) ? Number(t) : "invalid";
 }
 
-export function emptyActivityForm(): ActivityFormValues {
-  return { steps: "", km: "", kcal: "" };
+export function emptyBikeForm(): BikeFormValues {
+  return { km: "", kcal: "" };
 }
 
-export function activityToForm(a: ActivityRecord | null): ActivityFormValues {
-  if (!a) return emptyActivityForm();
+/** Modulo precompilato con la parte a mano già salvata (vuoto se non c'è). */
+export function bikeToForm(a: Pick<ActivityRecord, "bikeKmManual" | "bikeKcalManual"> | null): BikeFormValues {
+  if (!a) return emptyBikeForm();
   return {
-    steps: a.steps === null ? "" : String(a.steps),
-    km: a.bikeKm === null ? "" : String(a.bikeKm).replace(".", ","),
-    kcal: a.bikeKcalHealth === null ? "" : String(a.bikeKcalHealth).replace(".", ","),
+    km: a.bikeKmManual === null ? "" : String(a.bikeKmManual).replace(".", ","),
+    kcal: a.bikeKcalManual === null ? "" : String(a.bikeKcalManual).replace(".", ","),
   };
 }
 
-/** Controlla il modulo: passi e kcal interi, km anche con decimali; i campi vuoti restano assenti. */
-export function validateActivityForm(v: ActivityFormValues): { ok: true; activity: ParsedActivity } | { ok: false; errors: ActivityFormErrors } {
-  const errors: ActivityFormErrors = {};
-  const out: ParsedActivity = { steps: null, bikeKm: null, bikeKcal: null };
-
-  const steps = parseWhole(v.steps);
-  if (steps === "invalid") errors.steps = "Inserisci un numero intero";
-  else if (steps !== "empty") out.steps = steps;
+/** Controlla il modulo: km anche con decimali, kcal intere; almeno uno dei due, maggiore di zero. */
+export function validateBikeForm(v: BikeFormValues): { ok: true; bike: ParsedBike } | { ok: false; errors: BikeFormErrors } {
+  const errors: BikeFormErrors = {};
+  const out: ParsedBike = { km: null, kcal: null };
 
   const kcal = parseWhole(v.kcal);
   if (kcal === "invalid") errors.kcal = "Inserisci un numero intero";
-  else if (kcal !== "empty") out.bikeKcal = kcal;
+  else if (kcal !== "empty") {
+    if (kcal <= 0) errors.kcal = "Deve essere maggiore di zero";
+    else out.kcal = kcal;
+  }
 
   const km = parseDecimal(v.km);
   if (km === "invalid") errors.km = "Inserisci un numero valido";
   else if (km !== "empty") {
     if (km < 0) errors.km = "Non può essere negativo";
-    else out.bikeKm = km;
+    else if (km === 0) errors.km = "Deve essere maggiore di zero";
+    else out.km = km;
   }
 
-  return Object.keys(errors).length > 0 ? { ok: false, errors } : { ok: true, activity: out };
+  if (Object.keys(errors).length === 0 && out.km === null && out.kcal === null) errors.km = "Inserisci i km o le kcal";
+  return Object.keys(errors).length > 0 ? { ok: false, errors } : { ok: true, bike: out };
 }
 
-/**
- * Attività del giorno da salvare. La fonte è "manuale" per i valori scritti dall'utente;
- * un valore lasciato com'era mantiene la fonte che aveva (es. "salute").
- */
-export function buildActivityRecord(date: DateKey, parsed: ParsedActivity, existing: ActivityRecord | null): ActivityRecord {
-  const stepsSame = existing !== null && parsed.steps === existing.steps;
-  const bikeSame = existing !== null && parsed.bikeKm === existing.bikeKm && parsed.bikeKcal === existing.bikeKcalHealth;
-  return {
-    date,
-    steps: parsed.steps,
-    stepsSource: parsed.steps === null ? null : stepsSame ? existing.stepsSource : "manuale",
-    bikeKm: parsed.bikeKm,
-    bikeKcalHealth: parsed.bikeKcal,
-    bikeSource: parsed.bikeKm === null && parsed.bikeKcal === null ? null : bikeSame ? existing.bikeSource : "manuale",
-  };
+const EMPTY_DAY = (date: DateKey): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: null, bikeKcalManual: null });
+
+/** Il giorno con la parte a mano della bici sostituita: passi e parte di Salute restano come sono. */
+export function withManualBike(date: DateKey, bike: ParsedBike, existing: ActivityRecord | null): ActivityRecord {
+  return { ...(existing ?? EMPTY_DAY(date)), bikeKmManual: bike.km, bikeKcalManual: bike.kcal };
 }
+
+/** Il giorno senza la parte a mano della bici; null se non ce n'è una. Passi e parte di Salute restano come sono. */
+export function withoutManualBike(record: ActivityRecord): ActivityRecord | null {
+  if (record.bikeKmManual === null && record.bikeKcalManual === null) return null;
+  return { ...record, bikeKmManual: null, bikeKcalManual: null };
+}
+
+/** C'è una parte a mano della bici? */
+export const hasManualBike = (a: Pick<ActivityRecord, "bikeKmManual" | "bikeKcalManual"> | null | undefined): boolean => !!a && (a.bikeKmManual !== null || a.bikeKcalManual !== null);
 
 /** Controlla il peso in kg: numero maggiore di zero. */
 export function validateWeight(text: string): { ok: true; weightKg: number } | { ok: false; error: string } {

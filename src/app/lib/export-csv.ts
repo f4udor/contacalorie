@@ -76,7 +76,9 @@ export function measurementsCsv(data: Pick<StoredData, "weighIns" | "activity">)
       csvNumber(a?.bikeKm),
       csvNumber(a?.bikeKcalHealth),
       a?.bikeSource ? SOURCE_LABEL[a.bikeSource] : "",
+      csvNumber(a?.bikeKmManual),
+      csvNumber(a?.bikeKcalManual),
     ];
   });
-  return { content: toCsv(["Data", "Peso (kg)", "Passi", "Fonte passi", "Km in bici", "Kcal bici", "Fonte bici"], rows), rows: rows.length };
+  return { content: toCsv(["Data", "Peso (kg)", "Passi", "Fonte passi", "Km in bici", "Kcal bici", "Fonte bici", "Km bici a mano", "Kcal bici a mano"], rows), rows: rows.length };
 }

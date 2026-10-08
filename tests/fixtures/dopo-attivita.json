@@ -1,6 +1,6 @@
 {
   "id": "dopo-attivita",
-  "descrizione": "Dopo aver salvato 9.000 passi: obiettivo 2.175, composizione 'passi +75', scheda Attività.",
+  "descrizione": "Dopo aver salvato 8 km di bici a mano: obiettivo 2.208, composizione 'bici +108', scheda Attività con 'a mano'.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": null,
@@ -14,16 +14,16 @@
       }
     },
     {
-      "click": "Attività a mano"
+      "click": "Bici a mano"
     },
     {
       "fill": [
-        "Passi",
-        "9000"
+        "Km in bici",
+        "8"
       ]
     },
     {
-      "click": "Salva attività"
+      "click": "Salva bici"
     },
     {
       "wait": 600

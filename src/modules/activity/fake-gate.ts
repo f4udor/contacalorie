@@ -4,12 +4,14 @@ export interface FakeActivity {
   steps: number | null;
   stepsSource: "salute" | "manuale" | null;
   km: number | null;
-  kmSource: "salute" | "manuale" | null;
+  kmSource: "salute" | null;
+  /** Parte a mano della bici: gli invii da Salute non la toccano mai. */
+  kmManual?: number | null;
 }
 
 /**
  * Ingresso finto in memoria, con le stesse regole della funzione `ingest_health` del database
- * (codici per utente, revoca, limite, valori manuali intoccabili). Serve ai test e alle prove senza Supabase.
+ * (codici per utente, revoca, limite; i passi sostituiscono anche un valore a mano; la parte a mano della bici è intoccabile). Serve ai test e alle prove senza Supabase.
  */
 export function createFakeHealthGate(today: string, yesterday: string): HealthGate & {
   codes: Map<string, { user: string; revoked: boolean }>;
@@ -39,20 +41,14 @@ export function createFakeHealthGate(today: string, yesterday: string): HealthGa
         const a = activity.get(key) ?? { steps: null, stepsSource: null, km: null, kmSource: null };
         const done: HealthRow = { date: r.date };
         if (r.steps !== undefined && r.steps > 0) {
-          if (a.steps !== null && a.stepsSource === "manuale") kept.push({ date: r.date, campo: "passi" });
-          else {
-            a.steps = r.steps;
-            a.stepsSource = "salute";
-            done.steps = r.steps;
-          }
+          a.steps = r.steps;
+          a.stepsSource = "salute";
+          done.steps = r.steps;
         }
         if (r.km !== undefined && r.km > 0) {
-          if (a.km !== null && a.kmSource === "manuale") kept.push({ date: r.date, campo: "bici_km" });
-          else {
-            a.km = r.km;
-            a.kmSource = "salute";
-            done.km = r.km;
-          }
+          a.km = r.km;
+          a.kmSource = "salute";
+          done.km = r.km;
         }
         activity.set(key, a);
         if (done.steps !== undefined || done.km !== undefined) saved.push(done);

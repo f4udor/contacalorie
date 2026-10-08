@@ -7,7 +7,7 @@ import type { ActivityRecord, MealRecord, StoredData } from "./types";
 const dish = (id: string, date: string, slot: MealRecord["slot"] = "pranzo", isFree = false, kcal = 500): MealRecord => ({
   id, date, slot, name: id, quantity: null, kcal, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0, isFree, originalText: null,
 });
-const act = (date: string, o: Partial<ActivityRecord> = {}): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, ...o });
+const act = (date: string, o: Partial<ActivityRecord> = {}): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: null, bikeKcalManual: null, ...o });
 const data = (o: Partial<StoredData> = {}): StoredData => ({ version: 1, settings: {}, meals: [], activity: [], weighIns: [], favoriteDishes: [], favoriteMeals: [], ...o });
 
 async function filled(d: StoredData): Promise<DataStore> {
@@ -117,7 +117,7 @@ describe("importLocalData", () => {
     const second = data({
       settings: { weightKg: 80, heightCm: 178 },
       meals: [dish("a", "2026-01-05"), dish("z", "2026-01-06")],
-      activity: [act("2026-01-05", { steps: 100 }), act("2026-01-06", { bikeKm: 10, bikeSource: "manuale" })],
+      activity: [act("2026-01-05", { steps: 100 }), act("2026-01-06", { bikeKm: 10, bikeSource: "salute" })],
       weighIns: [{ date: "2026-01-05", weightKg: 80 }, { date: "2026-01-06", weightKg: 91 }],
     });
     const r = await importLocalData(second, remote);
@@ -169,7 +169,18 @@ describe("importLocalData", () => {
 describe("mergeActivity", () => {
   it("per ogni gruppo vince il valore già nell'account, se c'è", () => {
     const remote = act("2026-01-05", { steps: 8000, stepsSource: "salute" });
-    const local = act("2026-01-05", { steps: 1, stepsSource: "manuale", bikeKm: 20, bikeSource: "manuale" });
-    expect(mergeActivity(remote, local)).toEqual({ date: "2026-01-05", steps: 8000, stepsSource: "salute", bikeKm: 20, bikeKcalHealth: null, bikeSource: "manuale" });
+    const local = act("2026-01-05", { steps: 1, stepsSource: "manuale", bikeKm: 20, bikeSource: "salute", bikeKmManual: 6 });
+    expect(mergeActivity(remote, local)).toEqual({ date: "2026-01-05", steps: 8000, stepsSource: "salute", bikeKm: 20, bikeKcalHealth: null, bikeSource: "salute", bikeKmManual: 6, bikeKcalManual: null });
+  });
+  it("la parte a mano e la parte di Salute si scelgono ciascuna per conto suo", () => {
+    const remote = act("2026-01-05", { bikeKm: 10, bikeSource: "salute" });
+    const local = act("2026-01-05", { bikeKm: 3, bikeSource: "salute", bikeKmManual: 6 });
+    expect(mergeActivity(remote, local)).toMatchObject({ bikeKm: 10, bikeKmManual: 6 });
+  });
+  it("un vecchio dato del browser con bici a mano finisce nella parte a mano", async () => {
+    const remote = createMemoryDataStore();
+    const legacy = { date: "2026-01-05", steps: null, stepsSource: null, bikeKm: 12, bikeKcalHealth: 300, bikeSource: "manuale" } as unknown as ActivityRecord;
+    await importLocalData(data({ activity: [legacy] }), remote);
+    expect(await remote.getActivity("2026-01-05")).toMatchObject({ bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: 12, bikeKcalManual: 300 });
   });
 });

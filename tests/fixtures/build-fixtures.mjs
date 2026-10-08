@@ -11,7 +11,7 @@ let n = 0;
 const meal = (date, slot, name, kcal, p, c, f, fib, salt, extra = {}) => ({
   id: `m${++n}`, date, slot, name, kcal, protein: p, carbs: c, fat: f, fiber: fib, salt, isFree: false, originalText: null, ...extra,
 });
-const activity = (date, a) => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, ...a });
+const activity = (date, a) => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: null, bikeKcalManual: null, ...a });
 const data = (parts = {}) => ({ version: 1, settings: {}, meals: [], activity: [], weighIns: [], ...parts });
 
 const scenarios = [];
@@ -59,7 +59,7 @@ add(
 
 add(
   "oggi-bici",
-  "Caso E del brief: 30 km in bici a mano: bonus 405, obiettivo 2.505, carboidrati 329 g.",
+  "Caso E del brief: 30 km in bici inseriti a mano (solo parte a mano): bonus 405, obiettivo 2.505, carboidrati 329 g.",
   "2026-01-05",
   data({
     settings: { weightKg: 100 },
@@ -67,7 +67,7 @@ add(
       meal("2026-01-05", "colazione", "Pane e marmellata", 380, 9, 70, 6, 3, 0.8),
       meal("2026-01-05", "pranzo", "Pasta al ragù", 800, 35, 100, 25, 6, 2.2),
     ],
-    activity: [activity("2026-01-05", { bikeKm: 30, bikeSource: "manuale" })],
+    activity: [activity("2026-01-05", { bikeKmManual: 30 })],
   }),
 );
 
@@ -134,20 +134,21 @@ add("pannello-elimina", "Eliminazione: chiede conferma prima di cancellare.", "2
 const conAttivita = data({
   settings: { weightKg: 100 },
   meals: [meal("2026-01-05", "pranzo", "Pasta al ragù", 800, 35, 100, 25, 6, 2.2)],
-  activity: [activity("2026-01-05", { steps: 9000, stepsSource: "manuale", bikeKm: 30, bikeSource: "manuale" })],
+  activity: [activity("2026-01-05", { steps: 9000, stepsSource: "salute", bikeKm: 12.4, bikeSource: "salute", bikeKmManual: 8 })],
 });
-add("oggi-attivita", "Attività del giorno: passi e bici (km e kcal calcolate) con la fonte 'manuale'.", "2026-01-05", conAttivita);
-add("oggi-attivita-salute", "Attività con kcal della bici da Salute (800 kcal): fonte 'da Salute', bonus bici 400.", "2026-01-05", data({
+add("oggi-attivita", "Attività del giorno: passi da Salute (non toccabili) e bici con il totale (20,4 km) e il dettaglio '12,4 km da Salute + 8 km a mano'; si tocca solo la parte a mano.", "2026-01-05", conAttivita);
+add("oggi-attivita-salute", "Attività con kcal della bici da Salute (800 kcal): fonte 'da Salute', bonus bici 400, nessuna parte a mano: la riga della bici non si tocca.", "2026-01-05", data({
   settings: { weightKg: 100 },
   activity: [activity("2026-01-05", { steps: 8000, stepsSource: "salute", bikeKm: 31, bikeKcalHealth: 800, bikeSource: "salute" })],
 }));
-add("pannello-aggiungi-completo", "Pannello Aggiungi senza AI configurata: selettore AI | Manuale accanto al titolo, campo 'Cosa hai mangiato?' vuoto, avviso che invita a usare Manuale, e sotto Preferiti, Attività a mano, Pesata.", "2026-01-08", null, { fisso: true, passi: [apri] });
-add("pannello-attivita", "Attività a mano: modulo vuoto.", "2026-01-08", null, { fisso: true, passi: [apri, { click: "Attività a mano" }] });
-add("pannello-attivita-errori", "Attività a mano con valori non validi: errori accanto ai campi.", "2026-01-08", null, {
+add("pannello-aggiungi-completo", "Pannello Aggiungi senza AI configurata: selettore AI | Manuale accanto al titolo, campo 'Cosa hai mangiato?' vuoto, avviso che invita a usare Manuale, e sotto Preferiti, Bici a mano, Pesata.", "2026-01-08", null, { fisso: true, passi: [apri] });
+add("pannello-attivita", "Bici a mano: modulo vuoto (km e kcal facoltative, almeno uno).", "2026-01-08", null, { fisso: true, passi: [apri, { click: "Bici a mano" }] });
+add("pannello-attivita-errori", "Bici a mano con valori non validi: errori accanto ai campi.", "2026-01-08", null, {
   fisso: true,
-  passi: [apri, { click: "Attività a mano" }, { fill: ["Passi", "tanti"] }, { fill: ["Km in bici", "-2"] }, { fill: ["Kcal bici", "1,5"] }, { click: "Salva attività" }],
+  passi: [apri, { click: "Bici a mano" }, { fill: ["Km in bici", "-2"] }, { fill: ["Kcal", "1,5"] }, { click: "Salva bici" }],
 });
-add("pannello-attivita-modifica", "Modifica dell'attività già inserita (dalla scheda Attività).", "2026-01-05", conAttivita, { fisso: true, passi: [{ click: "Passi" }] });
+add("pannello-attivita-modifica", "Modifica della bici a mano già inserita (dalla scheda Attività): campi precompilati con la parte a mano, e 'Elimina la bici a mano'.", "2026-01-05", conAttivita, { fisso: true, passi: [{ clickRole: { role: "button", name: "Modifica la bici a mano", exact: false } }] });
+add("oggi-passi-sola-lettura", "Toccando la riga dei passi non si apre nessun pannello.", "2026-01-05", conAttivita, { passi: [{ click: "Passi", exact: true }, { wait: 400 }] });
 add("pannello-pesata", "Pesata: modulo vuoto.", "2026-01-08", null, { fisso: true, passi: [apri, { click: "Pesata", exact: true }] });
 add("pannello-pesata-errore", "Pesata con un valore non valido.", "2026-01-08", null, {
   fisso: true,
@@ -160,8 +161,8 @@ add("pannello-pesata-esistente", "Seconda pesata nello stesso giorno: precompila
 add("dopo-pesata", "Dopo aver salvato 90 kg da un profilo senza peso: la scheda proteine ha l'obiettivo 125 g (1,4 × 90).", "2026-01-08", null, {
   passi: [apri, { click: "Pesata", exact: true }, { fill: ["Peso (kg)", "90"] }, { click: "Salva pesata" }, { wait: 600 }],
 });
-add("dopo-attivita", "Dopo aver salvato 9.000 passi: obiettivo 2.175, composizione 'passi +75', scheda Attività.", "2026-01-08", null, {
-  passi: [apri, { click: "Attività a mano" }, { fill: ["Passi", "9000"] }, { click: "Salva attività" }, { wait: 600 }],
+add("dopo-attivita", "Dopo aver salvato 8 km di bici a mano: obiettivo 2.208, composizione 'bici +108', scheda Attività con 'a mano'.", "2026-01-08", null, {
+  passi: [apri, { click: "Bici a mano" }, { fill: ["Km in bici", "8"] }, { click: "Salva bici" }, { wait: 600 }],
 });
 
 // --- Settimana (T2.6)
@@ -186,7 +187,7 @@ const settimanaCompleta = data({
   ],
   activity: [
     activity("2026-01-05", { steps: 8000, stepsSource: "manuale" }),
-    activity("2026-01-06", { steps: 7200, stepsSource: "manuale", bikeKm: 20, bikeSource: "manuale" }),
+    activity("2026-01-06", { steps: 7200, stepsSource: "manuale", bikeKmManual: 20 }),
     activity("2026-01-07", { steps: 9000, stepsSource: "manuale" }),
     activity("2026-01-09", { steps: 6500, stepsSource: "manuale" }),
   ],
@@ -321,7 +322,7 @@ add("ai-dopo-conferma", "Dopo Conferma: i due piatti sono nel pasto Cena di oggi
 
 // --- Pannello Aggiungi: AI | Manuale (T4b.1)
 const cenaTotano = { slot: "cena", dishes: [dish("Anelli di totano", "150 g", true, 280, 22, 18, 14, 1, 1.4, "Ho ipotizzato 150 g di totano fritto."), dish("Insalata di pomodorini", "1 ciotola", true, 60, 2, 8, 2, 3, 0.1)] };
-add("aggiungi-manuale", "Pannello Aggiungi su Manuale: modulo del piatto con 'Stima con AI' (AI attiva) e sotto Preferiti, Attività a mano, Pesata.", "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, ai: { risposte: [] }, passi: [apri, manuale] });
+add("aggiungi-manuale", "Pannello Aggiungi su Manuale: modulo del piatto con 'Stima con AI' (AI attiva) e sotto Preferiti, Bici a mano, Pesata.", "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, ai: { risposte: [] }, passi: [apri, manuale] });
 add("ai-fascia-fissata", "'+ Aggiungi piatto' del Pranzo: titolo 'Pranzo', il modello ha indicato la Cena ma i piatti restano nel Pranzo (nessuna scelta della fascia).", "2026-01-05", pranzo2, { fisso: true, ai: { risposte: [prop(cenaTotano)] }, passi: [{ clickRole: { role: "button", name: "+ Aggiungi piatto", exact: false } }, { fill: ["Cosa hai mangiato?", "anelli di totano e un'insalata di pomodorini"] }, { clickRole: { role: "button", name: "Stima", exact: true } }, { wait: 600 }] });
 add("ai-fascia-fissata-conferma", "Dopo Conferma con la fascia fissata sul Pranzo: i due piatti sono nel Pranzo di oggi, non nella Cena.", "2026-01-05", pranzo2, { ai: { risposte: [prop(cenaTotano)] }, passi: [{ clickRole: { role: "button", name: "+ Aggiungi piatto", exact: false } }, { fill: ["Cosa hai mangiato?", "anelli di totano e un'insalata di pomodorini"] }, { clickRole: { role: "button", name: "Stima", exact: true } }, { wait: 600 }, { clickRole: { role: "button", name: "Conferma", exact: true } }, { wait: 700 }] });
 
@@ -462,9 +463,9 @@ const settimanaPiena = data({
     meal("2026-01-07", "pranzo", "Tiramisù", 450, 8, 50, 22, 1, 0.4),
   ],
   activity: [
-    activity("2026-01-05", { steps: 8123, stepsSource: "salute", bikeKm: 12.4, bikeSource: "salute" }),
-    activity("2026-01-06", { steps: 5400, stepsSource: "manuale", bikeKm: 20, bikeSource: "manuale" }),
-    activity("2026-01-07", { steps: 9450, stepsSource: "salute" }),
+    activity("2026-01-05", { steps: 8123, stepsSource: "salute", bikeKm: 12.4, bikeSource: "salute", bikeKmManual: 8 }),
+    activity("2026-01-06", { steps: 5400, stepsSource: "manuale", bikeKmManual: 20 }),
+    activity("2026-01-07", { steps: 9450, stepsSource: "salute", bikeKm: 5.2, bikeSource: "salute" }),
   ],
 });
 const conLibero = { ...settimanaPiena, meals: settimanaPiena.meals.map((m) => (m.date === "2026-01-07" && m.slot === "pranzo" ? { ...m, isFree: true } : m)) };
@@ -473,14 +474,16 @@ scenarios.push({ id: "settimana-peso-nessuna-pesata", descrizione: "La scheda Pe
 settScheda("settimana-pannello-peso", "Pannello Pesate: le pesate della settimana dalla più recente, ognuna con il cestino, e 'Aggiungi pesata'.", settimanaPiena, [tocca("Peso")]);
 settScheda("settimana-pannello-peso-aggiungi", "Aggiungi pesata: scelta del giorno della settimana e campo del peso.", settimanaPiena, [tocca("Peso"), { click: "Aggiungi pesata" }]);
 settScheda("settimana-pannello-peso-vuoto", "Pannello Pesate senza pesate nella settimana.", senzaPesate, [tocca("Peso")]);
-settScheda("settimana-pannello-bici", "Pannello Bici: sette giorni con km e fonte; il cestino solo sul valore a mano.", settimanaPiena, [tocca("Bici")]);
-settScheda("settimana-pannello-passi", "Pannello Passi: sette giorni con passi e fonte; il cestino solo sul valore a mano.", settimanaPiena, [tocca("Passi medi")]);
+settScheda("settimana-pannello-bici", "Pannello Bici: sette giorni con la parte di Salute (sola lettura) e la parte a mano (si tocca per modificarla, cestino); '+ A mano' sui giorni senza.", settimanaPiena, [tocca("Bici")]);
+settScheda("settimana-pannello-passi", "Pannello Passi in sola lettura: sette giorni con passi e fonte; il cestino solo su un vecchio valore a mano.", settimanaPiena, [tocca("Passi medi")]);
+settScheda("settimana-bici-modifica", "Pannello Bici: toccando la parte a mano di lunedì si apre il modulo con i campi precompilati.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Modifica la bici a mano di Lunedì 5 gennaio", exact: true } }]);
+settScheda("settimana-bici-aggiungi", "Pannello Bici: '+ A mano' su un giorno senza la parte a mano apre il modulo vuoto.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Aggiungi la bici a mano di Mercoledì 7 gennaio", exact: true } }]);
 settScheda("settimana-pannello-bici-vuoto", "Pannello Bici senza nessun valore nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Bici")]);
 settScheda("settimana-pannello-passi-vuoto", "Pannello Passi senza nessun valore nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Passi medi")]);
 settScheda("settimana-pannello-libero", "Pasto libero presente: giorno, fascia, kcal e 'Togli pasto libero'.", conLibero, [tocca("Pasto libero")]);
 settScheda("settimana-pannello-libero-scegli", "Nessun pasto libero: elenco dei pasti della settimana con 'Segna come libero'.", settimanaPiena, [tocca("Pasto libero")]);
 settScheda("settimana-pannello-libero-vuoto", "Nessun pasto libero e nessun pasto nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Pasto libero")]);
-settScheda("settimana-dopo-elimina-bici", "Dopo aver eliminato i km a mano di martedì e chiuso il pannello: il totale dei km (da 32,4 a 12,4) si è aggiornato.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Elimina il valore di Martedì 6 gennaio", exact: true } }, { wait: 500 }, { click: "Chiudi", exact: true }]);
+settScheda("settimana-dopo-elimina-bici", "Dopo aver eliminato la bici a mano di martedì e chiuso il pannello: il totale dei km (da 45,6 a 25,6) si è aggiornato.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Elimina la bici a mano di Martedì 6 gennaio", exact: true } }, { wait: 500 }, { click: "Chiudi", exact: true }]);
 settScheda("settimana-dopo-togli-libero", "Dopo 'Togli pasto libero': la scheda dice 'non usato' e il pasto resta.", conLibero, [tocca("Pasto libero"), { click: "Togli pasto libero" }, { wait: 500 }, { click: "Chiudi", exact: true }]);
 
 scenarios.push({
@@ -509,8 +512,8 @@ add("oggi-scorrimento-preferiti", "Dopo «Preferiti»: il piatto è salvato, la 
 add("oggi-scorrimento-cestino", "Dopo il cestino: il piatto è eliminato subito, senza conferma, e i totali si ricalcolano.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), { clickRole: { role: "button", name: "Elimina Pasta al pomodoro", exact: true } }, { wait: 500 }] });
 add("oggi-scorrimento-a-destra", "Scorrimento verso destra: non succede nulla.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro", 140)] });
 settScheda("settimana-pesate-scorrimento", "Pannello Pesate: scorrendo una pesata compare solo il cestino.", settimanaPiena, [tocca("Peso"), sw("Giovedì 8 gennaio")]);
-settScheda("settimana-bici-scorrimento", "Pannello Bici: scorrendo il valore a mano di martedì compare il cestino; le righe da Salute non scorrono.", settimanaPiena, [tocca("Bici"), sw("Martedì 6 gennaio")]);
-settScheda("settimana-bici-scorrimento-salute", "Pannello Bici: una riga con fonte Salute non mostra nessuna azione.", settimanaPiena, [tocca("Bici"), sw("Lunedì 5 gennaio")]);
+settScheda("settimana-bici-scorrimento", "Pannello Bici: scorrendo la parte a mano di martedì compare il cestino; la parte di Salute non si elimina.", settimanaPiena, [tocca("Bici"), sw("Martedì 6 gennaio")]);
+settScheda("settimana-bici-scorrimento-salute", "Pannello Bici: una riga con la sola parte di Salute non mostra nessuna azione.", settimanaPiena, [tocca("Bici"), sw("Mercoledì 7 gennaio")]);
 
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));

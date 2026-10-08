@@ -46,10 +46,14 @@ export interface MealKey {
 export interface Activity {
   /** Passi del giorno; null se assenti. */
   steps: number | null;
-  /** Km in bici; null se assenti. */
+  /** Km in bici da Salute; null se assenti. */
   bikeKm: number | null;
   /** Kcal della bici registrate da Salute; null se assenti. */
   bikeKcalHealth: number | null;
+  /** Km in bici inseriti a mano (si sommano a quelli di Salute); assenti = null o non presenti. */
+  bikeKmManual?: number | null;
+  /** Kcal della bici inserite a mano (sostituiscono km a mano × kcal per km); assenti = null o non presenti. */
+  bikeKcalManual?: number | null;
 }
 
 export interface Day {

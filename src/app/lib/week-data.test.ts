@@ -21,10 +21,10 @@ describe("loadWeekData", () => {
     const s = createMemoryDataStore();
     await s.saveMeal(meal("a", "2026-01-06", 500));
     await s.saveMeal(meal("fuori", "2026-01-12", 900));
-    await s.saveActivity({ date: "2026-01-07", steps: 9000, stepsSource: "manuale", bikeKm: 12, bikeKcalHealth: null, bikeSource: "manuale" });
+    await s.saveActivity({ date: "2026-01-07", steps: 9000, stepsSource: "manuale", bikeKm: 12, bikeKcalHealth: null, bikeSource: "salute", bikeKmManual: 5, bikeKcalManual: null });
     const w = await loadWeekData(s, "2026-01-11");
     expect(w.days[1].meals).toHaveLength(1);
-    expect(w.days[2].activity).toEqual({ steps: 9000, bikeKm: 12, bikeKcalHealth: null });
+    expect(w.days[2].activity).toEqual({ steps: 9000, bikeKm: 12, bikeKcalHealth: null, bikeKmManual: 5, bikeKcalManual: null });
     expect(w.days.flatMap((d) => d.meals).map((m) => m.id)).toEqual(["a"]);
   });
 

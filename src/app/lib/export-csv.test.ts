@@ -61,18 +61,18 @@ describe("dishesCsv", () => {
 });
 
 describe("measurementsCsv", () => {
-  const a = (date: string, o: Partial<ActivityRecord>): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, ...o });
+  const a = (date: string, o: Partial<ActivityRecord>): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: null, bikeKcalManual: null, ...o });
   it("una riga per giorno con pesata o attività, in ordine di data, con le fonti", () => {
     const { content, rows } = measurementsCsv({
       weighIns: [{ date: "2026-01-07", weightKg: 91.5 }, { date: "2026-01-05", weightKg: 92 }],
-      activity: [a("2026-01-05", { steps: 9000, stepsSource: "salute", bikeKm: 20.5, bikeKcalHealth: 600, bikeSource: "manuale" }), a("2026-01-06", { steps: 100, stepsSource: "manuale" })],
+      activity: [a("2026-01-05", { steps: 9000, stepsSource: "salute", bikeKm: 20.5, bikeKcalHealth: 600, bikeSource: "salute", bikeKmManual: 8, bikeKcalManual: 220 }), a("2026-01-06", { steps: 100, stepsSource: "manuale" })],
     });
     const l = lines(content);
     expect(rows).toBe(3);
-    expect(l[0]).toBe("Data;Peso (kg);Passi;Fonte passi;Km in bici;Kcal bici;Fonte bici");
-    expect(l[1]).toBe("2026-01-05;92;9000;Salute;20,5;600;manuale");
-    expect(l[2]).toBe("2026-01-06;;100;manuale;;;");
-    expect(l[3]).toBe("2026-01-07;91,5;;;;;");
+    expect(l[0]).toBe("Data;Peso (kg);Passi;Fonte passi;Km in bici;Kcal bici;Fonte bici;Km bici a mano;Kcal bici a mano");
+    expect(l[1]).toBe("2026-01-05;92;9000;Salute;20,5;600;Salute;8;220");
+    expect(l[2]).toBe("2026-01-06;;100;manuale;;;;;");
+    expect(l[3]).toBe("2026-01-07;91,5;;;;;;;");
   });
   it("senza dati: solo l'intestazione", () => {
     expect(measurementsCsv({ weighIns: [], activity: [] }).rows).toBe(0);

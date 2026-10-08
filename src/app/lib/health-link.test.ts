@@ -30,7 +30,7 @@ describe("avviso dei dati da Salute", () => {
 });
 
 describe("valori ricevuti", () => {
-  const rec = (date: string, o: Partial<ActivityRecord>): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, ...o });
+  const rec = (date: string, o: Partial<ActivityRecord>): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: null, bikeKcalManual: null, ...o });
   it("solo quelli con fonte salute, per i giorni chiesti", () => {
     const list = [rec("2026-01-08", { steps: 8000, stepsSource: "salute", bikeKm: 10, bikeSource: "manuale" }), rec("2026-01-07", { bikeKm: 5, bikeSource: "salute" }), rec("2026-01-06", { steps: 1, stepsSource: "salute" })];
     expect(receivedFromHealth(list, ["2026-01-08", "2026-01-07"])).toEqual([

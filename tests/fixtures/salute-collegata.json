@@ -14,7 +14,9 @@
         "stepsSource": "salute",
         "bikeKm": 12.4,
         "bikeKcalHealth": null,
-        "bikeSource": "salute"
+        "bikeSource": "salute",
+        "bikeKmManual": null,
+        "bikeKcalManual": null
       },
       {
         "date": "2026-01-07",
@@ -22,7 +24,9 @@
         "stepsSource": "salute",
         "bikeKm": null,
         "bikeKcalHealth": null,
-        "bikeSource": null
+        "bikeSource": null,
+        "bikeKmManual": null,
+        "bikeKcalManual": null
       }
     ],
     "weighIns": []

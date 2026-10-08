@@ -1,6 +1,8 @@
 import { groupMeals } from "@/engine";
 import type { DateKey, MealSlot } from "@/engine";
 import type { ActivityRecord, DataStore, MealRecord, WeighIn } from "@/data";
+import { hasManualBike, withManualBike, withoutManualBike } from "./activity-form";
+import type { ParsedBike } from "./activity-form";
 import { setMealFree } from "./save-dish";
 
 export type ActivityKind = "bici" | "passi";
@@ -12,12 +14,17 @@ export function weighInsInWeek(weighIns: readonly WeighIn[], monday: DateKey, su
 
 export interface ActivityRow {
   date: DateKey;
-  /** Passi, km o kcal inserite a mano; null se il giorno è vuoto. */
+  /** Passi del giorno (sempre da Salute; un vecchio valore a mano si può solo eliminare). */
   steps: number | null;
+  /** Bici, parte di Salute: km e kcal registrate. */
   km: number | null;
   kcal: number | null;
+  /** Fonte dei passi o della parte di Salute della bici. */
   source: "salute" | "manuale" | null;
-  /** Solo i valori inseriti a mano si eliminano; quelli da Salute no. */
+  /** Bici, parte inserita a mano. */
+  kmManual: number | null;
+  kcalManual: number | null;
+  /** Si può eliminare: i vecchi passi a mano e la parte a mano della bici. Mai un valore da Salute. */
   canDelete: boolean;
 }
 
@@ -31,26 +38,25 @@ export function activityRows(kind: ActivityKind, activity: readonly ActivityReco
     if (kind === "passi") {
       const steps = a?.steps ?? null;
       const source = steps === null ? null : (a?.stepsSource ?? null);
-      return { date, steps, km: null, kcal: null, source, canDelete: steps !== null && canDeleteSource(source) };
+      return { date, steps, km: null, kcal: null, source, kmManual: null, kcalManual: null, canDelete: steps !== null && canDeleteSource(source) };
     }
     const km = a?.bikeKm ?? null;
     const kcal = a?.bikeKcalHealth ?? null;
-    const source = km === null && kcal === null ? null : (a?.bikeSource ?? null);
-    return { date, steps: null, km, kcal, source, canDelete: (km !== null || kcal !== null) && canDeleteSource(source) };
+    const source = km === null && kcal === null ? null : (a?.bikeSource ?? "salute");
+    return { date, steps: null, km, kcal, source, kmManual: a?.bikeKmManual ?? null, kcalManual: a?.bikeKcalManual ?? null, canDelete: hasManualBike(a) };
   });
 }
 
-/** Il record senza il valore di passi o bici indicato (il giorno resta vuoto per quel valore); null se il valore non si può eliminare. */
+/** Il record senza il valore a mano indicato (vecchi passi a mano o parte a mano della bici); null se non c'è nulla da eliminare. */
 export function withoutActivityValue(record: ActivityRecord, kind: ActivityKind): ActivityRecord | null {
   if (kind === "passi") {
     if (record.steps === null || !canDeleteSource(record.stepsSource)) return null;
     return { ...record, steps: null, stepsSource: null };
   }
-  if ((record.bikeKm === null && record.bikeKcalHealth === null) || !canDeleteSource(record.bikeSource)) return null;
-  return { ...record, bikeKm: null, bikeKcalHealth: null, bikeSource: null };
+  return withoutManualBike(record);
 }
 
-/** Elimina un valore di passi o bici inserito a mano. Con un valore da Salute non fa nulla e restituisce falso. */
+/** Elimina un vecchio valore di passi a mano o la parte a mano della bici. Con un valore da Salute non fa nulla e restituisce falso. */
 export async function deleteActivityValue(store: DataStore, date: DateKey, kind: ActivityKind): Promise<boolean> {
   const record = await store.getActivity(date);
   if (!record) return false;
@@ -58,6 +64,11 @@ export async function deleteActivityValue(store: DataStore, date: DateKey, kind:
   if (!next) return false;
   await store.saveActivity(next);
   return true;
+}
+
+/** Salva la parte a mano della bici di un giorno (nuova o modificata). Non tocca i passi né la parte di Salute. */
+export async function saveManualBike(store: DataStore, date: DateKey, bike: ParsedBike): Promise<void> {
+  await store.saveActivity(withManualBike(date, bike, await store.getActivity(date)));
 }
 
 export interface WeekMeal {

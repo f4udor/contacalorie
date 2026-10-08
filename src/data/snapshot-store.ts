@@ -1,6 +1,7 @@
 import type { DateKey } from "@/engine";
 import type { DataStore } from "./store";
 import { STORAGE_VERSION } from "./types";
+import { normalizeActivity } from "./mapping";
 import type { ActivityRecord, FavoriteDish, FavoriteMeal, HealthLinkStatus, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 
 /** Dove vengono scritti i dati serializzati. */
@@ -49,7 +50,9 @@ function parse(text: string | null): Parsed {
   // I preferiti sono nati nella fase 4: i dati più vecchi non li hanno.
   const favoriteDishes = Array.isArray(raw.favoriteDishes) ? raw.favoriteDishes : [];
   const favoriteMeals = Array.isArray(raw.favoriteMeals) ? raw.favoriteMeals : [];
-  return { data: { ...(raw as unknown as StoredData), favoriteDishes, favoriteMeals } as StoredData, notice: null };
+  // La parte a mano della bici è nata nella fase 5b: i dati più vecchi non ce l'hanno (e un vecchio valore di bici a mano si sposta lì).
+  const activity = (raw.activity as (Partial<ActivityRecord> & { date: string })[]).map(normalizeActivity);
+  return { data: { ...(raw as unknown as StoredData), activity, favoriteDishes, favoriteMeals } as StoredData, notice: null };
 }
 
 const copy = <T>(v: T): T => structuredClone(v);
@@ -142,7 +145,8 @@ export class SnapshotDataStore implements DataStore {
     return copy(this.data.activity.filter((a) => inRange(a.date, from, to)));
   }
 
-  async saveActivity(activity: ActivityRecord) {
+  async saveActivity(record: ActivityRecord) {
+    const activity = normalizeActivity(record);
     const i = this.data.activity.findIndex((a) => a.date === activity.date);
     if (i >= 0) this.data.activity[i] = copy(activity);
     else this.data.activity.push(copy(activity));

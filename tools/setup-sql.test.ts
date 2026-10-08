@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 // @ts-expect-error file .mjs senza tipi
-import { UPDATE_HEADER_PHASE_5, buildSetupSql, buildUpdateSql } from "./build-setup-sql.mjs";
+import { UPDATE_HEADER_PHASE_5, UPDATE_HEADER_PHASE_5B, buildSetupSql, buildUpdateSql } from "./build-setup-sql.mjs";
 
 const root = path.resolve(__dirname, "..");
 
@@ -39,6 +39,23 @@ describe("supabase/setup.sql", () => {
     const names = [...update.matchAll(/-- ===== (\S+\.sql) =====/g)].map((m) => m[1]);
     expect(names[0]).toBe("20260101000010_ingresso_salute.sql");
     expect(names.every((n) => Number(n.slice(0, 14)) >= 20260101000010)).toBe(true);
+  });
+
+  it("aggiornamento-fase-5b.sql è aggiornato e contiene solo le migrazioni dalla 13", () => {
+    const update = readFileSync(path.join(root, "supabase/aggiornamento-fase-5b.sql"), "utf8");
+    expect(update).toBe(buildUpdateSql(path.join(root, "supabase/migrations"), 13, UPDATE_HEADER_PHASE_5B));
+    const names = [...update.matchAll(/-- ===== (\S+\.sql) =====/g)].map((m) => m[1]);
+    expect(names[0]).toBe("20260101000013_bici_a_mano.sql");
+    expect(names.every((n) => Number(n.slice(0, 14)) >= 20260101000013)).toBe(true);
+  });
+
+  it("la bici a mano (fase 5b): due colonne nuove, spostamento dei vecchi valori, l'ingresso non tocca la parte a mano", () => {
+    expect(onDisk).toContain("add column bike_km_manual");
+    expect(onDisk).toContain("add column bike_kcal_manual");
+    expect(onDisk).toMatch(/set bike_km_manual = bike_km,/);
+    const fn = onDisk.slice(onDisk.lastIndexOf("create or replace function public.ingest_health("));
+    expect(fn).not.toMatch(/bike_km_manual\s*=/);
+    expect(fn).not.toMatch(/steps_source = 'manuale'/);
   });
 
   it("l'ingresso dei dati da Salute: funzione chiamabile senza sessione, solo impronta del codice", () => {

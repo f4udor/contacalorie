@@ -21,7 +21,12 @@ export interface MealRecord extends Meal {
 
 export type ActivitySource = "salute" | "manuale";
 
-/** Attività del giorno (tabella `daily_activity`): una per data. */
+/**
+ * Attività del giorno (tabella `daily_activity`): una per data.
+ * Passi: arrivano da Salute; un vecchio valore con fonte "manuale" si può solo eliminare.
+ * Bici: `bikeKm`, `bikeKcalHealth` e `bikeSource` sono la parte di Salute (l'app non li modifica);
+ * `bikeKmManual` e `bikeKcalManual` sono la parte a mano (un valore per giorno), che si somma e non è mai toccata dagli invii.
+ */
 export interface ActivityRecord {
   date: DateKey;
   steps: number | null;
@@ -29,6 +34,8 @@ export interface ActivityRecord {
   bikeKm: number | null;
   bikeKcalHealth: number | null;
   bikeSource: ActivitySource | null;
+  bikeKmManual: number | null;
+  bikeKcalManual: number | null;
 }
 
 /** Collegamento con Salute: codice personale e stato degli invii (letto dal registro delle chiamate). */

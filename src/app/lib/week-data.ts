@@ -34,7 +34,7 @@ export async function loadWeekData(store: DataStore, date: DateKey): Promise<Wee
     return {
       date: d,
       meals: meals.filter((m) => m.date === d),
-      activity: { steps: a?.steps ?? null, bikeKm: a?.bikeKm ?? null, bikeKcalHealth: a?.bikeKcalHealth ?? null },
+      activity: { steps: a?.steps ?? null, bikeKm: a?.bikeKm ?? null, bikeKcalHealth: a?.bikeKcalHealth ?? null, bikeKmManual: a?.bikeKmManual ?? null, bikeKcalManual: a?.bikeKcalManual ?? null },
     };
   });
 

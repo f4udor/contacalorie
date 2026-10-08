@@ -6,7 +6,7 @@ import type { MealRecord } from "@/data";
 import type { MealSlot } from "@/engine";
 import { useDataStore } from "./data-provider";
 import { ActivityCard } from "./components/activity-card";
-import { AddPanel, EditActivityPanel, EditMealPanel, SaveMealPanel } from "./components/add-panel";
+import { AddPanel, EditBikePanel, EditMealPanel, SaveMealPanel } from "./components/add-panel";
 import { MealList } from "./components/meal-list";
 import { Card } from "./components/card";
 import { DayHeader } from "./components/day-header";
@@ -29,7 +29,7 @@ export function OggiScreen() {
   const date = param && DATE_PARAM.test(param) ? param : today;
   const { data, reload } = useWeekData(date);
   const store = useDataStore();
-  const [panel, setPanel] = useState<{ kind: "add"; slot?: MealSlot } | { kind: "edit"; meal: MealRecord } | { kind: "activity" } | { kind: "saveMeal"; slot: MealSlot } | null>(null);
+  const [panel, setPanel] = useState<{ kind: "add"; slot?: MealSlot } | { kind: "edit"; meal: MealRecord } | { kind: "bike" } | { kind: "saveMeal"; slot: MealSlot } | null>(null);
 
   const [favoriteNote, setFavoriteNote] = useState<string | null>(null);
 
@@ -102,7 +102,7 @@ export function OggiScreen() {
               {favoriteNote}
             </p>
           )}
-          <ActivityCard activity={activity} settings={data!.settings} onEdit={() => setPanel({ kind: "activity" })} />
+          <ActivityCard activity={activity} settings={data!.settings} onEditBike={() => setPanel({ kind: "bike" })} />
         </div>
       )}
       <button
@@ -116,7 +116,7 @@ export function OggiScreen() {
         </svg>
       </button>
       {panelContext && panel?.kind === "add" && <AddPanel {...panelContext} initialSlot={panel.slot} />}
-      {panelContext && panel?.kind === "activity" && <EditActivityPanel {...panelContext} />}
+      {panelContext && panel?.kind === "bike" && <EditBikePanel {...panelContext} />}
       {panelContext && panel?.kind === "saveMeal" && <SaveMealPanel {...panelContext} slot={panel.slot} />}
       {panelContext && panel?.kind === "edit" && <EditMealPanel {...panelContext} meal={panel.meal} />}
     </main>

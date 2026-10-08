@@ -1,3 +1,4 @@
+import { bikeKmTotal } from "./activity";
 import { hasFreeMealInWeek, kcalBudget, kcalEaten } from "./budget";
 import { weekDates } from "./dates";
 import { previewDayTarget } from "./preview";
@@ -79,7 +80,7 @@ export function weekSummary(date: DateKey, knownDays: readonly Day[], settings: 
           salt: avgOf((d) => sum(d, "salt")) as number,
         };
 
-  const kmValues = days.map((d) => d.activity.bikeKm).filter((v): v is number => v !== null);
+  const kmValues = days.map((d) => bikeKmTotal(d.activity)).filter((v): v is number => v !== null);
   const stepValues = days.map((d) => d.activity.steps).filter((v): v is number => v !== null && v > 0);
 
   return {

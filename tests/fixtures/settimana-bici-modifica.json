@@ -1,6 +1,6 @@
 {
-  "id": "settimana-pannello-libero-scegli",
-  "descrizione": "Nessun pasto libero: elenco dei pasti della settimana con 'Segna come libero'.",
+  "id": "settimana-bici-modifica",
+  "descrizione": "Pannello Bici: toccando la parte a mano di lunedì si apre il modulo con i campi precompilati.",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {
@@ -120,8 +120,15 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Pasto libero",
+        "name": "Bici",
         "exact": false
+      }
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Modifica la bici a mano di Lunedì 5 gennaio",
+        "exact": true
       }
     }
   ]

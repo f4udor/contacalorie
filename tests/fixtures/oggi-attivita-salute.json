@@ -1,6 +1,6 @@
 {
   "id": "oggi-attivita-salute",
-  "descrizione": "Attività con kcal della bici da Salute (800 kcal): fonte 'da Salute', bonus bici 400.",
+  "descrizione": "Attività con kcal della bici da Salute (800 kcal): fonte 'da Salute', bonus bici 400, nessuna parte a mano: la riga della bici non si tocca.",
   "oggi": "2026-01-05",
   "percorso": "/",
   "dati": {
@@ -16,7 +16,9 @@
         "stepsSource": "salute",
         "bikeKm": 31,
         "bikeKcalHealth": 800,
-        "bikeSource": "salute"
+        "bikeSource": "salute",
+        "bikeKmManual": null,
+        "bikeKcalManual": null
       }
     ],
     "weighIns": []

@@ -80,10 +80,10 @@ describe.each(factories)("DataStore %s", (_nome, make) => {
 
   it("attività: una sola per data, sostituita alla seconda scrittura", async () => {
     const s = make();
-    const base = { date: "2026-01-05", steps: 8000, stepsSource: "manuale", bikeKm: null, bikeKcalHealth: null, bikeSource: null } as const;
+    const base = { date: "2026-01-05", steps: 8000, stepsSource: "manuale", bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: null, bikeKcalManual: null } as const;
     await s.saveActivity(base);
-    await s.saveActivity({ ...base, steps: 9000, bikeKm: 20, bikeSource: "manuale" });
-    expect(await s.getActivity("2026-01-05")).toMatchObject({ steps: 9000, bikeKm: 20 });
+    await s.saveActivity({ ...base, steps: 9000, bikeKm: 20, bikeSource: "salute", bikeKmManual: 8 });
+    expect(await s.getActivity("2026-01-05")).toMatchObject({ steps: 9000, bikeKm: 20, bikeKmManual: 8 });
     expect(await s.listActivityBetween("2026-01-01", "2026-01-31")).toHaveLength(1);
     expect(await s.listActivityBetween("2026-02-01", "2026-02-28")).toEqual([]);
   });
@@ -106,7 +106,7 @@ describe.each(factories)("DataStore %s", (_nome, make) => {
     await s.saveSettings({ weightKg: 90 });
     await s.saveMeal(meal("a", "2026-01-05"));
     await s.saveMeal(meal("b", "2026-01-06"));
-    await s.saveActivity({ date: "2026-01-05", steps: 100, stepsSource: "manuale", bikeKm: null, bikeKcalHealth: null, bikeSource: null });
+    await s.saveActivity({ date: "2026-01-05", steps: 100, stepsSource: "manuale", bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: null, bikeKcalManual: null });
     await s.saveWeighIn({ date: "2026-01-05", weightKg: 90 });
     const all = await s.exportAll();
     expect(all.version).toBe(1);

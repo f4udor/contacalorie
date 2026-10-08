@@ -1,6 +1,6 @@
 {
-  "id": "settimana-pannello-libero-scegli",
-  "descrizione": "Nessun pasto libero: elenco dei pasti della settimana con 'Segna come libero'.",
+  "id": "settimana-bici-aggiungi",
+  "descrizione": "Pannello Bici: '+ A mano' su un giorno senza la parte a mano apre il modulo vuoto.",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {
@@ -120,8 +120,15 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Pasto libero",
+        "name": "Bici",
         "exact": false
+      }
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi la bici a mano di Mercoledì 7 gennaio",
+        "exact": true
       }
     }
   ]

@@ -89,6 +89,27 @@ export function mealToRow(m: MealRecord, userId: string): Row {
   };
 }
 
+/**
+ * Porta un'attività al formato attuale: i campi della parte a mano mancanti diventano null e un vecchio valore di bici
+ * con fonte "manuale" passa nella parte a mano (nulla si perde). Vale per i dati del browser salvati prima della fase 5b.
+ */
+export function normalizeActivity(a: Partial<ActivityRecord> & { date: string }): ActivityRecord {
+  const base: ActivityRecord = {
+    date: a.date,
+    steps: a.steps ?? null,
+    stepsSource: a.stepsSource ?? null,
+    bikeKm: a.bikeKm ?? null,
+    bikeKcalHealth: a.bikeKcalHealth ?? null,
+    bikeSource: a.bikeSource ?? null,
+    bikeKmManual: a.bikeKmManual ?? null,
+    bikeKcalManual: a.bikeKcalManual ?? null,
+  };
+  if (base.bikeSource === "manuale") {
+    return { ...base, bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: base.bikeKmManual ?? base.bikeKm, bikeKcalManual: base.bikeKcalManual ?? base.bikeKcalHealth };
+  }
+  return base;
+}
+
 export function rowToActivity(r: Row): ActivityRecord {
   return {
     date: String(r.date),
@@ -97,6 +118,8 @@ export function rowToActivity(r: Row): ActivityRecord {
     bikeKm: numOrNull(r.bike_km),
     bikeKcalHealth: numOrNull(r.bike_kcal_health),
     bikeSource: (r.bike_source as ActivityRecord["bikeSource"]) ?? null,
+    bikeKmManual: numOrNull(r.bike_km_manual),
+    bikeKcalManual: numOrNull(r.bike_kcal_manual),
   };
 }
 
@@ -109,6 +132,8 @@ export function activityToRow(a: ActivityRecord, userId: string): Row {
     bike_km: a.bikeKm,
     bike_kcal_health: a.bikeKcalHealth,
     bike_source: a.bikeSource,
+    bike_km_manual: a.bikeKmManual,
+    bike_kcal_manual: a.bikeKcalManual,
     updated_at: new Date().toISOString(),
   };
 }

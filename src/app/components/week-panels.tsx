@@ -5,9 +5,10 @@ import type { DateKey, MealSlot } from "@/engine";
 import type { DataStore } from "@/data";
 import type { WeekData } from "../lib/week-data";
 import { formatDateLong, formatNumber } from "../lib/format";
-import { validateWeight } from "../lib/activity-form";
-import { activityRows, defaultWeighInDate, deleteActivityValue, freeMealOfWeek, markFreeMeal, removeFreeMeal, weekMeals, weighInsInWeek } from "../lib/week-actions";
-import type { ActivityKind, WeekMeal } from "../lib/week-actions";
+import { hasManualBike, validateWeight } from "../lib/activity-form";
+import { activityRows, defaultWeighInDate, deleteActivityValue, freeMealOfWeek, markFreeMeal, removeFreeMeal, saveManualBike, weekMeals, weighInsInWeek } from "../lib/week-actions";
+import type { ActivityKind, ActivityRow, WeekMeal } from "../lib/week-actions";
+import { BikeForm } from "./activity-forms";
 import { TextField } from "./field";
 import { Sheet } from "./sheet";
 import { SwipeRow, trashIcon, useOpenRow } from "./swipe-row";
@@ -130,49 +131,120 @@ export function WeightPanel({ store, data, dates, today, onChanged, onClose }: P
   );
 }
 
-/** I sette giorni della settimana con il valore di bici o passi e la fonte: quelli a mano si eliminano, quelli da Salute no. */
+/** Testo di una parte della bici: "12,4 km · 410 kcal". */
+function bikePart(km: number | null, kcal: number | null): string {
+  return [km !== null ? `${formatNumber(km, 1)} km` : null, kcal !== null ? `${formatNumber(kcal)} kcal` : null].filter(Boolean).join(" · ");
+}
+
+/** Giorno di bici nel pannello della Settimana: parte di Salute (sola lettura) e parte a mano (si aggiunge, si modifica, si elimina). */
+function BikeDayRow({ row, busy, openId, setOpen, onEdit, onDelete }: { row: ActivityRow; busy: boolean; openId: string | null; setOpen: (id: string, open: boolean) => void; onEdit: () => void; onDelete: () => void }) {
+  const health = bikePart(row.km, row.kcal);
+  const manual = bikePart(row.kmManual, row.kcalManual);
+  const label = `Elimina la bici a mano di ${formatDateLong(row.date)}`;
+  return (
+    <SwipeRow id={row.date} openId={openId} setOpen={setOpen} actions={row.canDelete ? [{ key: "elimina", label, icon: trashIcon, tone: "danger", onClick: onDelete }] : []}>
+      <div className="flex min-h-14 items-center justify-between gap-3">
+        <span className="min-w-0 text-[17px]">{formatDateLong(row.date)}</span>
+        <span className="flex min-w-0 flex-col items-end">
+          {health === "" && manual === "" && <span className="text-[17px] text-muted">–</span>}
+          {health !== "" && (
+            <span className="flex items-center gap-2">
+              <span className="rounded-full bg-track px-2 py-0.5 text-xs font-semibold text-muted">da Salute</span>
+              <span className="text-[17px] font-semibold tabular-nums">{health}</span>
+            </span>
+          )}
+          {manual !== "" && (
+            <span className="flex items-center">
+              <button type="button" onClick={onEdit} aria-label={`Modifica la bici a mano di ${formatDateLong(row.date)}`} className="flex min-h-11 items-center gap-2 text-[17px] font-semibold tabular-nums text-accent">
+                <span className="rounded-full bg-track px-2 py-0.5 text-xs font-semibold text-muted">a mano</span>
+                {manual}
+              </button>
+              <TrashButton label={label} disabled={busy} onClick={onDelete} />
+            </span>
+          )}
+          {manual === "" && (
+            <button type="button" onClick={onEdit} aria-label={`Aggiungi la bici a mano di ${formatDateLong(row.date)}`} className="min-h-11 text-[15px] font-semibold text-accent">
+              + A mano
+            </button>
+          )}
+        </span>
+      </div>
+    </SwipeRow>
+  );
+}
+
+/** I sette giorni della settimana con passi (sola lettura, salvo i vecchi valori a mano da eliminare) o bici (parte a mano modificabile). */
 export function ActivityWeekPanel({ kind, store, data, dates, onChanged, onClose }: PanelProps & { kind: ActivityKind }) {
   const { busy, run } = useAction(onChanged);
   const rows = activityRows(kind, data.activity, dates);
   const open = useOpenRow();
-  const value = (r: (typeof rows)[number]) => {
-    if (kind === "passi") return r.steps === null ? null : formatNumber(r.steps);
-    if (r.km !== null) return `${formatNumber(r.km, 1)} km`;
-    return r.kcal === null ? null : `${formatNumber(r.kcal)} kcal`;
-  };
+  const [editing, setEditing] = useState<DateKey | null>(null);
+
+  if (kind === "bici" && editing) {
+    const existing = data.activity.find((a) => a.date === editing) ?? null;
+    const done = () => {
+      setEditing(null);
+      onChanged();
+    };
+    return (
+      <Sheet open onClose={onClose} title="Bici a mano">
+        <div className="flex flex-col gap-3">
+          <button type="button" onClick={() => setEditing(null)} className="-ml-2 flex min-h-11 w-fit items-center px-2 text-[17px] font-semibold text-accent">
+            ‹ Indietro
+          </button>
+          <p className="text-[15px] font-semibold">{formatDateLong(editing)}</p>
+          <BikeForm
+            existing={existing}
+            kcalPerKm={data.settings.kcalPerKm}
+            onSubmit={async (bike) => {
+              await saveManualBike(store, editing, bike);
+              done();
+            }}
+            onDelete={hasManualBike(existing) ? async () => { await deleteActivityValue(store, editing, "bici"); done(); } : undefined}
+          />
+        </div>
+      </Sheet>
+    );
+  }
+
   return (
     <Sheet open onClose={onClose} title={kind === "passi" ? "Passi" : "Bici"}>
       <ul className="divide-y divide-line">
-        {rows.map((r) => {
-          const v = value(r);
-          return (
-            <li key={r.date}>
+        {rows.map((r) => (
+          <li key={r.date}>
+            {kind === "bici" ? (
+              <BikeDayRow row={r} busy={busy} openId={open.openId} setOpen={open.setOpen} onEdit={() => setEditing(r.date)} onDelete={() => void run(() => deleteActivityValue(store, r.date, "bici"))} />
+            ) : (
               <SwipeRow
                 id={r.date}
                 openId={open.openId}
                 setOpen={open.setOpen}
-                actions={r.canDelete ? [{ key: "elimina", label: `Elimina il valore di ${formatDateLong(r.date)}`, icon: trashIcon, tone: "danger", onClick: () => void run(() => deleteActivityValue(store, r.date, kind)) }] : []}
+                actions={r.canDelete ? [{ key: "elimina", label: `Elimina il valore di ${formatDateLong(r.date)}`, icon: trashIcon, tone: "danger", onClick: () => void run(() => deleteActivityValue(store, r.date, "passi")) }] : []}
               >
-              <div className="flex min-h-14 items-center justify-between gap-3">
-              <span className="min-w-0 text-[17px]">{formatDateLong(r.date)}</span>
-              <span className="flex items-center gap-2">
-                {v === null ? (
-                  <span className="text-[17px] text-muted">–</span>
-                ) : (
-                  <>
-                    {r.source && <span className="rounded-full bg-track px-2 py-0.5 text-xs font-semibold text-muted">{r.source === "salute" ? "da Salute" : "manuale"}</span>}
-                    <span className="text-[17px] font-semibold tabular-nums">{v}</span>
-                  </>
-                )}
-                {r.canDelete && <TrashButton label={`Elimina il valore di ${formatDateLong(r.date)}`} disabled={busy} onClick={() => void run(() => deleteActivityValue(store, r.date, kind))} />}
-              </span>
-              </div>
+                <div className="flex min-h-14 items-center justify-between gap-3">
+                  <span className="min-w-0 text-[17px]">{formatDateLong(r.date)}</span>
+                  <span className="flex items-center gap-2">
+                    {r.steps === null ? (
+                      <span className="text-[17px] text-muted">–</span>
+                    ) : (
+                      <>
+                        {r.source && <span className="rounded-full bg-track px-2 py-0.5 text-xs font-semibold text-muted">{r.source === "salute" ? "da Salute" : "manuale"}</span>}
+                        <span className="text-[17px] font-semibold tabular-nums">{formatNumber(r.steps)}</span>
+                      </>
+                    )}
+                    {r.canDelete && <TrashButton label={`Elimina il valore di ${formatDateLong(r.date)}`} disabled={busy} onClick={() => void run(() => deleteActivityValue(store, r.date, "passi"))} />}
+                  </span>
+                </div>
               </SwipeRow>
-            </li>
-          );
-        })}
+            )}
+          </li>
+        ))}
       </ul>
-      <p className="pt-3 text-sm text-muted">Si eliminano solo i valori inseriti a mano. Un valore da Salute si corregge in Salute; il giorno rimasto vuoto si riempie al prossimo invio.</p>
+      <p className="pt-3 text-sm text-muted">
+        {kind === "passi"
+          ? "I passi arrivano da Salute e non si modificano. Un vecchio valore inserito a mano si può solo eliminare."
+          : "I km da Salute non si modificano. A mano puoi aggiungere un valore per giorno, che si somma: lo modifichi toccandolo, lo elimini col cestino."}
+      </p>
     </Sheet>
   );
 }

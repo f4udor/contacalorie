@@ -1,6 +1,6 @@
 {
   "id": "pannello-attivita-modifica",
-  "descrizione": "Modifica dell'attività già inserita (dalla scheda Attività).",
+  "descrizione": "Modifica della bici a mano già inserita (dalla scheda Attività): campi precompilati con la parte a mano, e 'Elimina la bici a mano'.",
   "oggi": "2026-01-05",
   "percorso": "/",
   "dati": {
@@ -28,10 +28,12 @@
       {
         "date": "2026-01-05",
         "steps": 9000,
-        "stepsSource": "manuale",
-        "bikeKm": 30,
+        "stepsSource": "salute",
+        "bikeKm": 12.4,
         "bikeKcalHealth": null,
-        "bikeSource": "manuale"
+        "bikeSource": "salute",
+        "bikeKmManual": 8,
+        "bikeKcalManual": null
       }
     ],
     "weighIns": []
@@ -40,7 +42,11 @@
   "fisso": true,
   "passi": [
     {
-      "click": "Passi"
+      "clickRole": {
+        "role": "button",
+        "name": "Modifica la bici a mano",
+        "exact": false
+      }
     }
   ]
 }
