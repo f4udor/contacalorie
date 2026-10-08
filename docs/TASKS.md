@@ -106,7 +106,7 @@ Struttura comune a tutte le schermate.
 - Componente "pannello dal basso" riutilizzabile, chiudibile con trascinamento o tasto.
 - Script `npm run screens` che genera gli screenshot da scenari in `tests/fixtures/`.
 
-### T2.2 Oggi: anello e nutrienti · da fare
+### T2.2 Oggi: anello e nutrienti · fatto
 Parte alta della schermata Oggi (§2 del brief, punti 1-3).
 - Data con frecce e tasto "Oggi"; titolo "Oggi" o giorno della settimana con data.
 - Anello delle kcal con le kcal rimaste al centro (o "sopra di" se si è sforato), colore secondo §3.5.

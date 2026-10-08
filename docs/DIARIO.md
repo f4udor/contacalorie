@@ -17,6 +17,7 @@ Una riga per task chiuso.
 - T1.10 · fatto · `docs/REPORT-FASE-1.md` scritto.
 - T2.0 · fatto · `src/data`: interfaccia `DataStore` async, implementazioni in memoria e nel browser (stessa classe a snapshot con versione del formato 1), avviso su dati illeggibili; regola di lint che vieta `localStorage` fuori da `src/data`.
 - T2.1 · fatto · guscio: barra in basso, variabili CSS chiaro/scuro, manifest e icone, pannello dal basso (`Sheet`), avviso dati, `npm run screens` con scenari in `tests/fixtures/`. Cose non provabili in 'Non verificato'.
+- T2.2 · fatto · Oggi: data con frecce, anello kcal, composizione, cinque schede nutrienti (`today-view.ts` + test); scenari vuoto, normale, caso B, bici, sforato, giorno passato. Formati italiani in `format.ts`.
 
 ## Decisioni da confermare
 
@@ -31,6 +32,10 @@ Una riga per task chiuso.
 - Token degli ingressi: nel database solo l'impronta (hash).
 - Pagina di prova `/prova/pannello` per mostrare il pannello dal basso; da togliere in T2.3 quando il pannello Aggiungi lo usa davvero.
 - Pagine Oggi, Settimana e Impostazioni sono segnaposto fino ai task che le riempiono; Grafici resta "In arrivo".
+- Oggi: l'anello e le "kcal rimaste" usano il budget (pasto libero col tetto); le "mangiate" mostrate sono quelle reali.
+- Oggi: in un giorno senza pasti le barrette dei nutrienti sono neutre (non gialle). Senza peso, anche la scheda dei carboidrati mostra "Obiettivo dopo il peso", perché il loro obiettivo dipende da quello delle proteine.
+- Oggi: il peso per le proteine è l'ultima pesata fino al giorno mostrato; se non c'è, il peso del profilo; se non c'è, la prima pesata successiva.
+- Il giorno mostrato in Oggi sta nell'indirizzo (`/?d=AAAA-MM-GG`).
 
 ## Non verificato
 
