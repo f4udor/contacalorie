@@ -209,7 +209,7 @@ Solo quando Supabase è configurato.
 - "Esci" in Impostazioni, con l'email dell'account visibile.
 - Senza Supabase configurato, nessuna schermata di accesso.
 
-### T3.5 Importazione dei dati del browser · da fare
+### T3.5 Importazione dei dati del browser · fatto
 - Al primo accesso, se il browser contiene dati, l'app propone "Importa i dati di questo dispositivo" mostrando quanti giorni, piatti e pesate contiene.
 - L'importazione non crea doppioni se ripetuta (anche da un secondo dispositivo con dati diversi: si uniscono).
 - I dati del browser restano finché l'utente non conferma che l'importazione è andata a buon fine.

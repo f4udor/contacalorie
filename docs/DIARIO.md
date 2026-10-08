@@ -30,6 +30,7 @@ Una riga per task chiuso.
 - T3.2 · fatto · Oggi: pasti come schede di piatti (totali, quantità, '+ Aggiungi piatto', fasce vuote come pulsanti), pannello del piatto con quantità, interruttore 'Pasto libero' sul pasto intero (`saveDish`, `isMealFree`), modifica/eliminazione per piatto, riga sul peso delle proteine in Impostazioni.
 - T3.3 · fatto · `SupabaseDataStore` (+ `withErrorReporting`, `createDataStore`: Supabase solo con entrambe le variabili), migrazione 0005 e `supabase/setup.sql` generato; test con client finto. Nulla provato contro Supabase vero (vedi Non verificato).
 - T3.4 · fatto · accesso con email e codice (`AuthService`: Supabase `signInWithOtp`/`verifyOtp`), schermata Accedi, 'Esci' con l'email in Impostazioni; nessuna schermata di accesso senza Supabase; accesso dimostrativo solo per gli screenshot. L'accesso vero non è provato.
+- T3.5 · fatto · importazione dei dati del browser nell'account (`importLocalData`: senza doppioni, unione tra dispositivi, nulla cancellato; proposta al primo accesso e voce in Impostazioni; i dati si tolgono dal dispositivo solo dopo conferma); `exportAll` nello sportello.
 
 ## Decisioni da confermare
 
