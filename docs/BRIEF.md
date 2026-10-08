@@ -12,15 +12,15 @@ Navigazione in basso: **Oggi, Settimana, Grafici, Impostazioni**.
 1. Data con frecce per cambiare giorno e tasto "Oggi".
 2. Anello delle kcal: rimaste al centro; sotto, la riga di composizione dell'obiettivo ("Base 2.100 · bici +400 · passi +75 · recupero −106").
 3. Griglia di schede dei nutrienti: proteine, carboidrati, grassi, fibre, sale. Ogni scheda: nome, "assunto su obiettivo", barretta colorata a semaforo.
-4. Pasti del giorno raggruppati per Colazione, Pranzo, Cena, Spuntino. Ogni pasto: nome, kcal, macro, etichetta "libero" se lo è. Modifica ed eliminazione.
+4. Pasti del giorno: Colazione, Pranzo, Cena, Spuntino. Ogni pasto è composto da uno o più piatti e mostra il totale di kcal e macro, con i piatti elencati sotto ed etichetta "libero" se lo è. Ogni piatto si modifica o elimina; ogni pasto ha il suo "Aggiungi piatto".
 5. Attività: passi e bici (km, kcal), con la fonte ("da Salute" o "manuale").
 6. Sfida mattutina: esercizi del giorno da spuntare, ripetizioni modificabili, "Salta".
 7. Pulsante **+** sempre visibile.
 
 ### Pannello Aggiungi (dal +)
 - In cima: campo di testo con microfono. L'utente detta o scrive, il modello AI restituisce uno o più pasti stimati, l'utente conferma, corregge i numeri a mano oppure invia una correzione a voce o testo ("il riso era poco") che aggiorna la stima.
-- Preferiti, "Copia da ieri", inserimento manuale dei numeri.
-- Interruttore "Pasto libero", disattivato se già usato nella settimana.
+- Preferiti, "Copia da ieri", inserimento manuale di un piatto. Se kcal e macro restano vuoti, li stima il modello AI a partire da nome e quantità, e l'utente conferma.
+- Interruttore "Pasto libero" sul pasto intero, disattivato se già usato nella settimana.
 - Voci separate: "Pesata" e "Attività a mano".
 
 ### Settimana (lunedì-domenica)
@@ -53,6 +53,7 @@ Tutti i valori sono impostazioni con questi default.
 | `stepThreshold` | 6000 |
 | `freeMealCap` | 800 |
 | `proteinPerKg` | 1,4 |
+| `proteinPerKgTarget` | 1,8 |
 | `fatShare` | 0,30 |
 | `fiberMin` | 30 g |
 | `saltMax` | 5 g |
@@ -60,9 +61,9 @@ Tutti i valori sono impostazioni con questi default.
 | `overLimit` | 1,5 |
 
 ### 3.1 Kcal contate nel budget
-`kcalBudget(giorno)` = somma delle kcal dei pasti, dove un pasto libero conta `min(kcal, freeMealCap)`. Le kcal mostrate come "mangiate" sono sempre quelle reali.
+Un pasto è l'insieme dei piatti di una fascia (colazione, pranzo, cena, spuntino) in un giorno. `kcalBudget(giorno)` = somma delle kcal dei piatti, dove per un pasto libero la somma dei suoi piatti conta `min(somma, freeMealCap)`. Le kcal mostrate come "mangiate" sono sempre quelle reali.
 
-Pasto libero: al massimo uno per settimana. Gli altri sgarri si inseriscono come pasti normali e contano per intero.
+Pasto libero: si segna sul pasto intero, al massimo uno per settimana. Gli altri sgarri si inseriscono come piatti normali e contano per intero.
 
 ### 3.2 Bonus attività
 - `kcalBici` = kcal registrate da Salute se presenti, altrimenti `km × kcalPerKm`.
@@ -80,7 +81,7 @@ Per il giorno di indice `i` nella settimana (lunedì = 0):
 La soglia minima vale per la base: il bonus attività si somma sopra. Ogni lunedì il saldo riparte da zero.
 
 ### 3.4 Obiettivi dei nutrienti
-- Proteine = `proteinPerKg × peso`, arrotondate ai 5 g.
+- Proteine = `proteinPerKgTarget × peso obiettivo` se il peso obiettivo è impostato, altrimenti `proteinPerKg × peso`; arrotondate ai 5 g. Il peso è l'ultima pesata, o quello del profilo se non ci sono pesate.
 - Grassi = `fatShare × baseKcal / 9`, arrotondati ai 5 g.
 - Carboidrati = `(obiettivo del giorno − proteine × 4 − grassi × 9) / 4`. Assorbono ogni variazione dell'obiettivo: salgono nei giorni di bici, scendono nei giorni di recupero.
 - Fibre = `fiberMin`. Sale = `saltMax`.
@@ -113,6 +114,8 @@ Default della tabella, peso 100 kg (proteine 140 g, grassi 70 g). Questi numeri 
 | H | Giorno senza pasti tra lunedì e oggi | Non entra nel saldo |
 | I | Proteine 125 g su 140 | Giallo (soglia verde 126) |
 | J | Sale 4,8 g su 5 | Giallo; 5,1 g rosso; 4,4 g verde |
+| K | Peso 105 kg, peso obiettivo 85 kg | Proteine = 155 g (1,8 × 85 = 153, arrotondato ai 5 g) |
+| L | Pranzo libero di tre piatti da 500, 400 e 300 kcal | Mangiate 1.200, contate nel budget 800 |
 
 ## 4. Pasti e modello AI
 
@@ -159,7 +162,7 @@ Per ogni esercizio del giorno: fatto, ripetizioni modificate, saltato. Nel datab
 
 ## 7. Dati
 
-Login con email, senza password. Ogni riga appartiene a un utente e nessuno può leggere righe altrui.
+Login con email e codice di 6 cifre ricevuto per email, senza password. Niente link magico: su iPhone aprirebbe Safari e non l'app installata sulla Home. Ogni riga appartiene a un utente e nessuno può leggere righe altrui.
 
 Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate, piani della sfida, esercizi del piano, registro giornaliero della sfida, token degli ingressi, registro delle chiamate agli ingressi.
 
@@ -169,10 +172,11 @@ Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate,
 |---|---|
 | 1 | Motore dei calcoli con test, schema del database |
 | 2 | Schermate Oggi, Settimana, Impostazioni; peso; sfida |
-| 3 | Inserimento a voce e testo con AI, correzione, preferiti |
-| 4 | Ingressi per i Comandi rapidi, guardiano |
-| 5 | Grafici |
-| 6 | Promemoria (opzionale) |
+| 3 | Supabase: login, dati online, importazione dal browser; pasti composti da piatti; proteine sul peso obiettivo |
+| 4 | Dati da Salute e Fitness tramite Comando rapido, guardiano |
+| 5 | Inserimento a voce e testo con AI, stima dei numeri mancanti, correzione, preferiti |
+| 6 | Grafici |
+| 7 | Promemoria (opzionale) |
 
 ## 9. Fuori dalla prima versione
 
