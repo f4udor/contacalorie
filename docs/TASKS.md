@@ -447,7 +447,7 @@ Vincoli di questa fase:
 - Nella proposta, il piatto segnalato mostra sulla riga un segno e, aperto, una frase breve ("Le kcal sembrano basse rispetto ai nutrienti: controlla i numeri."). Non blocca la conferma e non cambia i numeri. Ritoccando i numeri il controllo si ricalcola.
 - Test: casi T, U e V di §3.8; valori esattamente sulle due soglie; numeri a zero. Screenshot della proposta con un piatto segnalato.
 
-### T5b.5 Preferiti eliminabili scorrendo · da fare
+### T5b.5 Preferiti eliminabili scorrendo · fatto
 - Le righe dei preferiti (piatti e pasti) usano il componente di scorrimento di T5.5: verso sinistra compare il cestino, che elimina subito senza conferma.
 - La modalità "Modifica" dei preferiti sparisce: lo scorrimento è l'unico modo di eliminare. Il + e il tocco sulla riga continuano a fare quello che fanno oggi.
 - Test della logica di eliminazione per piatti e pasti e prova con il tocco simulato di Playwright. Screenshot con una riga aperta.
