@@ -1,0 +1,30 @@
+{
+  "id": "pannello-pesata-errore",
+  "descrizione": "Pesata con un valore non valido.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi"
+      }
+    },
+    {
+      "click": "Pesata",
+      "exact": true
+    },
+    {
+      "fill": [
+        "Peso (kg)",
+        "novanta"
+      ]
+    },
+    {
+      "click": "Salva pesata"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "id": "pannello-pesata",
+  "descrizione": "Pesata: modulo vuoto.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi"
+      }
+    },
+    {
+      "click": "Pesata",
+      "exact": true
+    }
+  ]
+}

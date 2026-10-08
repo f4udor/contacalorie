@@ -1,0 +1,56 @@
+{
+  "id": "pannello-pasto-compilato",
+  "descrizione": "Inserimento manuale compilato, con la fascia Colazione.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi"
+      }
+    },
+    {
+      "click": "Pasto a mano"
+    },
+    {
+      "fill": [
+        "Nome",
+        "Toast e caffè"
+      ]
+    },
+    {
+      "click": "Colazione"
+    },
+    {
+      "fill": [
+        "Kcal",
+        "420"
+      ]
+    },
+    {
+      "fill": [
+        "Proteine (g)",
+        "18,5"
+      ]
+    },
+    {
+      "fill": [
+        "Carboidrati (g)",
+        "52"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "id": "oggi-sforato",
+  "descrizione": "Giorno sopra l'obiettivo: anello rosso, 'sopra di', nutrienti fuori misura.",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m11",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pizza grande",
+        "kcal": 1300,
+        "protein": 50,
+        "carbs": 160,
+        "fat": 45,
+        "fiber": 8,
+        "salt": 6.5,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m12",
+        "date": "2026-01-05",
+        "slot": "cena",
+        "name": "Hamburger e patatine",
+        "kcal": 1500,
+        "protein": 60,
+        "carbs": 130,
+        "fat": 80,
+        "fiber": 7,
+        "salt": 5.5,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true
+}

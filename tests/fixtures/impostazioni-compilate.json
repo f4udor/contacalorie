@@ -1,0 +1,28 @@
+{
+  "id": "impostazioni-compilate",
+  "descrizione": "Profilo, proteine manuali (150 g) con la formula visibile e 'Torna alla formula', altre regole cambiate.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 92.5,
+      "heightCm": 178,
+      "ageYears": 41,
+      "targetWeightKg": 82,
+      "baseKcal": 2000,
+      "floorKcal": 1700,
+      "proteinGramsManual": 150,
+      "margin": 0.12,
+      "bonusShare": 0.4,
+      "kcalPerStep": 0.04,
+      "freeMealCap": 900,
+      "challengeStartDate": "2026-01-05"
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true
+}

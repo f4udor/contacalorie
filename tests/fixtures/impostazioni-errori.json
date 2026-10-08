@@ -1,0 +1,53 @@
+{
+  "id": "impostazioni-errori",
+  "descrizione": "Valori non validi: errori accanto ai campi, nulla viene salvato.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "fill": [
+        "Peso (kg)",
+        "novanta"
+      ]
+    },
+    {
+      "fill": [
+        "Età (anni)",
+        "40,5"
+      ]
+    },
+    {
+      "fill": [
+        "Kcal base",
+        "-5"
+      ]
+    },
+    {
+      "fill": [
+        "Margine dei semafori (%)",
+        "80"
+      ]
+    },
+    {
+      "fill": [
+        "Soglia passi",
+        "tanti"
+      ]
+    },
+    {
+      "fill": [
+        "Tetto di kcal",
+        "-1"
+      ]
+    },
+    {
+      "click": "Salva",
+      "exact": true
+    },
+    {
+      "scrollTo": "Controlla i campi"
+    }
+  ]
+}

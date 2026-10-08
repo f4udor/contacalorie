@@ -1,0 +1,26 @@
+{
+  "id": "impostazioni-salvato",
+  "descrizione": "Dopo aver salvato peso 92 kg: messaggio 'Salvato.' e la formula propone 130 g di proteine.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "fill": [
+        "Peso (kg)",
+        "92"
+      ]
+    },
+    {
+      "click": "Salva",
+      "exact": true
+    },
+    {
+      "wait": 500
+    },
+    {
+      "scrollTo": "Salvato."
+    }
+  ]
+}

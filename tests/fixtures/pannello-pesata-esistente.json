@@ -1,0 +1,35 @@
+{
+  "id": "pannello-pesata-esistente",
+  "descrizione": "Seconda pesata nello stesso giorno: precompilata, e dice che sostituisce la prima.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": [
+      {
+        "date": "2026-01-08",
+        "weightKg": 92.5
+      }
+    ],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi"
+      }
+    },
+    {
+      "click": "Pesata",
+      "exact": true
+    }
+  ]
+}

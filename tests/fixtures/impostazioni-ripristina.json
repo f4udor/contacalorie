@@ -1,0 +1,25 @@
+{
+  "id": "impostazioni-ripristina",
+  "descrizione": "Ripristina valori predefiniti: chiede conferma e dice cosa resta.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 92.5,
+      "baseKcal": 2000,
+      "margin": 0.12
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "click": "Ripristina valori predefiniti"
+    }
+  ]
+}

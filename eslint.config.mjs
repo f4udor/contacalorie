@@ -41,4 +41,17 @@ export default defineConfig([
       ],
     },
   },
+  {
+    // Solo lo sportello dei dati (src/data) tocca localStorage.
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/data/**"],
+    rules: {
+      "no-restricted-globals": ["error", { name: "localStorage", message: "Usa src/data: nessun altro file tocca localStorage." }],
+      "no-restricted-properties": [
+        "error",
+        { object: "window", property: "localStorage", message: "Usa src/data: nessun altro file tocca localStorage." },
+        { object: "globalThis", property: "localStorage", message: "Usa src/data: nessun altro file tocca localStorage." },
+      ],
+    },
+  },
 ]);

@@ -1,0 +1,8 @@
+{
+  "id": "settimana-vuota",
+  "descrizione": "Settimana senza dati: barre vuote con i soli obiettivi, valori '–', messaggio.",
+  "oggi": "2026-01-08",
+  "percorso": "/settimana",
+  "dati": null,
+  "scorre": true
+}

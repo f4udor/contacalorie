@@ -1,0 +1,31 @@
+{
+  "id": "dopo-attivita",
+  "descrizione": "Dopo aver salvato 9.000 passi: obiettivo 2.175, composizione 'passi +75', scheda Attività.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi"
+      }
+    },
+    {
+      "click": "Attività a mano"
+    },
+    {
+      "fill": [
+        "Passi",
+        "9000"
+      ]
+    },
+    {
+      "click": "Salva attività"
+    },
+    {
+      "wait": 600
+    }
+  ]
+}

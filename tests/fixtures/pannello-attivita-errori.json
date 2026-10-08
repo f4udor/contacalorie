@@ -1,0 +1,41 @@
+{
+  "id": "pannello-attivita-errori",
+  "descrizione": "Attività a mano con valori non validi: errori accanto ai campi.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi"
+      }
+    },
+    {
+      "click": "Attività a mano"
+    },
+    {
+      "fill": [
+        "Passi",
+        "tanti"
+      ]
+    },
+    {
+      "fill": [
+        "Km in bici",
+        "-2"
+      ]
+    },
+    {
+      "fill": [
+        "Kcal bici",
+        "1,5"
+      ]
+    },
+    {
+      "click": "Salva attività"
+    }
+  ]
+}

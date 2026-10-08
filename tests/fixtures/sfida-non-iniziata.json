@@ -1,0 +1,23 @@
+{
+  "id": "sfida-non-iniziata",
+  "descrizione": "Prima dell'inizio: messaggio con la data di partenza, nessuna lista.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100,
+      "challengeStartDate": "2026-01-12"
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "passi": [
+    {
+      "scrollTo": "non è ancora iniziata"
+    }
+  ]
+}

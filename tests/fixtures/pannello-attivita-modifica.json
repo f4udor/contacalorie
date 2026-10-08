@@ -1,0 +1,47 @@
+{
+  "id": "pannello-attivita-modifica",
+  "descrizione": "Modifica dell'attività già inserita (dalla scheda Attività).",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m62",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pasta al ragù",
+        "kcal": 800,
+        "protein": 35,
+        "carbs": 100,
+        "fat": 25,
+        "fiber": 6,
+        "salt": 2.2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [
+      {
+        "date": "2026-01-05",
+        "steps": 9000,
+        "stepsSource": "manuale",
+        "bikeKm": 30,
+        "bikeKcalHealth": null,
+        "bikeSource": "manuale"
+      }
+    ],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "click": "Passi"
+    }
+  ]
+}

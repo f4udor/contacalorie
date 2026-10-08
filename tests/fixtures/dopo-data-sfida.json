@@ -1,0 +1,33 @@
+{
+  "id": "dopo-data-sfida",
+  "descrizione": "Data di inizio della sfida impostata al 5 gennaio: Oggi mostra Giorno 4/30.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "fill": [
+        "Inizio della sfida",
+        "2026-01-05"
+      ]
+    },
+    {
+      "click": "Salva",
+      "exact": true
+    },
+    {
+      "wait": 500
+    },
+    {
+      "click": "Oggi",
+      "exact": true
+    },
+    {
+      "wait": 500
+    },
+    {
+      "scrollTo": "Fermati se senti dolore"
+    }
+  ]
+}

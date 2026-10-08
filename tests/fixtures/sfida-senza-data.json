@@ -1,0 +1,13 @@
+{
+  "id": "sfida-senza-data",
+  "descrizione": "Nessuna data di inizio: invito a impostarla.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "scrollTo": "non ha una data"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "id": "pannello-pasto-errori",
+  "descrizione": "Inserimento manuale: kcal mancanti e un numero non valido, nessun salvataggio.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi"
+      }
+    },
+    {
+      "click": "Pasto a mano"
+    },
+    {
+      "fill": [
+        "Proteine (g)",
+        "venti"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi pasto"
+      }
+    }
+  ]
+}

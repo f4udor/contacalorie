@@ -89,7 +89,7 @@ Regole valide per tutti i task con schermate:
 - Stati vuoti curati: un giorno senza pasti, una settimana vuota e un profilo senza peso devono avere una schermata sensata, non zeri o errori.
 - Se Playwright non riesce a installare il browser nell'ambiente, scrivilo in "Non verificato" e prosegui; non dichiarare verificato ciò che non hai visto.
 
-### T2.0 Sportello dei dati · da fare
+### T2.0 Sportello dei dati · fatto
 In `src/data`: un'interfaccia unica (`DataStore`) per leggere e scrivere impostazioni, pasti, attività del giorno, pesate e registro della sfida, con due implementazioni: in memoria (per i test) e nel browser (`localStorage`).
 - Le schermate useranno solo questa interfaccia; nessun altro file tocca `localStorage`.
 - I dati salvati hanno un numero di versione del formato, per poterli migrare in futuro.
@@ -97,7 +97,7 @@ In `src/data`: un'interfaccia unica (`DataStore`) per leggere e scrivere imposta
 - I campi ricalcano le tabelle di `docs/SCHEMA.md`, così il passaggio a Supabase cambierà solo l'implementazione.
 - Test sull'implementazione in memoria e su quella del browser (con un `localStorage` finto): scrittura, lettura, modifica, eliminazione, dati corrotti.
 
-### T2.1 Guscio dell'app · da fare
+### T2.1 Guscio dell'app · fatto
 Struttura comune a tutte le schermate.
 - Barra in basso con Oggi, Settimana, Grafici, Impostazioni. Grafici mostra solo "In arrivo".
 - Colori come variabili CSS, tema chiaro e scuro automatici; font di sistema; titoli grandi; schede arrotondate; un solo colore d'accento più verde, giallo e rosso dei semafori.
@@ -106,7 +106,7 @@ Struttura comune a tutte le schermate.
 - Componente "pannello dal basso" riutilizzabile, chiudibile con trascinamento o tasto.
 - Script `npm run screens` che genera gli screenshot da scenari in `tests/fixtures/`.
 
-### T2.2 Oggi: anello e nutrienti · da fare
+### T2.2 Oggi: anello e nutrienti · fatto
 Parte alta della schermata Oggi (§2 del brief, punti 1-3).
 - Data con frecce e tasto "Oggi"; titolo "Oggi" o giorno della settimana con data.
 - Anello delle kcal con le kcal rimaste al centro (o "sopra di" se si è sforato), colore secondo §3.5.
@@ -115,7 +115,7 @@ Parte alta della schermata Oggi (§2 del brief, punti 1-3).
 - Peso per le proteine: ultima pesata se presente, altrimenti peso del profilo. Senza nessuno dei due, la scheda proteine invita a inserire il peso.
 - Scenari: giorno vuoto, giorno normale, caso B del brief (giovedì con recupero), giorno di bici (caso E).
 
-### T2.3 Pasti · da fare
+### T2.3 Pasti · fatto
 Lista dei pasti e pannello Aggiungi con inserimento manuale.
 - Pasti raggruppati per fascia; per ciascuno nome, kcal, macro ed etichetta "libero".
 - Pulsante + sempre visibile che apre il pannello Aggiungi.
@@ -125,19 +125,19 @@ Lista dei pasti e pannello Aggiungi con inserimento manuale.
 - "Copia da ieri": copia i pasti del giorno prima come pasti normali (mai liberi); se ieri non ci sono pasti, lo dice.
 - Nel pannello, al posto del microfono, uno spazio riservato con la scritta "Inserimento a voce: in arrivo".
 
-### T2.4 Attività e pesata · da fare
+### T2.4 Attività e pesata · fatto
 - Sezione Attività in Oggi: passi e bici (km, kcal), con fonte "manuale".
 - Dal pannello Aggiungi: "Attività a mano" (passi, km, kcal facoltative) e "Pesata" (kg, una per giorno; una seconda pesata nello stesso giorno sostituisce la prima).
 - L'obiettivo del giorno si aggiorna subito dopo il salvataggio.
 
-### T2.5 Sfida mattutina · da fare
+### T2.5 Sfida mattutina · fatto
 Sezione in Oggi, usando `challengeDay` del motore e il piano di 30 giorni.
 - Esercizi del giorno con spunta "fatto", ripetizioni modificabili, "Salta"; indicazione "per lato" ed etichetta "nuovo" il giorno in cui un esercizio entra.
 - Intestazione "Giorno N/30 · fatti X su Y".
 - Prima dell'inizio e dopo il giorno 30: messaggio dedicato, nessuna lista.
 - Nota fissa in fondo: "Fermati se senti dolore a inguine o pube e salta l'esercizio."
 
-### T2.6 Settimana · da fare
+### T2.6 Settimana · fatto
 Schermata Settimana (§2 del brief), usando `weekSummary`.
 - Sette barre delle kcal mangiate con la linea dell'obiettivo di ogni giorno; colore secondo l'anello kcal.
 - Frecce per cambiare settimana.
@@ -145,7 +145,7 @@ Schermata Settimana (§2 del brief), usando `weekSummary`.
 - Toccare una barra apre quel giorno in Oggi.
 - Scenari: settimana vuota, settimana parziale, settimana completa con uno sforamento.
 
-### T2.7 Impostazioni · da fare
+### T2.7 Impostazioni · fatto
 - Profilo: peso, altezza, età, peso obiettivo.
 - Obiettivi: kcal base e soglia minima; grammi di proteine e grassi con il valore proposto dalla formula visibile e la possibilità di sostituirlo o tornare alla formula; fibre, sale, margine dei semafori.
 - Attività: kcal per km, kcal per passo, soglia passi, quota di bonus. Pasto libero: tetto di kcal.
@@ -154,11 +154,11 @@ Schermata Settimana (§2 del brief), usando `weekSummary`.
 - Valori non validi rifiutati con un messaggio accanto al campo; mai salvati.
 - Ogni sezione ha una riga che spiega in parole semplici a cosa serve.
 
-### T2.8 Rifinitura grafica · da fare
+### T2.8 Rifinitura grafica · fatto
 Passaggio finale su tutte le schermate, solo correttivo: nessuna funzione nuova.
 - Rigenera tutti gli screenshot e controllali uno per uno: allineamenti, spaziature coerenti, testi tagliati, contrasto in tema scuro, aree toccabili.
 - Prova anche a 375 px e 430 px di larghezza, oltre a 390.
 - Correggi ciò che trovi e annota nel diario cosa è stato cambiato.
 
-### T2.9 Report di fase · da fare
+### T2.9 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-2.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici, includi una lista di 10 controlli che Mauro può fare in cinque minuti sul telefono.

@@ -1,0 +1,32 @@
+{
+  "id": "oggi-giorno-passato",
+  "descrizione": "Giorno diverso da oggi: titolo col nome del giorno, tasto 'Oggi' e frecce.",
+  "oggi": "2026-01-08",
+  "percorso": "/?d=2026-01-06",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m13",
+        "date": "2026-01-06",
+        "slot": "pranzo",
+        "name": "Insalata di farro",
+        "kcal": 600,
+        "protein": 20,
+        "carbs": 85,
+        "fat": 18,
+        "fiber": 11,
+        "salt": 1.5,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true
+}

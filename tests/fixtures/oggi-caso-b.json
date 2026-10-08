@@ -1,0 +1,97 @@
+{
+  "id": "oggi-caso-b",
+  "descrizione": "Caso B del brief: giovedì dopo lunedì 1.750, martedì 1.800 e mercoledì 3.250 kcal (9.000 passi): saldo −425, recupero −106, obiettivo 1.994.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m4",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1750,
+        "protein": 90,
+        "carbs": 200,
+        "fat": 60,
+        "fiber": 20,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m5",
+        "date": "2026-01-06",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1800,
+        "protein": 100,
+        "carbs": 210,
+        "fat": 65,
+        "fiber": 22,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m6",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Cena fuori",
+        "kcal": 3250,
+        "protein": 120,
+        "carbs": 380,
+        "fat": 140,
+        "fiber": 18,
+        "salt": 8,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m7",
+        "date": "2026-01-08",
+        "slot": "colazione",
+        "name": "Latte e biscotti",
+        "kcal": 350,
+        "protein": 12,
+        "carbs": 55,
+        "fat": 9,
+        "fiber": 2,
+        "salt": 0.5,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m8",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Riso e pollo",
+        "kcal": 700,
+        "protein": 45,
+        "carbs": 90,
+        "fat": 14,
+        "fiber": 5,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [
+      {
+        "date": "2026-01-07",
+        "steps": 9000,
+        "stepsSource": "manuale",
+        "bikeKm": null,
+        "bikeKcalHealth": null,
+        "bikeSource": null
+      }
+    ],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true
+}

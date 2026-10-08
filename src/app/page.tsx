@@ -1,7 +1,10 @@
-export default function Home() {
+import { Suspense } from "react";
+import { OggiScreen } from "./oggi-screen";
+
+export default function OggiPage() {
   return (
-    <main className="p-6">
-      <h1 className="text-4xl font-bold">Personal Health</h1>
-    </main>
+    <Suspense fallback={<main aria-busy="true" />}>
+      <OggiScreen />
+    </Suspense>
   );
 }
