@@ -480,9 +480,18 @@ settScheda("settimana-pannello-passi-vuoto", "Pannello Passi senza nessun valore
 settScheda("settimana-pannello-libero", "Pasto libero presente: giorno, fascia, kcal e 'Togli pasto libero'.", conLibero, [tocca("Pasto libero")]);
 settScheda("settimana-pannello-libero-scegli", "Nessun pasto libero: elenco dei pasti della settimana con 'Segna come libero'.", settimanaPiena, [tocca("Pasto libero")]);
 settScheda("settimana-pannello-libero-vuoto", "Nessun pasto libero e nessun pasto nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Pasto libero")]);
-settScheda("settimana-dopo-elimina-bici", "Dopo aver eliminato i km a mano di martedì: il totale dei km e il pannello si aggiornano subito.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Elimina il valore di Martedì 6 gennaio", exact: true } }, { wait: 500 }]);
+settScheda("settimana-dopo-elimina-bici", "Dopo aver eliminato i km a mano di martedì e chiuso il pannello: il totale dei km (da 32,4 a 12,4) si è aggiornato.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Elimina il valore di Martedì 6 gennaio", exact: true } }, { wait: 500 }, { click: "Chiudi", exact: true }]);
 settScheda("settimana-dopo-togli-libero", "Dopo 'Togli pasto libero': la scheda dice 'non usato' e il pasto resta.", conLibero, [tocca("Pasto libero"), { click: "Togli pasto libero" }, { wait: 500 }, { click: "Chiudi", exact: true }]);
 
+scenarios.push({
+  id: "oggi-dopo-modifica-settimana",
+  descrizione: "Passi a mano di giovedì (9.000, bonus +75) eliminati dalla Settimana: aprendo Oggi l'obiettivo è tornato a 2.100 e la riga di composizione non c'è più.",
+  oggi: "2026-01-08",
+  percorso: "/settimana",
+  dati: data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pranzo", 700, 30, 80, 20, 5, 2)], activity: [activity("2026-01-08", { steps: 9000, stepsSource: "manuale" })] }),
+  scorre: true,
+  passi: [tocca("Passi medi"), { clickRole: { role: "button", name: "Elimina il valore di Giovedì 8 gennaio", exact: true } }, { wait: 400 }, { click: "Chiudi", exact: true }, { clickRole: { role: "link", name: "Oggi", exact: true } }, { wait: 600 }],
+});
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");

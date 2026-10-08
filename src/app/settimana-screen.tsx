@@ -13,7 +13,7 @@ import { formatDayMonth, formatNumber, formatSigned } from "./lib/format";
 import { useToday } from "./lib/use-today";
 import { useWeekData } from "./lib/use-week-data";
 import { buildWeekView } from "./lib/week-view";
-import { weekWeight } from "./lib/week-weight";
+import { weekWeight, weightCard } from "./lib/week-weight";
 
 const DATE_PARAM = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -80,21 +80,14 @@ export function SettimanaScreen() {
   const view = data ? buildWeekView({ date: monday, days: data.days, settings: data.settings, today }) : null;
   const s = view?.summary;
   const weight = data ? weekWeight({ monday, sunday, weighIns: data.weighIns, profileWeightKg: data.userSettings.weightKg, targetWeightKg: data.userSettings.targetWeightKg }) : null;
+  const card = weightCard(weight, (kg) => formatNumber(kg, 1), (kg) => formatSigned(kg, 1));
   const stats: StatProps[] = s
     ? [
         { label: "Saldo", value: s.balance === null ? dash : `${formatSigned(s.balance)} kcal`, hint: s.balance === null ? undefined : s.balance < 0 ? "da recuperare" : "di vantaggio" },
         { label: "Media kcal", value: s.avgKcal === null ? dash : `${formatNumber(s.avgKcal)} kcal`, hint: "sui giorni con pasti" },
         { label: "Bici", value: s.totalKm === null ? dash : `${formatNumber(s.totalKm, 1)} km`, onOpen: () => setPanel("bici") },
         { label: "Passi medi", value: s.avgSteps === null ? dash : formatNumber(s.avgSteps), hint: "sui giorni con passi", onOpen: () => setPanel("passi") },
-        weight
-          ? {
-              label: "Peso",
-              value: `${formatNumber(weight.lastKg, 1)} kg`,
-              hint: weight.deltaKg === null ? undefined : `${formatSigned(weight.deltaKg, 1)} kg ${weight.comparedWith === "pesata" ? "dalla pesata precedente" : "dal peso di partenza"}`,
-              hintTone: weight.tone,
-              onOpen: () => setPanel("peso"),
-            }
-          : { label: "Peso", value: "Nessuna pesata", onOpen: () => setPanel("peso") },
+        { label: "Peso", value: card.value, hint: card.hint, hintTone: card.tone, onOpen: () => setPanel("peso") },
         { label: "Pasto libero", value: s.freeMealUsed ? "usato" : "non usato", onOpen: () => setPanel("libero") },
       ]
     : [];

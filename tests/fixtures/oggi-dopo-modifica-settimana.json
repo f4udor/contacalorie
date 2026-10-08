@@ -1,0 +1,73 @@
+{
+  "id": "oggi-dopo-modifica-settimana",
+  "descrizione": "Passi a mano di giovedì (9.000, bonus +75) eliminati dalla Settimana: aprendo Oggi l'obiettivo è tornato a 2.100 e la riga di composizione non c'è più.",
+  "oggi": "2026-01-08",
+  "percorso": "/settimana",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m267",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 700,
+        "protein": 30,
+        "carbs": 80,
+        "fat": 20,
+        "fiber": 5,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [
+      {
+        "date": "2026-01-08",
+        "steps": 9000,
+        "stepsSource": "manuale",
+        "bikeKm": null,
+        "bikeKcalHealth": null,
+        "bikeSource": null
+      }
+    ],
+    "weighIns": []
+  },
+  "scorre": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Passi medi",
+        "exact": false
+      }
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Elimina il valore di Giovedì 8 gennaio",
+        "exact": true
+      }
+    },
+    {
+      "wait": 400
+    },
+    {
+      "click": "Chiudi",
+      "exact": true
+    },
+    {
+      "clickRole": {
+        "role": "link",
+        "name": "Oggi",
+        "exact": true
+      }
+    },
+    {
+      "wait": 600
+    }
+  ]
+}

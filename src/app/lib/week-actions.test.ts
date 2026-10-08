@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { createMemoryDataStore } from "@/data";
 import type { ActivityRecord, MealRecord } from "@/data";
+import { loadWeekData } from "./week-data";
+import { buildTodayView } from "./today-view";
+import { weekWeight, weightCard } from "./week-weight";
 import { activityRows, defaultWeighInDate, deleteActivityValue, freeMealOfWeek, markFreeMeal, removeFreeMeal, weekMeals, weighInsInWeek, withoutActivityValue } from "./week-actions";
 
 const rec = (date: string, o: Partial<ActivityRecord> = {}): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, ...o });
@@ -90,5 +93,51 @@ describe("pasto libero della settimana", () => {
     for (const m of meals) await store.saveMeal(m);
     expect(await markFreeMeal(store, weekMeals(meals), { date: "2026-01-06", slot: "cena" })).toBe(false);
     expect((await store.listMealsBetween(WEEK[0], WEEK[6])).filter((m) => m.isFree)).toHaveLength(2);
+  });
+});
+
+describe("dopo una modifica i numeri si ricalcolano", () => {
+  const fmt = (n: number) => String(n);
+
+  it("pesata eliminata: la scheda Peso torna a «Nessuna pesata»", async () => {
+    const store = createMemoryDataStore();
+    await store.saveWeighIn({ date: "2026-01-07", weightKg: 91.4 });
+    const card = async () => {
+      const weighIns = await store.listWeighIns();
+      return weightCard(weekWeight({ monday: WEEK[0], sunday: WEEK[6], weighIns }), fmt, fmt);
+    };
+    expect((await card()).value).toBe("91.4 kg");
+    await store.deleteWeighIn("2026-01-07");
+    expect(await card()).toEqual({ value: "Nessuna pesata" });
+  });
+
+  it("scheda Peso: con pesate mostra kg e differenza, senza dice «Nessuna pesata»", () => {
+    expect(weightCard(null, fmt, fmt)).toEqual({ value: "Nessuna pesata" });
+    const w = weekWeight({ monday: WEEK[0], sunday: WEEK[6], weighIns: [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-07", weightKg: 91.4 }], targetWeightKg: 82 });
+    expect(weightCard(w, fmt, fmt)).toEqual({ value: "91.4 kg", hint: "-0.6 kg dalla pesata precedente", tone: "ok" });
+  });
+
+  it("passi a mano eliminati: l'obiettivo di Oggi perde il bonus passi", async () => {
+    const store = createMemoryDataStore();
+    await store.saveActivity(rec("2026-01-08", { steps: 9000, stepsSource: "manuale" }));
+    const target = async () => {
+      const data = await loadWeekData(store, "2026-01-08");
+      return buildTodayView({ date: "2026-01-08", days: data.days, settings: data.settings, weightKg: 100 });
+    };
+    expect((await target()).target).toBe(2175);
+    await deleteActivityValue(store, "2026-01-08", "passi");
+    expect((await target()).target).toBe(2100);
+  });
+
+  it("pasto libero tolto: il budget del giorno conta il pasto per intero", async () => {
+    const store = createMemoryDataStore();
+    await store.saveMeal(dish("p", "2026-01-08", "pranzo", 2250, true));
+    const remaining = async () => {
+      const data = await loadWeekData(store, "2026-01-08");
+      return buildTodayView({ date: "2026-01-08", days: data.days, settings: data.settings, weightKg: 100 }).remaining;
+    };
+    expect(await remaining()).toBe(2100 - 800);
+    await removeFreeMeal(store, { date: "2026-01-08", slot: "pranzo" });
+    expect(await remaining()).toBe(2100 - 2250);
   });
 });

@@ -1,6 +1,6 @@
 {
   "id": "settimana-dopo-elimina-bici",
-  "descrizione": "Dopo aver eliminato i km a mano di martedì: il totale dei km e il pannello si aggiornano subito.",
+  "descrizione": "Dopo aver eliminato i km a mano di martedì e chiuso il pannello: il totale dei km (da 32,4 a 12,4) si è aggiornato.",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {
@@ -127,6 +127,10 @@
     },
     {
       "wait": 500
+    },
+    {
+      "click": "Chiudi",
+      "exact": true
     }
   ]
 }

@@ -40,3 +40,21 @@ export function weekWeight(input: { monday: DateKey; sunday: DateKey; weighIns: 
   }
   return { lastKg: last.weightKg, lastDate: last.date, deltaKg: deltaKg === 0 ? 0 : deltaKg, comparedWith, tone };
 }
+
+export const NO_WEIGHT_TEXT = "Nessuna pesata";
+
+export interface WeightCard {
+  value: string;
+  hint?: string;
+  tone?: WeightTone;
+}
+
+/** Testi della scheda Peso della Settimana: c'è sempre; senza pesate nella settimana dice "Nessuna pesata". */
+export function weightCard(weight: WeekWeight | null, formatKg: (kg: number) => string, formatDelta: (kg: number) => string): WeightCard {
+  if (!weight) return { value: NO_WEIGHT_TEXT };
+  return {
+    value: `${formatKg(weight.lastKg)} kg`,
+    hint: weight.deltaKg === null ? undefined : `${formatDelta(weight.deltaKg)} kg ${weight.comparedWith === "pesata" ? "dalla pesata precedente" : "dal peso di partenza"}`,
+    tone: weight.tone,
+  };
+}
