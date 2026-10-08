@@ -1,5 +1,7 @@
 import { AI_MESSAGES } from "@/modules/ai";
 import type { AiErrorCode, MealProposal } from "@/modules/ai";
+import { sumProposal } from "./proposal-form";
+import type { DishNumberKey } from "./proposal-form";
 
 export type EstimateResult = { ok: true; proposal: MealProposal; originalText: string } | { ok: false; code: AiErrorCode; message: string };
 
@@ -51,4 +53,22 @@ export async function fetchAiAvailable(doFetch: Fetch = fetch as unknown as Fetc
   } catch {
     return true;
   }
+}
+
+export type DishEstimateResult = { ok: true; numbers: Record<DishNumberKey, number>; note: string } | { ok: false; code: AiErrorCode; message: string };
+
+/** Stima i numeri di un piatto scritto a mano, dal nome e dalla quantità. Se il modello li divide in più piatti si sommano. */
+export async function estimateDish(
+  name: string,
+  quantity: string,
+  getToken: (() => Promise<string | null>) | null,
+  doFetch?: Fetch,
+  now?: Date,
+): Promise<DishEstimateResult> {
+  const n = name.trim();
+  const q = quantity.trim();
+  const r = await requestEstimate({ text: q ? `${n}, ${q}` : n }, getToken, doFetch, now);
+  if (!r.ok) return r;
+  const { notes, ...numbers } = sumProposal(r.proposal);
+  return { ok: true, numbers, note: notes.join(" ") };
 }

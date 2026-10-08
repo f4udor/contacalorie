@@ -255,7 +255,7 @@ Vincoli di questa fase:
 - "Conferma" salva tutti i piatti nei pasti indicati del giorno visualizzato; "Annulla" non salva nulla.
 - Stato di caricamento, errori di rete, limite superato e AI non configurata: messaggi chiari, il testo scritto non si perde.
 
-### T4.3 Piatto a mano con stima · da fare
+### T4.3 Piatto a mano con stima · fatto
 - Il pannello del piatto a mano chiede nome e quantità; kcal e macro diventano facoltativi.
 - Se kcal sono vuote: pulsante "Stima con AI" che riempie i numeri dal nome e dalla quantità, da confermare. Senza AI configurata, kcal resta obbligatorio come oggi.
 

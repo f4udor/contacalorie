@@ -71,12 +71,13 @@ export function parseDecimal(text: string): number | "empty" | "invalid" {
 }
 
 /**
- * Controlla il modulo. Solo le kcal sono obbligatorie; gli altri numeri vuoti valgono 0;
+ * Controlla il modulo. Solo le kcal sono obbligatorie (con la stima automatica attiva si possono ottenere dal nome e dalla quantità); gli altri numeri vuoti valgono 0;
  * il nome vuoto diventa "Piatto". Il pasto libero è accettato solo se `freeAllowed`.
  */
 export function validateMealForm(
   values: MealFormValues,
   freeAllowed: boolean,
+  aiAvailable = false,
 ): { ok: true; meal: ParsedMeal } | { ok: false; errors: MealFormErrors } {
   const errors: MealFormErrors = {};
   const nums: Record<"kcal" | "protein" | "carbs" | "fat" | "fiber" | "salt", number> = {
@@ -85,7 +86,7 @@ export function validateMealForm(
   for (const key of ["kcal", "protein", "carbs", "fat", "fiber", "salt"] as const) {
     const r = parseDecimal(values[key]);
     if (r === "empty") {
-      if (key === "kcal") errors.kcal = "Inserisci le kcal";
+      if (key === "kcal") errors.kcal = aiAvailable ? "Inserisci le kcal o tocca «Stima con AI»" : "Inserisci le kcal";
     } else if (r === "invalid") {
       errors[key] = "Inserisci un numero valido";
     } else if (r < 0) {

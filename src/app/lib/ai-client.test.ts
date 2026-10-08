@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fetchAiAvailable, localDateTime, requestEstimate } from "./ai-client";
+import { estimateDish, fetchAiAvailable, localDateTime, requestEstimate } from "./ai-client";
 
 const proposal = { meals: [{ slot: "pranzo", dishes: [{ name: "Pera", quantity: null, quantityAssumed: true, kcal: 80, protein: 0.5, carbs: 21, fat: 0.2, fiber: 4, salt: 0, note: "" }] }] };
 type Init = { method: string; headers: Record<string, string>; body: string };
@@ -68,5 +68,28 @@ describe("fetchAiAvailable", () => {
   });
   it("rete assente: si lascia provare (l'errore comparirà alla stima)", async () => {
     expect(await fetchAiAvailable(async () => { throw new Error("x"); })).toBe(true);
+  });
+});
+
+describe("estimateDish", () => {
+  it("manda nome e quantità come testo e somma i numeri dei piatti", async () => {
+    let init: Init | undefined;
+    const two = { meals: [{ slot: "pranzo", dishes: [{ ...proposal.meals[0].dishes[0], kcal: 300, note: "pasta" }, { ...proposal.meals[0].dishes[0], kcal: 180, note: "pesto" }] }] };
+    const f = async (_u: string, i?: Init) => {
+      init = i;
+      return { ok: true, status: 200, json: async () => ({ proposal: two }) };
+    };
+    const r = await estimateDish(" Spaghetti al pesto ", "80 g", null, f);
+    expect(JSON.parse(init!.body).text).toBe("Spaghetti al pesto, 80 g");
+    expect(r).toMatchObject({ ok: true, numbers: { kcal: 480, protein: 1, carbs: 42 }, note: "pasta pesto" });
+  });
+  it("senza quantità il testo è solo il nome; gli errori passano com'erano", async () => {
+    let init: Init | undefined;
+    await estimateDish("Pera", "  ", null, async (_u, i) => {
+      init = i;
+      return { ok: true, status: 200, json: async () => ({ proposal }) };
+    });
+    expect(JSON.parse(init!.body).text).toBe("Pera");
+    expect(await estimateDish("Pera", "", null, reply(429, { error: { code: "limite", message: "Limite raggiunto." } }))).toEqual({ ok: false, code: "limite", message: "Limite raggiunto." });
   });
 });

@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import type { DateKey, Meal } from "@/engine";
 import type { DataStore } from "@/data";
 import type { MealProposal } from "@/modules/ai";
 import { useAuth } from "../auth-provider";
-import { fetchAiAvailable, requestEstimate } from "../lib/ai-client";
+import { requestEstimate } from "../lib/ai-client";
 import { newId } from "../lib/ids";
 import { SLOTS } from "../lib/meal-form";
 import { DISH_NUMBER_KEYS, draftsToProposal, hasDishes, proposalToDrafts, proposalToRecords } from "../lib/proposal-form";
 import type { DishDraft, DishNumberKey, DraftErrors, MealDraft } from "../lib/proposal-form";
 import { isMealFree, saveDish } from "../lib/save-dish";
+import { useAiAvailable } from "../lib/use-ai";
 
 interface Props {
   store: DataStore;
@@ -32,7 +33,7 @@ const secondary = "min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text
 /** Campo "Cosa hai mangiato?" in cima al pannello Aggiungi, con la proposta da controllare e confermare. */
 export function AiEstimate({ store, date, dayDishes, onChanged, onClose, children }: Props) {
   const { getAccessToken } = useAuth();
-  const [available, setAvailable] = useState<boolean | null>(null);
+  const available = useAiAvailable();
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -41,14 +42,6 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, childre
   const [original, setOriginal] = useState<{ proposal: MealProposal; text: string } | null>(null);
   const [correction, setCorrection] = useState("");
   const [errors, setErrors] = useState<DraftErrors>({});
-
-  useEffect(() => {
-    let alive = true;
-    fetchAiAvailable().then((a) => alive && setAvailable(a));
-    return () => {
-      alive = false;
-    };
-  }, []);
 
   const start = (proposal: MealProposal, originalText: string) => {
     setOriginal({ proposal, text: originalText });
