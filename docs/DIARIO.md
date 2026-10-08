@@ -28,6 +28,7 @@ Una riga per task chiuso.
 - T3.0 · fatto · motore: pasto = piatti di una fascia in un giorno (`groupMeals`, `MealGroup`); il tetto del pasto libero vale sulla somma dei piatti; `hasFreeMealInWeek` esclude un pasto per giorno e fascia; casi L e C. DB: segno 'libero' su tutti i piatti. Test aggiornati: vedi 'Decisioni da confermare'.
 - T3.1 · fatto · motore: `proteinPerKgTarget` 1,8; proteine = 1,8 × peso obiettivo se impostato, altrimenti 1,4 × peso; manuale sempre prioritario; caso K. Colonna DB in T3.3.
 - T3.2 · fatto · Oggi: pasti come schede di piatti (totali, quantità, '+ Aggiungi piatto', fasce vuote come pulsanti), pannello del piatto con quantità, interruttore 'Pasto libero' sul pasto intero (`saveDish`, `isMealFree`), modifica/eliminazione per piatto, riga sul peso delle proteine in Impostazioni.
+- T3.3 · fatto · `SupabaseDataStore` (+ `withErrorReporting`, `createDataStore`: Supabase solo con entrambe le variabili), migrazione 0005 e `supabase/setup.sql` generato; test con client finto. Nulla provato contro Supabase vero (vedi Non verificato).
 
 ## Decisioni da confermare
 

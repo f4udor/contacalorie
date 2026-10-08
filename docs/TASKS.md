@@ -195,7 +195,7 @@ Vincoli di questa fase:
 - In Impostazioni la scheda Proteine spiega su quale peso è calcolata ("1,8 g per kg del peso obiettivo").
 - Scenari: pasto con un piatto, pasto con tre piatti, pasto libero con più piatti, giornata con tutti e quattro i pasti.
 
-### T3.3 Sportello dati su Supabase · da fare
+### T3.3 Sportello dati su Supabase · fatto
 - Implementazione di `DataStore` su Supabase, con `@supabase/supabase-js` (motivo della dipendenza nel diario).
 - L'app sceglie Supabase solo se entrambe le variabili d'ambiente sono presenti; altrimenti usa il browser.
 - Migrazioni aggiornate per T3.0 e T3.1, solo per aggiunta. Un file unico `supabase/setup.sql` con tutto lo schema in ordine, da incollare nell'editor SQL di Supabase.
