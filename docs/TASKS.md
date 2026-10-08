@@ -160,5 +160,5 @@ Passaggio finale su tutte le schermate, solo correttivo: nessuna funzione nuova.
 - Prova anche a 375 px e 430 px di larghezza, oltre a 390.
 - Correggi ciò che trovi e annota nel diario cosa è stato cambiato.
 
-### T2.9 Report di fase · da fare
+### T2.9 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-2.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici, includi una lista di 10 controlli che Mauro può fare in cinque minuti sul telefono.
