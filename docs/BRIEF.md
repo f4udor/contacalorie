@@ -18,13 +18,17 @@ Navigazione in basso: **Oggi, Settimana, Grafici, Impostazioni**.
 
 ### Pannello Aggiungi (dal +)
 - In cima: un campo di testo "Cosa hai mangiato?". L'utente scrive o detta con il microfono della tastiera dell'iPhone, il modello AI restituisce uno o più pasti con i loro piatti stimati, l'utente conferma, corregge i numeri a mano oppure invia una correzione a voce o testo ("il totano era di più") che aggiorna la stima.
-- Preferiti (piatti e pasti salvati), "Copia da ieri", piatto a mano con nome e quantità. I numeri sono facoltativi: se restano vuoti li stima il modello AI, e l'utente conferma.
+- Accanto al titolo un selettore **AI | Manuale**; si apre sempre su AI. "Manuale" mostra il piatto a mano con nome e quantità: i numeri sono facoltativi e, se restano vuoti, li stima il modello AI e l'utente conferma.
+- La proposta dell'AI mostra ogni piatto su una riga (nome, quantità, kcal); toccandola si aprono i numeri da correggere.
+- "Aggiungi piatto" sotto un pasto apre lo stesso pannello, su AI, con la fascia già fissata.
+- Preferiti (piatti e pasti salvati): ogni riga ha un + per aggiungerla; "Modifica" mostra i comandi per eliminarli.
 - Interruttore "Pasto libero" sul pasto intero, disattivato se già usato nella settimana.
 - Voci separate: "Pesata" e "Attività a mano".
 
 ### Settimana (lunedì-domenica)
 - Sette barre delle kcal mangiate con la linea dell'obiettivo di ogni giorno.
 - Saldo della settimana, media kcal, medie dei nutrienti, km in bici, passi medi, pasto libero usato o no.
+- Peso: ultima pesata della settimana e differenza in kg con la pesata precedente (o con il peso di partenza del profilo), verde se ci si avvicina al peso obiettivo e rosso se ci si allontana. Non compare senza pesate nella settimana. Il peso del profilo è il peso di partenza e le pesate non lo sovrascrivono; consigliata una pesata a settimana, stesso giorno, al mattino.
 
 ### Grafici
 - Peso, kcal e deficit, macro medi, attività. Periodo: 4 settimane, 3 mesi, tutto.
@@ -157,6 +161,7 @@ Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate,
 | 2 | Schermate Oggi, Settimana, Impostazioni; peso; sfida (poi rimossa) |
 | 3 | Supabase: login, dati online, importazione dal browser; pasti composti da piatti; proteine sul peso obiettivo |
 | 4 | Inserimento con AI (Vertex), piatti a mano con stima, preferiti, rimozione della sfida, primo avvio guidato |
+| 4b | Ritocchi delle schermate: AI o Manuale, proposta compatta, preferiti, peso nella Settimana |
 | 5 | Dati da Salute e Fitness tramite Comando rapido, guardiano |
 | 6 | Grafici |
 | 7 | Promemoria (opzionale) |
