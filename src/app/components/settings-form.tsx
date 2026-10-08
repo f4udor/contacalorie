@@ -68,8 +68,11 @@ export function SettingsForm({ store, settings, weighIns, today, onChanged }: Pr
       {field(key, label, {
         placeholder: "Formula",
         hint:
-          (proposedValue === null ? "Proposto dalla formula: serve il peso" : `Proposto dalla formula: ${formatNumber(proposedValue)} g`) +
-          (key === "proteinGramsManual" ? `. Calcolato su ${proteinBasis}.` : ""),
+          proposedValue === null
+            ? key === "proteinGramsManual"
+              ? "Proposto dalla formula: serve il peso o il peso obiettivo."
+              : "Proposto dalla formula: serve il peso."
+            : `Proposto dalla formula: ${formatNumber(proposedValue)} g` + (key === "proteinGramsManual" ? `. Calcolato su ${proteinBasis}.` : ""),
       })}
       {values[key] !== "" && (
         <button type="button" onClick={() => set(key)("")} className="-ml-2 min-h-11 w-fit px-2 text-[15px] font-semibold text-accent">

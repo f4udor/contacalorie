@@ -10,3 +10,5 @@ export type { SupabaseLike, SupabaseQuery, SupabaseTable } from "./supabase";
 export { withErrorReporting } from "./reporting";
 export type { ErrorReport } from "./reporting";
 export { createDataStore, isSupabaseConfigured, readSupabaseEnv } from "./factory";
+export * from "./auth";
+export { createAuthService } from "./auth-factory";

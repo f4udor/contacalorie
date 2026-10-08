@@ -25,7 +25,9 @@ export function TextField({ id, label, value, onChange, error, required, inputMo
         id={id}
         type="text"
         inputMode={inputMode}
-        autoComplete="off"
+        autoComplete={inputMode === "email" ? "email" : id === "login-code" ? "one-time-code" : "off"}
+        autoCapitalize={inputMode === "email" ? "none" : undefined}
+        autoCorrect={inputMode === "email" ? "off" : undefined}
         value={value}
         placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}

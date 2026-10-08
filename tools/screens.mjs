@@ -103,6 +103,15 @@ try {
             [STORAGE_KEY, typeof sc.dati === "string" ? sc.dati : JSON.stringify(sc.dati)],
           );
         }
+        if (sc.accessoDimostrativo) {
+          // Accesso finto (solo senza Supabase): inizia senza sessione oppure già collegato.
+          await context.addInitScript(
+            ([key, value]) => {
+              if (!localStorage.getItem(key)) localStorage.setItem(key, value);
+            },
+            ["personal-health:demo-auth", JSON.stringify({ session: sc.accessoDimostrativo.session ?? null })],
+          );
+        }
         if (sc.scritturaFallita) {
           // Simula il browser che non riesce più a scrivere (memoria piena): dopo aver caricato i dati, ogni salvataggio fallisce.
           await context.addInitScript(() => {

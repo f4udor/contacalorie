@@ -1,0 +1,40 @@
+{
+  "id": "accesso-effettuato",
+  "descrizione": "Codice giusto (123456 nella modalità dimostrativa): si entra in Oggi, con la barra in basso.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": null,
+  "accessoDimostrativo": {
+    "session": null
+  },
+  "fisso": false,
+  "passi": [
+    {
+      "fill": [
+        "Email",
+        "mauro@esempio.it"
+      ]
+    },
+    {
+      "click": "Invia il codice",
+      "exact": true
+    },
+    {
+      "fill": [
+        "Codice",
+        "123456"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Accedi",
+        "exact": true
+      }
+    },
+    {
+      "wait": 600
+    }
+  ],
+  "scorre": true
+}

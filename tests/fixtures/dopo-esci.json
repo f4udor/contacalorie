@@ -1,0 +1,25 @@
+{
+  "id": "dopo-esci",
+  "descrizione": "Dopo 'Esci': si torna alla schermata Accedi.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "fisso": true,
+  "accessoDimostrativo": {
+    "session": {
+      "email": "mauro@esempio.it"
+    }
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Esci",
+        "exact": true
+      }
+    },
+    {
+      "wait": 500
+    }
+  ]
+}

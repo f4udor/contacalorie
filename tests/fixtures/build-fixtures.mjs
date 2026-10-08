@@ -276,6 +276,19 @@ add("pannello-pasto-libero-bloccato", "Un altro pasto della settimana è già li
   meal("2026-01-07", "pranzo", "Riso", 400, 8, 80, 3, 2, 0.2),
 ]), { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, { scrollTo: "Pasto libero" }] });
 
+// --- Accesso con email e codice (T3.4): schermate con l'accesso dimostrativo (senza Supabase)
+const accesso = (id, descrizione, passi, extra = {}) =>
+  scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/", dati: null, accessoDimostrativo: { session: null }, fisso: true, passi, ...extra });
+const mail = { fill: ["Email", "mauro@esempio.it"] };
+const inviaCodice = { click: "Invia il codice", exact: true };
+accesso("accesso-email", "Accedi: prima si scrive l'email, niente password.", []);
+accesso("accesso-email-errore", "Email non valida: messaggio accanto al campo.", [{ fill: ["Email", "non-una-email"] }, inviaCodice]);
+accesso("accesso-codice", "Dopo aver chiesto il codice: si inserisce il codice di 6 cifre ricevuto per email.", [mail, inviaCodice]);
+accesso("accesso-codice-errore", "Codice sbagliato: messaggio chiaro, si può riprovare o chiedere un nuovo codice.", [mail, inviaCodice, { fill: ["Codice", "000000"] }, { clickRole: { role: "button", name: "Accedi", exact: true } }]);
+accesso("accesso-effettuato", "Codice giusto (123456 nella modalità dimostrativa): si entra in Oggi, con la barra in basso.", [mail, inviaCodice, { fill: ["Codice", "123456"] }, { clickRole: { role: "button", name: "Accedi", exact: true } }, { wait: 600 }], { fisso: false, scorre: true });
+scenarios.push({ id: "impostazioni-account", descrizione: "Impostazioni con l'accesso attivo: in fondo l'account con l'email e 'Esci'.", oggi: "2026-01-08", percorso: "/impostazioni", dati: null, scorre: true, accessoDimostrativo: { session: { email: "mauro@esempio.it" } }, passi: [{ scrollTo: "Esci" }] });
+scenarios.push({ id: "dopo-esci", descrizione: "Dopo 'Esci': si torna alla schermata Accedi.", oggi: "2026-01-08", percorso: "/impostazioni", dati: null, fisso: true, accessoDimostrativo: { session: { email: "mauro@esempio.it" } }, passi: [{ clickRole: { role: "button", name: "Esci", exact: true } }, { wait: 500 }] });
+
 // --- Errori di salvataggio (T3.3)
 add("salvataggio-fallito", "Il browser non riesce più a scrivere (memoria piena): il peso resta in memoria (proteine 125 g) e l'avviso in cima dice che non è stato salvato su questo dispositivo. Con Supabase lo stesso avviso compare per un salvataggio non riuscito e il pannello resta aperto per riprovare.", "2026-01-08", null, {
   fisso: true, scritturaFallita: true,

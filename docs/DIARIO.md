@@ -73,6 +73,9 @@ Una riga per task chiuso.
 - Errori (T3.3): ogni lettura o salvataggio fallito mostra un avviso giallo in cima alla schermata (sopra anche i pannelli) con un messaggio chiaro; il pannello o la spunta restano come erano, così si riprova; per le letture c'è "Riprova" (ricarica la pagina). Anche il browser che non riesce a scrivere ora lo dice subito.
 - "Copia da ieri" interrotta a metà da un errore di rete e ripetuta può duplicare i piatti già copiati.
 - Migrazione `20260101000005_piatti_e_proteine.sql` (solo aggiunte: `meals.quantity`, `settings.protein_per_kg_target`) e `supabase/setup.sql` generato da `npm run setup-sql`; un test controlla che sia aggiornato.
+- Accesso (T3.4): email + codice di 6 cifre (`signInWithOtp` + `verifyOtp`, nessun link); al primo accesso l'account si crea da solo (`shouldCreateUser`): si può disattivare le nuove registrazioni su Supabase dopo il primo accesso (lo dirà la guida T3.7). La sessione la tiene il client Supabase in questo dispositivo. Senza Supabase configurato non c'è nessuna schermata di accesso.
+- Modalità dimostrativa dell'accesso: serve solo a mostrare le schermate di accesso negli screenshot senza Supabase. Si attiva solo se Supabase NON è configurato e nel browser esiste la chiave `personal-health:demo-auth`; accetta qualsiasi email e il codice 123456 e non dà accesso a nessun dato (i dati restano quelli del browser). Con Supabase configurato non ha nessun effetto.
+- Se la sessione scade mentre si usa l'app, compare l'avviso "Non hai effettuato l'accesso." e al cambio di sessione si torna alla schermata Accedi.
 
 ## Non verificato
 
@@ -88,3 +91,4 @@ Una riga per task chiuso.
 - T3.3: `supabase/setup.sql` applicato per intero su un PostgreSQL 16 locale con uno stand-in di `auth.users`/`auth.uid()` (stessa prova della fase 1, ripetuta): tabelle create, piano iniziale (1 piano, 12 esercizi), isolamento tra utenti, nuove colonne `quantity` e `protein_per_kg_target`. Non su Supabase.
 - T3.3: la scelta "Supabase solo se ci sono entrambe le variabili" è provata con test sulla funzione; con le variabili dell'ambiente reali dopo la build di Vercel non è stato provato (la build locale non le ha).
 - T3.3: l'avviso per un salvataggio non riuscito è visto in uno screenshot solo nel caso del browser che non riesce a scrivere (i dati restano in memoria). Il caso di Supabase (errore di rete: l'avviso compare, il pannello o la spunta restano com'erano per riprovare) è coperto da test dello sportello e del segnalatore di errori, ma non da uno screenshot né da una prova a schermo.
+- T3.4: l'accesso vero (invio dell'email con il codice, verifica, sessione che resta attiva sull'app installata sulla Home dell'iPhone, compilazione automatica del codice dall'email) **non è stato provato**: solo test con un client di accesso finto e screenshot con l'accesso dimostrativo. Il modello dell'email deve mostrare il codice (non il link): sta nella guida T3.7.
