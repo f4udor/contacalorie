@@ -97,7 +97,7 @@ In `src/data`: un'interfaccia unica (`DataStore`) per leggere e scrivere imposta
 - I campi ricalcano le tabelle di `docs/SCHEMA.md`, così il passaggio a Supabase cambierà solo l'implementazione.
 - Test sull'implementazione in memoria e su quella del browser (con un `localStorage` finto): scrittura, lettura, modifica, eliminazione, dati corrotti.
 
-### T2.1 Guscio dell'app · da fare
+### T2.1 Guscio dell'app · fatto
 Struttura comune a tutte le schermate.
 - Barra in basso con Oggi, Settimana, Grafici, Impostazioni. Grafici mostra solo "In arrivo".
 - Colori come variabili CSS, tema chiaro e scuro automatici; font di sistema; titoli grandi; schede arrotondate; un solo colore d'accento più verde, giallo e rosso dei semafori.

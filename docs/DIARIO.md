@@ -16,6 +16,7 @@ Una riga per task chiuso.
 - T1.9 · fatto · 10 migrazioni/tabelle con RLS, piano di 30 giorni come dato iniziale, `docs/SCHEMA.md`. Provate solo su PostgreSQL locale con stand-in di Supabase (vedi Non verificato).
 - T1.10 · fatto · `docs/REPORT-FASE-1.md` scritto.
 - T2.0 · fatto · `src/data`: interfaccia `DataStore` async, implementazioni in memoria e nel browser (stessa classe a snapshot con versione del formato 1), avviso su dati illeggibili; regola di lint che vieta `localStorage` fuori da `src/data`.
+- T2.1 · fatto · guscio: barra in basso, variabili CSS chiaro/scuro, manifest e icone, pannello dal basso (`Sheet`), avviso dati, `npm run screens` con scenari in `tests/fixtures/`. Cose non provabili in 'Non verificato'.
 
 ## Decisioni da confermare
 
