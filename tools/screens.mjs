@@ -3,7 +3,7 @@
 // Per ogni scenario e per tema chiaro e scuro salva <id>-<chiaro|scuro>[-<larghezza>].png
 // e segnala scorrimento orizzontale e aree toccabili sotto i 44 px.
 import { spawn } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from "node:fs";
 import path from "node:path";
 import { chromium } from "@playwright/test";
 
@@ -62,6 +62,10 @@ try {
   await waitForServer(BASE);
   const browser = await chromium.launch({ executablePath: findChromium() });
   mkdirSync(path.join(root, outDir), { recursive: true });
+  // Rigenerazione completa: via gli screenshot di scenari che non esistono più.
+  if (!only && widths.length === 1 && widths[0] === 390) {
+    for (const f of readdirSync(path.join(root, outDir))) if (f.endsWith(".png")) rmSync(path.join(root, outDir, f));
+  }
 
   const files = readdirSync(fixturesDir).filter((f) => f.endsWith(".json")).sort();
   for (const file of files) {

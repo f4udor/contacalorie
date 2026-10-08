@@ -43,6 +43,8 @@ Una riga per task chiuso.
 - Pesata: una per giorno; la seconda sostituisce la prima. Il peso salvato è subito usato per le proteine.
 - Tema scuro: colore d'accento `#0a84ff` (con il precedente più chiaro il testo bianco sui pulsanti aveva poco contrasto).
 - In Oggi l'ordine è anello, nutrienti, pasti, attività (poi la sfida, T2.5).
+- Sfida: nel registro l'esercizio è identificato dal suo nome nel piano; togliere la spunta di un esercizio cancella la sua voce (anche le ripetizioni modificate). Senza data di inizio la sezione invita a impostarla (la data si potrà cambiare in T2.7); la nota sul dolore compare con la lista degli esercizi e nel pannello dell'esercizio.
+- Ripetizioni modificate: si cambiano toccando l'esercizio ("Fatto" le salva e segna l'esercizio come fatto); "Salta" lo segna saltato; "Rimetti da fare" cancella la voce.
 
 ## Non verificato
 

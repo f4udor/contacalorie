@@ -1,12 +1,13 @@
 {
-  "id": "pannello-aggiungi",
-  "descrizione": "Pannello Aggiungi: spazio riservato alla voce, Pasto a mano, Copia da ieri.",
+  "id": "pannello-esercizio",
+  "descrizione": "Esercizio toccato: ripetizioni modificabili (previste dal piano), Fatto, Salta.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
     "version": 1,
     "settings": {
-      "weightKg": 100
+      "weightKg": 100,
+      "challengeStartDate": "2025-12-10"
     },
     "meals": [],
     "activity": [],
@@ -17,10 +18,7 @@
   "fisso": true,
   "passi": [
     {
-      "clickRole": {
-        "role": "button",
-        "name": "Aggiungi"
-      }
+      "click": "Plank con tocco spalla"
     }
   ]
 }

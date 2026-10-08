@@ -1,7 +1,7 @@
 // Genera gli scenari di dati di esempio (tests/fixtures/*.json) usati da `npm run screens`.
 // Uso: node tests/fixtures/build-fixtures.mjs
 // Giorni di riferimento: lunedì 2026-01-05 … domenica 2026-01-11 (giovedì = 2026-01-08).
-import { writeFileSync } from "node:fs";
+import { readdirSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -172,5 +172,24 @@ add("dopo-attivita", "Dopo aver salvato 9.000 passi: obiettivo 2.175, composizio
   passi: [apri, { click: "Attività a mano" }, { fill: ["Passi", "9000"] }, { click: "Salva attività" }, { wait: 600 }],
 });
 
+// --- Sfida mattutina (T2.5)
+const sfida = (start, extra = {}) => data({ settings: { weightKg: 100, challengeStartDate: start }, ...extra });
+const voce = (date, exerciseId, status, reps = null) => ({ date, exerciseId, status, reps });
+add("sfida-giorno-4", "Sfida giorno 4/30: push up 4, crunch, crunch incrociati, dead bug nuovo; uno fatto, uno saltato, uno con ripetizioni modificate.", "2026-01-08",
+  sfida("2026-01-05", { challengeLog: [voce("2026-01-08", "Push up", "fatto"), voce("2026-01-08", "Crunch", "fatto", 25), voce("2026-01-08", "Crunch incrociati", "saltato")] }), { passi: [{ scrollTo: "Fermati se senti dolore" }] });
+add("sfida-giorno-1", "Sfida giorno 1/30: tre esercizi, tutti nuovi, niente fatto.", "2026-01-05", sfida("2026-01-05"), { passi: [{ scrollTo: "Fermati se senti dolore" }] });
+add("sfida-giorno-30", "Sfida giorno 30/30: dodici esercizi.", "2026-01-08", sfida("2025-12-10"), { passi: [{ scrollTo: "Fermati se senti dolore" }] });
+add("sfida-non-iniziata", "Prima dell'inizio: messaggio con la data di partenza, nessuna lista.", "2026-01-08", sfida("2026-01-12"), { passi: [{ scrollTo: "non è ancora iniziata" }] });
+add("sfida-completata", "Dopo il giorno 30: messaggio di sfida completata, nessuna lista.", "2026-01-08", sfida("2025-11-01"), { passi: [{ scrollTo: "Sfida completata" }] });
+add("sfida-senza-data", "Nessuna data di inizio: invito a impostarla.", "2026-01-08", null, { passi: [{ scrollTo: "non ha una data" }] });
+add("pannello-esercizio", "Esercizio toccato: ripetizioni modificabili (previste dal piano), Fatto, Salta.", "2026-01-08", sfida("2025-12-10"), { fisso: true, passi: [{ click: "Plank con tocco spalla" }] });
+add("pannello-esercizio-errore", "Ripetizioni non valide: errore accanto al campo.", "2026-01-08", sfida("2025-12-10"), { fisso: true, passi: [{ click: "Plank con tocco spalla" }, { fill: ["Ripetizioni per lato", "dieci"] }, { click: "Fatto", exact: true }] });
+add("pannello-esercizio-saltato", "Esercizio già saltato: compare 'Rimetti da fare'.", "2026-01-08", sfida("2026-01-05", { challengeLog: [voce("2026-01-08", "Dead bug", "saltato")] }), { fisso: true, passi: [{ click: "Dead bug", exact: false }] });
+add("dopo-esercizio-fatto", "Dopo aver toccato la spunta del Crunch: 'fatti 1 su 4'.", "2026-01-08", sfida("2026-01-05"), {
+  passi: [{ clickRole: { role: "checkbox", name: "Crunch: fatto" } }, { wait: 500 }, { scrollTo: "Fermati se senti dolore" }],
+});
+
+// Toglie gli scenari non più definiti qui.
+for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");
 console.log(`${scenarios.length} scenari scritti in ${dir}`);
