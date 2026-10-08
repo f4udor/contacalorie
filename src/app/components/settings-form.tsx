@@ -52,7 +52,11 @@ export function SettingsForm({ store, settings, weighIns, today, onChanged }: Pr
   // Valori proposti dalla formula, con le impostazioni salvate (non quelle in corso di modifica).
   const merged = mergeSettings(settings as Record<string, unknown>);
   const weight = currentWeight(weighIns, today, settings.weightKg);
-  const proposed = weight === null ? null : nutrientTargets(merged.baseKcal, weight, { ...merged, proteinGramsManual: null, fatGramsManual: null });
+  const targetWeight = settings.targetWeightKg ?? null;
+  const proposed =
+    weight === null && targetWeight === null
+      ? null
+      : nutrientTargets(merged.baseKcal, weight ?? 0, { ...merged, proteinGramsManual: null, fatGramsManual: null }, targetWeight);
   const formulaRow = (key: "proteinGramsManual" | "fatGramsManual", label: string, proposedValue: number | null) => (
     <div key={key} className="flex flex-col gap-1">
       {field(key, label, { placeholder: "Formula", hint: proposedValue === null ? "Proposto dalla formula: serve il peso" : `Proposto dalla formula: ${formatNumber(proposedValue)} g` })}

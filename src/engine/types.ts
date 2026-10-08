@@ -69,6 +69,8 @@ export interface Settings {
   stepThreshold: number;
   freeMealCap: number;
   proteinPerKg: number;
+  /** Grammi di proteine per kg di peso obiettivo (usato quando il peso obiettivo è impostato). */
+  proteinPerKgTarget: number;
   fatShare: number;
   fiberMin: number;
   saltMax: number;

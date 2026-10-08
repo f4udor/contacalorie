@@ -38,6 +38,7 @@ export function OggiScreen() {
         days: data.days,
         settings: data.settings,
         weightKg: currentWeight(data.weighIns, date, data.userSettings.weightKg),
+        targetWeightKg: data.userSettings.targetWeightKg ?? null,
       })
     : null;
 

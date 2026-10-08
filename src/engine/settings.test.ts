@@ -13,6 +13,7 @@ describe("default (BRIEF §3)", () => {
       stepThreshold: 6000,
       freeMealCap: 800,
       proteinPerKg: 1.4,
+      proteinPerKgTarget: 1.8,
       fatShare: 0.3,
       fiberMin: 30,
       saltMax: 5,
@@ -70,5 +71,13 @@ describe("mergeSettings", () => {
   it("non modifica i default", () => {
     mergeSettings({ baseKcal: 1 });
     expect(DEFAULT_SETTINGS.baseKcal).toBe(2100);
+  });
+});
+
+describe("proteinPerKgTarget", () => {
+  it("default 1,8 e personalizzabile", () => {
+    expect(mergeSettings().proteinPerKgTarget).toBe(1.8);
+    expect(mergeSettings({ proteinPerKgTarget: 2 }).proteinPerKgTarget).toBe(2);
+    expect(mergeSettings({ proteinPerKgTarget: -1 }).proteinPerKgTarget).toBe(1.8);
   });
 });

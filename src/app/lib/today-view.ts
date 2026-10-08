@@ -67,8 +67,12 @@ export function buildTodayView(input: {
   days: readonly Day[];
   settings: Settings;
   weightKg: number | null;
+  /** Peso obiettivo del profilo: se c'è, le proteine si calcolano su quello. */
+  targetWeightKg?: number | null;
 }): TodayView {
   const { date, days, settings, weightKg } = input;
+  const targetWeightKg = input.targetWeightKg ?? null;
+  const hasTargetWeight = targetWeightKg !== null && targetWeightKg > 0;
   const day = days.find((d) => d.date === date);
   const meals = day?.meals ?? [];
   const hasMeals = meals.length > 0;
@@ -83,8 +87,8 @@ export function buildTodayView(input: {
   if (t.stepsBonus !== 0) composition.push({ label: "passi", amount: t.stepsBonus, signed: true });
   if (recovery !== 0) composition.push({ label: "recupero", amount: recovery, signed: true });
 
-  const needsWeight = weightKg === null && settings.proteinGramsManual === null;
-  const goals = nutrientTargets(t.total, weightKg ?? 0, settings);
+  const needsWeight = weightKg === null && !hasTargetWeight && settings.proteinGramsManual === null;
+  const goals = nutrientTargets(t.total, weightKg ?? 0, settings, targetWeightKg);
 
   const taken: Record<NutrientKey, number> = { protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0 };
   for (const m of meals) {
