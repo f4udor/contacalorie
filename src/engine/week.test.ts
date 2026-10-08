@@ -38,7 +38,7 @@ describe("weekSummary: settimana con dati", () => {
   const days = [
     day(LUN, [meal("a", 1750, { protein: 100, carbs: 200, fat: 60, fiber: 20, salt: 4 })], { steps: 8000, bikeKm: 20 }, true),
     day(MAR, [meal("b", 1900, { protein: 120, carbs: 220, fat: 80, fiber: 30, salt: 6 })], { steps: 0 }, true),
-    day(MER, [meal("c", 2250, { isFree: true }), meal("d", 500)], { steps: 10000, bikeKm: 10 }),
+    day(MER, [meal("c", 2250, { isFree: true }), meal("d", 500, { slot: "cena" })], { steps: 10000, bikeKm: 10 }),
     day("2026-01-08", []), // senza pasti
     day("2026-01-12", [meal("fuori", 9999)]), // altra settimana
   ];

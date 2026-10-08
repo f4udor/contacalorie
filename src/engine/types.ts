@@ -3,6 +3,13 @@ export type DateKey = string;
 
 export type MealSlot = "colazione" | "pranzo" | "cena" | "spuntino";
 
+/** Le fasce nell'ordine in cui si mostrano. */
+export const MEAL_SLOTS: readonly MealSlot[] = ["colazione", "pranzo", "cena", "spuntino"];
+
+/**
+ * Un piatto. I piatti dello stesso giorno e della stessa fascia formano un pasto (`MealGroup`).
+ * Il nome `Meal` resta per compatibilità con lo schema del database (tabella `meals`: una riga per piatto).
+ */
 export interface Meal {
   id: string;
   name: string;
@@ -13,8 +20,27 @@ export interface Meal {
   fat: number;
   fiber: number;
   salt: number;
-  /** Pasto libero: conta al massimo `freeMealCap` nel budget. */
+  /** Segna il pasto come libero. Sta su tutti i piatti del pasto; un pasto è libero se almeno un suo piatto lo è. */
   isFree: boolean;
+}
+
+/** Un pasto: i piatti di una fascia in un giorno, con i totali. */
+export interface MealGroup {
+  slot: MealSlot;
+  dishes: Meal[];
+  kcal: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  salt: number;
+  isFree: boolean;
+}
+
+/** Identifica un pasto: giorno e fascia. */
+export interface MealKey {
+  date: DateKey;
+  slot: MealSlot;
 }
 
 export interface Activity {

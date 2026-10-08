@@ -144,7 +144,7 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
     <Sheet open onClose={onClose} title="Modifica pasto">
       <MealForm
         initial={mealToForm(meal)}
-        freeAllowed={!hasFreeMealInWeek(days, meal.id)}
+        freeAllowed={!hasFreeMealInWeek(days, { date: meal.date, slot: meal.slot })}
         freeMealCap={settings.freeMealCap}
         submitLabel="Salva"
         onSubmit={save}

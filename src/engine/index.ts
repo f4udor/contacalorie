@@ -1,6 +1,7 @@
 export * from "./types";
 export * from "./defaults";
 export * from "./settings";
+export * from "./meals";
 export * from "./budget";
 export * from "./activity";
 export * from "./dates";
