@@ -57,7 +57,7 @@ Nessun task `bloccato`: nessun ultimo tentativo da fare a fine fase. I commit «
 - **Schermate:** `health-section.tsx`, `health-warning.tsx`, `lib/health-link.ts` (`shouldWarnHealth`); `week-panels.tsx` e `lib/week-actions.ts`; `swipe-row.tsx` + `swipe-logic.ts`.
 
 ### Test
-- **561 test in 47 file** (Vitest), tutti verdi; `lint` senza avvisi e `build` passano. In questa fase: 491 → 561.
+- **561 test in 47 file** (Vitest), tutti verdi; `lint` senza avvisi e `build` passano. In questa fase: 432 → 561 (da 38 a 47 file).
 - **Casi di §3.6:** B, C, D aggiornati; M, N, O, P, Q, R aggiunti; A, E, F, G, H, I, J, K, L con gli stessi risultati. Test del motore toccati perché la regola cambia: `target.test.ts` (B, C, D riscritti; H, «il saldo include i bonus», «domenica» e «la base non scende sotto la soglia» con i nuovi numeri), `week.test.ts` (solo il saldo, ora con il tetto), `settings.test.ts` (tre nuovi default); nuovo `preview.test.ts`.
 - **Ingresso:** codice valido, sbagliato, revocato; tutti i formati; riga di tre giorni fa scartata; valore manuale non sovrascritto; invio ripetuto; valore aggiornato; solo passi, solo bici; corpo vuoto o non JSON; limite superato; due utenti.
 - **Gesto:** `swipe-logic.test.ts` (soglie, direzione, una riga aperta alla volta) e `npm run prova-scorrimento` (13 controlli con il tocco simulato di Playwright: apertura, pulsanti ≥ 44 px, una sola riga, tocco altrove, destra senza effetto, scorrimento verticale che non si blocca, tocco sulla riga, cestino senza conferma, Preferiti).
