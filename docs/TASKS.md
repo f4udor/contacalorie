@@ -301,7 +301,7 @@ Vincoli di questa fase:
 - Toccando la riga si aprono nome, quantità, nota del modello, kcal e nutrienti modificabili, e "Togli". Un piatto con un errore si apre da solo e la riga lo segnala.
 - Sparisce la frase iniziale "Controlla la stima…". Restano "Correggi", "Rifai la stima", "Conferma", "Annulla".
 
-### T4b.3 Preferiti: + e Modifica · da fare
+### T4b.3 Preferiti: + e Modifica · fatto
 - Ogni riga mostra a destra un + ben visibile: toccando la riga il preferito si aggiunge.
 - "Elimina" non compare più nella lista. Un pulsante "Modifica" accanto al campo di ricerca mostra "Elimina" (con conferma) su ogni riga e nasconde i +; "Fine" torna alla lista normale.
 - Il campo di ricerca non ha più l'etichetta "Cerca" sopra (resta come testo nel campo). Sparisce la nota "Senza quantità".

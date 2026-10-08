@@ -347,10 +347,13 @@ const preferiti = { favoriteDishes: [pesto2, mela, caffe], favoriteMeals: [
 const apriPreferiti = [apri, { click: "Preferiti", exact: true }];
 const favScen = (id, descrizione, dati, passi, extra = {}) => add(id, descrizione, "2026-01-08", dati, { fisso: true, passi, ...extra });
 favScen("preferiti-vuoto", "Nessun preferito: spiega come salvarli.", giornoPasti({ meals: [] }), apriPreferiti);
-favScen("preferiti-lista", "Preferiti salvati: pasti (con numero di piatti e kcal totali) e piatti, scelta della fascia, Cerca, Elimina per riga.", giornoPasti({ meals: [], ...preferiti }), apriPreferiti);
+favScen("preferiti-lista", "Preferiti salvati: pasti (con numero di piatti e kcal totali) e piatti, ogni riga con un + a destra; campo di ricerca con il pulsante Modifica; scelta della fascia.", giornoPasti({ meals: [], ...preferiti }), apriPreferiti);
 favScen("preferiti-ricerca", "Ricerca 'caff': trova il pasto e il piatto con quel nome (senza accenti né maiuscole).", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, { fill: ["Cerca", "caff"] }]);
+favScen("preferiti-modifica", "Modalità Modifica: niente +, ogni riga ha Elimina; il pulsante diventa Fine e la scelta della fascia sparisce.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, btn("Modifica")]);
+add("preferiti-fascia-fissata", "Preferiti aperti da '+ Aggiungi piatto' del Pranzo: la scelta della fascia non compare (i piatti vanno nel Pranzo).", "2026-01-05", { ...pranzo2, ...preferiti }, { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, { click: "Preferiti", exact: true }] });
+add("preferiti-fascia-fissata-aggiunto", "Dopo un tocco su 'Mela' dai Preferiti aperti dal Pranzo: la mela è nel Pranzo di quel giorno.", "2026-01-05", { ...pranzo2, ...preferiti }, { passi: [{ click: "+ Aggiungi piatto" }, { click: "Preferiti", exact: true }, { clickRole: { role: "button", name: "Aggiungi Mela" } }, { wait: 700 }] });
 favScen("preferiti-nessun-risultato", "Ricerca senza risultati: messaggio.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, { fill: ["Cerca", "zzz"] }]);
-favScen("preferiti-elimina", "Primo tocco su Elimina: il pulsante diventa 'Elimina davvero'.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, { clickRole: { role: "button", name: "Elimina Mela dai preferiti" } }]);
+favScen("preferiti-elimina", "In modifica, primo tocco su Elimina: il pulsante diventa 'Elimina davvero'.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, btn("Modifica"), { clickRole: { role: "button", name: "Elimina Mela dai preferiti" } }]);
 add("preferiti-dopo-aggiunta", "Dopo un tocco su 'Cena leggera' con la fascia Spuntino: i due piatti compaiono nello Spuntino di oggi.", "2026-01-08", giornoPasti({ meals: [], ...preferiti }), {
   passi: [...apriPreferiti, { clickRole: { role: "radio", name: "Spuntino" } }, { clickRole: { role: "button", name: "Aggiungi Cena leggera" } }, { wait: 700 }],
 });

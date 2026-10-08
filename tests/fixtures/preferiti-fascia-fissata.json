@@ -1,14 +1,45 @@
 {
-  "id": "preferiti-lista",
-  "descrizione": "Preferiti salvati: pasti (con numero di piatti e kcal totali) e piatti, ogni riga con un + a destra; campo di ricerca con il pulsante Modifica; scelta della fascia.",
-  "oggi": "2026-01-08",
+  "id": "preferiti-fascia-fissata",
+  "descrizione": "Preferiti aperti da '+ Aggiungi piatto' del Pranzo: la scelta della fascia non compare (i piatti vanno nel Pranzo).",
+  "oggi": "2026-01-05",
   "percorso": "/",
   "dati": {
     "version": 1,
     "settings": {
       "weightKg": 100
     },
-    "meals": [],
+    "meals": [
+      {
+        "id": "m86",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 650,
+        "protein": 22,
+        "carbs": 110,
+        "fat": 12,
+        "fiber": 6,
+        "salt": 1.8,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "100 g"
+      },
+      {
+        "id": "m87",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pane",
+        "kcal": 150,
+        "protein": 5,
+        "carbs": 30,
+        "fat": 1,
+        "fiber": 2,
+        "salt": 0.8,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "50 g"
+      }
+    ],
     "activity": [],
     "weighIns": [],
     "favoriteDishes": [
@@ -117,11 +148,7 @@
   "fisso": true,
   "passi": [
     {
-      "clickRole": {
-        "role": "button",
-        "name": "Aggiungi",
-        "exact": true
-      }
+      "click": "+ Aggiungi piatto"
     },
     {
       "click": "Preferiti",
