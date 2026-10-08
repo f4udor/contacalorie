@@ -125,7 +125,7 @@ Lista dei pasti e pannello Aggiungi con inserimento manuale.
 - "Copia da ieri": copia i pasti del giorno prima come pasti normali (mai liberi); se ieri non ci sono pasti, lo dice.
 - Nel pannello, al posto del microfono, uno spazio riservato con la scritta "Inserimento a voce: in arrivo".
 
-### T2.4 Attività e pesata · da fare
+### T2.4 Attività e pesata · fatto
 - Sezione Attività in Oggi: passi e bici (km, kcal), con fonte "manuale".
 - Dal pannello Aggiungi: "Attività a mano" (passi, km, kcal facoltative) e "Pesata" (kg, una per giorno; una seconda pesata nello stesso giorno sostituisce la prima).
 - L'obiettivo del giorno si aggiorna subito dopo il salvataggio.

@@ -82,7 +82,7 @@ export function WeightForm({ existingKg, onSubmit }: { existingKg: number | null
         value={value}
         onChange={setValue}
         error={error}
-        hint={existingKg === null ? "Una pesata per giorno." : "Hai già pesato oggi: salvando sostituisci la pesata."}
+        hint={existingKg === null ? "Una pesata per giorno." : "Hai già una pesata per questo giorno: salvando la sostituisci."}
       />
       <button type="submit" disabled={saving} className={primary}>
         Salva pesata
