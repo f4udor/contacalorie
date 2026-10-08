@@ -186,7 +186,7 @@ Vincoli di questa fase:
 - Con peso obiettivo impostato: `proteinPerKgTarget × peso obiettivo`; senza: `proteinPerKg × peso`. Il valore manuale sostituisce sempre la formula.
 - Caso K di §3.6; caso con solo peso attuale (100 kg → 140 g) ancora valido.
 
-### T3.2 Schermate: pasti composti da piatti · da fare
+### T3.2 Schermate: pasti composti da piatti · fatto
 - In Oggi ogni pasto è una scheda con totale di kcal e macro e i piatti elencati sotto; un pasto vuoto non compare, salvo un invito discreto ad aggiungere.
 - "Aggiungi piatto" dentro ogni pasto, con la fascia già scelta; il + generale chiede la fascia.
 - Il pannello del piatto contiene nome, quantità facoltativa (testo libero, es. "100 g"), kcal e macro. In questa fase kcal resta obbligatorio; la stima dei numeri mancanti arriverà con l'AI.
