@@ -16,13 +16,11 @@
       "margin": 0.12,
       "bonusShare": 0.4,
       "kcalPerStep": 0.04,
-      "freeMealCap": 900,
-      "challengeStartDate": "2026-01-05"
+      "freeMealCap": 900
     },
     "meals": [],
     "activity": [],
-    "weighIns": [],
-    "challengeLog": []
+    "weighIns": []
   },
   "scorre": true
 }

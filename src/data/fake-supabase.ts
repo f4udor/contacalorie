@@ -1,5 +1,3 @@
-import { DEFAULT_CHALLENGE_PLAN } from "@/engine";
-import { SYSTEM_PLAN_ID } from "./supabase";
 import type { SupabaseLike, SupabaseQuery, SupabaseTable } from "./supabase";
 
 type Row = Record<string, unknown>;
@@ -18,13 +16,6 @@ export class FakeSupabaseDb {
   /** Quante richieste di scrittura sono state accettate. */
   writes = 0;
   private seq = 0;
-
-  constructor() {
-    this.tables.set(
-      "challenge_exercises",
-      DEFAULT_CHALLENGE_PLAN.exercises.map((e, i) => ({ id: `ex-${i + 1}`, plan_id: SYSTEM_PLAN_ID, name: e.name })),
-    );
-  }
 
   rows(table: string): Row[] {
     if (!this.tables.has(table)) this.tables.set(table, []);

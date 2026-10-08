@@ -18,10 +18,9 @@ export type SettingsFieldKey =
   | "kcalPerStep"
   | "stepThreshold"
   | "bonusShare"
-  | "freeMealCap"
-  | "challengeStartDate";
+  | "freeMealCap";
 
-type Kind = "decimal" | "whole" | "percent" | "date";
+type Kind = "decimal" | "whole" | "percent";
 
 interface FieldRule {
   kind: Kind;
@@ -50,13 +49,12 @@ export const FIELD_RULES: Record<SettingsFieldKey, FieldRule> = {
   stepThreshold: { kind: "whole", min: 0, max: 100000 },
   bonusShare: { kind: "percent", min: 0, max: 100 },
   freeMealCap: { kind: "decimal", min: 0, max: 5000 },
-  challengeStartDate: { kind: "date", min: 0, max: 0 },
 };
 
 export const FIELD_KEYS = Object.keys(FIELD_RULES) as SettingsFieldKey[];
 
-/** Campi del profilo e della sfida: "Ripristina valori predefiniti" non li tocca. */
-export const PERSONAL_KEYS: readonly SettingsFieldKey[] = ["weightKg", "heightCm", "ageYears", "targetWeightKg", "challengeStartDate"];
+/** Campi del profilo: "Ripristina valori predefiniti" non li tocca. */
+export const PERSONAL_KEYS: readonly SettingsFieldKey[] = ["weightKg", "heightCm", "ageYears", "targetWeightKg"];
 
 export type SettingsFormValues = Record<SettingsFieldKey, string>;
 export type SettingsFormErrors = Partial<Record<SettingsFieldKey, string>>;
@@ -77,14 +75,6 @@ export function settingsToForm(s: UserSettings): SettingsFormValues {
   return out;
 }
 
-function isRealDate(t: string): boolean {
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(t);
-  if (!m) return false;
-  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
-  const date = new Date(Date.UTC(y, mo - 1, d));
-  return date.getUTCFullYear() === y && date.getUTCMonth() === mo - 1 && date.getUTCDate() === d;
-}
-
 function checkRange(n: number, rule: FieldRule, suffix = ""): string | null {
   if (rule.positive ? n <= 0 : n < rule.min) return rule.positive ? "Deve essere maggiore di zero" : "Non può essere negativo";
   if (n > rule.max) return `Al massimo ${String(rule.max).replace(".", ",")}${suffix}`;
@@ -103,14 +93,6 @@ export function validateSettingsForm(values: SettingsFormValues): { ok: true; pa
     const rule = FIELD_RULES[key];
     const raw = values[key];
 
-    if (rule.kind === "date") {
-      const t = raw.trim();
-      if (t === "") patch[key] = undefined;
-      else if (!isRealDate(t)) errors[key] = "Data non valida";
-      else patch[key] = t;
-      continue;
-    }
-
     const r = rule.kind === "whole" ? parseWhole(raw) : parseDecimal(raw);
     if (r === "empty") {
       patch[key] = undefined;
@@ -126,7 +108,7 @@ export function validateSettingsForm(values: SettingsFormValues): { ok: true; pa
   return Object.keys(errors).length > 0 ? { ok: false, errors } : { ok: true, patch: patch as SettingsPatch };
 }
 
-/** Patch che toglie tutte le regole personalizzate e lascia profilo e data della sfida. */
+/** Patch che toglie tutte le regole personalizzate e lascia il profilo. */
 export function defaultsPatch(): SettingsPatch {
   const patch: Record<string, undefined> = {};
   for (const key of FIELD_KEYS) if (!PERSONAL_KEYS.includes(key)) patch[key] = undefined;

@@ -235,7 +235,7 @@ Vincoli di questa fase:
 - Gli accessi si gestiscono da Supabase: nessuna schermata di inviti.
 - Per le schermate valgono le regole della fase 2 (scenari, screenshot, formato italiano, stati vuoti).
 
-### T4.0 Rimozione della sfida mattutina · da fare
+### T4.0 Rimozione della sfida mattutina · fatto
 - Spariscono la sezione in Oggi, i giorni di sfida in Settimana, la data di inizio in Impostazioni e il codice del motore e dei moduli dedicato alla sfida, con i suoi test.
 - Le tabelle della sfida restano nel database (nessuna migrazione che le elimina).
 - I test e gli screenshot esistenti vengono aggiornati di conseguenza; il diario elenca cosa è stato tolto.

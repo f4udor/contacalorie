@@ -45,25 +45,14 @@ describe("SupabaseDataStore: dati", () => {
 
   it("impostazioni: scrive tutte le colonne note, toglie i campi rimossi e include la nuova proteinPerKgTarget", async () => {
     const { db, store } = setup();
-    await store.saveSettings({ weightKg: 92.5, baseKcal: 2000, proteinPerKgTarget: 2, challengeStartDate: "2026-01-05" });
+    await store.saveSettings({ weightKg: 92.5, baseKcal: 2000, proteinPerKgTarget: 2 });
     expect(db.rows("settings")).toHaveLength(1);
-    expect(db.rows("settings")[0]).toMatchObject({ user_id: "utente-1", weight_kg: 92.5, base_kcal: 2000, protein_per_kg_target: 2, challenge_start_date: "2026-01-05", margin: null });
+    expect(db.rows("settings")[0]).toMatchObject({ user_id: "utente-1", weight_kg: 92.5, base_kcal: 2000, protein_per_kg_target: 2, margin: null });
     await store.saveSettings({ baseKcal: undefined, margin: 0.12 });
-    expect(await store.getSettings()).toEqual({ weightKg: 92.5, proteinPerKgTarget: 2, challengeStartDate: "2026-01-05", margin: 0.12 });
+    expect(await store.getSettings()).toEqual({ weightKg: 92.5, proteinPerKgTarget: 2, margin: 0.12 });
     expect(db.rows("settings")).toHaveLength(1);
   });
 
-  it("registro sfida: l'esercizio si salva con il suo id nel database e si rilegge per nome", async () => {
-    const { db, store } = setup();
-    await store.saveChallengeEntry({ date: "2026-01-08", exerciseId: "Crunch", status: "fatto", reps: 25 });
-    expect(db.rows("challenge_log")[0]).toMatchObject({ exercise_id: "ex-2", status: "fatto", reps: 25, user_id: "utente-1" });
-    expect(await store.listChallengeLog("2026-01-08")).toEqual([{ date: "2026-01-08", exerciseId: "Crunch", status: "fatto", reps: 25 }]);
-  });
-
-  it("registro sfida: un esercizio sconosciuto non si salva e dà un errore chiaro", async () => {
-    const { store } = setup();
-    await expect(store.saveChallengeEntry({ date: "2026-01-08", exerciseId: "Sconosciuto", status: "fatto", reps: null })).rejects.toBeInstanceOf(DataStoreError);
-  });
 });
 
 describe("SupabaseDataStore: tante righe", () => {
@@ -127,12 +116,12 @@ describe("SupabaseDataStore: errori", () => {
     await expect(store.getSettings()).rejects.toMatchObject({ kind: "accesso" });
   });
 
-  it("l'elenco degli esercizi non resta in cache dopo un errore", async () => {
+  it("dopo un errore di rete la richiesta successiva funziona", async () => {
     const { db, store } = setup();
     db.offline = true;
-    await expect(store.listChallengeLog("2026-01-08")).rejects.toBeInstanceOf(DataStoreError);
+    await expect(store.listMeals("2026-01-08")).rejects.toBeInstanceOf(DataStoreError);
     db.offline = false;
-    await expect(store.listChallengeLog("2026-01-08")).resolves.toEqual([]);
+    await expect(store.listMeals("2026-01-08")).resolves.toEqual([]);
   });
 });
 

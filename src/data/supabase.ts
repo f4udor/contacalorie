@@ -2,10 +2,8 @@ import type { DateKey } from "@/engine";
 import { DataStoreError, MESSAGE_NOT_SIGNED_IN, MESSAGE_READ_FAILED, MESSAGE_WRITE_FAILED } from "./errors";
 import {
   activityToRow,
-  challengeEntryToRow,
   mealToRow,
   rowToActivity,
-  rowToChallengeEntry,
   rowToMeal,
   rowToSettings,
   rowToWeighIn,
@@ -13,7 +11,7 @@ import {
   weighInToRow,
 } from "./mapping";
 import type { DataStore } from "./store";
-import type { ActivityRecord, ChallengeLogEntry, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 import { STORAGE_VERSION } from "./types";
 
 type Row = Record<string, unknown>;
@@ -42,13 +40,8 @@ export interface SupabaseLike {
   auth: { getSession(): Promise<{ data: { session: { user: { id: string } } | null } }> };
 }
 
-/** Id del piano di sistema (inserito da `supabase/migrations/…_piano_iniziale.sql`). */
-export const SYSTEM_PLAN_ID = "00000000-0000-4000-8000-000000000001";
-
 /** Sportello dei dati su Supabase. Ogni errore diventa un `DataStoreError` con un messaggio chiaro. */
 export class SupabaseDataStore implements DataStore {
-  private exercises: Promise<{ idByName: Map<string, string>; nameById: Map<string, string> }> | null = null;
-
   constructor(private readonly getClient: () => Promise<SupabaseLike>) {}
 
   // --- infrastruttura
@@ -90,20 +83,6 @@ export class SupabaseDataStore implements DataStore {
       out.push(...page);
       if (page.length < PAGE) return out;
     }
-  }
-
-  private loadExercises() {
-    this.exercises ??= this.getClient()
-      .then((client) => this.rows(client, "challenge_exercises", (q) => q.eq("plan_id", SYSTEM_PLAN_ID)))
-      .then((rows) => ({
-        idByName: new Map(rows.map((r) => [String(r.name), String(r.id)])),
-        nameById: new Map(rows.map((r) => [String(r.id), String(r.name)])),
-      }))
-      .catch((e) => {
-        this.exercises = null; // riprova alla prossima richiesta
-        throw e;
-      });
-    return this.exercises;
   }
 
   // --- impostazioni
@@ -203,50 +182,16 @@ export class SupabaseDataStore implements DataStore {
     });
   }
 
-  // --- registro della sfida
-
-  listChallengeLog(date: DateKey): Promise<ChallengeLogEntry[]> {
-    return this.listChallengeLogBetween(date, date);
-  }
-
-  listChallengeLogBetween(from: DateKey, to: DateKey): Promise<ChallengeLogEntry[]> {
-    return this.run("lettura", async (c) => {
-      const { nameById } = await this.loadExercises();
-      const rows = await this.rows(c, "challenge_log", (q) => q.gte("date", from).lte("date", to).order("date"));
-      return rows.map((r) => rowToChallengeEntry(r, nameById)).filter((e): e is ChallengeLogEntry => e !== null);
-    });
-  }
-
-  saveChallengeEntry(entry: ChallengeLogEntry): Promise<void> {
-    return this.run("scrittura", async (c) => {
-      const uuid = (await this.loadExercises()).idByName.get(entry.exerciseId);
-      if (!uuid) throw new Error(`Esercizio sconosciuto: ${entry.exerciseId}`);
-      const res = await c.from("challenge_log").upsert(challengeEntryToRow(entry, await this.userId(c), uuid), { onConflict: "user_id,date,exercise_id" });
-      SupabaseDataStore.check(res.error);
-    });
-  }
-
-  deleteChallengeEntry(date: DateKey, exerciseId: string): Promise<void> {
-    return this.run("scrittura", async (c) => {
-      const uuid = (await this.loadExercises()).idByName.get(exerciseId);
-      if (!uuid) return;
-      const res = await c.from("challenge_log").delete().eq("date", date).eq("exercise_id", uuid);
-      SupabaseDataStore.check(res.error);
-    });
-  }
-
   // --- tutti i dati
 
   exportAll(): Promise<StoredData> {
     return this.run("lettura", async (c) => {
       const uid = await this.userId(c);
-      const { nameById } = await this.loadExercises();
-      const [settings, meals, activity, weighIns, log] = await Promise.all([
+      const [settings, meals, activity, weighIns] = await Promise.all([
         this.rows(c, "settings", (q) => q.eq("user_id", uid)),
         this.allRows(c, "meals", "created_at"),
         this.allRows(c, "daily_activity", "date"),
         this.allRows(c, "weigh_ins", "date"),
-        this.allRows(c, "challenge_log", "date"),
       ]);
       return {
         version: STORAGE_VERSION,
@@ -254,7 +199,6 @@ export class SupabaseDataStore implements DataStore {
         meals: meals.map(rowToMeal),
         activity: activity.map(rowToActivity),
         weighIns: weighIns.map(rowToWeighIn),
-        challengeLog: log.map((r) => rowToChallengeEntry(r, nameById)).filter((e): e is ChallengeLogEntry => e !== null),
       };
     });
   }

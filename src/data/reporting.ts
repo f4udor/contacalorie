@@ -2,7 +2,7 @@ import { DataStoreError, MESSAGE_READ_FAILED, MESSAGE_WRITE_FAILED } from "./err
 import type { DataStore } from "./store";
 
 /** Metodi che scrivono: un errore qui significa "non salvato". */
-const WRITES = new Set(["saveSettings", "resetSettings", "saveMeal", "deleteMeal", "saveActivity", "saveWeighIn", "deleteWeighIn", "saveChallengeEntry", "deleteChallengeEntry"]);
+const WRITES = new Set(["saveSettings", "resetSettings", "saveMeal", "deleteMeal", "saveActivity", "saveWeighIn", "deleteWeighIn"]);
 
 export interface ErrorReport {
   /** Messaggio da mostrare all'utente. */

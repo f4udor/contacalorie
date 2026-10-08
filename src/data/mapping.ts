@@ -1,4 +1,4 @@
-import type { ActivityRecord, ChallengeLogEntry, MealRecord, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, MealRecord, UserSettings, WeighIn } from "./types";
 
 type Row = Record<string, unknown>;
 
@@ -24,7 +24,6 @@ export const SETTINGS_COLUMNS: readonly (readonly [keyof UserSettings, string])[
   ["overLimit", "over_limit"],
   ["proteinGramsManual", "protein_grams_manual"],
   ["fatGramsManual", "fat_grams_manual"],
-  ["challengeStartDate", "challenge_start_date"],
 ];
 
 const num = (v: unknown): number => (typeof v === "string" ? Number(v) : (v as number));
@@ -32,12 +31,12 @@ const numOrNull = (v: unknown): number | null => (v === null || v === undefined 
 
 /** Riga di `settings` → impostazioni (le colonne vuote non compaiono). */
 export function rowToSettings(row: Row | null): UserSettings {
-  const out: Record<string, number | string> = {};
+  const out: Record<string, number> = {};
   if (!row) return out as UserSettings;
   for (const [key, column] of SETTINGS_COLUMNS) {
     const v = row[column];
     if (v === null || v === undefined) continue;
-    out[key] = key === "challengeStartDate" ? String(v) : num(v);
+    out[key] = num(v);
   }
   return out as UserSettings;
 }
@@ -112,14 +111,3 @@ export function activityToRow(a: ActivityRecord, userId: string): Row {
 
 export const rowToWeighIn = (r: Row): WeighIn => ({ date: String(r.date), weightKg: num(r.weight_kg) });
 export const weighInToRow = (w: WeighIn, userId: string): Row => ({ user_id: userId, date: w.date, weight_kg: w.weightKg });
-
-/** Voce del registro della sfida: nel database l'esercizio è un id, qui il suo nome nel piano. */
-export function rowToChallengeEntry(r: Row, nameById: ReadonlyMap<string, string>): ChallengeLogEntry | null {
-  const exerciseId = nameById.get(String(r.exercise_id));
-  if (exerciseId === undefined) return null;
-  return { date: String(r.date), exerciseId, status: r.status as ChallengeLogEntry["status"], reps: numOrNull(r.reps) };
-}
-
-export function challengeEntryToRow(e: ChallengeLogEntry, userId: string, exerciseUuid: string): Row {
-  return { user_id: userId, date: e.date, exercise_id: exerciseUuid, status: e.status, reps: e.reps };
-}

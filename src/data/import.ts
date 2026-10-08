@@ -1,9 +1,9 @@
 import type { DataStore } from "./store";
-import type { ActivityRecord, ChallengeLogEntry, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 
 /** Quanti dati contiene un archivio. */
 export interface DataSummary {
-  /** Giorni diversi con almeno un piatto, un'attività, una pesata o una voce della sfida. */
+  /** Giorni diversi con almeno un piatto, un'attività o una pesata. */
   days: number;
   dishes: number;
   weighIns: number;
@@ -11,13 +11,13 @@ export interface DataSummary {
 
 export function summarize(data: StoredData): DataSummary {
   const dates = new Set<string>();
-  for (const list of [data.meals, data.activity, data.weighIns, data.challengeLog]) for (const r of list) dates.add(r.date);
+  for (const list of [data.meals, data.activity, data.weighIns]) for (const r of list) dates.add(r.date);
   return { days: dates.size, dishes: data.meals.length, weighIns: data.weighIns.length };
 }
 
 /** Non c'è niente da importare: nessun dato e nessuna impostazione. */
 export function isEmptyData(data: StoredData): boolean {
-  return data.meals.length === 0 && data.activity.length === 0 && data.weighIns.length === 0 && data.challengeLog.length === 0 && Object.keys(data.settings).length === 0;
+  return data.meals.length === 0 && data.activity.length === 0 && data.weighIns.length === 0 && Object.keys(data.settings).length === 0;
 }
 
 /**
@@ -43,9 +43,8 @@ export interface ImportResult {
   /** Piatti nuovi nell'account. */
   addedDishes: number;
   addedWeighIns: number;
-  /** Giorni con attività o voci della sfida nuovi. */
+  /** Giorni con attività nuovi. */
   addedActivityDays: number;
-  addedChallengeEntries: number;
   /** Elementi che c'erano già nell'account e non sono stati toccati o duplicati. */
   alreadyThere: number;
   /** Pasti in cui il segno "libero" è stato esteso a tutti i piatti. */
@@ -76,13 +75,13 @@ async function inChunks<T>(items: readonly T[], size: number, fn: (item: T) => P
  * Porta nell'account i dati salvati sul dispositivo, senza doppioni: si può ripetere, anche da un altro dispositivo con
  * dati diversi, e le due raccolte si uniscono.
  * - piatti: stesso id = stesso piatto (già presente: non si tocca);
- * - attività, pesate, voci della sfida: se c'è già qualcosa per quel giorno vince quello dell'account, altrimenti si aggiunge;
+ * - attività, pesate: se c'è già qualcosa per quel giorno vince quello dell'account, altrimenti si aggiunge;
  * - impostazioni: i valori già nell'account restano, quelli mancanti si completano.
  * Non cancella nulla, né nell'account né sul dispositivo.
  */
 export async function importLocalData(local: StoredData, remote: DataStore): Promise<ImportResult> {
   const existing = await remote.exportAll();
-  const result: ImportResult = { addedDishes: 0, addedWeighIns: 0, addedActivityDays: 0, addedChallengeEntries: 0, alreadyThere: 0, normalizedFreeMeals: 0 };
+  const result: ImportResult = { addedDishes: 0, addedWeighIns: 0, addedActivityDays: 0, alreadyThere: 0, normalizedFreeMeals: 0 };
 
   // piatti
   const normalized = normalizeFreeFlags(local.meals);
@@ -119,13 +118,6 @@ export async function importLocalData(local: StoredData, remote: DataStore): Pro
   result.alreadyThere += local.weighIns.length - newWeights.length;
   result.addedWeighIns = newWeights.length;
   await inChunks(newWeights, 5, (w) => remote.saveWeighIn(w));
-
-  // sfida
-  const knownLog = new Set(existing.challengeLog.map((e) => `${e.date}|${e.exerciseId}`));
-  const newLog: ChallengeLogEntry[] = local.challengeLog.filter((e) => !knownLog.has(`${e.date}|${e.exerciseId}`));
-  result.alreadyThere += local.challengeLog.length - newLog.length;
-  result.addedChallengeEntries = newLog.length;
-  await inChunks(newLog, 5, (e) => remote.saveChallengeEntry(e));
 
   // impostazioni: completa solo quelle mancanti
   const missing: Record<string, unknown> = {};

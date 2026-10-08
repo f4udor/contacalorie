@@ -142,23 +142,6 @@ export function SettingsForm({ store, settings, weighIns, today, onChanged }: Pr
         {field("freeMealCap", "Tetto di kcal", { placeholder: formatNumber(D.freeMealCap) })}
       </Section>
 
-      <Section title="Sfida" intro="Il giorno in cui parte la sfida mattutina di 30 giorni.">
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="set-challengeStartDate" className="text-sm font-semibold text-muted">
-            Inizio della sfida
-          </label>
-          <input
-            id="set-challengeStartDate"
-            type="date"
-            value={values.challengeStartDate}
-            onChange={(e) => set("challengeStartDate")(e.target.value)}
-            aria-invalid={errors.challengeStartDate ? true : undefined}
-            className={`min-h-11 w-full rounded-xl bg-bg px-3 text-[17px] outline-none focus:ring-2 focus:ring-accent ${errors.challengeStartDate ? "ring-2 ring-bad" : ""}`}
-          />
-          {errors.challengeStartDate && <p className="text-sm font-medium text-bad">{errors.challengeStartDate}</p>}
-        </div>
-      </Section>
-
       <div className="flex flex-col gap-3 pb-2">
         {status && (
           <p role="status" className={`text-center text-[15px] font-semibold ${status.kind === "ok" ? "text-ok" : "text-bad"}`}>
@@ -176,7 +159,7 @@ export function SettingsForm({ store, settings, weighIns, today, onChanged }: Pr
       {confirmReset && (
         <Sheet open onClose={() => setConfirmReset(false)} title="Ripristinare?">
           <div className="flex flex-col gap-4">
-            <p className="text-[17px]">Obiettivi, regole di calcolo, attività e pasto libero tornano ai valori predefiniti. Profilo e data della sfida restano come sono.</p>
+            <p className="text-[17px]">Obiettivi, regole di calcolo, attività e pasto libero tornano ai valori predefiniti. Il profilo resta com&apos;è.</p>
             <button type="button" onClick={reset} className="min-h-12 rounded-xl bg-bad-fill px-4 text-[17px] font-semibold text-white">
               Ripristina
             </button>

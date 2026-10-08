@@ -56,8 +56,6 @@ export interface Day {
   date: DateKey;
   meals: Meal[];
   activity: Activity;
-  /** Sfida mattutina completata in questo giorno. */
-  challengeDone?: boolean;
 }
 
 export interface Settings {

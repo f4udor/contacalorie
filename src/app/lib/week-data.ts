@@ -1,7 +1,6 @@
-import { DEFAULT_CHALLENGE_PLAN, mergeSettings, weekDates } from "@/engine";
+import { mergeSettings, weekDates } from "@/engine";
 import type { DateKey, Day, Settings } from "@/engine";
-import { isChallengeDayDone } from "./challenge-view";
-import type { ActivityRecord, ChallengeLogEntry, DataStore, MealRecord, UserSettings, WeighIn } from "@/data";
+import type { ActivityRecord, DataStore, MealRecord, UserSettings, WeighIn } from "@/data";
 
 /** Tutto ciò che serve alle schermate per mostrare la settimana che contiene una data. */
 export interface WeekData {
@@ -11,8 +10,6 @@ export interface WeekData {
   meals: MealRecord[];
   /** Le attività della settimana come salvate (con le fonti). */
   activity: ActivityRecord[];
-  /** Il registro della sfida della settimana. */
-  challengeLog: ChallengeLogEntry[];
   /** Impostazioni complete: quelle dell'utente sopra i default. */
   settings: Settings;
   /** Impostazioni come salvate (solo i valori cambiati, più il profilo). */
@@ -25,12 +22,11 @@ export async function loadWeekData(store: DataStore, date: DateKey): Promise<Wee
   const dates = weekDates(date);
   const from = dates[0];
   const to = dates[6];
-  const [meals, activity, userSettings, weighIns, challenge] = await Promise.all([
+  const [meals, activity, userSettings, weighIns] = await Promise.all([
     store.listMealsBetween(from, to),
     store.listActivityBetween(from, to),
     store.getSettings(),
     store.listWeighIns(),
-    store.listChallengeLogBetween(from, to),
   ]);
 
   const days: Day[] = dates.map((d) => {
@@ -39,9 +35,8 @@ export async function loadWeekData(store: DataStore, date: DateKey): Promise<Wee
       date: d,
       meals: meals.filter((m) => m.date === d),
       activity: { steps: a?.steps ?? null, bikeKm: a?.bikeKm ?? null, bikeKcalHealth: a?.bikeKcalHealth ?? null },
-      challengeDone: isChallengeDayDone(DEFAULT_CHALLENGE_PLAN, userSettings.challengeStartDate, d, challenge),
     };
   });
 
-  return { days, meals, activity, challengeLog: challenge, settings: mergeSettings(userSettings as Record<string, unknown>), userSettings, weighIns };
+  return { days, meals, activity, settings: mergeSettings(userSettings as Record<string, unknown>), userSettings, weighIns };
 }

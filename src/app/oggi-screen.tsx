@@ -6,7 +6,6 @@ import type { MealRecord } from "@/data";
 import type { MealSlot } from "@/engine";
 import { useDataStore } from "./data-provider";
 import { ActivityCard } from "./components/activity-card";
-import { ChallengeSection } from "./components/challenge-section";
 import { AddPanel, EditActivityPanel, EditMealPanel } from "./components/add-panel";
 import { MealList } from "./components/meal-list";
 import { Card } from "./components/card";
@@ -14,8 +13,6 @@ import { DayHeader } from "./components/day-header";
 import { KcalRing } from "./components/kcal-ring";
 import { NutrientCard } from "./components/nutrient-card";
 import { formatNumber, formatSigned } from "./lib/format";
-import { DEFAULT_CHALLENGE_PLAN } from "@/engine";
-import { buildChallengeView } from "./lib/challenge-view";
 import { currentWeight, buildTodayView } from "./lib/today-view";
 import { useToday } from "./lib/use-today";
 import { useWeekData } from "./lib/use-week-data";
@@ -51,10 +48,6 @@ export function OggiScreen() {
       ? { store, date, days: data.days, settings: data.settings, activity, weightKg: weighIn?.weightKg ?? null, onChanged: reload, onClose: () => setPanel(null) }
       : null;
 
-  const challenge = data
-    ? buildChallengeView({ plan: DEFAULT_CHALLENGE_PLAN, startDate: data.userSettings.challengeStartDate, date, log: data.challengeLog })
-    : null;
-
   return (
     <main className="pb-24">
       <DayHeader date={date} today={today} />
@@ -75,7 +68,6 @@ export function OggiScreen() {
           </div>
           <MealList dishes={meals} settings={data!.settings} onSelectDish={(meal) => setPanel({ kind: "edit", meal })} onAddDish={(slot) => setPanel({ kind: "add", slot })} />
           <ActivityCard activity={activity} settings={data!.settings} onEdit={() => setPanel({ kind: "activity" })} />
-          {challenge && store && <ChallengeSection view={challenge} date={date} store={store} onChanged={reload} />}
         </div>
       )}
       <button

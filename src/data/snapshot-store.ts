@@ -1,7 +1,7 @@
 import type { DateKey } from "@/engine";
 import type { DataStore } from "./store";
 import { STORAGE_VERSION } from "./types";
-import type { ActivityRecord, ChallengeLogEntry, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 
 /** Dove vengono scritti i dati serializzati. */
 export interface Persistence {
@@ -16,7 +16,7 @@ export const NOTICE_UNKNOWN_VERSION = "I dati salvati sono di una versione scono
 export const NOTICE_WRITE_FAILED = "Non è stato possibile salvare i dati su questo dispositivo.";
 
 export function emptyData(): StoredData {
-  return { version: STORAGE_VERSION, settings: {}, meals: [], activity: [], weighIns: [], challengeLog: [] };
+  return { version: STORAGE_VERSION, settings: {}, meals: [], activity: [], weighIns: [] };
 }
 
 function isObject(v: unknown): v is Record<string, unknown> {
@@ -40,11 +40,12 @@ function parse(text: string | null): Parsed {
     Array.isArray(raw.meals) &&
     Array.isArray(raw.activity) &&
     Array.isArray(raw.weighIns) &&
-    Array.isArray(raw.challengeLog) &&
-    [...raw.meals, ...raw.activity, ...raw.weighIns, ...raw.challengeLog].every(
+    [...raw.meals, ...raw.activity, ...raw.weighIns].every(
       (r) => isObject(r) && typeof r.date === "string",
     );
   if (!ok) return { data: emptyData(), notice: NOTICE_UNREADABLE };
+  // I dati salvati prima della fase 4 possono contenere il registro della sfida (tolta): non serve più.
+  delete raw.challengeLog;
   return { data: raw as unknown as StoredData, notice: null };
 }
 
@@ -146,26 +147,6 @@ export class SnapshotDataStore implements DataStore {
 
   async deleteWeighIn(date: DateKey) {
     this.data.weighIns = this.data.weighIns.filter((w) => w.date !== date);
-    this.commit();
-  }
-
-  async listChallengeLog(date: DateKey) {
-    return copy(this.data.challengeLog.filter((e) => e.date === date));
-  }
-
-  async listChallengeLogBetween(from: DateKey, to: DateKey) {
-    return copy(this.data.challengeLog.filter((e) => inRange(e.date, from, to)));
-  }
-
-  async saveChallengeEntry(entry: ChallengeLogEntry) {
-    const i = this.data.challengeLog.findIndex((e) => e.date === entry.date && e.exerciseId === entry.exerciseId);
-    if (i >= 0) this.data.challengeLog[i] = copy(entry);
-    else this.data.challengeLog.push(copy(entry));
-    this.commit();
-  }
-
-  async deleteChallengeEntry(date: DateKey, exerciseId: string) {
-    this.data.challengeLog = this.data.challengeLog.filter((e) => !(e.date === date && e.exerciseId === exerciseId));
     this.commit();
   }
 

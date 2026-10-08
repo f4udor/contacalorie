@@ -34,6 +34,7 @@ Una riga per task chiuso.
 - T3.6 · fatto · esportazione CSV di piatti e di pesate/attività da Impostazioni → Dati (`export-csv.ts` + test), con browser e con Supabase; letture a pagine con secondo ordinamento per id.
 - T3.7 · fatto · `docs/COLLEGA-SUPABASE.md`: dieci passi per chi non programma (progetto, setup.sql, codice via email, URL e chiave, Vercel, ripubblicare, accesso, importazione); test di coerenza con il codice. Nomi dei pulsanti di Supabase/Vercel non verificati.
 - T3.8 · fatto · `docs/REPORT-FASE-3.md` scritto, con i controlli da fare sul telefono prima e dopo il collegamento di Supabase.
+- T4.0 · fatto · sfida mattutina tolta. Tolti: sezione in Oggi (`challenge-section.tsx`, `challenge-view.ts` + test), riga "Sfida" in Settimana e `challengeDaysDone` nel riepilogo, campo "Inizio della sfida" in Impostazioni (e il tipo di campo "data" del modulo, non più usato), nel motore `challenge.ts`, `challenge-plan.ts`, `challenge.test.ts` e `Day.challengeDone`, nello sportello i metodi del registro della sfida (browser, Supabase, importazione, avvisi di errore) e `challengeStartDate`, 15 scenari di screenshot. Tabelle e colonne della sfida restano nel database, non più usate (nessuna migrazione).
 
 ## Decisioni da confermare
 
@@ -89,6 +90,7 @@ Una riga per task chiuso.
 - Le letture di tutti i dati (pesate, esportazione) avvengono a pagine da 1.000 righe, il limite di Supabase per richiesta.
 - Esportazione (T3.6): due file CSV in Impostazioni → Dati: piatti (con quantità) e pesate/attività (una riga per giorno). Formato pensato per Excel in italiano: separatore ";", numeri con la virgola, UTF-8 con segno iniziale; i testi che iniziano con = + - @ hanno un apice davanti per non essere letti come formule. Il nome del file contiene la data di oggi. Con un archivio vuoto non si scarica un file vuoto: lo dice. Funziona con lo sportello del browser e con quello di Supabase (`exportAll`).
 - Le letture a pagine di Supabase ordinano anche per `id`, così le pagine non si ripetono né saltano righe (nota del revisore di T3.5).
+- Rimozione della sfida (T4.0): `src/engine/week.test.ts` è stato toccato solo per togliere il parametro e le verifiche sulla sfida (nessun'altra verifica cambiata). I dati salvati nel browser prima della fase 4 con registro della sfida si leggono ancora: il registro viene lasciato da parte (test). Salvare le impostazioni su Supabase non tocca più la colonna `challenge_start_date`, che resta com'era. L'ultima scheda di Settimana ("Pasto libero") ora occupa tutta la riga, perché con la sfida tolta le schede erano cinque.
 
 ## Non verificato
 

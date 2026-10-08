@@ -35,7 +35,6 @@ export interface WeekSummary {
   /** Media dei passi sui giorni con passi (> 0); null se nessuno. */
   avgSteps: number | null;
   freeMealUsed: boolean;
-  challengeDaysDone: number;
 }
 
 type WeekSettings = Pick<
@@ -97,7 +96,6 @@ export function weekSummary(date: DateKey, knownDays: readonly Day[], settings: 
     totalKm: kmValues.length === 0 ? null : kmValues.reduce((a, b) => a + b, 0),
     avgSteps: mean(stepValues),
     freeMealUsed: hasFreeMealInWeek(days),
-    challengeDaysDone: days.filter((d) => d.challengeDone === true).length,
   };
 }
 

@@ -6,8 +6,6 @@ export interface UserSettings extends Partial<Settings> {
   heightCm?: number;
   ageYears?: number;
   targetWeightKg?: number;
-  /** Data di inizio della sfida mattutina. */
-  challengeStartDate?: DateKey;
 }
 
 /** Piatto salvato (tabella `meals`, una riga per piatto). I piatti di una data e fascia formano un pasto. */
@@ -37,15 +35,6 @@ export interface WeighIn {
   weightKg: number;
 }
 
-/** Voce del registro della sfida (tabella `challenge_log`): una per data ed esercizio. */
-export interface ChallengeLogEntry {
-  date: DateKey;
-  exerciseId: string;
-  status: "fatto" | "saltato";
-  /** Ripetizioni modificate dall'utente; null = quelle del piano. */
-  reps: number | null;
-}
-
 /** Forma dei dati salvati. `version` serve a migrare il formato in futuro. */
 export interface StoredData {
   version: number;
@@ -53,7 +42,6 @@ export interface StoredData {
   meals: MealRecord[];
   activity: ActivityRecord[];
   weighIns: WeighIn[];
-  challengeLog: ChallengeLogEntry[];
 }
 
 export const STORAGE_VERSION = 1;

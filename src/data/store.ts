@@ -1,5 +1,5 @@
 import type { DateKey } from "@/engine";
-import type { ActivityRecord, ChallengeLogEntry, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 
 /**
  * Unico punto d'accesso ai dati per le schermate.
@@ -30,12 +30,6 @@ export interface DataStore {
   /** Una sola pesata per data: sostituisce quella esistente. */
   saveWeighIn(weighIn: WeighIn): Promise<void>;
   deleteWeighIn(date: DateKey): Promise<void>;
-
-  listChallengeLog(date: DateKey): Promise<ChallengeLogEntry[]>;
-  listChallengeLogBetween(from: DateKey, to: DateKey): Promise<ChallengeLogEntry[]>;
-  /** Una sola voce per data ed esercizio: sostituisce quella esistente. */
-  saveChallengeEntry(entry: ChallengeLogEntry): Promise<void>;
-  deleteChallengeEntry(date: DateKey, exerciseId: string): Promise<void>;
 
   /** Tutti i dati salvati (per l'importazione e l'esportazione). */
   exportAll(): Promise<StoredData>;
