@@ -6,7 +6,7 @@ Stati: `da fare`, `fatto`, `bloccato`. I riferimenti (§) rimandano a `docs/BRIE
 
 Nessuna schermata in questa fase. Alla fine il motore è completo, testato e non dipende da nient'altro.
 
-### T1.0 Impalcatura del progetto · bloccato
+### T1.0 Impalcatura del progetto · fatto
 Crea il progetto con lo stack e la struttura di cartelle di `CLAUDE.md`.
 - `npm run lint`, `npm test` e `npm run build` passano su un progetto vuoto.
 - Esistono `docs/DIARIO.md` (con le sezioni "Decisioni da confermare" e "Non verificato") e `.claude/agents/revisore.md` con i controlli elencati in `CLAUDE.md`.

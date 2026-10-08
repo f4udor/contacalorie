@@ -4,7 +4,7 @@ Una riga per task chiuso.
 
 ## Task chiusi
 
-- T1.0 · bloccato · respinto due volte dalla revisione: la regola di lint su `src/engine` si aggira con `./../app/page` (il pattern `^(?!\./)` accetta ogni import che inizia con `./`). Correzione indicata dal revisore: regex `^(?!\./[A-Za-z0-9_-]+$)` (per i test `^(?!\./[A-Za-z0-9_-]+$|vitest$)`) più i casi `./../app/page` e `./sub/../../app/page` in `tools/lint-engine.test.ts`. Il resto del task (lint/test/build, pagina, diario, `.gitkeep`) è approvato.
+- T1.0 · fatto · bloccato dopo due revisioni per il buco `./../` nella regola di lint; chiuso dopo la fase con la correzione indicata dal revisore (regex `^(?!\./[A-Za-z0-9_-]+$)`) e tre casi di test in più, verificati: falliscono con la regola vecchia, passano con la nuova.
 - T1.1 · fatto · tipi, default di §3, `mergeSettings` con test. Aggiunti `proteinGramsManual`/`fatGramsManual` (null = formula).
 - T1.2 · fatto · kcal di budget (`kcalBudget`, tetto pasto libero), kcal reali (`kcalEaten`), `hasFreeMealInWeek` con esclusione.
 - T1.3 · fatto · bonus bici (`bikeBonus`) e passi (`stepsBonus`); casi A, E, F.
@@ -31,5 +31,4 @@ Una riga per task chiuso.
 ## Non verificato
 
 - T1.0: la regola di lint `no-restricted-imports` non copre `require()` né `import()` dinamico.
-- T1.0: il buco `./../` nella regola di lint resta aperto finché il task è bloccato.
 - T1.9: le migrazioni sono state eseguite solo su un PostgreSQL 16 locale con uno stand-in di `auth.users`/`auth.uid()` e del ruolo `authenticated`; non su Supabase reale. Verificato lì: creazione di tutte le tabelle, dato iniziale (1 piano, 12 esercizi), isolamento tra due utenti (lettura, modifica, inserimento altrui rifiutati), piano di sistema non modificabile, unicità attività per utente e data. Non verificato: comportamento con il vero `auth.uid()` di Supabase, grant dei ruoli Supabase, `gen_random_uuid()` su Supabase.

@@ -13,10 +13,10 @@
 
 Tutti i casi A-J del brief (§3.6) escono con i numeri esatti. Esiste anche il progetto vuoto (la pagina iniziale mostra solo "Personal Health") e il disegno del database: dieci tabelle, ognuna visibile solo al proprio utente, con il piano di 30 giorni già dentro.
 
-**Cosa si può provare.** Non ci sono schermate, quindi non c'è nulla da guardare nel telefono. Si può solo rilanciare i controlli: `npm test` (106 test), `npm run lint`, `npm run build`.
+**Cosa si può provare.** Non ci sono schermate, quindi non c'è nulla da guardare nel telefono. Si può solo rilanciare i controlli: `npm test` (109 test), `npm run lint`, `npm run build`.
 
 **Cosa manca.**
-- Il task T1.0 (impalcatura) è **bloccato**: la regola che impedisce al motore di importare da fuori ha un buco (`./../app/page` passa). Il resto del task funziona. Il rimedio è già descritto nel diario e vale un paio di righe.
+- Il task T1.0 (impalcatura) era rimasto bloccato per un buco nella regola che impedisce al motore di importare da fuori (`./../app/page` passava). Il buco è stato chiuso dopo la fase con la correzione indicata dal revisore: ora tutti gli 11 task sono chiusi.
 - Il database non è stato provato su Supabase vero, solo su un database locale che lo imita.
 - Nessuna schermata, nessun collegamento reale a Supabase o all'AI: sono le fasi successive.
 
@@ -26,7 +26,7 @@ Tutti i casi A-J del brief (§3.6) escono con i numeri esatti. Esiste anche il p
 
 | Task | Esito |
 |---|---|
-| T1.0 Impalcatura | **bloccato**: respinto due volte (buco `./../` nella regola di lint) |
+| T1.0 Impalcatura | fatto: respinto due volte (buco `./../` nella regola di lint), chiuso dopo la fase con la correzione del revisore |
 | T1.1 Tipi e impostazioni | fatto |
 | T1.2 Kcal nel budget | fatto |
 | T1.3 Bonus attività | fatto |
@@ -43,7 +43,7 @@ Un commit per task, ognuno inviato al ramo `claude/compassionate-heisenberg-w05a
 **Processo.** Il subagente `revisore` non era caricabile nella sessione (creato durante la sessione stessa). Su autorizzazione dell'utente, ora scritta in `CLAUDE.md`, ogni revisione è stata fatta da un agente `general-purpose` con le istruzioni di `.claude/agents/revisore.md`, il testo del task e il diff. T1.1-T1.9 approvati al primo giro; T1.0 respinto due volte, quindi `bloccato` come da regola.
 
 ### Test
-- 106 test in 10 file (Vitest), tutti verdi; `lint` e `build` passano.
+- 109 test in 10 file (Vitest), tutti verdi; `lint` e `build` passano.
 - Casi di §3.6: A, B, C, D, H (`target.test.ts`), E, F (`activity.test.ts`, `target.test.ts`, `nutrients.test.ts`), G (`nutrients.test.ts`), I, J (`traffic.test.ts`), sfida giorni 1, 4, 6, 30 (`challenge.test.ts`).
 - Confini esatti di ogni soglia dei semafori; obiettivo 0 → neutro; settimana vuota → `null`; ora legale e anni bisestili per le date.
 - La percentuale di copertura **non è stata misurata** (nessuno strumento installato; richiederebbe una dipendenza non motivata dal brief).
@@ -60,6 +60,6 @@ Elenco completo in `docs/DIARIO.md`. Le principali:
 - il limite di un pasto libero a settimana è controllato dall'app, non dal database.
 
 ### Limiti e non verificato
-- T1.0: buco `./../` nella regola di lint; `require()` e `import()` dinamici non coperti. Rimedio indicato dal revisore: regex `^(?!\./[A-Za-z0-9_-]+$)` (e per i test `^(?!\./[A-Za-z0-9_-]+$|vitest$)`) più i due casi in `tools/lint-engine.test.ts`.
+- T1.0: `require()` e `import()` dinamici non coperti dalla regola di lint. Il buco `./../` è chiuso (regex `^(?!\./[A-Za-z0-9_-]+$)`, tre casi di test in `tools/lint-engine.test.ts`).
 - T1.9: migrazioni provate su PostgreSQL 16 locale con stand-in di `auth.users`, `auth.uid()` e del ruolo `authenticated`. Non provato su Supabase: `auth.uid()` reale, grant dei ruoli, accesso con il vero login.
 - Nessuna schermata in questa fase: nessuno screenshot.

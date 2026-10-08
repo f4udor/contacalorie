@@ -16,7 +16,7 @@ export default defineConfig([
         {
           patterns: [
             {
-              regex: "^(?!\\./)",
+              regex: "^(?!\\./[A-Za-z0-9_-]+$)",
               message: "src/engine può importare solo da src/engine (percorsi './nome').",
             },
           ],
@@ -33,7 +33,7 @@ export default defineConfig([
         {
           patterns: [
             {
-              regex: "^(?!\\./|vitest$)",
+              regex: "^(?!\\./[A-Za-z0-9_-]+$|vitest$)",
               message: "src/engine può importare solo da src/engine (e i test da vitest).",
             },
           ],
