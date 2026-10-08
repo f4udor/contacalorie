@@ -355,7 +355,7 @@ Vincoli di questa fase:
 - La scheda Attività di Oggi continua a mostrare la fonte ("da Salute" o "manuale").
 - Test della logica dell'avviso (nessun codice; invio 23 ore fa; 25 ore fa; mai arrivato dopo la creazione del codice) e scenari di screenshot per ogni stato.
 
-### T5.2 Guida al Comando rapido · da fare
+### T5.2 Guida al Comando rapido · fatto
 `docs/COLLEGA-SALUTE.md`, stesso stile delle altre guide, passi numerati con cosa si vede a schermo:
 1. eseguire `supabase/aggiornamento-fase-5.sql`;
 2. creare il codice in Impostazioni;
