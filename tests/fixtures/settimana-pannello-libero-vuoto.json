@@ -1,0 +1,26 @@
+{
+  "id": "settimana-pannello-libero-vuoto",
+  "descrizione": "Nessun pasto libero e nessun pasto nella settimana.",
+  "oggi": "2026-01-08",
+  "percorso": "/settimana",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 92.5
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Pasto libero",
+        "exact": false
+      }
+    }
+  ]
+}

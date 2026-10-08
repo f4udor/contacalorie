@@ -1,0 +1,213 @@
+"use client";
+
+import { useState } from "react";
+import type { DateKey, MealSlot } from "@/engine";
+import type { DataStore } from "@/data";
+import type { WeekData } from "../lib/week-data";
+import { formatDateLong, formatNumber } from "../lib/format";
+import { validateWeight } from "../lib/activity-form";
+import { activityRows, defaultWeighInDate, deleteActivityValue, freeMealOfWeek, markFreeMeal, removeFreeMeal, weekMeals, weighInsInWeek } from "../lib/week-actions";
+import type { ActivityKind, WeekMeal } from "../lib/week-actions";
+import { TextField } from "./field";
+import { Sheet } from "./sheet";
+
+const SLOT_LABEL: Record<MealSlot, string> = { colazione: "Colazione", pranzo: "Pranzo", cena: "Cena", spuntino: "Spuntino" };
+
+export interface PanelProps {
+  store: DataStore;
+  data: WeekData;
+  dates: DateKey[];
+  today: DateKey;
+  onChanged: () => void;
+  onClose: () => void;
+}
+
+const primary = "min-h-12 w-full rounded-xl bg-accent px-4 text-[17px] font-semibold text-white disabled:opacity-50";
+const secondary = "min-h-12 w-full rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent disabled:opacity-50";
+
+function TrashButton({ label, onClick, disabled }: { label: string; onClick: () => void; disabled?: boolean }) {
+  return (
+    <button type="button" aria-label={label} disabled={disabled} onClick={onClick} className="flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full text-bad disabled:opacity-50">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14M10 10v6M14 10v6" />
+      </svg>
+    </button>
+  );
+}
+
+/** Esegue un'azione di modifica: se non riesce l'avviso in cima lo spiega e il pannello resta com'è. */
+function useAction(onChanged: () => void) {
+  const [busy, setBusy] = useState(false);
+  const run = async (fn: () => Promise<unknown>) => {
+    setBusy(true);
+    try {
+      await fn();
+      onChanged();
+    } catch {
+      // Salvataggio non riuscito: l'avviso in cima lo spiega.
+    } finally {
+      setBusy(false);
+    }
+  };
+  return { busy, run };
+}
+
+/** Pesate della settimana: si eliminano e si aggiungono. */
+export function WeightPanel({ store, data, dates, today, onChanged, onClose }: PanelProps) {
+  const { busy, run } = useAction(onChanged);
+  const list = weighInsInWeek(data.weighIns, dates[0], dates[6]);
+  const [adding, setAdding] = useState(false);
+  const [date, setDate] = useState<DateKey>(() => defaultWeighInDate(dates, today));
+  const [value, setValue] = useState("");
+  const [error, setError] = useState<string | undefined>();
+  const existing = data.weighIns.find((w) => w.date === date);
+
+  const save = (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = validateWeight(value);
+    if (!r.ok) return setError(r.error);
+    setError(undefined);
+    void run(async () => {
+      await store.saveWeighIn({ date, weightKg: r.weightKg });
+      setAdding(false);
+      setValue("");
+    });
+  };
+
+  return (
+    <Sheet open onClose={onClose} title="Pesate">
+      {list.length === 0 ? (
+        <p className="py-2 text-[15px] text-muted">Nessuna pesata in questa settimana.</p>
+      ) : (
+        <ul className="divide-y divide-line">
+          {list.map((w) => (
+            <li key={w.date} className="flex min-h-14 items-center justify-between gap-3">
+              <span className="min-w-0">
+                <span className="block text-[17px] font-semibold tabular-nums">{formatNumber(w.weightKg, 1)} kg</span>
+                <span className="block text-sm text-muted">{formatDateLong(w.date)}</span>
+              </span>
+              <TrashButton label={`Elimina la pesata di ${formatDateLong(w.date)}`} disabled={busy} onClick={() => void run(() => store.deleteWeighIn(w.date))} />
+            </li>
+          ))}
+        </ul>
+      )}
+      {adding ? (
+        <form onSubmit={save} noValidate className="mt-3 flex flex-col gap-4 border-t border-line pt-4">
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="weigh-date" className="text-sm font-semibold text-muted">
+              Giorno
+            </label>
+            <select id="weigh-date" value={date} onChange={(e) => setDate(e.target.value)} className="min-h-11 w-full rounded-xl bg-bg px-3 text-[17px]">
+              {dates.map((d) => (
+                <option key={d} value={d}>
+                  {formatDateLong(d)}
+                </option>
+              ))}
+            </select>
+          </div>
+          <TextField id="weigh-kg" label="Peso (kg)" value={value} onChange={setValue} error={error} hint={existing ? "Hai già una pesata per questo giorno: salvando la sostituisci." : "Una pesata per giorno."} />
+          <div className="flex gap-2">
+            <button type="submit" disabled={busy} className={primary}>
+              Salva pesata
+            </button>
+            <button type="button" onClick={() => setAdding(false)} className={secondary}>
+              Annulla
+            </button>
+          </div>
+        </form>
+      ) : (
+        <button type="button" onClick={() => setAdding(true)} className={`${secondary} mt-3`}>
+          Aggiungi pesata
+        </button>
+      )}
+    </Sheet>
+  );
+}
+
+/** I sette giorni della settimana con il valore di bici o passi e la fonte: quelli a mano si eliminano, quelli da Salute no. */
+export function ActivityWeekPanel({ kind, store, data, dates, onChanged, onClose }: PanelProps & { kind: ActivityKind }) {
+  const { busy, run } = useAction(onChanged);
+  const rows = activityRows(kind, data.activity, dates);
+  const value = (r: (typeof rows)[number]) => {
+    if (kind === "passi") return r.steps === null ? null : formatNumber(r.steps);
+    if (r.km !== null) return `${formatNumber(r.km, 1)} km`;
+    return r.kcal === null ? null : `${formatNumber(r.kcal)} kcal`;
+  };
+  return (
+    <Sheet open onClose={onClose} title={kind === "passi" ? "Passi" : "Bici"}>
+      <ul className="divide-y divide-line">
+        {rows.map((r) => {
+          const v = value(r);
+          return (
+            <li key={r.date} className="flex min-h-14 items-center justify-between gap-3">
+              <span className="min-w-0 text-[17px]">{formatDateLong(r.date)}</span>
+              <span className="flex items-center gap-2">
+                {v === null ? (
+                  <span className="text-[17px] text-muted">–</span>
+                ) : (
+                  <>
+                    {r.source && <span className="rounded-full bg-track px-2 py-0.5 text-xs font-semibold text-muted">{r.source === "salute" ? "da Salute" : "manuale"}</span>}
+                    <span className="text-[17px] font-semibold tabular-nums">{v}</span>
+                  </>
+                )}
+                {r.canDelete && <TrashButton label={`Elimina il valore di ${formatDateLong(r.date)}`} disabled={busy} onClick={() => void run(() => deleteActivityValue(store, r.date, kind))} />}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      <p className="pt-3 text-sm text-muted">Si eliminano solo i valori inseriti a mano. Un valore da Salute si corregge in Salute; il giorno rimasto vuoto si riempie al prossimo invio.</p>
+    </Sheet>
+  );
+}
+
+function MealLine({ m }: { m: WeekMeal }) {
+  return (
+    <span className="min-w-0">
+      <span className="block text-[17px] font-semibold">
+        {formatDateLong(m.date)} · {SLOT_LABEL[m.slot]}
+      </span>
+      <span className="block break-words text-sm text-muted">
+        {formatNumber(m.kcal)} kcal · {m.names.join(", ")}
+      </span>
+    </span>
+  );
+}
+
+/** Pasto libero della settimana: si toglie (il pasto resta e conta per intero) oppure si sceglie tra i pasti della settimana. */
+export function FreeMealPanel({ store, data, onChanged, onClose }: PanelProps) {
+  const { busy, run } = useAction(onChanged);
+  const meals = weekMeals(data.meals);
+  const free = freeMealOfWeek(data.meals);
+  return (
+    <Sheet open onClose={onClose} title="Pasto libero">
+      {free ? (
+        <div>
+          <div className="py-2">
+            <MealLine m={free} />
+          </div>
+          <p className="pb-3 text-sm text-muted">Se lo togli il pasto resta, ma conta per intero nel budget.</p>
+          <button type="button" disabled={busy} onClick={() => void run(() => removeFreeMeal(store, free))} className={secondary}>
+            Togli pasto libero
+          </button>
+        </div>
+      ) : meals.length === 0 ? (
+        <p className="py-2 text-[15px] text-muted">Nessun pasto in questa settimana.</p>
+      ) : (
+        <div>
+          <p className="pb-2 text-sm text-muted">Scegli il pasto della settimana da segnare come libero: nel budget conta al massimo il tetto delle Impostazioni.</p>
+          <ul className="divide-y divide-line">
+            {meals.map((m) => (
+              <li key={`${m.date}-${m.slot}`} className="flex min-h-14 items-center justify-between gap-3 py-1">
+                <MealLine m={m} />
+                <button type="button" disabled={busy} onClick={() => void run(() => markFreeMeal(store, meals, m))} className="min-h-11 shrink-0 rounded-xl bg-bg px-3 text-[15px] font-semibold text-accent disabled:opacity-50">
+                  Segna come libero
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </Sheet>
+  );
+}

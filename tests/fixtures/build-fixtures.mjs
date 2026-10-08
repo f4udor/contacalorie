@@ -449,6 +449,40 @@ add("oggi-anteprima-domenica", "Domenica in anteprima: il debito è stato estint
 add("oggi-debito-piccolo", "Lunedì 2.111 kcal (debito 11, sotto la soglia di 25): martedì obiettivo 2.100 e nessuna riga di recupero.", "2026-01-06", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", 2111, 90, 200, 60, 20, 4)] }));
 sett("settimana-anteprima", "Settimana con debito di 250 kcal e oggi giovedì: le linee dell'obiettivo dei giorni futuri sono 2.000, 2.000, 2.050, 2.100.", "2026-01-08", debito250);
 
+// --- Schede della Settimana toccabili (T5.4). Settimana 5-11 gennaio, oggi giovedì 8.
+const settScheda = (id, descrizione, dati, passi, extra = {}) => scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/settimana", dati, scorre: true, fisso: true, passi, ...extra });
+const tocca = (name) => ({ clickRole: { role: "button", name, exact: false } });
+const settimanaPiena = data({
+  settings: { weightKg: 92.5, targetWeightKg: 82 },
+  weighIns: [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-06", weightKg: 91.8 }, { date: "2026-01-08", weightKg: 91.4 }],
+  meals: [
+    meal("2026-01-05", "pranzo", "Pasta al pomodoro", 700, 20, 100, 12, 5, 1.5),
+    meal("2026-01-06", "cena", "Pizza margherita", 1100, 40, 140, 35, 6, 3),
+    meal("2026-01-07", "pranzo", "Risotto ai funghi", 650, 15, 95, 18, 4, 2),
+    meal("2026-01-07", "pranzo", "Tiramisù", 450, 8, 50, 22, 1, 0.4),
+  ],
+  activity: [
+    activity("2026-01-05", { steps: 8123, stepsSource: "salute", bikeKm: 12.4, bikeSource: "salute" }),
+    activity("2026-01-06", { steps: 5400, stepsSource: "manuale", bikeKm: 20, bikeSource: "manuale" }),
+    activity("2026-01-07", { steps: 9450, stepsSource: "salute" }),
+  ],
+});
+const conLibero = { ...settimanaPiena, meals: settimanaPiena.meals.map((m) => (m.date === "2026-01-07" && m.slot === "pranzo" ? { ...m, isFree: true } : m)) };
+const senzaPesate = { ...settimanaPiena, weighIns: [{ date: "2026-01-02", weightKg: 92 }] };
+scenarios.push({ id: "settimana-peso-nessuna-pesata", descrizione: "La scheda Peso c'è sempre: senza pesate nella settimana dice 'Nessuna pesata' (con la freccia che la rende toccabile).", oggi: "2026-01-08", percorso: "/settimana", dati: senzaPesate, scorre: true });
+settScheda("settimana-pannello-peso", "Pannello Pesate: le pesate della settimana dalla più recente, ognuna con il cestino, e 'Aggiungi pesata'.", settimanaPiena, [tocca("Peso")]);
+settScheda("settimana-pannello-peso-aggiungi", "Aggiungi pesata: scelta del giorno della settimana e campo del peso.", settimanaPiena, [tocca("Peso"), { click: "Aggiungi pesata" }]);
+settScheda("settimana-pannello-peso-vuoto", "Pannello Pesate senza pesate nella settimana.", senzaPesate, [tocca("Peso")]);
+settScheda("settimana-pannello-bici", "Pannello Bici: sette giorni con km e fonte; il cestino solo sul valore a mano.", settimanaPiena, [tocca("Bici")]);
+settScheda("settimana-pannello-passi", "Pannello Passi: sette giorni con passi e fonte; il cestino solo sul valore a mano.", settimanaPiena, [tocca("Passi medi")]);
+settScheda("settimana-pannello-bici-vuoto", "Pannello Bici senza nessun valore nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Bici")]);
+settScheda("settimana-pannello-passi-vuoto", "Pannello Passi senza nessun valore nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Passi medi")]);
+settScheda("settimana-pannello-libero", "Pasto libero presente: giorno, fascia, kcal e 'Togli pasto libero'.", conLibero, [tocca("Pasto libero")]);
+settScheda("settimana-pannello-libero-scegli", "Nessun pasto libero: elenco dei pasti della settimana con 'Segna come libero'.", settimanaPiena, [tocca("Pasto libero")]);
+settScheda("settimana-pannello-libero-vuoto", "Nessun pasto libero e nessun pasto nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Pasto libero")]);
+settScheda("settimana-dopo-elimina-bici", "Dopo aver eliminato i km a mano di martedì: il totale dei km e il pannello si aggiornano subito.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Elimina il valore di Martedì 6 gennaio", exact: true } }, { wait: 500 }]);
+settScheda("settimana-dopo-togli-libero", "Dopo 'Togli pasto libero': la scheda dice 'non usato' e il pasto resta.", conLibero, [tocca("Pasto libero"), { click: "Togli pasto libero" }, { wait: 500 }, { click: "Chiudi", exact: true }]);
+
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");
