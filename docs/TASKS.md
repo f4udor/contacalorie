@@ -173,7 +173,7 @@ Vincoli di questa fase:
 - I test del motore che riguardano il pasto libero possono essere aggiornati in T3.0, perché la regola cambia; vanno aggiornati solo quelli, e il diario dice quali.
 - Per le schermate valgono le regole della fase 2 (scenari, screenshot, formato italiano, stati vuoti).
 
-### T3.0 Motore: pasto libero sul pasto intero · da fare
+### T3.0 Motore: pasto libero sul pasto intero · fatto
 §3.1 del brief: il pasto libero vale per l'insieme dei piatti di una fascia in un giorno.
 - Un pasto è libero se è segnato libero; il tetto `freeMealCap` si applica alla somma dei suoi piatti, non al singolo piatto.
 - Caso L di §3.6; caso C ancora valido.
