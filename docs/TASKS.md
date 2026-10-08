@@ -452,7 +452,7 @@ Vincoli di questa fase:
 - La modalità "Modifica" dei preferiti sparisce: lo scorrimento è l'unico modo di eliminare. Il + e il tocco sulla riga continuano a fare quello che fanno oggi.
 - Test della logica di eliminazione per piatti e pasti e prova con il tocco simulato di Playwright. Screenshot con una riga aperta.
 
-### T5b.6 Media della settimana sul grafico · da fare
+### T5b.6 Media della settimana sul grafico · fatto
 - Motore: la media kcal della settimana segue §3.8. La funzione riceve qual è "oggi" come parametro (il motore non legge la data). **I test esistenti della media si aggiornano alla nuova regola**; nessun altro test del motore si tocca.
 - La scheda "Media kcal" usa il nuovo numero, con la dicitura "sui giorni conclusi".
 - Sul grafico a sette barre: linea tratteggiata orizzontale alla media, con etichetta "media 2.040" che non copre le barre né l'etichetta dell'obiettivo. Colore neutro, diverso dalla linea dell'obiettivo. Senza media la linea non compare.
