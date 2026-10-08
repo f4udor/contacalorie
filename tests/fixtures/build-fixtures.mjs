@@ -419,6 +419,26 @@ add("dopo-kcal-base", "Kcal base cambiata a 2.000 nelle Impostazioni: Oggi mostr
   percorso: "/impostazioni",
   passi: [{ fill: ["Kcal base", "2000"] }, salva, { wait: 500 }, { click: "Oggi", exact: true }, { wait: 500 }],
 });
+// --- Salute (T5.1). "Adesso" negli screenshot: giovedì 2026-01-08, 09:00 a Roma = 08:00 UTC.
+const salute = (stato) => ({ active: false, codeCreatedAt: null, lastSuccessAt: null, lastAttempt: null, ...stato });
+const sal = (id, descrizione, st, extra = {}) => scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/impostazioni", dati: null, scorre: true, passi: [{ scrollTo: "Salute" }], ...(st ? { salute: salute(st) } : {}), ...extra });
+sal("salute-senza-accesso", "Impostazioni → Collegamenti → Salute con i dati solo sul dispositivo: dice che serve l'accesso.", null);
+sal("salute-senza-codice", "Salute senza codice: spiegazione e pulsante 'Crea codice'.", {});
+sal("salute-codice-creato", "Appena creato: il codice compare una sola volta, con 'Copia' e l'indirizzo.", {}, { passi: [{ click: "Crea codice" }, { wait: 400 }, { scrollTo: "Fatto" }] });
+sal("salute-dopo-fatto", "Dopo 'Fatto': il codice non si vede più, restano stato e pulsanti.", {}, { passi: [{ click: "Crea codice" }, { click: "Fatto", exact: true }, { wait: 400 }, { scrollTo: "Disattiva" }] });
+sal("salute-collegata", "Salute collegata: ultimo invio, valori di oggi e di ieri.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-08T07:40:00Z", lastAttempt: { at: "2026-01-08T07:40:00Z", success: true, detail: null } }, {
+  dati: data({ activity: [activity("2026-01-08", { steps: 3120, stepsSource: "salute", bikeKm: 12.4, bikeSource: "salute" }), activity("2026-01-07", { steps: 9450, stepsSource: "salute" })] }),
+});
+sal("salute-mai-arrivato", "Codice appena creato, nessun invio ancora.", { active: true, codeCreatedAt: "2026-01-08T07:30:00Z" });
+sal("salute-ultimo-fallito", "L'ultimo tentativo non è riuscito: compare il motivo.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-07T17:00:00Z", lastAttempt: { at: "2026-01-08T07:50:00Z", success: false, detail: "Nessuna riga utile" } });
+sal("salute-rigenera-conferma", "'Rigenera codice' chiede conferma e avverte che il Comando rapido smette di funzionare.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-08T07:40:00Z" }, { passi: [{ scrollTo: "Rigenera codice" }, { click: "Rigenera codice", exact: true }, { wait: 300 }] });
+sal("salute-disattivata", "Dopo 'Disattiva': torna 'Crea codice'.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-08T07:40:00Z" }, { passi: [{ scrollTo: "Disattiva" }, { click: "Disattiva", exact: true }, { wait: 400 }] });
+const oggiSalute = (id, descrizione, st) => scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/", dati: null, scorre: true, salute: salute(st) });
+oggiSalute("oggi-avviso-salute", "Oggi con codice attivo e ultimo invio 30 ore fa: avviso in cima che porta a Collegamenti.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-07T02:00:00Z" });
+oggiSalute("oggi-salute-recente", "Oggi con codice attivo e ultimo invio 1 ora fa: nessun avviso.", { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-08T07:00:00Z" });
+oggiSalute("oggi-salute-senza-codice", "Oggi senza codice: nessun avviso.", {});
+scenarios.push({ id: "oggi-avviso-salute-tocco", descrizione: "Toccando l'avviso si arriva a Impostazioni → Collegamenti.", oggi: "2026-01-08", percorso: "/", dati: null, scorre: true, salute: salute({ active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-07T02:00:00Z" }), passi: [{ click: "Nessun dato da Salute da ieri" }, { wait: 600 }] });
+
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");

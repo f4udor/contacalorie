@@ -1,0 +1,46 @@
+{
+  "id": "salute-collegata",
+  "descrizione": "Salute collegata: ultimo invio, valori di oggi e di ieri.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": {
+    "version": 1,
+    "settings": {},
+    "meals": [],
+    "activity": [
+      {
+        "date": "2026-01-08",
+        "steps": 3120,
+        "stepsSource": "salute",
+        "bikeKm": 12.4,
+        "bikeKcalHealth": null,
+        "bikeSource": "salute"
+      },
+      {
+        "date": "2026-01-07",
+        "steps": 9450,
+        "stepsSource": "salute",
+        "bikeKm": null,
+        "bikeKcalHealth": null,
+        "bikeSource": null
+      }
+    ],
+    "weighIns": []
+  },
+  "scorre": true,
+  "passi": [
+    {
+      "scrollTo": "Salute"
+    }
+  ],
+  "salute": {
+    "active": true,
+    "codeCreatedAt": "2026-01-02T08:00:00Z",
+    "lastSuccessAt": "2026-01-08T07:40:00Z",
+    "lastAttempt": {
+      "at": "2026-01-08T07:40:00Z",
+      "success": true,
+      "detail": null
+    }
+  }
+}

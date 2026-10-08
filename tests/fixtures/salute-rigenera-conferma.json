@@ -1,0 +1,26 @@
+{
+  "id": "salute-rigenera-conferma",
+  "descrizione": "'Rigenera codice' chiede conferma e avverte che il Comando rapido smette di funzionare.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "scrollTo": "Rigenera codice"
+    },
+    {
+      "click": "Rigenera codice",
+      "exact": true
+    },
+    {
+      "wait": 300
+    }
+  ],
+  "salute": {
+    "active": true,
+    "codeCreatedAt": "2026-01-02T08:00:00Z",
+    "lastSuccessAt": "2026-01-08T07:40:00Z",
+    "lastAttempt": null
+  }
+}

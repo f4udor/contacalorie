@@ -1,0 +1,25 @@
+{
+  "id": "salute-codice-creato",
+  "descrizione": "Appena creato: il codice compare una sola volta, con 'Copia' e l'indirizzo.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "click": "Crea codice"
+    },
+    {
+      "wait": 400
+    },
+    {
+      "scrollTo": "Fatto"
+    }
+  ],
+  "salute": {
+    "active": false,
+    "codeCreatedAt": null,
+    "lastSuccessAt": null,
+    "lastAttempt": null
+  }
+}

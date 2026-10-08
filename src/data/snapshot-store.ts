@@ -1,7 +1,7 @@
 import type { DateKey } from "@/engine";
 import type { DataStore } from "./store";
 import { STORAGE_VERSION } from "./types";
-import type { ActivityRecord, FavoriteDish, FavoriteMeal, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, FavoriteDish, FavoriteMeal, HealthLinkStatus, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 
 /** Dove vengono scritti i dati serializzati. */
 export interface Persistence {
@@ -80,6 +80,18 @@ export class SnapshotDataStore implements DataStore {
     } catch {
       this.notice = NOTICE_WRITE_FAILED;
     }
+  }
+
+  async getHealthLink(): Promise<HealthLinkStatus> {
+    return { supported: false, active: false, codeCreatedAt: null, lastSuccessAt: null, lastAttempt: null };
+  }
+
+  async createHealthCode(): Promise<string> {
+    throw new Error("Il collegamento con Salute richiede l'accesso.");
+  }
+
+  async revokeHealthCode(): Promise<void> {
+    throw new Error("Il collegamento con Salute richiede l'accesso.");
   }
 
   async getSettings() {

@@ -15,7 +15,7 @@ import {
   weighInToRow,
 } from "./mapping";
 import type { DataStore } from "./store";
-import type { ActivityRecord, FavoriteDish, FavoriteMeal, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
+import type { ActivityRecord, FavoriteDish, FavoriteMeal, HealthLinkStatus, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 import { STORAGE_VERSION } from "./types";
 
 type Row = Record<string, unknown>;
@@ -41,6 +41,7 @@ export interface SupabaseTable {
 
 export interface SupabaseLike {
   from(table: string): SupabaseTable;
+  rpc(name: string, args?: Record<string, unknown>): PromiseLike<{ data: unknown; error: { message: string } | null }>;
   auth: { getSession(): Promise<{ data: { session: { user: { id: string } } | null } }> };
 }
 
@@ -183,6 +184,44 @@ export class SupabaseDataStore implements DataStore {
     return this.run("scrittura", async (c) => {
       const res = await c.from("weigh_ins").delete().eq("date", date);
       SupabaseDataStore.check(res.error);
+    });
+  }
+
+  // --- collegamento con Salute
+
+  getHealthLink(): Promise<HealthLinkStatus> {
+    return this.run("lettura", async (c) => {
+      const latest = async (table: string, build: (q: SupabaseQuery) => SupabaseQuery) => {
+        const res = await build(c.from(table).select("*")).order("id", { ascending: false }).range(0, 0);
+        SupabaseDataStore.check(res.error);
+        return res.data?.[0] ?? null;
+      };
+      const token = await latest("ingest_tokens", (q) => q.eq("kind", "salute").order("created_at", { ascending: false }));
+      const attempt = await latest("ingest_log", (q) => q.eq("kind", "salute").order("called_at", { ascending: false }));
+      const success = await latest("ingest_log", (q) => q.eq("kind", "salute").eq("success", true).order("called_at", { ascending: false }));
+      const active = token !== null && !token.revoked_at;
+      return {
+        supported: true,
+        active,
+        codeCreatedAt: active ? String(token.created_at) : null,
+        lastSuccessAt: success ? String(success.called_at) : null,
+        lastAttempt: attempt ? { at: String(attempt.called_at), success: attempt.success === true, detail: (attempt.detail as string | null) ?? null } : null,
+      };
+    });
+  }
+
+  createHealthCode(): Promise<string> {
+    return this.run("scrittura", async (c) => {
+      const res = await c.rpc("create_health_token");
+      SupabaseDataStore.check(res.error);
+      if (typeof res.data !== "string" || res.data === "") throw new Error("Codice non ricevuto");
+      return res.data;
+    });
+  }
+
+  revokeHealthCode(): Promise<void> {
+    return this.run("scrittura", async (c) => {
+      SupabaseDataStore.check((await c.rpc("revoke_health_token")).error);
     });
   }
 

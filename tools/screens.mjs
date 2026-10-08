@@ -120,6 +120,15 @@ try {
             ["personal-health:demo-auth", JSON.stringify({ session: sc.accessoDimostrativo.session ?? null })],
           );
         }
+        if (sc.salute) {
+          // Collegamento con Salute simulato (solo senza Supabase): stato scritto nella chiave dimostrativa.
+          await context.addInitScript(
+            ([key, value]) => {
+              if (!localStorage.getItem(key)) localStorage.setItem(key, value);
+            },
+            ["personal-health:demo-health", JSON.stringify(sc.salute)],
+          );
+        }
         if (sc.scritturaFallita) {
           // Simula il browser che non riesce più a scrivere (memoria piena): dopo aver caricato i dati, ogni salvataggio fallisce.
           await context.addInitScript(() => {

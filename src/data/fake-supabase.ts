@@ -29,6 +29,21 @@ export class FakeSupabaseDb {
   client(): SupabaseLike {
     return {
       from: (table) => new FakeTable(this, table),
+      rpc: async (name) => {
+        if (this.offline) throw new TypeError("Failed to fetch");
+        if (this.serverError) return { data: null, error: { message: this.serverError } };
+        if (!this.userId) return { data: null, error: { message: "Accesso necessario" } };
+        const tokens = this.rows("ingest_tokens");
+        for (const t of tokens) if (t.user_id === this.userId && t.kind === "salute" && !t.revoked_at) t.revoked_at = new Date(this.nextSeq()).toISOString();
+        if (name === "create_health_token") {
+          const code = `ph-codice-${this.nextSeq()}`;
+          tokens.push({ id: `tok-${this.nextSeq()}`, user_id: this.userId, kind: "salute", token_hash: `hash:${code}`, created_at: new Date(1_800_000_000_000 + this.nextSeq() * 1000).toISOString(), revoked_at: null });
+          this.writes++;
+          return { data: code, error: null };
+        }
+        this.writes++;
+        return { data: null, error: null };
+      },
       auth: {
         getSession: async () => {
           if (this.offline) throw new TypeError("Failed to fetch");
@@ -70,6 +85,7 @@ class FakeTable implements SupabaseTable {
 class FakeQuery implements SupabaseQuery {
   private filters: ((r: Row) => boolean)[] = [];
   private orderBy: string[] = [];
+  private descending = new Set<string>();
   private window: [number, number] | null = null;
 
   constructor(
@@ -90,8 +106,9 @@ class FakeQuery implements SupabaseQuery {
     this.filters.push((r) => (r[column] as string | number) <= (value as string | number));
     return this;
   }
-  order(column: string) {
+  order(column: string, options?: { ascending?: boolean }) {
     this.orderBy.push(column);
+    if (options?.ascending === false) this.descending.add(column);
     return this;
   }
   range(from: number, to: number) {
@@ -123,7 +140,7 @@ class FakeQuery implements SupabaseQuery {
     const sorted = [...matches];
     sorted.sort((a, b) => {
       for (const col of this.orderBy) {
-        if (a[col] !== b[col]) return (a[col] as string | number) < (b[col] as string | number) ? -1 : 1;
+        if (a[col] !== b[col]) return ((a[col] as string | number) < (b[col] as string | number) ? -1 : 1) * (this.descending.has(col) ? -1 : 1);
       }
       return 0;
     });

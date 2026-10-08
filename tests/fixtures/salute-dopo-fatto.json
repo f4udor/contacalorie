@@ -1,0 +1,29 @@
+{
+  "id": "salute-dopo-fatto",
+  "descrizione": "Dopo 'Fatto': il codice non si vede più, restano stato e pulsanti.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "click": "Crea codice"
+    },
+    {
+      "click": "Fatto",
+      "exact": true
+    },
+    {
+      "wait": 400
+    },
+    {
+      "scrollTo": "Disattiva"
+    }
+  ],
+  "salute": {
+    "active": false,
+    "codeCreatedAt": null,
+    "lastSuccessAt": null,
+    "lastAttempt": null
+  }
+}

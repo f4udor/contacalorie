@@ -15,6 +15,7 @@ import { NutrientCard } from "./components/nutrient-card";
 import { formatNumber, formatSigned } from "./lib/format";
 import { currentWeight, buildTodayView, hasCompositionDetail } from "./lib/today-view";
 import { useToday } from "./lib/use-today";
+import { HealthWarning } from "./components/health-warning";
 import { useWeekData } from "./lib/use-week-data";
 
 const DATE_PARAM = /^\d{4}-\d{2}-\d{2}$/;
@@ -50,6 +51,7 @@ export function OggiScreen() {
 
   return (
     <main className="pb-24">
+      <HealthWarning />
       <DayHeader date={date} today={today} />
       {view && (
         <div className="flex flex-col gap-3">

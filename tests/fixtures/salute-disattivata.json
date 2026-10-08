@@ -1,0 +1,26 @@
+{
+  "id": "salute-disattivata",
+  "descrizione": "Dopo 'Disattiva': torna 'Crea codice'.",
+  "oggi": "2026-01-08",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "scrollTo": "Disattiva"
+    },
+    {
+      "click": "Disattiva",
+      "exact": true
+    },
+    {
+      "wait": 400
+    }
+  ],
+  "salute": {
+    "active": true,
+    "codeCreatedAt": "2026-01-02T08:00:00Z",
+    "lastSuccessAt": "2026-01-08T07:40:00Z",
+    "lastAttempt": null
+  }
+}
