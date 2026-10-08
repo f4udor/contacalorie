@@ -29,7 +29,7 @@ export interface WeekSummary {
   days: WeekDayRow[];
   /** Saldo della regola (§3.3, con il tetto al margine) fino al giorno più recente con pasti, questo compreso; null se nessun giorno ha pasti. */
   balance: number | null;
-  /** Media delle kcal reali sui giorni con pasti; null se nessuno. */
+  /** Media delle kcal reali sui giorni con pasti, escluso oggi (è in corso: abbasserebbe la media); null se nessun giorno è valido (§3.8). */
   avgKcal: number | null;
   avgNutrients: NutrientAverages | null;
   /** Km in bici totali; null se nessun giorno ha km. */
@@ -49,7 +49,8 @@ function mean(values: number[]): number | null {
 
 /**
  * Riepilogo della settimana (lunedì-domenica) che contiene `date`. I giorni mancanti sono considerati vuoti.
- * Se `today` è dato, l'obiettivo dei giorni dopo oggi è l'anteprima di §3.3 (`previewDayTarget`).
+ * Se `today` è dato, l'obiettivo dei giorni dopo oggi è l'anteprima di §3.3 (`previewDayTarget`) e la media delle kcal
+ * esclude il giorno di oggi (§3.8). Senza `today` nessun giorno è escluso. Il motore non legge la data da solo.
  */
 export function weekSummary(date: DateKey, knownDays: readonly Day[], settings: WeekSettings, today?: DateKey): WeekSummary {
   const dates = weekDates(date);
@@ -86,7 +87,7 @@ export function weekSummary(date: DateKey, knownDays: readonly Day[], settings: 
   return {
     days: rows,
     balance,
-    avgKcal: avgOf((d) => kcalEaten(d.meals)),
+    avgKcal: mean(eatenDays.filter((d) => d.date !== today).map((d) => kcalEaten(d.meals))),
     avgNutrients,
     totalKm: kmValues.length === 0 ? null : kmValues.reduce((a, b) => a + b, 0),
     avgSteps: mean(stepValues),

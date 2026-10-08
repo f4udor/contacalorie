@@ -84,7 +84,7 @@ export function SettimanaScreen() {
   const stats: StatProps[] = s
     ? [
         { label: "Saldo", value: s.balance === null ? dash : `${formatSigned(s.balance)} kcal`, hint: s.balance === null ? undefined : s.balance < 0 ? "da recuperare" : "di vantaggio" },
-        { label: "Media kcal", value: s.avgKcal === null ? dash : `${formatNumber(s.avgKcal)} kcal`, hint: "sui giorni con pasti" },
+        { label: "Media kcal", value: s.avgKcal === null ? dash : `${formatNumber(s.avgKcal)} kcal`, hint: "sui giorni conclusi" },
         { label: "Bici", value: s.totalKm === null ? dash : `${formatNumber(s.totalKm, 1)} km`, onOpen: () => setPanel("bici") },
         { label: "Passi medi", value: s.avgSteps === null ? dash : formatNumber(s.avgSteps), hint: "sui giorni con passi", onOpen: () => setPanel("passi") },
         { label: "Peso", value: card.value, hint: card.hint, hintTone: card.tone, onOpen: () => setPanel("peso") },
@@ -117,8 +117,8 @@ export function SettimanaScreen() {
       {view && s && (
         <div className="flex flex-col gap-3">
           <Card className="pb-2">
-            <WeekChart bars={view.bars} today={today} />
-            <p className="pt-1 text-center text-xs text-muted">La linea indica l&apos;obiettivo del giorno. Tocca una barra per aprire il giorno.</p>
+            <WeekChart bars={view.bars} today={today} avg={s.avgKcal === null || view.avgRatio === null ? null : { kcal: s.avgKcal, ratio: view.avgRatio }} />
+            <p className="pt-1 text-center text-xs text-muted">Tocca una barra per aprire il giorno.</p>
           </Card>
 
           {view.isEmpty && !weight && (

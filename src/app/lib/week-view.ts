@@ -18,6 +18,8 @@ export interface WeekBar {
 export interface WeekView {
   summary: WeekSummary;
   bars: WeekBar[];
+  /** Altezza della linea della media kcal (da 0 a 1, sulla stessa scala delle barre); null se la media non c'è. */
+  avgRatio: number | null;
   /** Nessun pasto, o attività in tutta la settimana. */
   isEmpty: boolean;
 }
@@ -25,7 +27,7 @@ export interface WeekView {
 /** Barre e riepilogo della settimana che contiene `date`, calcolati dal motore. */
 export function buildWeekView(input: { date: DateKey; days: readonly Day[]; settings: Settings; /** Oggi: i giorni dopo oggi usano l'anteprima dell'obiettivo. */ today?: DateKey }): WeekView {
   const summary = weekSummary(input.date, input.days, input.settings, input.today);
-  const top = Math.max(1, ...summary.days.map((d) => Math.max(d.kcalEaten, d.target))) * 1.08;
+  const top = Math.max(1, summary.avgKcal ?? 0, ...summary.days.map((d) => Math.max(d.kcalEaten, d.target))) * 1.08;
   const bars: WeekBar[] = summary.days.map((d) => ({
     date: d.date,
     hasMeals: d.hasMeals,
@@ -37,5 +39,5 @@ export function buildWeekView(input: { date: DateKey; days: readonly Day[]; sett
   }));
   const isEmpty =
     summary.balance === null && summary.totalKm === null && summary.avgSteps === null;
-  return { summary, bars, isEmpty };
+  return { summary, bars, avgRatio: summary.avgKcal === null ? null : summary.avgKcal / top, isEmpty };
 }

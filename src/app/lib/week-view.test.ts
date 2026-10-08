@@ -57,3 +57,30 @@ describe("buildWeekView", () => {
     expect(v.summary.totalKm).toBe(10);
   });
 });
+
+describe("linea della media kcal (T5b.6)", () => {
+  const eat = (date: string, kcal: number) => day(date, [meal(`m-${date}`, kcal)]);
+  it("la media è quella dei giorni conclusi e la linea sta sulla stessa scala delle barre", () => {
+    const days = [eat("2026-01-05", 2000), eat("2026-01-07", 2200), eat("2026-01-08", 600)];
+    const v = buildWeekView({ date: "2026-01-08", days, settings: s, today: "2026-01-08" });
+    expect(v.summary.avgKcal).toBe(2100);
+    const top = Math.max(...v.bars.map((b) => Math.max(b.barRatio, b.targetRatio)));
+    expect(v.avgRatio).not.toBeNull();
+    expect(v.avgRatio as number).toBeGreaterThan(0);
+    expect(v.avgRatio as number).toBeLessThanOrEqual(1);
+    expect(top).toBeLessThanOrEqual(1);
+    // 2.100 sulla stessa scala di una barra da 2.100: stessa altezza.
+    const bar2100 = buildWeekView({ date: "2026-01-08", days: [eat("2026-01-05", 2100)], settings: s, today: "2026-01-20" });
+    expect(bar2100.avgRatio).toBeCloseTo(bar2100.bars[0].barRatio, 10);
+  });
+  it("senza media (solo oggi con pasti) la linea non c'è", () => {
+    const v = buildWeekView({ date: "2026-01-05", days: [eat("2026-01-05", 800)], settings: s, today: "2026-01-05" });
+    expect(v.summary.avgKcal).toBeNull();
+    expect(v.avgRatio).toBeNull();
+  });
+  it("una media più alta di ogni barra e di ogni obiettivo non esce dal grafico", () => {
+    const days = [eat("2026-01-05", 2000)];
+    const v = buildWeekView({ date: "2026-01-05", days, settings: s, today: "2026-01-20" });
+    expect(v.avgRatio as number).toBeLessThanOrEqual(1);
+  });
+});

@@ -41,7 +41,8 @@ describe("weekSummary: settimana con dati", () => {
     day("2026-01-08", []), // senza pasti
     day("2026-01-12", [meal("fuori", 9999)]), // altra settimana
   ];
-  const w = weekSummary(MER, days, s);
+  // La settimana è già conclusa (oggi è il lunedì dopo): nessun giorno è escluso dalla media.
+  const w = weekSummary(MER, days, s, "2026-01-12");
 
   it("kcal e obiettivo di ogni giorno", () => {
     expect(w.days[0]).toMatchObject({ date: LUN, kcalEaten: 1750, kcalBudget: 1750, hasMeals: true });
@@ -90,5 +91,29 @@ describe("weekSummary: casi particolari", () => {
 
   it("nessun pasto libero se non usato", () => {
     expect(weekSummary(LUN, [day(LUN, [meal("a", 2000)])], s).freeMealUsed).toBe(false);
+  });
+});
+
+describe("media kcal sui giorni conclusi (§3.8, casi W, X, Y)", () => {
+  const GIO = "2026-01-08";
+  it("caso W: oggi giovedì; lun 2.000, mar senza pasti, mer 2.200, gio (oggi) 600 → media 2.100", () => {
+    const days = [day(LUN, [meal("a", 2000)]), day(MER, [meal("c", 2200)]), day(GIO, [meal("g", 600)])];
+    expect(weekSummary(GIO, days, s, GIO).avgKcal).toBe(2100);
+  });
+  it("caso X: oggi lunedì, pasti solo oggi → nessuna media", () => {
+    expect(weekSummary(LUN, [day(LUN, [meal("a", 800)])], s, LUN).avgKcal).toBeNull();
+  });
+  it("caso Y: settimana passata con 7 giorni di pasti → media sui 7 giorni", () => {
+    const days = ["2026-01-05", "2026-01-06", "2026-01-07", "2026-01-08", "2026-01-09", "2026-01-10", "2026-01-11"].map((d, i) => day(d, [meal(`m${i}`, 1800 + i * 100)]));
+    expect(weekSummary(LUN, days, s, "2026-01-20").avgKcal).toBe((1800 + 1900 + 2000 + 2100 + 2200 + 2300 + 2400) / 7);
+  });
+  it("oggi con pasti non conta, ma gli altri giorni sì; senza giorni validi il trattino", () => {
+    const days = [day(LUN, [meal("a", 1500)]), day(MAR, [meal("b", 2500)])];
+    expect(weekSummary(MAR, days, s, MAR).avgKcal).toBe(1500);
+    expect(weekSummary(MAR, [day(MAR, [meal("b", 2500)])], s, MAR).avgKcal).toBeNull();
+  });
+  it("le medie dei nutrienti non cambiano: includono anche oggi", () => {
+    const days = [day(LUN, [meal("a", 2000, { protein: 100 })]), day(GIO, [meal("g", 600, { protein: 20 })])];
+    expect(weekSummary(GIO, days, s, GIO).avgNutrients?.protein).toBe(60);
   });
 });

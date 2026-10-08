@@ -567,6 +567,13 @@ favScen("preferiti-scorrimento-aperto", "Preferiti: la riga 'Mela' scorsa a sini
 favScen("preferiti-scorrimento-pasto", "Preferiti: anche un pasto salvato ('Cena leggera') si scorre e mostra il cestino.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, sw("Cena leggera")]);
 favScen("preferiti-scorrimento-elimina", "Dopo il cestino su 'Mela': il preferito è eliminato subito, senza conferma; restano gli altri.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, sw("Mela"), { clickRole: { role: "button", name: "Elimina Mela dai preferiti", exact: true } }, { wait: 500 }]);
 
+// --- Media della settimana sul grafico (T5b.6): oggi domenica 11 (senza pasti), le barre sono i giorni conclusi.
+const giorniMedia = (kcal) => data({ settings: { weightKg: 100 }, meals: kcal.map((k, i) => meal(`2026-01-0${5 + i}`, "pranzo", "Pranzo", k, Math.round(k / 15), Math.round(k / 9), Math.round(k / 30), 8, 2)) });
+sett("settimana-media-sopra", "Media sopra l'obiettivo: 2.400 kcal di media sui giorni conclusi; linea tratteggiata sopra le linee degli obiettivi, etichetta «media 2.400» nella legenda sopra le barre.", "2026-01-11", giorniMedia([2400, 2500, 2300, 2400, 2400]));
+sett("settimana-media-sotto", "Media sotto l'obiettivo: 1.800 kcal di media; la linea tratteggiata sta sotto gli obiettivi.", "2026-01-11", giorniMedia([1800, 1700, 1900, 1800, 1800]));
+sett("settimana-media-vicina", "Media molto vicina all'obiettivo (2.110 su 2.100): la linea tratteggiata e le linee degli obiettivi quasi coincidono ma si distinguono; la legenda sopra le barre mostra «media 2.110» e «obiettivo» senza sovrapporsi.", "2026-01-11", giorniMedia([2110, 2120, 2100, 2110, 2110]));
+sett("settimana-media-assente", "Oggi è lunedì e i pasti sono solo di oggi: nessun giorno concluso, la scheda mostra il trattino e la linea non compare.", "2026-01-05", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", 800, 40, 90, 20, 5, 2)] }));
+
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");

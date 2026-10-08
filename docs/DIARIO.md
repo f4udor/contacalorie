@@ -62,6 +62,7 @@ Una riga per task chiuso.
 - T5b.3 · fatto · campo `freeMeal` sul pasto nello schema e nel prompt (con esempio); validazione tollerante (assente = falso, non booleano = non valida); interruttore «Pasto libero» su ogni pasto proposto (componente `FreeMealSwitch`, lo stesso del piatto a mano): acceso in partenza se segnalato e la settimana lo consente, disattivato con la spiegazione se la settimana ne ha già uno o se un altro pasto della proposta lo è, sempre modificabile; con la fascia fissata segue il pasto esistente; cambiando fascia ne segue lo stato. 5 scenari.
 - T5b.4 · fatto · `src/engine/coherence.ts` (`kcalFromMacros`, `needsKcalCheck`, costanti `kcalCheckShare` 0,20 e `kcalCheckMin` 40 in `defaults.ts`); casi T, U, V, soglie esatte, numeri a zero. Nella proposta il piatto segnalato ha «⚠ controlla» sulla riga e, aperto, la frase breve; nel piatto a mano stimato con l'AI la stessa frase sotto la nota. Non blocca, non cambia i numeri, si ricalcola a ogni ritocco. 4 scenari.
 - T5b.5 · fatto · preferiti (piatti e pasti) con `SwipeRow`: scorrendo a sinistra compare il cestino, che elimina subito senza conferma (`deleteFavorite`); tolta la modalità «Modifica» (con «Elimina» / «Elimina davvero»); il + e il tocco sulla riga aggiungono come prima. `npm run prova-scorrimento` ora prova anche i preferiti (20 controlli). Scenari `preferiti-modifica` e `preferiti-elimina` sostituiti da 3 scenari di scorrimento.
+- T5b.6 · in attesa di revisione · media kcal della settimana sui giorni conclusi (`weekSummary` esclude il giorno `today` dalla media; senza `today` non esclude nessuno): test esistenti della media aggiornati (si passa un `today` dopo la settimana), nuovi casi W, X, Y; la scheda dice «sui giorni conclusi»; sul grafico linea tratteggiata grigia alla media (`avgRatio`, stessa scala delle barre) e legenda sopra le barre («obiettivo», «media 2.040»). 4 scenari (sopra, sotto, vicina, assente).
 
 ## Decisioni da confermare
 
@@ -154,6 +155,7 @@ Una riga per task chiuso.
 - Pasto libero nella proposta (T5b.3): con la fascia fissata il segnale del modello è ignorato (l'interruttore parte dallo stato del pasto esistente, ma si può cambiare). Dopo «Rifai la stima» l'interruttore riparte dalle regole iniziali (le scelte fatte a mano sull'interruttore non si conservano).
 - Controllo di coerenza (T5b.4): soglie esatte non segnalate (serve superarle entrambe). Nel piatto a mano il controllo compare solo dopo «Stima con AI» (non sui numeri scritti a mano) e vale sui numeri correnti del modulo; se il modello divide il piatto in più piatti il controllo è sulla somma. La frase è la stessa nella proposta e nel piatto a mano.
 - Preferiti (T5b.5): nei preferiti il cestino è solo nello scorrimento (a differenza dei pannelli della Settimana non c'è un cestino sempre visibile), come da brief.
+- Media (T5b.6): l'etichetta «media 2.040» sta in una legenda sopra le barre (con «obiettivo»), non accanto alla linea: accanto avrebbe ristretto le barre sotto i 44 px o coperto la domenica. Solo la media delle kcal esclude oggi; le medie dei nutrienti restano su tutti i giorni con pasti.
 
 ## Non verificato
 

@@ -1,0 +1,87 @@
+{
+  "id": "settimana-media-sotto",
+  "descrizione": "Media sotto l'obiettivo: 1.800 kcal di media; la linea tratteggiata sta sotto gli obiettivi.",
+  "oggi": "2026-01-11",
+  "percorso": "/settimana",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m346",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1800,
+        "protein": 120,
+        "carbs": 200,
+        "fat": 60,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m347",
+        "date": "2026-01-06",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1700,
+        "protein": 113,
+        "carbs": 189,
+        "fat": 57,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m348",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1900,
+        "protein": 127,
+        "carbs": 211,
+        "fat": 63,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m349",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1800,
+        "protein": 120,
+        "carbs": 200,
+        "fat": 60,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m350",
+        "date": "2026-01-09",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1800,
+        "protein": 120,
+        "carbs": 200,
+        "fat": 60,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

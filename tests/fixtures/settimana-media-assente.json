@@ -1,0 +1,31 @@
+{
+  "id": "settimana-media-assente",
+  "descrizione": "Oggi è lunedì e i pasti sono solo di oggi: nessun giorno concluso, la scheda mostra il trattino e la linea non compare.",
+  "oggi": "2026-01-05",
+  "percorso": "/settimana",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m356",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 800,
+        "protein": 40,
+        "carbs": 90,
+        "fat": 20,
+        "fiber": 5,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}
