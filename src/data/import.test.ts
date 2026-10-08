@@ -30,6 +30,10 @@ describe("summarize / isEmptyData", () => {
     });
     expect(summarize(d)).toEqual({ days: 3, dishes: 3, weighIns: 1 });
   });
+  it("il solo segno del primo avvio non è un dato da importare", () => {
+    expect(isEmptyData(data({ settings: { onboardingDone: true } }))).toBe(true);
+    expect(isEmptyData(data({ settings: { onboardingDone: true, weightKg: 90 } }))).toBe(false);
+  });
   it("archivio vuoto", () => {
     expect(isEmptyData(data())).toBe(true);
     expect(summarize(data())).toEqual({ days: 0, dishes: 0, weighIns: 0 });

@@ -15,9 +15,9 @@ export function summarize(data: StoredData): DataSummary {
   return { days: dates.size, dishes: data.meals.length, weighIns: data.weighIns.length };
 }
 
-/** Non c'è niente da importare: nessun dato e nessuna impostazione. */
+/** Non c'è niente da importare: nessun dato e nessuna impostazione (il solo segno "primo avvio fatto" non conta). */
 export function isEmptyData(data: StoredData): boolean {
-  return data.meals.length === 0 && data.favoriteDishes.length === 0 && data.favoriteMeals.length === 0 && data.activity.length === 0 && data.weighIns.length === 0 && Object.keys(data.settings).length === 0;
+  return data.meals.length === 0 && data.favoriteDishes.length === 0 && data.favoriteMeals.length === 0 && data.activity.length === 0 && data.weighIns.length === 0 && Object.keys(data.settings).every((k) => k === "onboardingDone");
 }
 
 /**
