@@ -39,7 +39,8 @@ try {
       const R = Date;
       globalThis.Date = class extends R {
         constructor(...a) {
-          a.length === 0 ? super(fixed) : super(...a);
+          if (a.length === 0) super(fixed);
+          else super(...a);
         }
         static now() {
           return fixed;

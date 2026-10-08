@@ -382,7 +382,7 @@ La guida dichiara che i nomi delle azioni non sono stati visti a schermo e posso
 - Dopo ogni modifica, Settimana e Oggi mostrano subito i numeri ricalcolati.
 - Test della logica (eliminazione consentita solo per `manuale`; pasto libero tolto e rimesso; pesata eliminata e scheda che torna a "Nessuna pesata") e scenari di screenshot per ogni pannello, pieno e vuoto.
 
-### T5.5 Scorrimento a sinistra per le azioni · da fare
+### T5.5 Scorrimento a sinistra per le azioni · fatto
 - Un solo componente condiviso per le righe che scorrono. Scorrendo verso **sinistra** compaiono i pulsanti a destra della riga; scorrendo indietro o toccando altrove si richiudono. Nessuna azione sullo scorrimento verso destra.
 - Piatti in Oggi: "Preferiti" (salva il piatto nei preferiti) e cestino. Pannelli di T5.4 (pesate, attività a mano): solo cestino.
 - Il cestino elimina subito, senza conferma.
