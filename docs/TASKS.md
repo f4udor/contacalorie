@@ -180,7 +180,7 @@ Vincoli di questa fase:
 - "Pasto libero già usato nella settimana" ragiona sui pasti, non sui piatti, e può escludere un pasto (serve in modifica).
 - Nel database, la scelta più semplice che non rinomina né elimina colonne (per esempio il segno libero su tutti i piatti del pasto, oppure una tabella nuova per i pasti); scrivi la scelta nel diario.
 
-### T3.1 Motore: proteine sul peso obiettivo · da fare
+### T3.1 Motore: proteine sul peso obiettivo · fatto
 §3.4 del brief.
 - Nuova impostazione `proteinPerKgTarget` (1,8) con default in `defaults.ts`.
 - Con peso obiettivo impostato: `proteinPerKgTarget × peso obiettivo`; senza: `proteinPerKg × peso`. Il valore manuale sostituisce sempre la formula.

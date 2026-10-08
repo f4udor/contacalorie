@@ -26,6 +26,7 @@ Una riga per task chiuso.
 - T2.8 · fatto · rifinitura: 312 screenshot (52 scenari, chiaro/scuro, 375/390/430 px), nessuna segnalazione di scorrimento o aree piccole; scheda nutrienti dispari a tutta larghezza, placeholder più leggibili, intestazione Settimana.
 - T2.9 · fatto · `docs/REPORT-FASE-2.md` scritto, con i 10 controlli da fare sul telefono.
 - T3.0 · fatto · motore: pasto = piatti di una fascia in un giorno (`groupMeals`, `MealGroup`); il tetto del pasto libero vale sulla somma dei piatti; `hasFreeMealInWeek` esclude un pasto per giorno e fascia; casi L e C. DB: segno 'libero' su tutti i piatti. Test aggiornati: vedi 'Decisioni da confermare'.
+- T3.1 · fatto · motore: `proteinPerKgTarget` 1,8; proteine = 1,8 × peso obiettivo se impostato, altrimenti 1,4 × peso; manuale sempre prioritario; caso K. Colonna DB in T3.3.
 
 ## Decisioni da confermare
 
