@@ -119,7 +119,7 @@ export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = 
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="meal-quantity" className="text-sm font-semibold text-muted">Quantità (facoltativa)</label>
-        <input id="meal-quantity" type="text" autoComplete="off" value={values.quantity} onChange={(e) => set("quantity", e.target.value)} className={input} />
+        <textarea id="meal-quantity" autoComplete="off" rows={Math.min(8, Math.max(1, Math.ceil(values.quantity.length / 30)))} value={values.quantity} onChange={(e) => set("quantity", e.target.value.replace(/\n/g, " "))} className={`${input} field-sizing-content resize-none py-2.5`} />
       </div>
 
       {!lockedSlot && (

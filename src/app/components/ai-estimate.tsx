@@ -205,7 +205,7 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
                       <label htmlFor={`qty-${d.key}`} className="text-sm font-semibold text-muted">
                         Quantità
                       </label>
-                      <input id={`qty-${d.key}`} type="text" autoComplete="off" value={d.quantity} onChange={(e) => setDish(meal.key, d.key, { quantity: e.target.value, quantityAssumed: false })} className={`${input} bg-bg`} />
+                      <textarea id={`qty-${d.key}`} autoComplete="off" rows={Math.min(8, Math.max(1, Math.ceil(d.quantity.length / 30)))} value={d.quantity} onChange={(e) => setDish(meal.key, d.key, { quantity: e.target.value.replace(/\n/g, " "), quantityAssumed: false })} className={`${input} field-sizing-content resize-none bg-bg py-2.5`} />
                       {d.note && <p className="text-sm text-muted">{d.note}</p>}
                     </div>
                     <div className="grid grid-cols-2 gap-x-3 gap-y-3">
