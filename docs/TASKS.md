@@ -318,5 +318,5 @@ Vincoli di questa fase:
 - La scheda non compare se nella settimana non ci sono pesate.
 - La logica è una funzione pura con test: nessuna pesata nella settimana; confronto con la pesata precedente; confronto con il peso di partenza; obiettivo sotto e sopra; nessun obiettivo; variazione zero; pesate non ordinate.
 
-### T4b.6 Report di fase · da fare
+### T4b.6 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-4b.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici, elenca cosa provare sul telefono dopo la pubblicazione.

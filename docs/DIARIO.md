@@ -48,6 +48,7 @@ Una riga per task chiuso.
 - T4b.3 · fatto · Preferiti: ogni riga ha un + a destra e un tocco la aggiunge; "Elimina" non è più nella lista: il pulsante "Modifica" accanto al campo di ricerca mostra "Elimina" (con conferma "Elimina davvero") su ogni riga e nasconde i +, "Fine" torna indietro; il campo di ricerca non ha più l'etichetta sopra (resta "Cerca" nel campo); tolta la nota "Senza quantità"; con la fascia fissata (dal pasto) non compare la scelta della fascia. 3 scenari nuovi.
 - T4b.4 · fatto · Oggi: la riga di composizione sotto l'anello compare solo se oltre alla base ci sono bici, passi o recupero (`hasCompositionDetail` + test); "kcal sopra di" → "kcal oltre"; attività vuota: solo "Nessuna attività". Screenshot di Oggi rigenerati (tutti).
 - T4b.5 · fatto · Settimana: scheda "Peso" (ultima pesata della settimana e differenza in kg a una cifra con l'ultima pesata precedente al lunedì, o con il peso del profilo se non ce n'è; verde se ci si avvicina al peso obiettivo, rosso se ci si allontana, grigio senza obiettivo, senza confronto o senza variazione); non compare senza pesate nella settimana. Funzione pura `weekWeight` (`src/app/lib/week-weight.ts`) con 13 test; 8 scenari.
+- T4b.6 · fatto · `docs/REPORT-FASE-4b.md` scritto, con cosa provare sul telefono dopo la pubblicazione.
 
 ## Decisioni da confermare
 
