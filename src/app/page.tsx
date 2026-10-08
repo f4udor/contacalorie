@@ -1,13 +1,10 @@
-import { Card } from "./components/card";
-import { PageTitle } from "./components/page-title";
+import { Suspense } from "react";
+import { OggiScreen } from "./oggi-screen";
 
 export default function OggiPage() {
   return (
-    <main>
-      <PageTitle>Oggi</PageTitle>
-      <Card>
-        <p className="text-muted">Qui compariranno anello delle kcal, nutrienti e pasti del giorno.</p>
-      </Card>
-    </main>
+    <Suspense fallback={<main aria-busy="true" />}>
+      <OggiScreen />
+    </Suspense>
   );
 }

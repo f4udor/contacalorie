@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
-    "screens": "node tools/screens.mjs"
+    "screens": "node tools/screens.mjs",
+    "fixtures": "node tests/fixtures/build-fixtures.mjs"
   },
   "dependencies": {
     "next": "^16.4.0",

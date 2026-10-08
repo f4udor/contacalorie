@@ -1,0 +1,55 @@
+{
+  "id": "oggi-bici",
+  "descrizione": "Caso E del brief: 30 km in bici a mano: bonus 405, obiettivo 2.505, carboidrati 329 g.",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m9",
+        "date": "2026-01-05",
+        "slot": "colazione",
+        "name": "Pane e marmellata",
+        "kcal": 380,
+        "protein": 9,
+        "carbs": 70,
+        "fat": 6,
+        "fiber": 3,
+        "salt": 0.8,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m10",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pasta al ragù",
+        "kcal": 800,
+        "protein": 35,
+        "carbs": 100,
+        "fat": 25,
+        "fiber": 6,
+        "salt": 2.2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [
+      {
+        "date": "2026-01-05",
+        "steps": null,
+        "stepsSource": null,
+        "bikeKm": 30,
+        "bikeKcalHealth": null,
+        "bikeSource": "manuale"
+      }
+    ],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true
+}

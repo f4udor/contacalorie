@@ -3,5 +3,6 @@
   "descrizione": "Dati salvati corrotti: l'app riparte vuota e mostra l'avviso.",
   "oggi": "2026-01-08",
   "percorso": "/",
-  "dati": "{{non json"
+  "dati": "{{non json",
+  "scorre": true
 }

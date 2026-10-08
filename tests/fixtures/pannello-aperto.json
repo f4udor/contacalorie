@@ -4,5 +4,9 @@
   "oggi": "2026-01-08",
   "percorso": "/prova/pannello",
   "dati": null,
-  "passi": [{ "click": "Apri pannello" }]
+  "passi": [
+    {
+      "click": "Apri pannello"
+    }
+  ]
 }
