@@ -32,7 +32,7 @@ Una riga per task chiuso.
 - Token degli ingressi: nel database solo l'impronta (hash).
 - Pagine Oggi, Settimana e Impostazioni sono segnaposto fino ai task che le riempiono; Grafici resta "In arrivo".
 - Oggi: l'anello e le "kcal rimaste" usano il budget (pasto libero col tetto); le "mangiate" mostrate sono quelle reali.
-- Oggi: in un giorno senza pasti le barrette dei nutrienti sono neutre (non gialle). Senza peso, anche la scheda dei carboidrati mostra "Obiettivo dopo il peso", perché il loro obiettivo dipende da quello delle proteine.
+- Oggi: in un giorno senza pasti le barrette dei nutrienti sono neutre (non gialle), le schede mostrano "–" invece di 0 e sotto l'anello compare solo l'obiettivo. Senza peso, anche la scheda dei carboidrati mostra "Obiettivo dopo il peso", perché il loro obiettivo dipende da quello delle proteine.
 - Oggi: il peso per le proteine è l'ultima pesata fino al giorno mostrato; se non c'è, il peso del profilo; se non c'è, la prima pesata successiva.
 - Il giorno mostrato in Oggi sta nell'indirizzo (`/?d=AAAA-MM-GG`).
 - Pasti: fascia predefinita "Pranzo"; nome vuoto salvato come "Pasto"; "Copia da ieri" copia tutti i pasti di ieri come normali e, se li ripeti, li duplica; per eliminare un pasto la conferma è dentro il pannello (non una finestra del browser).

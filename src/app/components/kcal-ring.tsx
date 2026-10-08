@@ -14,10 +14,12 @@ interface KcalRingProps {
   color: RingColor;
   eaten: number;
   target: number;
+  /** Nessun pasto nel giorno: si mostra solo l'obiettivo, non "0 mangiate". */
+  empty: boolean;
 }
 
 /** Anello delle kcal: al centro quelle rimaste, o di quanto si è sopra l'obiettivo. */
-export function KcalRing({ remaining, progress, color, eaten, target }: KcalRingProps) {
+export function KcalRing({ remaining, progress, color, eaten, target, empty }: KcalRingProps) {
   const size = 220;
   const stroke = 22;
   const r = (size - stroke) / 2;
@@ -47,8 +49,16 @@ export function KcalRing({ remaining, progress, color, eaten, target }: KcalRing
         </div>
       </div>
       <p className="mt-3 text-sm text-muted">
-        Mangiate <span className="font-semibold text-fg tabular-nums">{formatNumber(eaten)}</span> su{" "}
-        <span className="font-semibold text-fg tabular-nums">{formatNumber(target)}</span> kcal
+        {empty ? (
+          <>
+            Obiettivo <span className="font-semibold text-fg tabular-nums">{formatNumber(target)}</span> kcal
+          </>
+        ) : (
+          <>
+            Mangiate <span className="font-semibold text-fg tabular-nums">{formatNumber(eaten)}</span> su{" "}
+            <span className="font-semibold text-fg tabular-nums">{formatNumber(target)}</span> kcal
+          </>
+        )}
       </p>
     </div>
   );

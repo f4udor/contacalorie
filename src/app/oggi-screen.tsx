@@ -46,7 +46,7 @@ export function OggiScreen() {
       {view && (
         <div className="flex flex-col gap-3">
           <Card className="flex flex-col items-center pb-5 pt-6">
-            <KcalRing remaining={view.remaining} progress={view.ringProgress} color={view.ringColor} eaten={view.eaten} target={view.target} />
+            <KcalRing remaining={view.remaining} progress={view.ringProgress} color={view.ringColor} eaten={view.eaten} target={view.target} empty={!view.hasMeals} />
             <p className="mt-4 text-center text-sm text-muted" aria-label="Composizione dell'obiettivo">
               {view.composition
                 .map((c) => `${c.label} ${c.signed ? formatSigned(c.amount) : formatNumber(c.amount)}`)

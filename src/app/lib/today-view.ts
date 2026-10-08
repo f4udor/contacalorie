@@ -9,6 +9,8 @@ export interface NutrientView {
   name: string;
   /** Quantità assunta, in grammi. */
   taken: number;
+  /** Nessun pasto nel giorno: la scheda mostra "–" invece di 0. */
+  empty: boolean;
   /** Obiettivo in grammi; null se manca il peso per calcolarlo. */
   target: number | null;
   decimals: number;
@@ -100,7 +102,7 @@ export function buildTodayView(input: {
     if (hasMeals && target !== null) {
       light = kind === "min" ? lightMinimum(taken[key], target, settings) : kind === "range" ? lightRange(taken[key], target, settings) : lightCeiling(taken[key], target, settings);
     }
-    return { key, name, taken: taken[key], target, decimals, light, progress: progressOf(taken[key], target), needsWeight: blocked };
+    return { key, name, taken: taken[key], empty: !hasMeals, target, decimals, light, progress: progressOf(taken[key], target), needsWeight: blocked };
   };
 
   return {

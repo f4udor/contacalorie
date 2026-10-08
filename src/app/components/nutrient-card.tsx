@@ -28,7 +28,7 @@ export function NutrientCard({ n }: { n: NutrientView }) {
         </Link>
       ) : (
         <p className="mt-1 text-[22px] font-bold leading-tight tabular-nums">
-          {formatNumber(n.taken, n.decimals)}
+          {n.empty ? "–" : formatNumber(n.taken, n.decimals)}
           <span className="text-[15px] font-medium text-muted">
             {n.target === null ? " g" : ` / ${formatNumber(n.target, n.decimals)} g`}
           </span>

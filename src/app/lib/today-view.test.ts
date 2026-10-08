@@ -45,8 +45,13 @@ describe("buildTodayView", () => {
     expect(v.ringColor).toBe("accento");
     expect(v.ringProgress).toBe(0);
     expect(v.composition).toEqual([{ label: "Base", amount: 2100, signed: false }]);
-    expect(v.nutrients.every((n) => n.light === "neutro")).toBe(true);
+    expect(v.nutrients.every((n) => n.light === "neutro" && n.empty)).toBe(true);
     expect(v.nutrients.find((n) => n.key === "protein")?.target).toBe(140);
+  });
+
+  it("con pasti le schede non sono vuote", () => {
+    const v = buildTodayView({ date: "2026-01-05", days: week(day("2026-01-05", [meal("a", 100)])), settings: s, weightKg: 100 });
+    expect(v.nutrients.every((n) => !n.empty)).toBe(true);
   });
 
   it("caso B: giovedì con recupero → obiettivo 1.994, recupero −106", () => {
