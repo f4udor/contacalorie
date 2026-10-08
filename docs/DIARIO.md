@@ -23,6 +23,7 @@ Una riga per task chiuso.
 - T2.5 · fatto · Oggi: sezione Sfida mattutina (Giorno N/30 · fatti X su Y, spunta, ripetizioni modificabili, Salta, 'per lato', 'nuovo', messaggi prima/dopo, nota sul dolore); `challenge-view.ts` con test. Scelte in 'Decisioni da confermare'.
 - T2.6 · fatto · Settimana: sette barre con linea dell'obiettivo (colore dell'anello), frecce di settimana, riepilogo da `weekSummary`, tocco su barra → giorno in Oggi; `buildWeekView` con test.
 - T2.7 · fatto · Impostazioni: profilo, obiettivi (formula proposta per proteine e grassi, 'Torna alla formula'), attività, pasto libero, sfida; validazione con errori accanto ai campi (`settings-form.ts` + test); ripristino con conferma. Le modifiche arrivano in Oggi.
+- T2.8 · fatto · rifinitura: 312 screenshot (52 scenari, chiaro/scuro, 375/390/430 px), nessuna segnalazione di scorrimento o aree piccole; scheda nutrienti dispari a tutta larghezza, placeholder più leggibili, intestazione Settimana.
 
 ## Decisioni da confermare
 

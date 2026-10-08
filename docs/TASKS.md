@@ -154,7 +154,7 @@ Schermata Settimana (§2 del brief), usando `weekSummary`.
 - Valori non validi rifiutati con un messaggio accanto al campo; mai salvati.
 - Ogni sezione ha una riga che spiega in parole semplici a cosa serve.
 
-### T2.8 Rifinitura grafica · da fare
+### T2.8 Rifinitura grafica · fatto
 Passaggio finale su tutte le schermate, solo correttivo: nessuna funzione nuova.
 - Rigenera tutti gli screenshot e controllali uno per uno: allineamenti, spaziature coerenti, testi tagliati, contrasto in tema scuro, aree toccabili.
 - Prova anche a 375 px e 430 px di larghezza, oltre a 390.
