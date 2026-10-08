@@ -1,0 +1,47 @@
+{
+  "id": "pannello-libero-usato",
+  "descrizione": "La settimana ha già un pasto libero: l'interruttore è disattivato e spiega perché.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m39",
+        "date": "2026-01-06",
+        "slot": "cena",
+        "name": "Pizza",
+        "kcal": 1100,
+        "protein": 40,
+        "carbs": 130,
+        "fat": 42,
+        "fiber": 6,
+        "salt": 4.2,
+        "isFree": true,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi"
+      }
+    },
+    {
+      "click": "Pasto a mano"
+    },
+    {
+      "scrollTo": "Pasto libero"
+    }
+  ]
+}

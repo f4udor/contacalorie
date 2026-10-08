@@ -1,6 +1,11 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
+import type { MealRecord } from "@/data";
+import { useDataStore } from "./data-provider";
+import { AddPanel, EditMealPanel } from "./components/add-panel";
+import { MealList } from "./components/meal-list";
 import { Card } from "./components/card";
 import { DayHeader } from "./components/day-header";
 import { KcalRing } from "./components/kcal-ring";
@@ -17,7 +22,9 @@ export function OggiScreen() {
   const today = useToday();
   const param = useSearchParams().get("d");
   const date = param && DATE_PARAM.test(param) ? param : today;
-  const { data } = useWeekData(date);
+  const { data, reload } = useWeekData(date);
+  const store = useDataStore();
+  const [panel, setPanel] = useState<{ kind: "add" } | { kind: "edit"; meal: MealRecord } | null>(null);
 
   if (!today || !date) return <main aria-busy="true" />;
 
@@ -30,8 +37,11 @@ export function OggiScreen() {
       })
     : null;
 
+  const meals = data?.meals.filter((m) => m.date === date) ?? [];
+  const panelContext = data && store ? { store, date, days: data.days, settings: data.settings, onChanged: reload, onClose: () => setPanel(null) } : null;
+
   return (
-    <main>
+    <main className="pb-24">
       <DayHeader date={date} today={today} />
       {view && (
         <div className="flex flex-col gap-3">
@@ -48,8 +58,27 @@ export function OggiScreen() {
               <NutrientCard key={n.key} n={n} />
             ))}
           </div>
+          {meals.length > 0 ? (
+            <MealList meals={meals} onSelect={(meal) => setPanel({ kind: "edit", meal })} />
+          ) : (
+            <Card>
+              <p className="text-center text-[15px] text-muted">Nessun pasto per questo giorno. Tocca + per aggiungerne uno.</p>
+            </Card>
+          )}
         </div>
       )}
+      <button
+        type="button"
+        aria-label="Aggiungi"
+        onClick={() => setPanel({ kind: "add" })}
+        className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-[max(1rem,calc((100vw-36rem)/2+1rem))] z-30 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white shadow-lg"
+      >
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+      </button>
+      {panelContext && panel?.kind === "add" && <AddPanel {...panelContext} />}
+      {panelContext && panel?.kind === "edit" && <EditMealPanel {...panelContext} meal={panel.meal} />}
     </main>
   );
 }

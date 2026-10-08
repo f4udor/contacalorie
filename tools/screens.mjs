@@ -110,7 +110,8 @@ try {
           await page.waitForTimeout(step.wait ?? 350);
         }
         // La pagina intera in una sola immagine, con la barra in basso al suo posto.
-        const full = await page.evaluate(() => document.documentElement.scrollHeight);
+        // Con "fisso" (pannelli aperti) resta la finestra di 390×844, come sul telefono.
+        const full = sc.fisso ? HEIGHT : await page.evaluate(() => document.documentElement.scrollHeight);
         await page.setViewportSize({ width, height: Math.max(HEIGHT, full) });
         await page.waitForTimeout(150);
         const suffix = width === 390 ? "" : `-${width}`;

@@ -1,11 +1,13 @@
 import { mergeSettings, weekDates } from "@/engine";
 import type { DateKey, Day, Settings } from "@/engine";
-import type { DataStore, UserSettings, WeighIn } from "@/data";
+import type { DataStore, MealRecord, UserSettings, WeighIn } from "@/data";
 
 /** Tutto ciò che serve alle schermate per mostrare la settimana che contiene una data. */
 export interface WeekData {
   /** I sette giorni (lunedì-domenica) nel formato del motore. */
   days: Day[];
+  /** I pasti della settimana come salvati (con data e testo originale). */
+  meals: MealRecord[];
   /** Impostazioni complete: quelle dell'utente sopra i default. */
   settings: Settings;
   /** Impostazioni come salvate (solo i valori cambiati, più il profilo). */
@@ -36,5 +38,5 @@ export async function loadWeekData(store: DataStore, date: DateKey): Promise<Wee
     };
   });
 
-  return { days, settings: mergeSettings(userSettings as Record<string, unknown>), userSettings, weighIns };
+  return { days, meals, settings: mergeSettings(userSettings as Record<string, unknown>), userSettings, weighIns };
 }

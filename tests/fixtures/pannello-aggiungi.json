@@ -1,0 +1,26 @@
+{
+  "id": "pannello-aggiungi",
+  "descrizione": "Pannello Aggiungi: spazio riservato alla voce, Pasto a mano, Copia da ieri.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": [],
+    "challengeLog": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi"
+      }
+    }
+  ]
+}

@@ -20,8 +20,6 @@ const add = (id, descrizione, oggi, dati, extra = {}) => scenarios.push({ id, de
 
 // --- Guscio e avvisi (T2.1)
 scenarios.push({ id: "grafici-in-arrivo", descrizione: "Grafici mostra solo 'In arrivo'.", oggi: "2026-01-08", percorso: "/grafici", dati: null });
-scenarios.push({ id: "pannello-chiuso", descrizione: "Pagina di prova del pannello, prima di aprirlo.", oggi: "2026-01-08", percorso: "/prova/pannello", dati: null });
-scenarios.push({ id: "pannello-aperto", descrizione: "Pannello dal basso aperto.", oggi: "2026-01-08", percorso: "/prova/pannello", dati: null, passi: [{ click: "Apri pannello" }] });
 scenarios.push({ id: "avviso-dati-illeggibili", descrizione: "Dati salvati corrotti: l'app riparte vuota e mostra l'avviso.", oggi: "2026-01-08", percorso: "/", dati: "{{non json", scorre: true });
 
 // --- Oggi: anello e nutrienti (T2.2)
@@ -96,6 +94,50 @@ add(
   }),
   { percorso: "/?d=2026-01-06" },
 );
+
+// --- Pasti e pannello Aggiungi (T2.3)
+const giornoPasti = (extra = {}) =>
+  data({
+    settings: { weightKg: 100 },
+    meals: [
+      meal("2026-01-08", "colazione", "Cappuccino e brioche", 320, 8, 48, 10, 1, 0.4),
+      meal("2026-01-08", "pranzo", "Pasta al pomodoro", 650, 22, 110, 12, 6, 1.8),
+      meal("2026-01-08", "pranzo", "Insalata mista con un nome molto lungo che deve andare a capo senza rompere nulla", 120, 3, 8, 8, 4, 0.6),
+      meal("2026-01-08", "spuntino", "Pizza al taglio", 1100, 40, 130, 42, 6, 4.2, { isFree: true }),
+      meal("2026-01-08", "cena", "Petto di pollo e verdure", 480, 52, 18, 20, 7, 1.4),
+    ],
+    ...extra,
+  });
+add("oggi-pasti", "Giorno con pasti in quattro fasce, uno libero (1.100 kcal, conta 800) e un nome lungo.", "2026-01-08", giornoPasti());
+const apri = { clickRole: { role: "button", name: "Aggiungi" } };
+add("pannello-aggiungi", "Pannello Aggiungi: spazio riservato alla voce, Pasto a mano, Copia da ieri.", "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, passi: [apri] });
+add("pannello-pasto-vuoto", "Inserimento manuale: modulo vuoto, solo le kcal sono obbligatorie.", "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, passi: [apri, { click: "Pasto a mano" }] });
+add("pannello-pasto-errori", "Inserimento manuale: kcal mancanti e un numero non valido, nessun salvataggio.", "2026-01-08", giornoPasti({ meals: [] }), {
+  fisso: true,
+  passi: [apri, { click: "Pasto a mano" }, { fill: ["Proteine (g)", "venti"] }, { clickRole: { role: "button", name: "Aggiungi pasto" } }],
+});
+add("pannello-pasto-compilato", "Inserimento manuale compilato, con la fascia Colazione.", "2026-01-08", giornoPasti({ meals: [] }), {
+  fisso: true,
+  passi: [apri, { click: "Pasto a mano" }, { fill: ["Nome", "Toast e caffè"] }, { click: "Colazione" }, { fill: ["Kcal", "420"] }, { fill: ["Proteine (g)", "18,5"] }, { fill: ["Carboidrati (g)", "52"] }],
+});
+add("pannello-libero-usato", "La settimana ha già un pasto libero: l'interruttore è disattivato e spiega perché.", "2026-01-08", giornoPasti({ meals: [meal("2026-01-06", "cena", "Pizza", 1100, 40, 130, 42, 6, 4.2, { isFree: true })] }), {
+  fisso: true,
+  passi: [apri, { click: "Pasto a mano" }, { scrollTo: "Pasto libero" }],
+});
+add("pannello-modifica", "Modifica di un pasto già inserito.", "2026-01-08", giornoPasti(), { fisso: true, passi: [{ click: "Pasta al pomodoro" }] });
+add("pannello-modifica-libero", "Modifica del pasto libero: l'interruttore resta attivo, è proprio quello della settimana.", "2026-01-08", giornoPasti(), {
+  fisso: true,
+  passi: [{ click: "Pizza al taglio" }, { scrollTo: "Pasto libero" }],
+});
+add("pannello-elimina", "Eliminazione: chiede conferma prima di cancellare.", "2026-01-08", giornoPasti(), { fisso: true, passi: [{ click: "Pasta al pomodoro" }, { click: "Elimina pasto" }] });
+add("copia-ieri-vuoto", "Copia da ieri quando ieri non ci sono pasti: lo dice.", "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, passi: [apri, { click: "Copia da ieri" }] });
+add("copia-ieri", "Copia da ieri: i pasti di ieri (anche quello libero) tornano come pasti normali.", "2026-01-08", data({
+  settings: { weightKg: 100 },
+  meals: [
+    meal("2026-01-07", "colazione", "Yogurt e cereali", 300, 14, 45, 7, 3, 0.3),
+    meal("2026-01-07", "cena", "Pizza", 1100, 40, 130, 42, 6, 4.2, { isFree: true }),
+  ],
+}), { passi: [apri, { click: "Copia da ieri" }, { wait: 600 }] });
 
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");
 console.log(`${scenarios.length} scenari scritti in ${dir}`);

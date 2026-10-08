@@ -30,12 +30,13 @@ Una riga per task chiuso.
 - Piano della sfida come piano di sistema (`user_id` null, uguale per tutti) scelto da `settings.challenge_plan_id`; la data di inizio è in `settings.challenge_start_date`.
 - Il vincolo "un solo pasto libero a settimana" non è nel database (si controlla nell'app con `hasFreeMealInWeek`).
 - Token degli ingressi: nel database solo l'impronta (hash).
-- Pagina di prova `/prova/pannello` per mostrare il pannello dal basso; da togliere in T2.3 quando il pannello Aggiungi lo usa davvero.
 - Pagine Oggi, Settimana e Impostazioni sono segnaposto fino ai task che le riempiono; Grafici resta "In arrivo".
 - Oggi: l'anello e le "kcal rimaste" usano il budget (pasto libero col tetto); le "mangiate" mostrate sono quelle reali.
 - Oggi: in un giorno senza pasti le barrette dei nutrienti sono neutre (non gialle). Senza peso, anche la scheda dei carboidrati mostra "Obiettivo dopo il peso", perché il loro obiettivo dipende da quello delle proteine.
 - Oggi: il peso per le proteine è l'ultima pesata fino al giorno mostrato; se non c'è, il peso del profilo; se non c'è, la prima pesata successiva.
 - Il giorno mostrato in Oggi sta nell'indirizzo (`/?d=AAAA-MM-GG`).
+- Pasti: fascia predefinita "Pranzo"; nome vuoto salvato come "Pasto"; "Copia da ieri" copia tutti i pasti di ieri come normali e, se li ripeti, li duplica; per eliminare un pasto la conferma è dentro il pannello (non una finestra del browser).
+- Pasto libero: l'interruttore è attivo in modifica del pasto che è già l'unico libero della settimana; disattivato in tutti gli altri casi se la settimana ne ha già uno.
 
 ## Non verificato
 
@@ -44,3 +45,4 @@ Una riga per task chiuso.
 - T2.1: installazione sulla Home dell'iPhone, schermo intero e aree sicure reali (notch, barra home) non si possono provare nell'ambiente: il codice usa `viewport-fit=cover` e `env(safe-area-inset-*)`, ma gli screenshot li hanno a zero.
 - T2.1: pannello dal basso provato in un browser headless con il mouse (Esc, Chiudi, tocco fuori, trascinamento corto e lungo: tutto come atteso), non con il tocco di un iPhone. Nessun test automatico oltre a `shouldCloseOnDrag`.
 - T2.1: `npm run screens` a 390 px, chiaro e scuro: 10 screenshot, nessuna segnalazione (niente scorrimento orizzontale, aree toccabili ≥ 44 px, pagine entro 844 px).
+- T2.3: aggiunta, modifica, eliminazione e "Copia da ieri" provate in un browser headless (dati salvati e ancora presenti dopo il ricaricamento della pagina); non provate con il tocco su iPhone né con la tastiera numerica di iOS (`inputmode="decimal"`: su iPhone in italiano dovrebbe offrire la virgola, non verificato).
