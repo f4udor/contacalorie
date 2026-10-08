@@ -13,24 +13,24 @@ Navigazione in basso: **Oggi, Settimana, Grafici, Impostazioni**.
 2. Anello delle kcal: rimaste al centro; sotto, la riga di composizione dell'obiettivo ("Base 2.100 · bici +400 · passi +75 · recupero −100"), solo se c'è qualcosa oltre alla base.
 3. Griglia di schede dei nutrienti: proteine, carboidrati, grassi, fibre, sale. Ogni scheda: nome, "assunto su obiettivo", barretta colorata a semaforo.
 4. Pasti del giorno: Colazione, Pranzo, Cena, Spuntino. Ogni pasto è composto da uno o più piatti e mostra il totale di kcal e macro, con i piatti elencati sotto ed etichetta "libero" se lo è. Ogni piatto si modifica o elimina; ogni pasto ha il suo "Aggiungi piatto". Scorrendo un piatto verso sinistra compaiono "Preferiti" e il cestino; il cestino elimina subito, senza conferma.
-5. Attività: passi e bici (km, kcal), con la fonte ("da Salute" o "manuale").
+5. Attività: passi e bici (km, kcal), con la fonte ("da Salute" o "manuale"). I passi sono in sola lettura: toccarli non apre nulla. Della bici si tocca solo la parte inserita a mano (§5).
 6. Avviso in cima se i dati da Salute non arrivano da più di un giorno (§5).
 7. Pulsante **+** sempre visibile.
 
 ### Pannello Aggiungi (dal +)
 - In cima: un campo di testo "Cosa hai mangiato?". L'utente scrive o detta con il microfono della tastiera dell'iPhone, il modello AI restituisce uno o più pasti con i loro piatti stimati, l'utente conferma, corregge i numeri a mano oppure invia una correzione a voce o testo ("il totano era di più") che aggiorna la stima.
 - Accanto al titolo un selettore **AI | Manuale**; si apre sempre su AI. "Manuale" mostra il piatto a mano con nome e quantità: i numeri sono facoltativi e, se restano vuoti, li stima il modello AI e l'utente conferma.
-- La proposta dell'AI mostra ogni piatto su una riga (nome, quantità, kcal); toccandola si aprono i numeri da correggere.
+- La proposta dell'AI mostra ogni piatto su una riga (nome, quantità, kcal); toccandola si aprono i numeri da correggere. Ogni pasto proposto ha il suo interruttore "Pasto libero", con le stesse regole dell'inserimento a mano; se l'utente lo ha detto nella frase arriva già acceso e si può spegnere. Un piatto la cui stima non supera il controllo di coerenza (§3.7) mostra un avviso breve.
 - "Aggiungi piatto" sotto un pasto apre lo stesso pannello, su AI, con la fascia già fissata.
-- Preferiti (piatti e pasti salvati): ogni riga ha un + per aggiungerla; "Modifica" mostra i comandi per eliminarli.
+- Preferiti (piatti e pasti salvati): ogni riga ha un + per aggiungerla e si elimina scorrendola verso sinistra, con lo stesso gesto e lo stesso cestino dei piatti in Oggi (subito, senza conferma).
 - Interruttore "Pasto libero" sul pasto intero, disattivato se già usato nella settimana.
-- Voci separate: "Pesata" e "Attività a mano".
+- Voci separate: "Pesata" e "Bici a mano". I passi non si inseriscono a mano.
 
 ### Settimana (lunedì-domenica)
-- Sette barre delle kcal mangiate con la linea dell'obiettivo di ogni giorno.
-- Saldo della settimana, media kcal, medie dei nutrienti, km in bici, passi medi, pasto libero usato o no.
-- Peso: ultima pesata della settimana e differenza in kg con la pesata precedente (o con il peso di partenza del profilo), verde se ci si avvicina al peso obiettivo e rosso se ci si allontana. La scheda c'è sempre: senza pesate nella settimana dice "Nessuna pesata". Il peso del profilo è il peso di partenza e le pesate non lo sovrascrivono; consigliata una pesata a settimana, stesso giorno, al mattino.
-- Le schede Peso, Bici, Passi e Pasto libero si toccano e aprono un pannello: pesate da eliminare o aggiungere; giorni di bici e di passi, dove si eliminano solo i valori inseriti a mano; pasto libero da togliere (il pasto resta, torna normale) o da scegliere tra i pasti della settimana.
+- Sette barre delle kcal mangiate con la linea dell'obiettivo di ogni giorno e una linea tratteggiata orizzontale alla media kcal della settimana, con etichetta ("media 2.040"), distinta a colpo d'occhio dalla linea dell'obiettivo.
+- Saldo della settimana, media kcal (§3.8, lo stesso numero della linea), medie dei nutrienti, km in bici, passi medi, pasto libero usato o no.
+- Peso: ultima pesata della settimana e differenza in kg con la pesata precedente (o con il peso di partenza del profilo), sempre con il segno e un decimale ("−0,4 kg", "+0,3 kg", mai "0 kg" per una variazione di qualche etto), verde se ci si avvicina al peso obiettivo e rosso se ci si allontana. La scheda c'è sempre: senza pesate nella settimana dice "Nessuna pesata". Il peso del profilo è il peso di partenza e le pesate non lo sovrascrivono; consigliata una pesata a settimana, stesso giorno, al mattino.
+- Le schede Peso, Bici, Passi e Pasto libero si toccano e aprono un pannello: pesate da eliminare o aggiungere; giorni di bici, dove si aggiunge, modifica o elimina solo la parte inserita a mano; giorni di passi, in sola lettura salvo i vecchi valori a mano, che si possono solo eliminare; pasto libero da togliere (il pasto resta, torna normale) o da scegliere tra i pasti della settimana.
 
 ### Grafici
 - Peso, kcal e deficit, macro medi, attività. Periodo: 4 settimane, 3 mesi, tutto.
@@ -67,6 +67,13 @@ Tutti i valori sono impostazioni con questi default.
 | `saltMax` | 5 g |
 | `margin` | 0,10 |
 | `overLimit` | 1,5 |
+| `ringGreenBelow` | 150 kcal |
+| `ringGreenAbove` | 50 kcal |
+| `ringYellowAbove` | 200 kcal |
+| `kcalCheckShare` | 0,20 |
+| `kcalCheckMin` | 40 kcal |
+
+Le ultime cinque sono costanti del motore in `defaults.ts`: non hanno un campo in Impostazioni né una colonna nel database.
 
 ### 3.1 Kcal contate nel budget
 Un pasto è l'insieme dei piatti di una fascia (colazione, pranzo, cena, spuntino) in un giorno. `kcalBudget(giorno)` = somma delle kcal dei piatti, dove per un pasto libero la somma dei suoi piatti conta `min(somma, freeMealCap)`. Le kcal mostrate come "mangiate" sono sempre quelle reali.
@@ -111,7 +118,16 @@ Con `x` = assunto, `T` = obiettivo, `m` = `margin`:
 | Intervallo | carboidrati, grassi | `x < T(1−m)` | da `T(1−m)` a `T(1+m)` | `x > T(1+m)` |
 | Tetto | sale | da `T(1−m)` a `T` | `x < T(1−m)` | `x > T` |
 
-Anello delle kcal: colore d'accento fino a `T`, giallo da `T` a `T × 1,05`, rosso oltre.
+Anello delle kcal. Con `d` = kcal contate nel budget − obiettivo del giorno:
+
+| Colore | Condizione |
+|---|---|
+| Accento (in corso) | `d < −ringGreenBelow` |
+| Verde | da `−ringGreenBelow` a `+ringGreenAbove`, estremi compresi |
+| Giallo | oltre `+ringGreenAbove`, fino a `+ringYellowAbove` compreso |
+| Rosso | `d > +ringYellowAbove` |
+
+Un giorno senza pasti resta nel colore d'accento. Le barre della Settimana usano gli stessi colori.
 
 ### 3.6 Casi di verifica
 Default della tabella, peso 100 kg (proteine 140 g, grassi 70 g). Questi numeri devono uscire identici dai test.
@@ -137,17 +153,39 @@ Default della tabella, peso 100 kg (proteine 140 g, grassi 70 g). Questi numeri 
 | Q | Oggi è giovedì senza pasti, saldo −250 dai giorni precedenti | Anteprima: gio 2.000, ven 2.000, sab 2.050, dom 2.100 |
 | R | Oggi è giovedì, saldo 0 dai giorni precedenti, mangiate finora 2.111 su 2.100 | Anteprima ven = 2.100 (debito 11 sotto `recoveryMin`) |
 
+### 3.7 Coerenza delle stime
+Per un piatto stimato dal modello: `kcalMacro` = `4 × proteine + 4 × carboidrati + 9 × grassi`. La stima è "da controllare" se le kcal dichiarate sono più basse di `kcalMacro` di oltre `kcalCheckShare` **e** di oltre `kcalCheckMin` kcal. Si segnala solo la sottostima: è l'errore che danneggia la dieta, e l'alcol alza le kcal senza comparire nei macro. Il controllo avvisa, non blocca e non corregge i numeri.
+
+### 3.8 Media kcal della settimana
+Media delle kcal mangiate nei giorni della settimana che hanno almeno un pasto, **escluso il giorno di oggi** (è in corso e abbasserebbe la media). Senza giorni validi non c'è media: la scheda mostra il trattino e la linea non compare. La scheda "Media kcal" e la linea del grafico usano lo stesso numero.
+
+Casi di verifica aggiuntivi (obiettivo del giorno 2.100):
+
+| # | Situazione | Risultato atteso |
+|---|---|---|
+| S | Contate 1.949 / 1.950 / 2.150 / 2.151 / 2.300 / 2.301 | accento / verde / verde / giallo / giallo / rosso |
+| T | Piatto con 110 kcal, proteine 13, carboidrati 72, grassi 6 (`kcalMacro` 394) | Da controllare |
+| U | Birra: 215 kcal, proteine 2, carboidrati 18, grassi 0 (`kcalMacro` 80) | Non segnalata |
+| V | Piatto con 380 kcal e `kcalMacro` 394 | Non segnalato |
+| W | Oggi è giovedì. Lun 2.000, mar senza pasti, mer 2.200, gio (oggi) 600 | Media 2.100 |
+| X | Oggi è lunedì, con pasti solo oggi | Nessuna media |
+| Y | Settimana passata con 7 giorni di pasti | Media sui 7 giorni |
+
 ## 4. Pasti e modello AI
 
 - **Cosa riceve il modello**: solo il testo scritto o dettato dall'utente, la data e l'ora locali (per dedurre la fascia) ed eventualmente la stima precedente con la correzione. Nessun altro dato dell'utente: niente peso, obiettivi, email.
-- **Cosa restituisce**: uno o più pasti; per ogni pasto la fascia (colazione, pranzo, cena, spuntino) e i piatti. Per ogni piatto: nome, quantità, se la quantità è stata ipotizzata, kcal, proteine, carboidrati, grassi, fibre, sale, e una nota breve.
+- **Cosa restituisce**: uno o più pasti; per ogni pasto la fascia (colazione, pranzo, cena, spuntino), se l'utente lo ha indicato come pasto libero, e i piatti. Per ogni piatto: nome, quantità, se la quantità è stata ipotizzata, kcal, proteine, carboidrati, grassi, fibre, sale, e una nota breve.
 - **Fascia**: quella detta dall'utente ("a pranzo"); se non la dice, si deduce dall'ora. Si può cambiare prima di confermare.
-- **Quantità**: se l'utente non le dice, il modello usa porzioni standard di un adulto, le scrive nella proposta e le segna come ipotizzate. Non fa domande.
+- **Nome e quantità**: il nome è solo il nome del piatto ("Polpette di maiale al sugo"). La quantità è l'elenco degli ingredienti principali con i grammi, come testo libero ("200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro"); per un alimento semplice basta la sua quantità ("1 mela, 180 g"). Nessuna tabella di ingredienti nel database: resta il campo di testo che c'è già.
+- **Quantità non dette**: il modello usa porzioni standard di un adulto, le scrive nella quantità e le segna come ipotizzate. Non fa domande.
+- **Crudo o cotto**: per pasta, riso, altri cereali e legumi secchi i grammi detti dall'utente si intendono **a crudo**, salvo che dica "cotta", "cotto", "lessa" o "nel piatto". L'interpretazione è sempre scritta nella quantità ("100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio"), così un errore si vede prima di confermare. Riferimento: "pasta al pomodoro 100 g" vale circa 400-450 kcal, non 110-150.
+- **Pasto libero**: se la frase lo dice ("pasto libero: pizza e birra"), il modello lo segnala sul pasto. Il modello riconosce solo che è stato detto: il tetto di kcal e il limite di uno a settimana li applica il motore.
+- **Stessa frase, stessa stima**: temperatura 0 e risposta strutturata.
 - **Piatti separati**: "anelli di totano e un'insalata di pomodorini" diventano due piatti dello stesso pasto, ciascuno con la sua stima.
 - Nulla viene salvato senza conferma dell'utente. Ogni piatto stimato conserva il testo originale.
 - **Provider**: intercambiabile dietro `AiProvider`. Il primo è Gemini su **Vertex AI** (Google Cloud), chiamato solo dal server. Modello, progetto e regione sono variabili d'ambiente. In sviluppo si usa un provider finto con risposte fisse.
 - **Protezioni**: solo utenti con accesso possono chiamare il modello; massimo 60 stime al giorno per utente (impostazione del server); risposta del modello sempre validata prima di mostrarla.
-- **Preferiti**: piatti singoli e pasti interi salvati con i loro numeri, da riaggiungere senza passare dal modello. Niente ricette con ingredienti, niente foto.
+- **Preferiti**: piatti singoli e pasti interi salvati con i loro numeri, da riaggiungere senza passare dal modello; si eliminano scorrendo. Niente ricettario separato, niente foto.
 
 ## 5. Attività e automazioni
 
@@ -155,8 +193,10 @@ Salute e Promemoria di Apple non sono raggiungibili da un server: i dati arrivan
 
 ### Dati da Salute
 - **Cosa manda il Comando rapido.** Un solo comando legge da Salute i passi e la distanza in bici degli ultimi 2 giorni, raggruppati per giorno, e li invia all'app. Parte da solo più volte al giorno; a telefono bloccato Salute non è leggibile e quell'invio semplicemente non riesce, senza avvisi. Verificato su iPhone: il raggruppamento per giorno funziona per passi e bici; le uscite registrate con Fitness arrivano in "Distanza in bici" con i km giusti; a telefono bloccato il comando non mostra errori.
-- **Cosa tiene l'app.** Solo le righe di **oggi e di ieri** (fuso `Europe/Rome`): le altre si scartano. Ripetere lo stesso invio non crea doppioni: l'ultimo valore sostituisce il precedente. Un valore inserito a mano non viene mai sovrascritto. Un valore mancante o a zero non scrive e non cancella nulla.
-- **Bici.** Arrivano solo i km: le kcal si calcolano con `km × kcalPerKm` (§3.2), perché i Comandi rapidi non leggono gli allenamenti.
+- **Cosa tiene l'app.** Solo le righe di **oggi e di ieri** (fuso `Europe/Rome`): le altre si scartano. Ripetere lo stesso invio non crea doppioni: l'ultimo valore sostituisce il precedente. Un valore mancante o a zero non scrive e non cancella nulla.
+- **Passi.** Arrivano solo da Salute: non si inseriscono e non si modificano a mano. Un invio da Salute sostituisce anche un vecchio valore a mano. I vecchi valori a mano restano visibili finché Salute non li sostituisce e si possono solo eliminare.
+- **Bici a mano.** I km da Salute non si modificano e non si eliminano. A mano si può aggiungere **un valore per giorno** (km, kcal facoltative), che si **somma** ai km da Salute di quel giorno e non viene mai toccato dagli invii; si modifica e si elimina liberamente. Serve per le uscite non registrate sul telefono. Nel database è una colonna in più, per aggiunta; i valori di bici a mano già presenti diventano la parte a mano del loro giorno.
+- **Kcal della bici.** Da Salute arrivano solo i km: le kcal si calcolano con `km × kcalPerKm` (§3.2), perché i Comandi rapidi non leggono gli allenamenti. Per la parte a mano valgono le kcal inserite, se ci sono, altrimenti la stessa formula. Le kcal del giorno sono la somma delle due parti.
 - **Codice personale.** L'ingresso è protetto da un codice generato in Impostazioni → Collegamenti, uno per utente. Si vede in chiaro una sola volta; nel database resta solo l'impronta. Rigenerarlo invalida il precedente.
 - **Guardiano.** Se esiste un codice e da più di 24 ore non arriva un invio riuscito, Oggi mostra un avviso. Nessuna email.
 - Ogni invio registra data, ora ed esito; Impostazioni mostra l'ultimo invio riuscito e i valori ricevuti.
@@ -186,9 +226,10 @@ Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate,
 | 4 | Inserimento con AI (Vertex), piatti a mano con stima, preferiti, rimozione della sfida, primo avvio guidato |
 | 4b | Ritocchi delle schermate: AI o Manuale, proposta compatta, preferiti, peso nella Settimana |
 | 5 | Dati da Salute tramite Comando rapido e avviso; nuova regola del recupero; schede della Settimana toccabili; scorrimento per eliminare |
+| 5b | Ritocchi dopo la prova sul telefono: attività in sola lettura e bici a mano, colori dell'anello, pasto libero e ricetta nella proposta AI, regola del crudo, controllo di coerenza, preferiti eliminabili scorrendo, media nella Settimana, segno della variazione di peso |
 | 6 | Grafici |
 | 7 | Promemoria (opzionale) |
 
 ## 9. Fuori dalla prima versione
 
-Sfida mattutina e programmi di allenamento, gestione inviti nell'app (gli accessi si gestiscono da Supabase), attività diverse da bici e passi, app nativa, foto del piatto, Strava, velocità media e durata delle uscite, obiettivo del giorno modificabile a mano, nutrienti modificabili giorno per giorno, email del guardiano, app a pagamento per leggere Salute.
+Sfida mattutina e programmi di allenamento, gestione inviti nell'app (gli accessi si gestiscono da Supabase), attività diverse da bici e passi, app nativa, foto del piatto, Strava, velocità media e durata delle uscite, obiettivo del giorno modificabile a mano, nutrienti modificabili giorno per giorno, email del guardiano, app a pagamento per leggere Salute, passi inseriti a mano, più uscite in bici a mano nello stesso giorno, soglie dell'anello modificabili da Impostazioni.
