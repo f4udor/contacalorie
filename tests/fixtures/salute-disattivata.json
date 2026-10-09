@@ -1,6 +1,6 @@
 {
   "id": "salute-disattivata",
-  "descrizione": "Dopo 'Disattiva': torna 'Crea codice'.",
+  "descrizione": "Dopo 'Disattiva': torna 'Crea il codice'.",
   "oggi": "2026-01-08",
   "percorso": "/impostazioni?s=collegamenti",
   "dati": null,

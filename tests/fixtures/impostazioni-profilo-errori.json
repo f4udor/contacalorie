@@ -9,18 +9,19 @@
     {
       "fill": [
         "Peso",
-        "novanta"
+        "novanta",
+        true
       ]
     },
     {
       "fill": [
-        "Età (anni)",
+        "Età",
         "40,5"
       ]
     },
     {
       "fill": [
-        "Altezza (cm)",
+        "Altezza",
         "1000"
       ]
     },

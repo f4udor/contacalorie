@@ -21,7 +21,7 @@
   "scorre": true,
   "passi": [
     {
-      "click": "Imposta questa data"
+      "click": "Usa questa data"
     },
     {
       "wait": 500

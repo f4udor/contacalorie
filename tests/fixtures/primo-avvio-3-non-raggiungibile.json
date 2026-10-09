@@ -8,21 +8,20 @@
   "fisso": true,
   "passi": [
     {
-      "clickRole": {
-        "role": "radio",
-        "name": "Uomo",
-        "exact": true
-      }
+      "select": [
+        "Sesso",
+        "uomo"
+      ]
     },
     {
       "fill": [
-        "Età (anni)",
+        "Età",
         "27"
       ]
     },
     {
       "fill": [
-        "Altezza (cm)",
+        "Altezza",
         "180"
       ]
     },
@@ -35,14 +34,16 @@
     },
     {
       "fill": [
-        "Peso (kg)",
-        "100"
+        "Peso",
+        "100",
+        true
       ]
     },
     {
       "fill": [
-        "Peso obiettivo (kg)",
-        "90"
+        "Peso obiettivo",
+        "90",
+        true
       ]
     },
     {

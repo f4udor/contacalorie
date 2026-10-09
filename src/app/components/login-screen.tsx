@@ -3,10 +3,7 @@
 import { useState } from "react";
 import { AuthError, CODE_LENGTH, isValidCode, isValidEmail, normalizeEmail } from "@/data";
 import type { AuthService, AuthSession } from "@/data";
-import { TextField } from "./field";
-
-const primary = "min-h-12 w-full rounded-xl bg-accent px-4 text-[17px] font-semibold text-white disabled:opacity-50";
-const secondary = "min-h-11 rounded-xl px-3 text-[15px] font-semibold text-accent disabled:opacity-50";
+import { Caption, FieldRow, GroupedList, PillButton, RowInput } from "./ui/ui";
 
 /** Schermata "Accedi": prima l'email, poi il codice di 6 cifre ricevuto per email. */
 export function LoginScreen({ service, onSession }: { service: AuthService; onSession: (s: AuthSession) => void }) {
@@ -57,36 +54,51 @@ export function LoginScreen({ service, onSession }: { service: AuthService; onSe
     }
   };
 
+  const message = error ?? info;
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-xl flex-col justify-center gap-6 px-4 pb-[env(safe-area-inset-bottom)] pt-[env(safe-area-inset-top)]">
       <header>
         <h1 className="text-[34px] font-bold leading-tight tracking-tight">Accedi</h1>
-        <p className="mt-1 text-[17px] text-muted">
-          {step === "email" ? "Scrivi la tua email: ti mandiamo un codice di 6 cifre. Niente password." : `Inserisci il codice che trovi nell'email inviata a ${normalizeEmail(email)}.`}
+        <p className="mt-1 text-[17px] text-testo-secondario">
+          {step === "email" ? "Ti mandiamo un codice di 6 cifre." : `Inserisci il codice che trovi nell'email inviata a ${normalizeEmail(email)}.`}
         </p>
       </header>
 
       {step === "email" ? (
-        <form onSubmit={sendCode} noValidate className="flex flex-col gap-4 rounded-2xl bg-card p-4">
-          <TextField id="login-email" label="Email" value={email} onChange={setEmail} inputMode="email" error={error} />
-          <button type="submit" disabled={busy} className={primary}>
+        <form onSubmit={sendCode} noValidate className="flex flex-col gap-3">
+          <GroupedList>
+            <FieldRow label="Email" htmlFor="login-email" error={error}>
+              <RowInput id="login-email" value={email} onChange={setEmail} inputMode="text" kind="email" invalid={Boolean(error)} />
+            </FieldRow>
+          </GroupedList>
+          <PillButton filled type="submit" disabled={busy}>
             Invia il codice
-          </button>
+          </PillButton>
         </form>
       ) : (
-        <form onSubmit={verify} noValidate className="flex flex-col gap-4 rounded-2xl bg-card p-4">
-          <TextField id="login-code" label="Codice" value={code} onChange={setCode} inputMode="numeric" error={error} hint={info} />
-          <button type="submit" disabled={busy} className={primary}>
+        <form onSubmit={verify} noValidate className="flex flex-col gap-3">
+          <GroupedList>
+            <FieldRow label="Codice" htmlFor="login-code" error={error}>
+              <RowInput id="login-code" value={code} onChange={setCode} inputMode="numeric" kind="codice" invalid={Boolean(error)} />
+            </FieldRow>
+          </GroupedList>
+          {!error && message && <Caption>{message}</Caption>}
+          <PillButton filled type="submit" disabled={busy}>
             Accedi
-          </button>
-          <div className="flex flex-wrap justify-between gap-1">
-            <button type="button" disabled={busy} onClick={() => { setStep("email"); setError(undefined); setInfo(undefined); }} className={secondary}>
-              Cambia email
-            </button>
-            <button type="button" disabled={busy} onClick={() => sendCode()} className={secondary}>
-              Invia un nuovo codice
-            </button>
-          </div>
+          </PillButton>
+          <PillButton disabled={busy} onClick={() => sendCode()}>
+            Invia un nuovo codice
+          </PillButton>
+          <PillButton
+            disabled={busy}
+            onClick={() => {
+              setStep("email");
+              setError(undefined);
+              setInfo(undefined);
+            }}
+          >
+            Cambia email
+          </PillButton>
         </form>
       )}
     </main>

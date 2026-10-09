@@ -1,16 +1,18 @@
 {
   "id": "impostazioni-collegamenti-attiva",
-  "descrizione": "Impostazioni → Collegamenti: stima automatica 'attiva'.",
+  "descrizione": "Impostazioni → Collegamenti: Salute e stime dei pasti attive, con modello e stime di oggi (4 di 60).",
   "oggi": "2026-01-08",
   "percorso": "/impostazioni?s=collegamenti",
   "dati": null,
   "scorre": true,
   "ai": {
-    "risposte": []
+    "risposte": [],
+    "modello": "Gemini 2.5 Flash",
+    "usate": 4
   },
   "passi": [
     {
-      "scrollTo": "Collegamenti"
+      "scrollTo": "Stime dei pasti"
     }
   ]
 }

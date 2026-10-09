@@ -40,12 +40,34 @@ describe("POST /api/estimate", () => {
     expect(res.status).toBe(400);
   });
 
-  it("GET dice se la stima è attiva", async () => {
+  it("GET dice se la stima è attiva, con il nome del modello e il limite", async () => {
     vi.stubEnv("AI_PROVIDER", "");
     vi.stubEnv("VERTEX_PROJECT", "");
-    expect(await (await GET()).json()).toEqual({ available: false });
-    vi.stubEnv("AI_PROVIDER", "fake");
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
-    expect(await (await GET()).json()).toEqual({ available: true });
+    expect(await (await GET()).json()).toEqual({ available: false, model: null, limit: 60, usedToday: null });
+    vi.stubEnv("AI_PROVIDER", "fake");
+    expect(await (await GET()).json()).toEqual({ available: true, model: "Modello di prova", limit: 60, usedToday: null });
+  });
+
+  it("GET con il limite configurato lo dice; senza modello configurato non c'è nome", async () => {
+    vi.stubEnv("AI_PROVIDER", "");
+    vi.stubEnv("VERTEX_PROJECT", "");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
+    vi.stubEnv("AI_DAILY_LIMIT", "25");
+    expect((await (await GET()).json()).limit).toBe(25);
+  });
+
+  it("GET con Supabase e il token dell'utente legge le stime di oggi (e non espone altro)", async () => {
+    vi.stubEnv("AI_PROVIDER", "fake");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://x.supabase.co");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "anon");
+    const fetchMock = vi.fn(async () => ({ ok: true, json: async () => [{ count: 4 }] }));
+    vi.stubGlobal("fetch", fetchMock);
+    const res = await GET(new Request("http://localhost/api/estimate", { headers: { Authorization: "Bearer tok" } }));
+    expect(await res.json()).toEqual({ available: true, model: "Modello di prova", limit: 60, usedToday: 4 });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    vi.unstubAllGlobals();
+    // Senza token: il conteggio non si legge.
+    expect((await (await GET(new Request("http://localhost/api/estimate"))).json()).usedToday).toBeNull();
   });
 });

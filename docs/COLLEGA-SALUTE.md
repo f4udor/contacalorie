@@ -34,13 +34,13 @@ Se compare un errore del tipo "already exists", il file era già stato eseguito:
 ## Passo 2. Crea il codice personale
 
 1. Apri l'app, vai su **Impostazioni**, apri **Collegamenti** e cerca la voce **Salute**.
-2. Premi **Crea codice**.
+2. Premi **Crea il codice**.
 3. Compaiono il **Codice** e l'**Indirizzo**. Premi **Copia** accanto a ciascuno e incollali in un posto sicuro (per esempio in una nota privata) per il passo 3. **Il codice si vede solo questa volta**: quando premi **Fatto** sparisce.
 4. Premi **Fatto**.
 
-**Cosa vedi:** la voce **Salute** diventa «collegata», con «Nessun invio ancora».
+**Cosa vedi:** la voce **Salute** diventa «Attiva», con ultimo invio «Nessuno».
 
-Se perdi il codice: **Rigenera codice** ne crea uno nuovo e invalida il vecchio (il Comando rapido smette di funzionare finché non ci incolli il nuovo). **Disattiva** lo toglie del tutto.
+Se perdi il codice: **Rigenera il codice** ne crea uno nuovo e invalida il vecchio (il Comando rapido smette di funzionare finché non ci incolli il nuovo). **Disattiva** lo toglie del tutto.
 
 ---
 
@@ -125,7 +125,7 @@ Aggiungi **sei orari al giorno**, per esempio 07:30, 10:30, 13:30, 16:30, 19:30 
 ## Passo 6. Controlla in Impostazioni
 
 Dopo qualche ora apri **Impostazioni → Collegamenti → Salute**:
-- **Ultimo invio riuscito**: data e ora dell'ultimo invio che ha salvato qualcosa;
+- **Ultimo invio**: data e ora dell'ultimo invio che ha salvato qualcosa;
 - sotto, i **valori ricevuti** per oggi e ieri (passi e km);
 - se l'ultimo tentativo non è riuscito, ne vedi il **motivo**.
 

@@ -7,16 +7,21 @@ import type { OnboardingKey, OnboardingValues } from "../lib/onboarding";
 import { formatDateFull, formatNumber } from "../lib/format";
 import type { SettingsFormErrors } from "../lib/settings-form";
 import { todayKey } from "../lib/today";
-import { TextField } from "./field";
-import { ChoiceField, DateField } from "./settings-fields";
+import { Caption, DateInput, FieldRow, GroupedList, PillButton, RowInput, SelectInput } from "./ui/ui";
 
-const TITLES = ["Su di te", "Il tuo obiettivo", "Le tue kcal"] as const;
+const TITLES = ["Su di te", "Il tuo obiettivo", "Le tue calorie"] as const;
 
-const LABELS: Record<Exclude<OnboardingKey, "sex" | "targetDate" | "baseKcal">, string> = {
-  ageYears: "Età (anni)",
-  heightCm: "Altezza (cm)",
-  weightKg: "Peso (kg)",
-  targetWeightKg: "Peso obiettivo (kg)",
+const SEX_OPTIONS = [
+  { value: "", label: "Da scegliere" },
+  { value: "uomo", label: "Uomo" },
+  { value: "donna", label: "Donna" },
+] as const;
+
+const LABELS: Record<Exclude<OnboardingKey, "sex" | "targetDate" | "baseKcal">, { label: string; unit: string }> = {
+  ageYears: { label: "Età", unit: "anni" },
+  heightCm: { label: "Altezza", unit: "cm" },
+  weightKg: { label: "Peso", unit: "kg" },
+  targetWeightKg: { label: "Peso obiettivo", unit: "kg" },
 };
 
 /** Primo avvio guidato: tre schermate brevi per chi non ha ancora nessuna impostazione. Compare sopra l'app e si può saltare. */
@@ -85,84 +90,82 @@ export function Onboarding() {
   };
 
   const field = (key: Exclude<OnboardingKey, "sex" | "targetDate" | "baseKcal">) => (
-    <TextField key={key} id={`onb-${key}`} label={LABELS[key]} value={values[key]} onChange={set(key)} error={errors[key]} inputMode={key === "ageYears" ? "numeric" : "decimal"} />
+    <FieldRow key={key} label={LABELS[key].label} htmlFor={`onb-${key}`} unit={LABELS[key].unit} error={errors[key]}>
+      <RowInput id={`onb-${key}`} value={values[key]} onChange={set(key)} inputMode={key === "ageYears" ? "numeric" : "decimal"} invalid={Boolean(errors[key])} />
+    </FieldRow>
   );
 
   return (
-    <div role="dialog" aria-modal="true" aria-labelledby="onb-title" className="fixed inset-0 z-[55] flex flex-col overflow-y-auto bg-bg pt-[env(safe-area-inset-top)]">
+    <div role="dialog" aria-modal="true" aria-labelledby="onb-title" className="fixed inset-0 z-[55] flex flex-col overflow-y-auto bg-sfondo pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex w-full max-w-xl flex-1 flex-col px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
         <div className="flex min-h-14 items-center justify-between">
-          <p className="text-[15px] font-semibold text-muted" aria-live="polite">
+          <p className="text-[15px] font-semibold text-testo-secondario" aria-live="polite">
             {step + 1} di {ONBOARDING_STEPS.length}
           </p>
-          <button type="button" disabled={busy} onClick={() => void finish(SKIP_PATCH)} className="min-h-11 px-2 text-[17px] font-semibold text-accent disabled:opacity-50">
+          <button type="button" disabled={busy} onClick={() => void finish(SKIP_PATCH)} className="min-h-11 px-2 text-[17px] font-medium text-comando disabled:opacity-50">
             Salta
           </button>
         </div>
-        <p className="mt-2 text-sm font-semibold uppercase tracking-wide text-muted">Benvenuto</p>
+        <p className="mt-2 text-[13px] font-medium uppercase tracking-wide text-testo-secondario">Benvenuto</p>
         <h1 id="onb-title" className="mb-6 mt-1 text-[34px] font-bold leading-tight tracking-tight">
           {TITLES[step]}
         </h1>
-        <div className="flex flex-col gap-4 rounded-2xl bg-card p-4">
+        <div className="flex flex-col gap-1.5">
           {step === 0 && (
-            <>
-              <ChoiceField
-                id="onb-sex"
-                label="Sesso"
-                value={values.sex}
-                onChange={set("sex")}
-                error={errors.sex}
-                options={[
-                  { value: "uomo", label: "Uomo" },
-                  { value: "donna", label: "Donna" },
-                ]}
-              />
+            <GroupedList>
+              <FieldRow label="Sesso" htmlFor="onb-sex" error={errors.sex}>
+                <SelectInput id="onb-sex" value={values.sex as "" | "uomo" | "donna"} options={SEX_OPTIONS} onChange={set("sex")} />
+              </FieldRow>
               {field("ageYears")}
               {field("heightCm")}
-            </>
+            </GroupedList>
           )}
           {step === 1 && (
-            <>
+            <GroupedList>
               {field("weightKg")}
               {field("targetWeightKg")}
-              <DateField id="onb-targetDate" label="Data obiettivo" value={values.targetDate} onChange={set("targetDate")} error={errors.targetDate} />
-            </>
+              <FieldRow label="Data obiettivo" htmlFor="onb-targetDate" error={errors.targetDate}>
+                <DateInput id="onb-targetDate" value={values.targetDate} onChange={set("targetDate")} />
+              </FieldRow>
+            </GroupedList>
           )}
           {last && (
             <>
-              <div className="flex items-baseline justify-between gap-3">
-                <span className="text-sm font-semibold text-muted">Kcal base {values.baseKcal.trim() !== "" ? "personalizzate" : summary?.calculated ? "calcolate" : "predefinite"}</span>
-                <span data-onb-base className="text-[22px] font-bold tabular-nums">
-                  {summary ? formatNumber(summary.baseKcal) : "–"} kcal
-                </span>
-              </div>
-              {summary?.minimum != null && (
-                <div>
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="text-sm font-semibold text-muted">Metabolismo basale</span>
-                    <span className="text-[17px] font-semibold tabular-nums">{formatNumber(summary.minimum)} kcal</span>
-                  </div>
-                  <p className="mt-1 text-sm text-muted">La base del giorno non scende sotto questo valore</p>
-                </div>
-              )}
-              {summary && !summary.calculated && <p className="text-sm text-muted">Con sesso, età, altezza e peso le kcal si calcolano da sole: puoi completarli in Impostazioni.</p>}
+              <GroupedList>
+                <li className="flex min-h-12 items-baseline justify-between gap-3 px-4 py-2.5">
+                  <span className="text-[17px]">Calorie di base {values.baseKcal.trim() !== "" ? "personalizzate" : summary?.calculated ? "calcolate" : "predefinite"}</span>
+                  <span data-onb-base className="text-[22px] font-bold tabular-nums">
+                    {summary ? formatNumber(summary.baseKcal) : "–"} kcal
+                  </span>
+                </li>
+                {summary?.minimum != null && (
+                  <li className="flex min-h-12 items-baseline justify-between gap-3 px-4 py-2.5">
+                    <span className="text-[17px]">Metabolismo basale</span>
+                    <span className="text-[17px] tabular-nums text-testo-secondario">{formatNumber(summary.minimum)} kcal</span>
+                  </li>
+                )}
+                <FieldRow label="Calorie di base scelte da te" htmlFor="onb-baseKcal" error={errors.baseKcal}>
+                  <RowInput id="onb-baseKcal" value={values.baseKcal} onChange={set("baseKcal")} inputMode="decimal" placeholder="facoltative" invalid={Boolean(errors.baseKcal)} />
+                </FieldRow>
+              </GroupedList>
+              {summary?.minimum != null && <Caption>La base del giorno non scende sotto questo valore</Caption>}
+              {summary && !summary.calculated && <Caption>Completa il profilo in Impostazioni per calcolarle.</Caption>}
               {summary?.earliestDate && (
-                <p className="text-[15px] font-medium" data-unreachable>
+                <p className="px-4 text-[15px] font-medium text-attenzione" data-unreachable>
                   Con la data scelta la base resta al minimo. Prima data possibile: <strong>{formatDateFull(summary.earliestDate)}</strong>
                 </p>
               )}
-              <TextField id="onb-baseKcal" label="Cambia la base a mano (kcal)" value={values.baseKcal} onChange={set("baseKcal")} error={errors.baseKcal} placeholder={summary ? formatNumber(summary.baseKcal) : undefined} />
             </>
           )}
         </div>
         <div className="mt-auto flex flex-col gap-2 pt-6">
-          <button type="button" disabled={busy} onClick={next} className="min-h-12 rounded-xl bg-accent px-4 text-[17px] font-semibold text-white disabled:opacity-50">
-            {last ? "Fine" : "Avanti"}
-          </button>
+          <PillButton filled disabled={busy} onClick={next}>
+            {last ? "Inizia" : "Avanti"}
+          </PillButton>
           {step > 0 && (
-            <button type="button" disabled={busy} onClick={() => setStep(step - 1)} className="min-h-12 rounded-xl bg-card px-4 text-[17px] font-semibold text-accent disabled:opacity-50">
+            <PillButton disabled={busy} onClick={() => setStep(step - 1)}>
               Indietro
-            </button>
+            </PillButton>
           )}
         </div>
       </div>

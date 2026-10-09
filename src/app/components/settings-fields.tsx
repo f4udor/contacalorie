@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { DataStore, UserSettings } from "@/data";
 import { settingsToForm, validateSettingsFields } from "../lib/settings-form";
+import { PillButton } from "./ui/ui";
 import type { SettingsFieldKey, SettingsFormErrors, SettingsFormValues } from "../lib/settings-form";
 
 /** Stato e salvataggio dei campi di una pagina di Impostazioni: ogni pagina controlla e salva solo i suoi campi. */
@@ -41,18 +42,18 @@ export function useFieldsForm(store: DataStore, settings: UserSettings, keys: re
   return { values, set, errors, status, saving, save };
 }
 
-/** Il blocco in fondo a una pagina con campi: messaggio e pulsante «Salva». */
+/** Il blocco in fondo a una pagina con campi: messaggio e tasto pieno «Salva». */
 export function SaveBar({ status, saving }: { status: { kind: "ok" | "errore"; text: string } | null; saving: boolean }) {
   return (
     <div className="flex flex-col gap-3 pb-2">
       {status && (
-        <p role="status" className={`text-center text-[15px] font-semibold ${status.kind === "ok" ? "text-ok" : "text-bad"}`}>
+        <p role="status" className={`px-4 text-[14px] font-semibold ${status.kind === "ok" ? "text-in-obiettivo" : "text-fuori"}`}>
           {status.text}
         </p>
       )}
-      <button type="submit" disabled={saving} className="min-h-12 rounded-xl bg-accent px-4 text-[17px] font-semibold text-white disabled:opacity-50">
+      <PillButton filled type="submit" disabled={saving}>
         Salva
-      </button>
+      </PillButton>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import type { DishNumberKey } from "./proposal-form";
 
 export type EstimateResult = { ok: true; proposal: MealProposal; originalText: string } | { ok: false; code: AiErrorCode; message: string };
 
-type Fetch = (url: string, init?: { method: string; headers: Record<string, string>; body: string }) => Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>;
+type Fetch = (url: string, init?: { method: string; headers: Record<string, string>; body?: string }) => Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>;
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -71,4 +71,30 @@ export async function estimateDish(
   if (!r.ok) return r;
   const { notes, ...numbers } = sumProposal(r.proposal);
   return { ok: true, numbers, note: notes.join(" ") };
+}
+
+/** Ciò che il server dice della stima automatica (per la pagina Collegamenti): attiva o no, nome leggibile del modello, limite al giorno e stime di oggi. */
+export interface AiInfo {
+  available: boolean;
+  model: string | null;
+  limit: number | null;
+  usedToday: number | null;
+}
+
+/** Chiede al server lo stato della stima automatica, con il token dell'utente se c'è (serve a contare le stime di oggi). Null se non si riesce a leggere. */
+export async function fetchAiInfo(getToken: (() => Promise<string | null>) | null, doFetch: Fetch = fetch as unknown as Fetch): Promise<AiInfo | null> {
+  try {
+    const token = getToken ? await getToken() : null;
+    const res = await doFetch("/api/estimate", { method: "GET", headers: token ? { Authorization: `Bearer ${token}` } : {} });
+    const body = (await res.json()) as { available?: unknown; model?: unknown; limit?: unknown; usedToday?: unknown };
+    if (!res.ok) return null;
+    return {
+      available: body.available === true,
+      model: typeof body.model === "string" && body.model !== "" ? body.model : null,
+      limit: typeof body.limit === "number" ? body.limit : null,
+      usedToday: typeof body.usedToday === "number" ? body.usedToday : null,
+    };
+  } catch {
+    return null;
+  }
 }

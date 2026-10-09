@@ -243,19 +243,22 @@ export function Caption({ children, id, tone = "testo-secondario" }: { children:
   );
 }
 
-const ROW_INPUT = "min-h-11 min-w-0 flex-1 bg-transparent text-right text-[17px] outline-none placeholder:text-testo-secondario";
+const ROW_INPUT = "min-h-11 min-w-16 flex-1 bg-transparent text-right text-[17px] outline-none placeholder:text-testo-secondario";
 
 /**
  * Riga di un campo dentro un elenco raggruppato: il nome a sinistra, il valore a destra (con l'unità accanto). Un errore sta sotto la riga.
  * `children` è il campo (`RowInput`, `RowTextarea`, `DateInput`…).
  */
-export function FieldRow({ label, htmlFor, unit, error, children }: { label: string; htmlFor: string; unit?: string; error?: string; children: ReactNode }) {
+export function FieldRow({ label, htmlFor, unit, error, note, children }: { label: string; htmlFor: string; unit?: string; error?: string; note?: ReactNode; children: ReactNode }) {
   return (
     <li className="px-4 py-1.5">
       <div className="flex min-h-11 items-center gap-3">
-        <label htmlFor={htmlFor} className="shrink-0 text-[17px]">
-          {label}
-        </label>
+        <span className="min-w-0 shrink py-1">
+          <label htmlFor={htmlFor} className="block text-[17px] leading-snug">
+            {label}
+          </label>
+          {note && <span className="block text-[13px] leading-tight">{note}</span>}
+        </span>
         {children}
         {unit && <span className="shrink-0 text-[17px] text-testo-secondario">{unit}</span>}
       </div>
@@ -270,27 +273,33 @@ export function FieldRow({ label, htmlFor, unit, error, children }: { label: str
 
 interface RowInputProps {
   id: string;
+  /** Valore mostrato in grigio (un numero calcolato che non è stato scritto a mano). */
+  muted?: boolean;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
   inputMode?: "decimal" | "numeric" | "text";
   invalid?: boolean;
+  /** Campo di posta o di codice monouso: il telefono propone l'email o il codice ricevuto e non mette la maiuscola. */
+  kind?: "email" | "codice";
 }
 
 /** Campo di testo a destra, in una riga (`FieldRow`). */
-export function RowInput({ id, value, onChange, placeholder, inputMode = "text", invalid }: RowInputProps) {
+export function RowInput({ id, value, onChange, placeholder, inputMode = "text", invalid, muted, kind }: RowInputProps) {
   return (
     <input
       id={id}
       type="text"
       inputMode={inputMode}
-      autoComplete="off"
+      autoComplete={kind === "email" ? "email" : kind === "codice" ? "one-time-code" : "off"}
+      autoCapitalize={kind ? "none" : undefined}
+      autoCorrect={kind === "email" ? "off" : undefined}
       value={value}
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
       aria-invalid={invalid ? true : undefined}
       aria-describedby={invalid ? `${id}-err` : undefined}
-      className={ROW_INPUT}
+      className={`${ROW_INPUT} ${muted ? "text-testo-secondario" : ""}`}
     />
   );
 }

@@ -8,11 +8,9 @@ import { formatDateLong, formatNumber } from "../lib/format";
 import { formatDateTime, receivedFromHealth } from "../lib/health-link";
 import { useHealthLink } from "../lib/use-health-link";
 import { useToday } from "../lib/use-today";
+import { ActionRow, Caption, GroupedList, PillButton, ValueRow } from "./ui/ui";
 
-const button = "min-h-12 w-full rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent disabled:opacity-50";
-const dangerButton = "min-h-12 w-full rounded-xl bg-bg px-4 text-[17px] font-semibold text-bad disabled:opacity-50";
-
-function CopyRow({ label, value }: { label: string; value: string }) {
+function CopyRow({ title, label, value }: { title: string; label: string; value: string }) {
   const [state, setState] = useState<"idle" | "copied" | "failed">("idle");
   const copy = async () => {
     try {
@@ -23,16 +21,16 @@ function CopyRow({ label, value }: { label: string; value: string }) {
     }
   };
   return (
-    <div className="mt-3">
-      <p className="text-sm font-semibold text-muted">{label}</p>
-      <p className="mt-1 select-all break-all rounded-xl bg-bg px-3 py-2 font-mono text-[15px]">{value}</p>
-      <button type="button" onClick={copy} className="mt-2 min-h-11 rounded-xl px-3 text-[17px] font-semibold text-accent" aria-label={`Copia ${label.toLowerCase()}`}>
-        Copia
+    <li className="px-4 py-2.5">
+      <p className="text-[13px] text-testo-secondario">{title}</p>
+      <p className="mt-1 select-all break-all font-mono text-[15px]">{value}</p>
+      <button type="button" onClick={copy} className="mt-1 min-h-11 text-[17px] font-medium text-comando" aria-label={label}>
+        {label}
       </button>
-      <span role="status" className="ml-2 text-sm text-muted">
+      <span role="status" className="ml-2 text-[13px] text-testo-secondario">
         {state === "copied" ? "Copiato" : state === "failed" ? "Non riesco a copiare: tieni premuto sul testo e scegli Copia." : ""}
       </span>
-    </div>
+    </li>
   );
 }
 
@@ -76,79 +74,63 @@ export function HealthSection() {
   const received = today ? receivedFromHealth(activity, [today, addDays(today, -1)]) : [];
 
   return (
-    <div className="border-t border-line pt-3" aria-label="Salute">
-      <div className="flex min-h-12 items-center justify-between gap-3">
-        <span className="text-[17px]">Salute</span>
-        <span className={`text-[17px] font-semibold ${link?.active ? "text-ok" : "text-muted"}`}>{link === null ? "controllo…" : link.active ? "collegata" : "non collegata"}</span>
-      </div>
-
-      {link && !link.supported && <p className="text-sm text-muted">Il collegamento con Salute richiede l&apos;accesso: ora i dati sono solo su questo dispositivo.</p>}
-
-      {link?.supported && code !== null && (
-        <div>
-          <p className="text-sm font-medium">Questo codice si vede solo adesso: copialo nel Comando rapido prima di chiudere.</p>
-          <CopyRow label="Codice" value={code} />
-          <CopyRow label="Indirizzo" value={endpoint} />
-          <button type="button" onClick={() => setCode(null)} className={`${button} mt-3`}>
-            Fatto
-          </button>
-        </div>
-      )}
-
-      {link?.supported && code === null && !link.active && (
-        <div>
-          <p className="mb-3 text-sm text-muted">Passi e km in bici arrivano da soli dall&apos;iPhone con un Comando rapido. Prima crea il codice personale. Come fare: docs/COLLEGA-SALUTE.md.</p>
-          <button type="button" disabled={busy} onClick={() => act(() => store!.createHealthCode())} className={button}>
-            Crea codice
-          </button>
-        </div>
-      )}
-
-      {link?.supported && code === null && link.active && (
-        <div>
-          <dl className="text-[15px]">
-            <div className="flex justify-between gap-3 py-1">
-              <dt className="text-muted">Ultimo invio riuscito</dt>
-              <dd className="text-right font-semibold tabular-nums">{link.lastSuccessAt ? formatDateTime(link.lastSuccessAt) : "Nessun invio ancora"}</dd>
-            </div>
+    <section className="flex flex-col gap-1.5" aria-label="Salute">
+      <h2 className="px-4 text-[13px] font-medium uppercase tracking-wide text-testo-secondario">Salute</h2>
+      <GroupedList>
+        <ValueRow title="Stato" value={link === null ? "Controllo…" : link.active ? "Attiva" : "Non attiva"} />
+        {link?.supported && code === null && link.active && (
+          <>
+            <ValueRow title="Ultimo invio" value={link.lastSuccessAt ? formatDateTime(link.lastSuccessAt) : "Nessuno"} />
             {received.map((r) => (
-              <div key={r.date} className="flex justify-between gap-3 py-1">
-                <dt className="text-muted">{r.date === today ? "Oggi" : "Ieri"}</dt>
-                <dd className="text-right tabular-nums" aria-label={formatDateLong(r.date)}>
-                  {[r.steps !== null ? `${formatNumber(r.steps)} passi` : null, r.km !== null ? `${formatNumber(r.km, 1)} km` : null].filter(Boolean).join(" · ")}
-                </dd>
-              </div>
+              <ValueRow
+                key={r.date}
+                title={r.date === today ? "Ricevuti oggi" : "Ricevuti ieri"}
+                value={<span aria-label={formatDateLong(r.date)}>{[r.steps !== null ? `${formatNumber(r.steps)} passi` : null, r.km !== null ? `${formatNumber(r.km, 1)} km` : null].filter(Boolean).join(" · ")}</span>}
+              />
             ))}
-          </dl>
-          {link.lastAttempt && !link.lastAttempt.success && (
-            <p role="status" className="mt-1 text-sm font-medium text-bad">
-              Ultimo tentativo non riuscito ({formatDateTime(link.lastAttempt.at)}){link.lastAttempt.detail ? `: ${link.lastAttempt.detail}` : ""}
-            </p>
-          )}
-          <div className="mt-3 flex flex-col gap-2">
-            {confirmRegenerate ? (
-              <div className="rounded-xl bg-bg p-3">
-                <p className="text-sm">Il Comando rapido smette di funzionare finché non ci incolli il nuovo codice. Rigenerare?</p>
-                <div className="mt-2 flex gap-2">
-                  <button type="button" disabled={busy} onClick={() => act(() => store!.createHealthCode())} className="min-h-12 flex-1 rounded-xl bg-accent px-3 text-[17px] font-semibold text-white disabled:opacity-50">
-                    Rigenera
-                  </button>
-                  <button type="button" onClick={() => setConfirmRegenerate(false)} className="min-h-12 flex-1 rounded-xl px-3 text-[17px] font-semibold text-accent">
-                    Annulla
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <button type="button" disabled={busy} onClick={() => setConfirmRegenerate(true)} className={button}>
-                Rigenera codice
-              </button>
-            )}
-            <button type="button" disabled={busy} onClick={() => act(() => store!.revokeHealthCode())} className={dangerButton}>
-              Disattiva
-            </button>
-          </div>
-        </div>
+          </>
+        )}
+        {link?.supported && code !== null && (
+          <>
+            <CopyRow title="Codice" label="Copia il codice" value={code} />
+            <CopyRow title="Indirizzo" label="Copia l'indirizzo" value={endpoint} />
+          </>
+        )}
+      </GroupedList>
+
+      {link && !link.supported && <Caption>Accedi per collegare Salute.</Caption>}
+      {link?.supported && code !== null && <Caption>Il codice si vede solo adesso: copialo nel Comando rapido.</Caption>}
+      {link?.supported && code === null && !link.active && <Caption>Passi e km arrivano dall&apos;iPhone con un Comando rapido. Crea il codice per iniziare.</Caption>}
+      {link?.supported && code === null && link.active && link.lastAttempt && !link.lastAttempt.success && (
+        <Caption tone="fuori">
+          Ultimo tentativo non riuscito ({formatDateTime(link.lastAttempt.at)}){link.lastAttempt.detail ? `: ${link.lastAttempt.detail}` : ""}
+        </Caption>
       )}
-    </div>
+
+      <div className="mt-2 flex flex-col gap-2">
+        {link?.supported && code !== null && <PillButton filled onClick={() => setCode(null)}>Fatto</PillButton>}
+        {link?.supported && code === null && !link.active && (
+          <PillButton filled disabled={busy} onClick={() => act(() => store!.createHealthCode())}>
+            Crea il codice
+          </PillButton>
+        )}
+        {link?.supported && code === null && link.active && (
+          <>
+            {confirmRegenerate ? (
+              <>
+                <Caption>Rigenerando il codice il Comando rapido smette di inviare finché non lo aggiorni.</Caption>
+                <PillButton filled disabled={busy} onClick={() => act(() => store!.createHealthCode())}>Rigenera</PillButton>
+                <PillButton onClick={() => setConfirmRegenerate(false)}>Annulla</PillButton>
+              </>
+            ) : (
+              <PillButton disabled={busy} onClick={() => setConfirmRegenerate(true)}>Rigenera il codice</PillButton>
+            )}
+            <GroupedList>
+              <ActionRow tone="fuori" label="Disattiva" disabled={busy} onClick={() => act(() => store!.revokeHealthCode())} />
+            </GroupedList>
+          </>
+        )}
+      </div>
+    </section>
   );
 }

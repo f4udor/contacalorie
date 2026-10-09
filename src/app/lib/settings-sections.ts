@@ -11,7 +11,7 @@ export const SECTIONS: readonly { id: SectionId; title: string }[] = [
   { id: "obiettivi", title: "Obiettivi" },
   { id: "attivita", title: "Attività" },
   { id: "pasto-libero", title: "Pasto libero" },
-  { id: "dati", title: "Dati" },
+  { id: "dati", title: "Esporta i dati" },
   { id: "collegamenti", title: "Collegamenti" },
 ];
 
@@ -23,18 +23,18 @@ export function sectionFromParam(param: string | null): SectionId | null {
 /** Indirizzo di una pagina di Impostazioni. */
 export const sectionHref = (id: SectionId): string => `/impostazioni?s=${id}`;
 
-/** Il riassunto breve a destra di ogni riga della prima pagina. Vuoto = nessun riassunto. */
+/** Il riassunto breve a destra di ogni riga della prima pagina. Vuoto = nessun valore (la riga mostra solo la freccia o niente). */
 export function rowSummaries(input: { user: UserSettings; settings: Settings; profileComplete: boolean; weightKg: number | null; healthLinked: boolean | null }): Record<SectionId, string> {
-  const { user, settings, profileComplete, weightKg, healthLinked } = input;
-  const profile =
-    profileComplete && user.ageYears !== undefined && weightKg !== null ? `${formatNumber(user.ageYears)} anni · ${formatNumber(weightKg, 1)} kg` : "Da completare";
+  const { user, settings, weightKg, healthLinked } = input;
+  const target = user.targetWeightKg;
+  const profile = weightKg === null ? "Da completare" : target !== undefined && target > 0 ? `${formatNumber(weightKg, 1)} kg → ${formatNumber(target, 1)} kg` : `${formatNumber(weightKg, 1)} kg`;
   return {
     profilo: profile,
     obiettivi: `${formatNumber(settings.baseKcal)} kcal`,
-    attivita: `Bonus ${formatNumber(settings.bonusShare * 100, 1)} %`,
+    attivita: "",
     "pasto-libero": `${formatNumber(settings.freeMealCap)} kcal`,
-    dati: "CSV",
-    collegamenti: healthLinked === null ? "" : healthLinked ? "Salute collegata" : "Salute non collegata",
+    dati: "",
+    collegamenti: healthLinked === null ? "" : healthLinked ? "Salute attiva" : "Salute non attiva",
   };
 }
 

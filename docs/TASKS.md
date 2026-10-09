@@ -578,7 +578,7 @@ Vincoli di questa fase:
 - Stati esistenti conservati: caricamento della stima, errore, AI non disponibile, limite giornaliero, pasto libero disattivato, riga dei preferiti aperta con il cestino.
 - Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari dei pannelli, solo scuri.
 
-### T6.5 Impostazioni, primo avvio, accesso, Grafici · da fare
+### T6.5 Impostazioni, primo avvio, accesso, Grafici · fatto
 - Impostazioni e le sue pagine come nella bozza: elenchi raggruppati, valore attuale a destra, azioni nel colore Comando, "Esci" nel colore Fuori. Collegamenti resta staccata in fondo.
 - Collegamenti come in §10.5 e in `bozza-4-collegamenti.png`. **Aggiunta: nome del modello.** Il server espone il nome del modello configurato (solo il nome, nessun segreto; con il provider finto dice "Modello di prova") e la pagina lo mostra in forma leggibile ("gemini-2.5-flash" → "Gemini 2.5 Flash"), con stato e stime di oggi sul limite. Test della conversione del nome e del caso senza modello configurato.
 - Primo avvio e accesso con email e codice: stesso stile, stessi passi.

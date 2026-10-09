@@ -8,21 +8,20 @@
   "primoAvvio": true,
   "passi": [
     {
-      "clickRole": {
-        "role": "radio",
-        "name": "Uomo",
-        "exact": true
-      }
+      "select": [
+        "Sesso",
+        "uomo"
+      ]
     },
     {
       "fill": [
-        "Età (anni)",
+        "Età",
         "27"
       ]
     },
     {
       "fill": [
-        "Altezza (cm)",
+        "Altezza",
         "180"
       ]
     },
@@ -35,8 +34,9 @@
     },
     {
       "fill": [
-        "Peso (kg)",
-        "100"
+        "Peso",
+        "100",
+        true
       ]
     },
     {
@@ -49,7 +49,7 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Fine",
+        "name": "Inizia",
         "exact": true
       }
     },

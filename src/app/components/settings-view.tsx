@@ -3,6 +3,8 @@
 import { resolveSettings } from "@/engine";
 import { ActivityPage, DataPage, FreeMealPage, GoalsPage, LinksPage, ProfilePage } from "./settings-pages";
 import { SettingsList } from "./settings-list";
+import { ActionRow, Caption, GroupedList } from "./ui/ui";
+import { formatDateTime } from "../lib/health-link";
 import { Sheet } from "./sheet";
 import { useAuth } from "../auth-provider";
 import { useDataStore } from "../data-provider";
@@ -33,15 +35,18 @@ export function SettingsView({ section, onNavigate }: { section: SectionId | nul
           <SettingsList
             onOpen={onNavigate}
             summaries={rowSummaries({ user: loaded.settings, settings: resolved.settings, profileComplete: resolved.plan !== null, weightKg, healthLinked: link === null ? null : link.active })}
+            linksNote={link?.active ? `Salute e modello AI.${link.lastSuccessAt ? ` Ultimo invio ${formatDateTime(link.lastSuccessAt)}.` : ""}` : "Salute e modello AI."}
+            account={
+              email !== null && signOut ? (
+                <div className="flex flex-col gap-1.5" aria-label="Account">
+                  <GroupedList>
+                    <ActionRow label="Esci" tone="fuori" onClick={() => signOut()} />
+                  </GroupedList>
+                  <Caption>{email}</Caption>
+                </div>
+              ) : undefined
+            }
           />
-        )}
-        {email !== null && signOut && (
-          <section className="mt-6 rounded-2xl bg-card p-4" aria-label="Account">
-            <p className="break-all text-[17px] font-semibold">{email}</p>
-            <button type="button" onClick={() => signOut()} className="mt-4 min-h-12 w-full rounded-xl bg-bg px-4 text-[17px] font-semibold text-bad">
-              Esci
-            </button>
-          </section>
         )}
       </>
     );

@@ -119,7 +119,7 @@ I nomi vanno scritti **esattamente** così, maiuscole e trattini bassi compresi.
 Le variabili contano solo dalla prossima pubblicazione: se salti questo passo non cambia nulla.
 
 1. Su Vercel premi **Deployments**; sulla riga più recente premi i tre puntini **⋯** e scegli **Redeploy**, poi conferma con **Redeploy**. Aspetta che lo stato diventi **Ready** (di solito un minuto).
-2. Apri l'app (accedi se serve). Vai in **Impostazioni** e apri **Collegamenti**: la voce *Stima automatica (AI)* deve dire **attiva**. Se dice *non configurata*, vedi "Se qualcosa non va".
+2. Apri l'app (accedi se serve). Vai in **Impostazioni** e apri **Collegamenti**: nella sezione *Stime dei pasti* la riga *Stato* deve dire **Attivo** (e *Modello* il nome del modello). Se dice *Non attivo*, vedi "Se qualcosa non va".
 3. Torna in **Oggi**, premi **+**. In cima scrivi, per esempio, *anelli di totano e un'insalata di pomodorini* e premi **Stima**.
 4. Compare la proposta: due piatti nel pasto della fascia giusta, con le quantità segnate **ipotizzata**. Controlla i numeri, correggi se serve (o scrivi una correzione in **Correggi** e premi **Rifai la stima**), poi premi **Conferma**.
 
@@ -137,7 +137,7 @@ Ora la chiave sta su Vercel e il file non serve più: **cancellalo** dalla carte
 
 | Cosa succede | Cosa fare |
 |---|---|
-| In Impostazioni → Collegamenti c'è scritto **non configurata** | Mancano delle variabili del passo 7, hanno il nome sbagliato, oppure `VERTEX_CREDENTIALS_JSON` non contiene un JSON intero (deve iniziare con `{` e finire con `}`). Controlla e **ripubblica** (passo 8). |
+| In Impostazioni → Collegamenti c'è scritto **Non attivo** | Mancano delle variabili del passo 7, hanno il nome sbagliato, oppure `VERTEX_CREDENTIALS_JSON` non contiene un JSON intero (deve iniziare con `{` e finire con `}`). Controlla e **ripubblica** (passo 8). |
 | «Stima automatica non disponibile» | Come sopra: la stima si accende solo con tutte e quattro le variabili. |
 | «Non riesco a raggiungere il servizio di stima» | Se la connessione c'è, di solito è un errore di Google: modello non disponibile nella regione (ricontrolla il passo 3), API non abilitata (passo 2), fatturazione non collegata (passo 1) o ruolo mancante (passo 4: *Vertex AI User*). Su Vercel, in **Logs**, il messaggio di Google dice quale. |
 | «La stima ricevuta non è utilizzabile» | Il modello ha risposto in modo strano: riprova, magari con parole diverse. Non viene salvato nulla. |

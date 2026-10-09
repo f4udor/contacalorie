@@ -45,7 +45,7 @@ describe("docs/COLLEGA-SALUTE.md", () => {
 
   it("i nomi dell'app citati esistono nell'app", () => {
     const sorgenti = [read("src/app/components/health-section.tsx"), read("src/app/components/health-warning.tsx")].join("\n");
-    for (const testo of ["Crea codice", "Copia", "Fatto", "Rigenera codice", "Disattiva", "Nessun invio ancora", "Ultimo invio riuscito", "Nessun dato da Salute da ieri"]) {
+    for (const testo of ["Crea il codice", "Copia il codice", "Fatto", "Rigenera il codice", "Disattiva", "Nessuno", "Ultimo invio", "Nessun dato da Salute da ieri"]) {
       expect(sorgenti).toContain(testo);
     }
   });
