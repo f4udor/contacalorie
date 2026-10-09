@@ -78,6 +78,14 @@ describe.each(factories)("DataStore %s", (_nome, make) => {
     expect(await s.getSettings()).toEqual({});
   });
 
+  it("profilo: sesso e data dell'obiettivo si salvano, si rileggono e si tolgono", async () => {
+    const s = make();
+    await s.saveSettings({ sex: "donna", targetDate: "2026-09-30", ageYears: 30 });
+    expect(await s.getSettings()).toEqual({ sex: "donna", targetDate: "2026-09-30", ageYears: 30 });
+    await s.saveSettings({ sex: undefined, targetDate: undefined });
+    expect(await s.getSettings()).toEqual({ ageYears: 30 });
+  });
+
   it("attività: una sola per data, sostituita alla seconda scrittura", async () => {
     const s = make();
     const base = { date: "2026-01-05", steps: 8000, stepsSource: "manuale", bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: null, bikeKcalManual: null } as const;

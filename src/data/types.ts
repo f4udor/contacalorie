@@ -1,4 +1,4 @@
-import type { DateKey, Meal, MealSlot, Settings } from "@/engine";
+import type { DateKey, Meal, MealSlot, Settings, Sex } from "@/engine";
 
 /** Impostazioni dell'utente: solo i valori che ha cambiato (il resto è default) più il profilo. */
 export interface UserSettings extends Partial<Settings> {
@@ -6,6 +6,10 @@ export interface UserSettings extends Partial<Settings> {
   heightCm?: number;
   ageYears?: number;
   targetWeightKg?: number;
+  /** Sesso, per il metabolismo basale (BRIEF §3.9). */
+  sex?: Sex;
+  /** Data entro cui raggiungere il peso obiettivo (AAAA-MM-GG). */
+  targetDate?: DateKey;
   /** Il primo avvio guidato è stato fatto o saltato. */
   onboardingDone?: boolean;
 }

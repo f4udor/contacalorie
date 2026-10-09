@@ -14,6 +14,12 @@ export const kcalCheckShare = 0.2;
 /** ...e più di queste kcal. */
 export const kcalCheckMin = 40;
 
+/** Obiettivi calcolati dal profilo (BRIEF §3.9): costanti del motore, senza campo in Impostazioni né colonna nel database. */
+/** Giornata sedentaria apposta: bici e passi si sommano già con il bonus e non devono contare due volte. */
+export const sedentaryFactor = 1.2;
+/** Kcal di un kg di peso da perdere o prendere. */
+export const kcalPerKg = 7700;
+
 /** Valori di default di BRIEF §3. */
 export const DEFAULT_SETTINGS: Readonly<Settings> = Object.freeze({
   baseKcal: 2100,

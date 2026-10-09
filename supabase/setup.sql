@@ -557,3 +557,9 @@ grant execute on function public.ingest_health(text, jsonb, integer, integer, te
 -- Fase 5b (T5b.1): la soglia del recupero passa da 25 a 50 kcal, uguale al limite verde dell'anello delle kcal.
 -- La colonna non ha un valore predefinito: vuota vale il valore dell'app (ora 50). Le righe che hanno ancora il vecchio 25 passano a 50.
 update public.settings set recovery_min = 50 where recovery_min = 25;
+
+-- ===== 20260101000015_profilo_obiettivi.sql =====
+-- Fase 5c (T5c.3): obiettivi calcolati dal profilo. Solo aggiunte: sesso e data entro cui raggiungere il peso obiettivo.
+-- Età, altezza, peso e peso obiettivo ci sono già. Nessun valore predefinito: vuoto = profilo incompleto o senza data.
+alter table public.settings add column sex text check (sex in ('uomo', 'donna'));
+alter table public.settings add column target_date date;

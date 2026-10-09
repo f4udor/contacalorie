@@ -502,7 +502,7 @@ Vincoli di questa fase:
 - La linea tratteggiata della media e la sua voce in legenda prendono un colore proprio, diverso da quello della linea dell'obiettivo e non verde, giallo o rosso; contrasto sufficiente in chiaro e scuro. Il colore è una variabile di stile con un nome suo, così la fase 6 lo cambia in un punto solo.
 - Rigenerati i quattro scenari `settimana-media-*`.
 
-### T5c.3 Obiettivi calcolati dal profilo · da fare
+### T5c.3 Obiettivi calcolati dal profilo · fatto
 - Motore: nuova funzione pura che applica §3.9 e restituisce basale, minimo, fabbisogno, scarto al giorno, kcal base calcolata e, se il piano non è raggiungibile, i giorni alla prima data possibile. Costanti `sedentaryFactor` e `kcalPerKg` in `defaults.ts`. "Oggi" arriva come parametro.
 - Profilo: per aggiunta, sesso (`uomo` / `donna`) e data dell'obiettivo. Età, altezza, peso e peso obiettivo ci sono già.
 - La kcal base e la soglia minima usate da tutte le regole (§3.3) passano da una sola funzione: valore a mano se c'è, altrimenti calcolato; con profilo incompleto, i default di oggi. **Chi ha già una kcal base salvata la tiene come personalizzata**: dopo l'aggiornamento i numeri di un utente esistente non cambiano da soli, tranne la soglia minima, che diventa il basale appena il profilo è completo.
