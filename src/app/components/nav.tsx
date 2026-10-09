@@ -23,7 +23,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Navigazione principale"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-[var(--nav)] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-vetro pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
     >
       <ul className="mx-auto flex max-w-xl">
         {TABS.map((tab) => {

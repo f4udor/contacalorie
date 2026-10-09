@@ -18,6 +18,8 @@ const scenarios = [];
 // "scorre": la schermata è più lunga di 844 px e scorre in verticale (voluto): lo screenshot la mostra intera.
 const add = (id, descrizione, oggi, dati, extra = {}) => scenarios.push({ id, descrizione, oggi, percorso: "/", dati, scorre: true, ...extra });
 
+scenarios.push({ id: "prova-stile", descrizione: "Pagina di prova interna (T6.0): tutti i colori con il loro nome e tutti i componenti condivisi.", oggi: "2026-01-08", percorso: "/prova-stile", dati: null, scorre: true });
+
 // --- Guscio e avvisi (T2.1)
 scenarios.push({ id: "grafici-in-arrivo", descrizione: "Grafici mostra solo 'In arrivo'.", oggi: "2026-01-08", percorso: "/grafici", dati: null });
 scenarios.push({ id: "avviso-dati-illeggibili", descrizione: "Dati salvati corrotti: l'app riparte vuota e mostra l'avviso (il primo avvio guidato compare dopo aver chiuso l'avviso).", oggi: "2026-01-08", percorso: "/", dati: "{{non json", scorre: true });

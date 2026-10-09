@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { addDays, weekDates, weekStart } from "@/engine";
 import type { DateKey } from "@/engine";
 import { useState } from "react";
-import { Card } from "./components/card";
+import { Card } from "./components/ui/ui";
 import { ActivityWeekPanel, FreeMealPanel, WeightPanel } from "./components/week-panels";
 import { useDataStore } from "./data-provider";
 import { WeekChart } from "./components/week-chart";

@@ -4,11 +4,11 @@ import { formatDateLong, formatNumber, formatWeekday } from "../lib/format";
 import type { WeekBar } from "../lib/week-view";
 
 const FILL: Record<RingColor, string> = {
-  accento: "var(--accent)",
-  verde: "var(--ok-fill)",
-  giallo: "var(--warn-fill)",
-  rosso: "var(--bad-fill)",
-  neutro: "var(--track)",
+  accento: "var(--comando)",
+  verde: "var(--in-obiettivo)",
+  giallo: "var(--attenzione)",
+  rosso: "var(--fuori)",
+  neutro: "var(--tessera)",
 };
 
 const CHART_HEIGHT = 168;

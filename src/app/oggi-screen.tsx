@@ -8,7 +8,7 @@ import { useDataStore } from "./data-provider";
 import { ActivityCard } from "./components/activity-card";
 import { AddPanel, EditBikePanel, EditMealPanel, SaveMealPanel } from "./components/add-panel";
 import { MealList } from "./components/meal-list";
-import { Card } from "./components/card";
+import { Card } from "./components/ui/ui";
 import { DayHeader } from "./components/day-header";
 import { KcalRing } from "./components/kcal-ring";
 import { NutrientCard } from "./components/nutrient-card";

@@ -536,7 +536,7 @@ Vincoli di questa fase:
 - La bozza fissa la direzione, non i pixel: dove un caso reale non c'è nella bozza (stati vuoti, errori, testi lunghi, schermi stretti), vale §10 e la scelta più vicina a Fitness, annotata nel diario.
 - Nessuna nuova dipendenza salvo motivo scritto nel diario. Nessuna funzione nuova.
 
-### T6.0 Fondamenta dello stile · da fare
+### T6.0 Fondamenta dello stile · fatto
 - Un solo file con le variabili di §10.2 (nomi di ruolo), i raggi e i caratteri. Rimosso tutto ciò che riguarda il tema chiaro: regole `prefers-color-scheme`, varianti chiare, colori chiari.
 - Componenti condivisi di §10.3: scheda, tessera, elenco raggruppato con i tre tipi di riga, tasto a pillola (normale e pieno), intestazione dei pannelli, selettore a segmenti, numero con unità, freccia nel cerchietto.
 - Corrispondenza tra stati del motore e colori di §10.2 in una sola funzione delle schermate, con test: oggi sotto obiettivo → Comando; giorno passato sotto obiettivo → Sotto; "verde" → In obiettivo; "giallo" → Attenzione; "rosso" → Fuori.

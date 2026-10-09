@@ -2,11 +2,11 @@ import type { RingColor } from "@/engine";
 import { formatNumber } from "../lib/format";
 
 const STROKE: Record<RingColor, string> = {
-  accento: "var(--accent)",
-  verde: "var(--ok-fill)",
-  giallo: "var(--warn-fill)",
-  rosso: "var(--bad-fill)",
-  neutro: "var(--track)",
+  accento: "var(--comando)",
+  verde: "var(--in-obiettivo)",
+  giallo: "var(--attenzione)",
+  rosso: "var(--fuori)",
+  neutro: "var(--tessera)",
 };
 
 interface KcalRingProps {
@@ -30,7 +30,7 @@ export function KcalRing({ remaining, progress, color, eaten, target, empty }: K
     <div className="flex flex-col items-center">
       <div className="relative" style={{ width: size, height: size }}>
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90" aria-hidden="true">
-          <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--track)" strokeWidth={stroke} />
+          <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--tessera)" strokeWidth={stroke} />
           {progress > 0 && (
             <circle
               cx={size / 2}

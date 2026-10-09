@@ -10,7 +10,7 @@ import { DataProvider } from "./data-provider";
 export const metadata: Metadata = {
   title: "Personal Health",
   description: "Dieta e attività fisica, in un posto solo.",
-  appleWebApp: { capable: true, title: "Personal Health", statusBarStyle: "default" },
+  appleWebApp: { capable: true, title: "Personal Health", statusBarStyle: "black" },
   formatDetection: { telephone: false },
 };
 
@@ -18,10 +18,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f2f2f7" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" },
-  ],
+  // Colore della barra del browser: lo Sfondo di §10.2 (nero pieno).
+  themeColor: "#000000",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

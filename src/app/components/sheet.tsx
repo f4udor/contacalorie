@@ -61,7 +61,7 @@ export function Sheet({ open, onClose, title, bar, subHeader, children }: SheetP
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center">
-      <div className="scrim-anim absolute inset-0 bg-[var(--scrim)] [animation:scrim-in_200ms_ease-out]" onClick={onClose} aria-hidden="true" />
+      <div className="scrim-anim absolute inset-0 bg-velo [animation:scrim-in_200ms_ease-out]" onClick={onClose} aria-hidden="true" />
       <div
         ref={panelRef}
         role="dialog"

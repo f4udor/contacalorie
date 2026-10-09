@@ -4,10 +4,10 @@ import { formatNumber } from "../lib/format";
 import type { NutrientView } from "../lib/today-view";
 
 const FILL: Record<Light, string> = {
-  verde: "var(--ok-fill)",
-  giallo: "var(--warn-fill)",
-  rosso: "var(--bad-fill)",
-  neutro: "var(--accent)",
+  verde: "var(--in-obiettivo)",
+  giallo: "var(--attenzione)",
+  rosso: "var(--fuori)",
+  neutro: "var(--comando)",
 };
 
 const LIGHT_LABEL: Record<Light, string> = {
