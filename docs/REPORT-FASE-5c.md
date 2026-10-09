@@ -34,9 +34,9 @@ Apri **Supabase → SQL Editor → New query**, incolla **tutto** il contenuto d
 | T5c.2 Colore della linea della media | fatto |
 | T5c.3 Obiettivi calcolati dal profilo | fatto |
 | T5c.4 Impostazioni a sezioni e primo avvio | fatto |
-| T5c.5 Report di fase | questo file |
+| T5c.5 Report di fase | questo file (respinto una volta: il numero dei test di partenza era sbagliato, corretto) |
 
-Nessun task `bloccato`: nessun ultimo tentativo da fare a fine fase. Ogni task è stato approvato dal subagente `revisore` al primo passaggio, e ha un solo commit (con codice, test, scenari, stato in `docs/TASKS.md` e riga del diario).
+Nessun task `bloccato`: nessun ultimo tentativo da fare a fine fase. I task da T5c.0 a T5c.4 sono stati approvati dal subagente `revisore` al primo passaggio e hanno un solo commit (con codice, test, scenari, stato in `docs/TASKS.md` e riga del diario).
 
 ### Come sono fatte le cose
 - **Motore** (`src/engine`, resta puro): nuovo `profile.ts` con `computePlan` (basale Mifflin-St Jeor, minimo arrotondato alla decina, fabbisogno × `sedentaryFactor`, scarto al giorno, kcal base calcolata, piano non raggiungibile con giorni e data della prima possibilità) e `resolveSettings` (unico punto da cui le regole prendono kcal base e soglia minima: a mano se c'è, altrimenti calcolata, con profilo incompleto i default). Costanti `sedentaryFactor` 1,2 e `kcalPerKg` 7.700 in `defaults.ts`. «Oggi» è sempre un parametro. Nessun test esistente del motore è stato toccato (casi A-Z invariati).
@@ -44,7 +44,7 @@ Nessun task `bloccato`: nessun ultimo tentativo da fare a fine fase. Ogni task �
 - **Schermate:** `Sheet` con intestazione a barra (`bar`, `subHeader`); `useDishForm` (stato unico dei due modi), `dish-sheet.ts`, `DishEditAi`, `AiEstimate` senza Conferma/Annulla (si conferma con Salva); `favorites.ts` (`sameKey`, `isFavoriteDish`, `toggleFavoriteDish`); `--avg-line` in `globals.css`; `settings-sections.ts`, `settings-fields.tsx`, `settings-pages.tsx`, `settings-list.tsx`; primo avvio in tre schermate (`onboarding.ts`).
 
 ### Test
-- **703 test in 52 file** (Vitest), tutti verdi; `lint` senza avvisi e `build` passano. In questa fase: 644 → 703 (nuovi file: `dish-sheet`, `avg-line-color`, `profile`, `settings-sections`). La percentuale di copertura non è misurata (manca lo strumento di copertura).
+- **703 test in 52 file** (Vitest), tutti verdi; `lint` senza avvisi e `build` passano. In questa fase: 632 → 703 (da 48 a 52 file; nuovi file: `dish-sheet`, `avg-line-color`, `profile`, `settings-sections`). La percentuale di copertura non è misurata (manca lo strumento di copertura).
 - **Motore:** casi da AA ad AH con i numeri esatti, più data passata, peso obiettivo già raggiunto, peso preso dall'ultima pesata invece che dal profilo, utente esistente con base salvata, chi vuole salire, arrotondamento «lontano dallo zero» dello scarto.
 - **Altri:** stato di «Salva» (aggiunta, modifica, occupato), stima che sostituisce i numeri, correzione a parole; preferiti (maiuscole e spazi, quantità diversa, salva-rimuovi-salva, pasto con lo stesso nome); contrasto e variabile del colore della media; riassunti delle righe, pagine, etichette calcolato/personalizzato, prima data possibile; primo avvio (campi, riepilogo AB/AC/AH); validazione per pagina, sesso e data; `loadWeekData` con profilo completo, base salvata, pesata, profilo incompleto; sportello (sesso e data in memoria, browser e Supabase finto); `setup.sql` e `aggiornamento-fase-5c.sql` aggiornati.
 - **Screenshot:** 222 scenari × chiaro e scuro a 390 px in `docs/screenshots/`; rigenerati solo gli scenari toccati da ogni task (pannelli del piatto e dell'aggiunta, scorrimento e preferiti, `settimana-media-*`, `impostazioni-*`, `primo-avvio-*`, collegamenti e Salute per il cambio di indirizzo). Nessuna segnalazione di scorrimento orizzontale o aree sotto 44 px. Rimossi `impostazioni-predefinite`, `-compilate`, `-errori`, `-salvato` (sostituiti dalle pagine nuove).
