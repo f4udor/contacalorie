@@ -319,7 +319,8 @@ Pochi componenti condivisi, usati ovunque:
 ### 10.4 Navigazione
 - **Barra in basso**: capsula sospesa in vetro, tre voci con icona e nome (Oggi, Settimana, Grafici). La voce attiva sta in una pillola più scura, nel colore Comando.
 - **Tasto +**: cerchio di 52 px nel colore Comando al 62% di opacità, opaco (senza sfumature né alone), sospeso in basso a destra **sopra** la barra e staccato da essa di almeno 12 px. In fondo a ogni schermata c'è spazio vuoto sufficiente perché, a fine pagina, il + e la barra non coprano contenuto.
-- **Impostazioni**: non sono più nella barra. Si aprono da un tasto a ingranaggio in alto a destra in Oggi, come pannello con la X. Dentro, l'elenco a sezioni di §2.
+- **Impostazioni**: non sono più nella barra. Si aprono da un tasto a ingranaggio in alto a destra, presente sia in Oggi sia in Settimana, come pannello con la X. Dentro, l'elenco a sezioni di §2.
+- **Ritorno al presente**: quando si guarda un giorno diverso da oggi, accanto alla data compare una pillola piccola nel colore Comando, "Oggi", che riporta al giorno corrente; in Settimana, quando si guarda un'altra settimana, la pillola "Questa settimana". Sul giorno o sulla settimana corrente la pillola non c'è. Nei pannelli con le frecce delle settimane vale lo stesso.
 - **Icone**: disegnate nel repository come SVG a tratto, nello stile delle icone di sistema Apple; nessuna libreria di icone salvo motivo scritto nel diario.
 
 ### 10.5 Schermate
