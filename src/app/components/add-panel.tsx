@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { hasFreeMealInWeek } from "@/engine";
 import type { DateKey, Day, MealSlot, Settings } from "@/engine";
 import type { ActivityRecord, DataStore, MealRecord } from "@/data";
@@ -10,10 +10,14 @@ import { isMealFree, saveDish } from "../lib/save-dish";
 import { hasManualBike } from "../lib/activity-form";
 import type { ParsedBike } from "../lib/activity-form";
 import { deleteActivityValue, saveManualBike } from "../lib/week-actions";
+import { canSaveDish } from "../lib/dish-sheet";
 import { emptyMealForm, mealToForm } from "../lib/meal-form";
+import { useDishForm } from "../lib/use-dish-form";
 import type { ParsedMeal } from "../lib/meal-form";
 import { BikeForm, WeightForm } from "./activity-forms";
 import { AiEstimate } from "./ai-estimate";
+import type { AiEstimateHandle } from "./ai-estimate";
+import { DishEditAi } from "./dish-edit-ai";
 import { FavoritesView } from "./favorites-view";
 import { MealForm } from "./meal-form";
 import { Sheet } from "./sheet";
@@ -59,7 +63,7 @@ function ModeSwitch({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => voi
     { value: "manuale", label: "Manuale" },
   ];
   return (
-    <div role="radiogroup" aria-label="Modo di inserimento" className="flex gap-0.5 rounded-xl bg-bg p-0.5">
+    <div role="radiogroup" aria-label="Modo di inserimento" className="grid grid-cols-2 gap-0.5 rounded-xl bg-bg p-0.5">
       {options.map((o) => (
         <button
           key={o.value}
@@ -67,7 +71,7 @@ function ModeSwitch({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => voi
           role="radio"
           aria-checked={mode === o.value}
           onClick={() => onChange(o.value)}
-          className={`min-h-11 min-w-11 rounded-[10px] px-3 text-[15px] font-semibold ${mode === o.value ? "bg-accent text-white" : "text-fg"}`}
+          className={`min-h-11 rounded-[10px] px-3 text-[15px] font-semibold ${mode === o.value ? "bg-accent text-white" : "text-fg"}`}
         >
           {o.label}
         </button>
@@ -87,6 +91,10 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
   const freeAllowedFor = (slot: MealSlot) => !hasFreeMealInWeek(days, { date, slot });
   const dayDishes = days.find((d) => d.date === date)?.meals ?? [];
   const existingFree = (slot: MealSlot) => isMealFree(dayDishes, slot);
+  const form = useDishForm({ ...emptyMealForm(initialSlot), isFree: existingFree(initialSlot ?? emptyMealForm().slot) }, freeAllowedFor);
+  const aiHandle = useRef<AiEstimateHandle | null>(null);
+  const [aiCanSave, setAiCanSave] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   const saveMeal = async (parsed: ParsedMeal) => {
     const { isFree, ...dishFields } = parsed;
@@ -94,6 +102,23 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
     await saveDish(store, record, isFree);
     onChanged();
     onClose();
+  };
+
+  /** "Salva" dell'intestazione: conferma la proposta (AI) o salva il piatto scritto (Manuale). */
+  const save = async () => {
+    if (saving) return;
+    setSaving(true);
+    try {
+      if (mode === "ai") await aiHandle.current?.confirm();
+      else {
+        const parsed = form.validate();
+        if (parsed) await saveMeal(parsed);
+      }
+    } catch {
+      // Salvataggio non riuscito: l'avviso in cima lo spiega e la scheda resta com'è, per riprovare.
+    } finally {
+      setSaving(false);
+    }
   };
 
   const saveBike = async (bike: ParsedBike) => {
@@ -127,25 +152,38 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
       )}
     </div>
   );
+  const bar =
+    view === "main"
+      ? { onSave: () => void save(), saveDisabled: saving || form.busy || !(mode === "ai" ? aiCanSave : canSaveDish(form.values, null)) }
+      : view === "bici"
+        ? { formId: "bike-form" }
+        : view === "pesata"
+          ? { formId: "weight-form" }
+          : {};
 
   return (
-    <Sheet open onClose={onClose} title={title} headerExtra={view === "main" ? <ModeSwitch mode={mode} onChange={setMode} /> : undefined}>
+    <Sheet open onClose={onClose} title={title} bar={bar} subHeader={view === "main" ? <ModeSwitch mode={mode} onChange={setMode} /> : undefined}>
       {/* La parte principale resta montata (nascosta) quando si apre una sotto-schermata: il testo scritto e la proposta non si perdono. */}
       <div className={view === "main" ? "" : "hidden"}>
         <div className={mode === "ai" ? "" : "hidden"}>
-          <AiEstimate store={store} date={date} free={{ freeAllowedFor, mealIsFreeFor: existingFree }} freeMealCap={settings.freeMealCap} onChanged={onChanged} onClose={onClose} fixedSlot={initialSlot}>
+          <AiEstimate store={store} date={date} free={{ freeAllowedFor, mealIsFreeFor: existingFree }} freeMealCap={settings.freeMealCap} onChanged={onChanged} onClose={onClose} fixedSlot={initialSlot} handleRef={aiHandle} onCanSaveChange={setAiCanSave}>
             {menu}
           </AiEstimate>
         </div>
         <div className={mode === "manuale" ? "flex flex-col gap-4" : "hidden"}>
           <MealForm
-            initial={{ ...emptyMealForm(initialSlot), isFree: existingFree(initialSlot ?? emptyMealForm().slot) }}
+            values={form.values}
+            onChange={form.patch}
+            errors={form.errors}
             freeAllowedFor={freeAllowedFor}
             mealIsFreeFor={existingFree}
             lockedSlot={initialSlot !== undefined}
             freeMealCap={settings.freeMealCap}
-            submitLabel="Aggiungi piatto"
-            onSubmit={saveMeal}
+            aiAvailable={form.aiAvailable}
+            aiBusy={form.busy}
+            aiError={form.aiError}
+            aiNote={form.aiNote}
+            onEstimate={form.estimate}
           />
           {menu}
         </div>
@@ -156,18 +194,24 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
             ‹ Indietro
           </button>
           {view === "preferiti" && <FavoritesView store={store} date={date} initialSlot={initialSlot} dayDishes={dayDishes} onChanged={onChanged} onClose={onClose} />}
-          {view === "bici" && <BikeForm existing={activity} kcalPerKm={settings.kcalPerKm} onSubmit={saveBike} onDelete={hasManualBike(activity) ? removeBike : undefined} />}
-          {view === "pesata" && <WeightForm existingKg={weightKg} onSubmit={saveWeight} />}
+          {view === "bici" && <BikeForm formId="bike-form" existing={activity} kcalPerKm={settings.kcalPerKm} onSubmit={saveBike} onDelete={hasManualBike(activity) ? removeBike : undefined} />}
+          {view === "pesata" && <WeightForm formId="weight-form" existingKg={weightKg} onSubmit={saveWeight} />}
         </div>
       )}
     </Sheet>
   );
 }
 
-/** Pannello di modifica di un pasto, con eliminazione. */
+/** Scheda di modifica di un piatto: la stessa dell'aggiunta, aperta su Manuale. In fondo, separati, "Elimina" e l'azione sui preferiti. */
 export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecord }) {
   const { store, days, settings, onChanged, onClose } = ctx;
+  const [mode, setMode] = useState<Mode>("manuale");
   const [favoriteStatus, setFavoriteStatus] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const freeAllowedFor = (slot: MealSlot) => !hasFreeMealInWeek(days, { date: meal.date, slot });
+  const initial = mealToForm(meal);
+  const form = useDishForm(initial, freeAllowedFor, meal.originalText ?? null);
 
   const saveFavorite = async () => {
     try {
@@ -179,42 +223,95 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
     }
   };
 
-  const save = async (parsed: ParsedMeal) => {
-    const { isFree, ...dishFields } = parsed;
-    await saveDish(store, { ...meal, isFree, ...dishFields }, isFree);
-    onChanged();
-    onClose();
+  const save = async () => {
+    if (saving) return;
+    const parsed = form.validate();
+    if (!parsed) {
+      setMode("manuale");
+      return;
+    }
+    setSaving(true);
+    try {
+      const { isFree, ...dishFields } = parsed;
+      await saveDish(store, { ...meal, isFree, ...dishFields }, isFree);
+      onChanged();
+      onClose();
+    } catch {
+      // Salvataggio non riuscito: l'avviso in cima lo spiega e la scheda resta com'è, per riprovare.
+    } finally {
+      setSaving(false);
+    }
   };
   const remove = async () => {
-    await store.deleteMeal(meal.id);
-    onChanged();
-    onClose();
+    setSaving(true);
+    try {
+      await store.deleteMeal(meal.id);
+      onChanged();
+      onClose();
+    } catch {
+      // L'avviso in cima lo spiega; si può riprovare.
+    } finally {
+      setSaving(false);
+    }
   };
 
+  if (confirming) {
+    return (
+      <Sheet open onClose={onClose} title="Elimina piatto" bar={{}}>
+        <div className="flex flex-col gap-4 py-2" role="alertdialog" aria-label="Conferma eliminazione">
+          <p className="text-[17px]">
+            Eliminare <strong>{meal.name}</strong>? Non si può annullare.
+          </p>
+          <button type="button" disabled={saving} onClick={remove} className="min-h-12 rounded-xl bg-bad-fill px-4 text-[17px] font-semibold text-white disabled:opacity-50">
+            Elimina
+          </button>
+          <button type="button" onClick={() => setConfirming(false)} className="min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent">
+            Annulla
+          </button>
+        </div>
+      </Sheet>
+    );
+  }
+
   return (
-    <Sheet open onClose={onClose} title="Modifica piatto">
-      <MealForm
-        initial={mealToForm(meal)}
-        freeAllowedFor={(slot) => !hasFreeMealInWeek(days, { date: meal.date, slot })}
-        mealIsFreeFor={(slot) => isMealFree(days.find((d) => d.date === meal.date)?.meals ?? [], slot, meal.id)}
-        freeMealCap={settings.freeMealCap}
-        submitLabel="Salva"
-        onSubmit={save}
-        onDelete={remove}
-        deleteName={meal.name}
-        extra={
-          <div className="flex flex-col gap-2">
-            <button type="button" onClick={saveFavorite} className="min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent">
-              Salva nei preferiti
-            </button>
-            {favoriteStatus && (
-              <p role="status" className="text-center text-[15px] font-semibold text-ok">
-                {favoriteStatus}
-              </p>
-            )}
-          </div>
-        }
-      />
+    <Sheet
+      open
+      onClose={onClose}
+      title="Modifica piatto"
+      bar={{ onSave: () => void save(), saveDisabled: saving || form.busy || !canSaveDish(form.values, initial) }}
+      subHeader={<ModeSwitch mode={mode} onChange={setMode} />}
+    >
+      <div className="flex flex-col gap-4">
+        <div className={mode === "manuale" ? "" : "hidden"}>
+          <MealForm
+            values={form.values}
+            onChange={form.patch}
+            errors={form.errors}
+            freeAllowedFor={freeAllowedFor}
+            mealIsFreeFor={(slot) => isMealFree(days.find((d) => d.date === meal.date)?.meals ?? [], slot, meal.id)}
+            freeMealCap={settings.freeMealCap}
+            aiAvailable={form.aiAvailable}
+            aiBusy={form.busy}
+            aiError={form.aiError}
+            aiNote={form.aiNote}
+            onEstimate={form.estimate}
+          />
+        </div>
+        {mode === "ai" && <DishEditAi values={form.values} busy={form.busy} error={form.aiError} note={form.aiNote} onCorrect={form.correct} />}
+        <div className="mt-4 flex flex-col gap-2 border-t border-line pt-4">
+          <button type="button" onClick={saveFavorite} className="min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent">
+            Salva nei preferiti
+          </button>
+          {favoriteStatus && (
+            <p role="status" className="text-center text-[15px] font-semibold text-ok">
+              {favoriteStatus}
+            </p>
+          )}
+          <button type="button" onClick={() => setConfirming(true)} className="min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-bad">
+            Elimina piatto
+          </button>
+        </div>
+      </div>
     </Sheet>
   );
 }
@@ -233,8 +330,8 @@ export function EditBikePanel(ctx: PanelContext) {
     onClose();
   };
   return (
-    <Sheet open onClose={onClose} title="Bici a mano">
-      <BikeForm existing={activity} kcalPerKm={settings.kcalPerKm} onSubmit={save} onDelete={hasManualBike(activity) ? remove : undefined} />
+    <Sheet open onClose={onClose} title="Bici a mano" bar={{ formId: "bike-form" }}>
+      <BikeForm formId="bike-form" existing={activity} kcalPerKm={settings.kcalPerKm} onSubmit={save} onDelete={hasManualBike(activity) ? remove : undefined} />
     </Sheet>
   );
 }

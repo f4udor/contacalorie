@@ -111,10 +111,12 @@ const giornoPasti = (extra = {}) =>
 add("oggi-pasti", "Giorno con pasti in quattro fasce, uno libero (1.100 kcal, conta 800) e un nome lungo.", "2026-01-08", giornoPasti());
 const apri = { clickRole: { role: "button", name: "Aggiungi", exact: true } };
 const manuale = { clickRole: { role: "radio", name: "Manuale" } };
+// "Salva" nell'intestazione fissa della scheda (piatto, pesata, bici a mano).
+const salvaScheda = { clickRole: { role: "button", name: "Salva", exact: true } };
 add("pannello-pasto-vuoto", "Inserimento manuale: modulo vuoto, solo le kcal sono obbligatorie.", "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, passi: [apri, manuale] });
 add("pannello-pasto-errori", "Inserimento manuale: kcal mancanti e un numero non valido, nessun salvataggio.", "2026-01-08", giornoPasti({ meals: [] }), {
   fisso: true,
-  passi: [apri, manuale, { fill: ["Proteine (g)", "venti"] }, { clickRole: { role: "button", name: "Aggiungi piatto" } }],
+  passi: [apri, manuale, { fill: ["Proteine (g)", "venti"] }, salvaScheda],
 });
 add("pannello-pasto-compilato", "Inserimento manuale compilato, con la fascia Colazione.", "2026-01-08", giornoPasti({ meals: [] }), {
   fisso: true,
@@ -156,24 +158,24 @@ add("pannello-aggiungi-completo", "Pannello Aggiungi senza AI configurata: selet
 add("pannello-attivita", "Bici a mano: modulo vuoto (km e kcal facoltative, almeno uno).", "2026-01-08", null, { fisso: true, passi: [apri, { click: "Bici a mano" }] });
 add("pannello-attivita-errori", "Bici a mano con valori non validi: errori accanto ai campi.", "2026-01-08", null, {
   fisso: true,
-  passi: [apri, { click: "Bici a mano" }, { fill: ["Km in bici", "-2"] }, { fill: ["Kcal", "1,5"] }, { click: "Salva bici" }],
+  passi: [apri, { click: "Bici a mano" }, { fill: ["Km in bici", "-2"] }, { fill: ["Kcal", "1,5"] }, salvaScheda],
 });
 add("pannello-attivita-modifica", "Modifica della bici a mano già inserita (dalla scheda Attività): campi precompilati con la parte a mano, e 'Elimina la bici a mano'.", "2026-01-05", conAttivita, { fisso: true, passi: [{ clickRole: { role: "button", name: "Modifica la bici a mano", exact: false } }] });
 add("oggi-passi-sola-lettura", "Toccando la riga dei passi non si apre nessun pannello.", "2026-01-05", conAttivita, { passi: [{ click: "Passi", exact: true }, { wait: 400 }] });
 add("pannello-pesata", "Pesata: modulo vuoto.", "2026-01-08", null, { fisso: true, passi: [apri, { click: "Pesata", exact: true }] });
 add("pannello-pesata-errore", "Pesata con un valore non valido.", "2026-01-08", null, {
   fisso: true,
-  passi: [apri, { click: "Pesata", exact: true }, { fill: ["Peso (kg)", "novanta"] }, { click: "Salva pesata" }],
+  passi: [apri, { click: "Pesata", exact: true }, { fill: ["Peso (kg)", "novanta"] }, salvaScheda],
 });
 add("pannello-pesata-esistente", "Seconda pesata nello stesso giorno: precompilata, e dice che sostituisce la prima.", "2026-01-08", data({ settings: { weightKg: 100 }, weighIns: [{ date: "2026-01-08", weightKg: 92.5 }] }), {
   fisso: true,
   passi: [apri, { click: "Pesata", exact: true }],
 });
 add("dopo-pesata", "Dopo aver salvato 90 kg da un profilo senza peso: la scheda proteine ha l'obiettivo 125 g (1,4 × 90).", "2026-01-08", null, {
-  passi: [apri, { click: "Pesata", exact: true }, { fill: ["Peso (kg)", "90"] }, { click: "Salva pesata" }, { wait: 600 }],
+  passi: [apri, { click: "Pesata", exact: true }, { fill: ["Peso (kg)", "90"] }, salvaScheda, { wait: 600 }],
 });
 add("dopo-attivita", "Dopo aver salvato 8 km di bici a mano: obiettivo 2.208, composizione 'bici +108', scheda Attività con 'a mano'.", "2026-01-08", null, {
-  passi: [apri, { click: "Bici a mano" }, { fill: ["Km in bici", "8"] }, { click: "Salva bici" }, { wait: 600 }],
+  passi: [apri, { click: "Bici a mano" }, { fill: ["Km in bici", "8"] }, salvaScheda, { wait: 600 }],
 });
 
 // --- Settimana (T2.6)
@@ -246,7 +248,7 @@ const pranzo2 = giornoPiatti([
 add("pannello-aggiungi-piatto", "'Aggiungi piatto' dentro il pranzo: si apre su AI con 'Pranzo' come titolo; sotto solo Preferiti.", "2026-01-05", pranzo2, { fisso: true, passi: [{ click: "+ Aggiungi piatto" }] });
 add("pannello-aggiungi-piatto-manuale", "'Aggiungi piatto' dentro il pranzo, su Manuale: la fascia è già scelta e non si chiede; sotto solo Preferiti.", "2026-01-05", pranzo2, { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, manuale] });
 add("dopo-aggiungi-piatto", "Dopo aver aggiunto 'Insalata' (80 kcal, 150 g) al pranzo: il totale del pasto passa da 800 a 880 kcal.", "2026-01-05", pranzo2, {
-  passi: [{ click: "+ Aggiungi piatto" }, manuale, { fill: ["Nome del piatto", "Insalata"] }, { fill: ["Quantità", "150 g"] }, { fill: ["Kcal", "80"] }, { click: "Aggiungi piatto", exact: true }, { wait: 600 }],
+  passi: [{ click: "+ Aggiungi piatto" }, manuale, { fill: ["Nome del piatto", "Insalata"] }, { fill: ["Quantità", "150 g"] }, { fill: ["Kcal", "80"] }, salvaScheda, { wait: 600 }],
 });
 add("pannello-aggiungi-piatto-libero", "Aggiungere un piatto a un pasto libero: l'interruttore è già attivo e vale per tutto il pasto.", "2026-01-05", giornoPiatti([
   meal("2026-01-05", "cena", "Pizza", 900, 30, 120, 30, 5, 3.5, { isFree: true }),
@@ -301,7 +303,7 @@ importa("importa-pasti-misti", "Pasto con un piatto libero e uno normale insieme
 // --- Errori di salvataggio (T3.3)
 add("salvataggio-fallito", "Il browser non riesce più a scrivere (memoria piena): il peso resta in memoria (proteine 125 g) e l'avviso in cima dice che non è stato salvato su questo dispositivo. Con Supabase lo stesso avviso compare per un salvataggio non riuscito e il pannello resta aperto per riprovare.", "2026-01-08", null, {
   fisso: true, scritturaFallita: true,
-  passi: [apri, { click: "Pesata", exact: true }, { fill: ["Peso (kg)", "90"] }, { click: "Salva pesata" }, { wait: 500 }],
+  passi: [apri, { click: "Pesata", exact: true }, { fill: ["Peso (kg)", "90"] }, salvaScheda, { wait: 500 }],
 });
 
 // --- Inserimento con l'AI (T4.2): le risposte del server sono finte (`ai`), nessuna rete
@@ -317,25 +319,25 @@ aiScen("ai-non-disponibile", "AI non configurata: avviso 'Stima automatica non d
 aiScen("ai-caricamento", "Durante la stima: pulsante 'Sto stimando…' disattivato, testo conservato.", { risposte: [{ ritardo: 8000, ...prop(cena) }] }, [scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 500 }]);
 aiScen("ai-proposta-due-piatti", "Proposta con due piatti nel pasto Cena, uno per riga: nome, quantità con 'ipotizzata', kcal; i numeri compaiono toccando la riga.", { risposte: [prop(cena)] }, [scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 600 }]);
 aiScen("ai-proposta-piatto-aperto", "Toccando la riga 'Anelli di totano' si aprono nome, quantità, nota del modello, kcal e nutrienti modificabili e 'Togli'.", { risposte: [prop(cena)] }, [scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 600 }, { click: "Anelli di totano" }, { wait: 300 }]);
-aiScen("ai-proposta-conferma", "Fondo della proposta: Correggi, Rifai la stima, Conferma, Annulla.", { risposte: [prop(cena)] }, [scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 600 }, { scrollTo: "Annulla" }]);
+aiScen("ai-proposta-conferma", "Fondo della proposta: Correggi, Rifai la stima, Conferma, Annulla.", { risposte: [prop(cena)] }, [scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 600 }, { scrollTo: "Rifai la stima" }]);
 aiScen("ai-proposta-due-pasti", "Una frase con due pasti: Colazione (due piatti) e Pranzo, con la fascia modificabile.", { risposte: [prop(...colPranzo)] }, [scrivi("a colazione un cappuccino e un cornetto e a pranzo un panino con prosciutto"), stima, { wait: 600 }]);
 aiScen("ai-proposta-tolto-piatto", "Dopo aver tolto il cornetto: resta il cappuccino e il pranzo.", { risposte: [prop(...colPranzo)] }, [scrivi("a colazione un cappuccino e un cornetto e a pranzo un panino con prosciutto"), stima, { wait: 600 }, { click: "Cornetto" }, { clickRole: { role: "button", name: "Togli Cornetto" } }, { wait: 300 }]);
 aiScen("ai-correzione", "Dopo la correzione 'il totano era di più': la stima è rifatta (totano 300 g, 560 kcal, quantità non più ipotizzata).", { risposte: [prop(cena), prop({ slot: "cena", dishes: [dish("Anelli di totano", "300 g", false, 560, 44, 36, 28, 2, 2.8), cena.dishes[1]] })] }, [scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 600 }, { fill: ["Correggi", "il totano era di più"] }, btn("Rifai la stima"), { wait: 600 }]);
-aiScen("ai-errore-numero", "Kcal svuotate nella riga aperta prima di confermare: errore accanto al campo, nulla è salvato.", { risposte: [prop({ slot: "pranzo", dishes: [dish("Pasta al pomodoro", "80 g", true, 420, 14, 80, 6, 5, 1.2)] })] }, [scrivi("pasta al pomodoro"), stima, { wait: 600 }, { click: "Pasta al pomodoro" }, { fill: ["Kcal", ""] }, btn("Conferma"), { wait: 300 }]);
-aiScen("ai-errore-numero-riga-chiusa", "Kcal svuotate e riga richiusa: confermando la riga si riapre da sola, con l'errore accanto al campo; la riga dice 'da correggere'.", { risposte: [prop({ slot: "pranzo", dishes: [dish("Pasta al pomodoro", "80 g", true, 420, 14, 80, 6, 5, 1.2), dish("Insalata", "1 ciotola", true, 60, 2, 8, 2, 3, 0.1)] })] }, [scrivi("pasta al pomodoro e insalata"), stima, { wait: 600 }, { click: "Pasta al pomodoro" }, { fill: ["Kcal", ""] }, { click: "Pasta al pomodoro" }, btn("Conferma"), { wait: 300 }]);
+aiScen("ai-errore-numero", "Kcal svuotate nella riga aperta prima di confermare: errore accanto al campo, nulla è salvato.", { risposte: [prop({ slot: "pranzo", dishes: [dish("Pasta al pomodoro", "80 g", true, 420, 14, 80, 6, 5, 1.2)] })] }, [scrivi("pasta al pomodoro"), stima, { wait: 600 }, { click: "Pasta al pomodoro" }, { fill: ["Kcal", ""] }, salvaScheda, { wait: 300 }]);
+aiScen("ai-errore-numero-riga-chiusa", "Kcal svuotate e riga richiusa: confermando la riga si riapre da sola, con l'errore accanto al campo; la riga dice 'da correggere'.", { risposte: [prop({ slot: "pranzo", dishes: [dish("Pasta al pomodoro", "80 g", true, 420, 14, 80, 6, 5, 1.2), dish("Insalata", "1 ciotola", true, 60, 2, 8, 2, 3, 0.1)] })] }, [scrivi("pasta al pomodoro e insalata"), stima, { wait: 600 }, { click: "Pasta al pomodoro" }, { fill: ["Kcal", ""] }, { click: "Pasta al pomodoro" }, salvaScheda, { wait: 300 }]);
 aiScen("ai-errore-rete", "Servizio non raggiungibile: messaggio chiaro, il testo scritto resta.", { risposte: [{ stato: 502, corpo: { error: { code: "rete", message: "Non riesco a raggiungere il servizio di stima: controlla la connessione e riprova." } } }] }, [scrivi("una pera"), stima, { wait: 500 }]);
 aiScen("ai-limite", "Limite giornaliero raggiunto: messaggio chiaro, il testo resta.", { risposte: [{ stato: 429, corpo: { error: { code: "limite", message: "Hai raggiunto il limite di stime di oggi. Riprova domani o inserisci i numeri a mano." } } }] }, [scrivi("una pera"), stima, { wait: 500 }]);
 aiScen("ai-risposta-non-valida", "Risposta del modello non utilizzabile: messaggio chiaro, nulla salvato.", { risposte: [{ stato: 502, corpo: { error: { code: "non-valida", message: "La stima ricevuta non è utilizzabile. Riprova, magari con parole diverse." } } }] }, [scrivi("una pera"), stima, { wait: 500 }]);
 add("ai-dopo-conferma", "Dopo Conferma: i due piatti sono nel pasto Cena di oggi (con totale), il pannello è chiuso.", "2026-01-08", giornoPasti({ meals: [] }), {
   ai: { risposte: [prop(cena)] },
-  passi: [apri, scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 600 }, btn("Conferma"), { wait: 700 }],
+  passi: [apri, scrivi("anelli di totano e un'insalata di pomodorini"), stima, { wait: 600 }, salvaScheda, { wait: 700 }],
 });
 
 // --- Pannello Aggiungi: AI | Manuale (T4b.1)
 const cenaTotano = { slot: "cena", dishes: [dish("Anelli di totano", "150 g", true, 280, 22, 18, 14, 1, 1.4, "Ho ipotizzato 150 g di totano fritto."), dish("Insalata di pomodorini", "1 ciotola", true, 60, 2, 8, 2, 3, 0.1)] };
 add("aggiungi-manuale", "Pannello Aggiungi su Manuale: modulo del piatto con 'Stima con AI' (AI attiva) e sotto Preferiti, Bici a mano, Pesata.", "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, ai: { risposte: [] }, passi: [apri, manuale] });
 add("ai-fascia-fissata", "'+ Aggiungi piatto' del Pranzo: titolo 'Pranzo', il modello ha indicato la Cena ma i piatti restano nel Pranzo (nessuna scelta della fascia).", "2026-01-05", pranzo2, { fisso: true, ai: { risposte: [prop(cenaTotano)] }, passi: [{ clickRole: { role: "button", name: "+ Aggiungi piatto", exact: false } }, { fill: ["Cosa hai mangiato?", "anelli di totano e un'insalata di pomodorini"] }, { clickRole: { role: "button", name: "Stima", exact: true } }, { wait: 600 }] });
-add("ai-fascia-fissata-conferma", "Dopo Conferma con la fascia fissata sul Pranzo: i due piatti sono nel Pranzo di oggi, non nella Cena.", "2026-01-05", pranzo2, { ai: { risposte: [prop(cenaTotano)] }, passi: [{ clickRole: { role: "button", name: "+ Aggiungi piatto", exact: false } }, { fill: ["Cosa hai mangiato?", "anelli di totano e un'insalata di pomodorini"] }, { clickRole: { role: "button", name: "Stima", exact: true } }, { wait: 600 }, { clickRole: { role: "button", name: "Conferma", exact: true } }, { wait: 700 }] });
+add("ai-fascia-fissata-conferma", "Dopo Conferma con la fascia fissata sul Pranzo: i due piatti sono nel Pranzo di oggi, non nella Cena.", "2026-01-05", pranzo2, { ai: { risposte: [prop(cenaTotano)] }, passi: [{ clickRole: { role: "button", name: "+ Aggiungi piatto", exact: false } }, { fill: ["Cosa hai mangiato?", "anelli di totano e un'insalata di pomodorini"] }, { clickRole: { role: "button", name: "Stima", exact: true } }, { wait: 600 }, salvaScheda, { wait: 700 }] });
 
 // --- Ricetta nella quantità (T5b.2)
 const polpette = "200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro, 20 g parmigiano, 1 uovo, 15 g olio";
@@ -349,30 +351,47 @@ add("pannello-quantita-lunga", "Toccando il piatto con la quantità lunga si leg
 }), { fisso: true, passi: [{ click: "Polpette di maiale al sugo" }, { scrollTo: "Quantità" }] });
 aiScen("ai-proposta-ricetta", "Proposta con tre piatti dalla quantità lunga e la regola del crudo scritta nella quantità: la riga va a capo (al massimo due righe) senza coprire le kcal.", { risposte: [prop({ slot: "pranzo", dishes: [dish("Polpette di maiale al sugo", polpette, true, 720, 48, 42, 38, 5, 2.4, "Ho ipotizzato quattro polpette."), dish("Pasta al pomodoro", "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", false, 430, 14, 82, 6, 5, 1.2, "100 g di pasta intesi a crudo.")] })] }, [scrivi("polpette al sugo e pasta al pomodoro 100 g"), stima, { wait: 600 }]);
 
+// --- Scheda del piatto unica (T5c.0): intestazione fissa Chiudi · titolo · Salva
+const modoAi = { clickRole: { role: "radio", name: "AI", exact: true } };
+const pastaCorretta = prop({ slot: "pranzo", dishes: [dish("Pasta al pomodoro", "150 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", false, 640, 21, 118, 9, 7, 1.6, "Ho portato la pasta a 150 g a crudo.")] });
+const scheda = (id, descrizione, ai, passi, extra = {}) => add(id, descrizione, "2026-01-08", giornoPasti(), { fisso: true, ai, passi, ...extra });
+scheda("scheda-aggiunta-ai", "Aggiunta, modo AI: intestazione Chiudi · Aggiungi · Salva (spento: non c'è ancora nulla da salvare), selettore AI | Manuale sotto il titolo.", { risposte: [] }, [apri]);
+scheda("scheda-aggiunta-ai-proposta", "Aggiunta su AI con la proposta: «Salva» acceso nell'intestazione, nessun Conferma né Annulla in fondo; la pagina è scorsa fino a «Rifai la stima» e l'intestazione resta visibile.", { risposte: [prop(...colPranzo)] }, [apri, scrivi("a colazione un cappuccino e un cornetto e a pranzo un panino con prosciutto"), stima, { wait: 600 }, { click: "Panino con prosciutto" }, { scrollTo: "Rifai la stima" }]);
+scheda("scheda-aggiunta-manuale", "Aggiunta, modo Manuale: nome, quantità, fascia, «Stima con l'AI» sempre presente, numeri; «Salva» spento finché non si scrive qualcosa.", { risposte: [] }, [apri, manuale]);
+scheda("scheda-aggiunta-manuale-scorsa", "Aggiunta su Manuale, con qualcosa scritto e il contenuto scorso fino al fondo (Preferiti, Bici a mano, Pesata): l'intestazione con «Salva» acceso resta visibile.", { risposte: [] }, [apri, manuale, { fill: ["Nome del piatto", "Insalata"] }, { fill: ["Kcal", "80"] }, { scrollTo: "Pesata" }]);
+scheda("scheda-aggiunta-passaggio", "Scritto un piatto su Manuale, poi AI e di nuovo Manuale: nome e numeri sono rimasti dov'erano.", { risposte: [] }, [apri, manuale, { fill: ["Nome del piatto", "Insalata"] }, { fill: ["Kcal", "80"] }, modoAi, manuale]);
+scheda("scheda-modifica-manuale", "Modifica di un piatto, modo Manuale: stessa scheda dell'aggiunta con i dati del piatto; «Salva» spento finché non cambia qualcosa.", { risposte: [] }, [{ click: "Pasta al pomodoro" }]);
+scheda("scheda-modifica-manuale-scorsa", "Modifica su Manuale scorsa fino in fondo: «Salva nei preferiti» e «Elimina piatto» stanno staccati dal resto; intestazione visibile.", { risposte: [] }, [{ click: "Pasta al pomodoro" }, { scrollTo: "Elimina piatto" }]);
+scheda("scheda-modifica-salva-acceso", "Modifica con un numero cambiato (kcal 700): «Salva» è acceso.", { risposte: [] }, [{ click: "Pasta al pomodoro" }, { fill: ["Kcal", "700"] }]);
+scheda("scheda-modifica-ai", "Modifica, modo AI: il piatto com'è adesso e il campo «Correggi» per dirlo a parole; «Salva» spento.", { risposte: [pastaCorretta] }, [{ click: "Pasta al pomodoro" }, modoAi]);
+scheda("scheda-modifica-ai-corretta", "Modifica su AI dopo «era di più»: la stima aggiornata è nella stessa scheda (nome, quantità e kcal nuovi) e «Salva» si accende per applicarla.", { risposte: [pastaCorretta] }, [{ click: "Pasta al pomodoro" }, modoAi, { fill: ["Correggi", "la pasta era 150 g"] }, btn("Rifai la stima"), { wait: 600 }]);
+scheda("scheda-modifica-stima-sostituisce", "Modifica su Manuale con i numeri già scritti: «Stima con l'AI» li sostituisce con la nuova stima (restano modificabili prima di salvare).", { risposte: [pastaCorretta] }, [{ click: "Pasta al pomodoro" }, btn("Stima con l'AI"), { wait: 600 }]);
+scheda("scheda-modifica-dopo-salva", "Dopo «Salva» in modifica (kcal 700): la scheda si chiude e Oggi mostra il piatto con le kcal nuove.", { risposte: [] }, [{ click: "Pasta al pomodoro" }, { fill: ["Kcal", "700"] }, salvaScheda, { wait: 600 }]);
+
 // --- Pasto libero nella proposta (T5b.3)
 const pizzaBirra = (freeMeal, slot = "cena") => ({ slot, freeMeal, dishes: [dish("Pizza margherita", "1 pizza, 350 g", false, 850, 32, 110, 28, 5, 3.4), dish("Birra", "1 bottiglia, 330 ml", false, 140, 1, 12, 0, 0, 0)] });
 const scrivi2 = scrivi("pasto libero: pizza margherita e una birra");
 aiScen("ai-libero-acceso", "Il modello ha segnalato il pasto libero e la settimana lo consente: l'interruttore 'Pasto libero' è già acceso, modificabile.", { risposte: [prop(pizzaBirra(true))] }, [scrivi2, stima, { wait: 600 }, { scrollTo: "Pasto libero" }]);
 aiScen("ai-libero-spento", "Il modello non ha segnalato il pasto libero: l'interruttore è spento (si può accendere).", { risposte: [prop(pizzaBirra(false))] }, [scrivi("pizza margherita e una birra"), stima, { wait: 600 }, { scrollTo: "Pasto libero" }]);
 add("ai-libero-disattivato", "La settimana ha già un pasto libero (spuntino di oggi): anche se il modello lo segnala l'interruttore è spento e disattivato, con la spiegazione.", "2026-01-08", giornoPasti(), { fisso: true, ai: { risposte: [prop(pizzaBirra(true, "cena"))] }, passi: [apri, scrivi2, stima, { wait: 600 }, { scrollTo: "Pasto libero" }] });
-aiScen("ai-libero-due-pasti", "Due pasti proposti, entrambi segnalati: se ne accende uno solo (il primo); l'altro è disattivato con la spiegazione.", { risposte: [prop(pizzaBirra(true, "pranzo"), pizzaBirra(true, "cena"))] }, [scrivi("pasto libero a pranzo e pasto libero a cena"), stima, { wait: 600 }, { scrollTo: "Annulla" }]);
-aiScen("ai-libero-conferma", "Dopo Conferma con l'interruttore acceso: il pasto di oggi è etichettato 'libero' e conta al massimo il tetto.", { risposte: [prop(pizzaBirra(true))] }, [scrivi2, stima, { wait: 600 }, btn("Conferma"), { wait: 700 }]);
+aiScen("ai-libero-due-pasti", "Due pasti proposti, entrambi segnalati: se ne accende uno solo (il primo); l'altro è disattivato con la spiegazione.", { risposte: [prop(pizzaBirra(true, "pranzo"), pizzaBirra(true, "cena"))] }, [scrivi("pasto libero a pranzo e pasto libero a cena"), stima, { wait: 600 }, { scrollTo: "Rifai la stima" }]);
+aiScen("ai-libero-conferma", "Dopo Conferma con l'interruttore acceso: il pasto di oggi è etichettato 'libero' e conta al massimo il tetto.", { risposte: [prop(pizzaBirra(true))] }, [scrivi2, stima, { wait: 600 }, salvaScheda, { wait: 700 }]);
 
 // --- Controllo di coerenza kcal / nutrienti (T5b.4)
 const dolce = { slot: "spuntino", freeMeal: false, dishes: [dish("Torta di mele", "1 fetta, 120 g", false, 110, 13, 72, 6, 3, 0.3, "Fetta media di torta."), dish("Birra", "1 bottiglia, 330 ml", false, 215, 2, 18, 0, 0, 0)] };
 aiScen("ai-controllo-segnalato", "Proposta con un piatto che non supera il controllo di coerenza (110 kcal ma i nutrienti ne danno 394): sulla riga '⚠ controlla'; la birra (kcal più alte dei nutrienti) non è segnalata.", { risposte: [prop(dolce)] }, [scrivi("una fetta di torta di mele e una birra"), stima, { wait: 600 }]);
 aiScen("ai-controllo-aperto", "Aperto, il piatto segnalato mostra la frase 'Le kcal sembrano basse rispetto ai nutrienti: controlla i numeri.'; non blocca la conferma e non cambia i numeri.", { risposte: [prop(dolce)] }, [scrivi("una fetta di torta di mele e una birra"), stima, { wait: 600 }, { click: "Torta di mele" }, { wait: 300 }]);
 aiScen("ai-controllo-ritoccato", "Dopo aver ritoccato le kcal a 380 il segno scompare: il controllo si ricalcola.", { risposte: [prop(dolce)] }, [scrivi("una fetta di torta di mele e una birra"), stima, { wait: 600 }, { click: "Torta di mele" }, { fill: ["Kcal", "380"] }, { wait: 300 }]);
-aiScen("piatto-stima-segnalato", "Piatto a mano stimato con l'AI con kcal troppo basse rispetto ai nutrienti: sotto la nota compare l'avviso di controllo.", { risposte: [prop({ slot: "spuntino", dishes: [dish("Torta di mele", "1 fetta, 120 g", false, 110, 13, 72, 6, 3, 0.3, "Fetta media di torta.")] })] }, [manuale, { fill: ["Nome del piatto", "Torta di mele"] }, btn("Stima con AI"), { wait: 600 }]);
+aiScen("piatto-stima-segnalato", "Piatto a mano stimato con l'AI con kcal troppo basse rispetto ai nutrienti: sotto la nota compare l'avviso di controllo.", { risposte: [prop({ slot: "spuntino", dishes: [dish("Torta di mele", "1 fetta, 120 g", false, 110, 13, 72, 6, 3, 0.3, "Fetta media di torta.")] })] }, [manuale, { fill: ["Nome del piatto", "Torta di mele"] }, btn("Stima con l'AI"), { wait: 600 }]);
 
 // --- Piatto a mano con stima (T4.3)
 const pesto = prop({ slot: "pranzo", dishes: [dish("Spaghetti al pesto", "80 g pasta a crudo, 20 g pesto alla genovese", false, 480, 15, 70, 16, 4, 1.3, "Pasta con circa 20 g di pesto alla genovese.")] });
 const aMano = [manuale, { fill: ["Nome del piatto", "Spaghetti al pesto"] }, { fill: ["Quantità (facoltativa)", "80 g di pasta"] }];
 aiScen("piatto-stima-vuoto", "Piatto a mano con l'AI attiva: nome e quantità scritti, kcal vuote; compare 'Stima con AI' e il campo Kcal non ha più l'asterisco.", { risposte: [pesto] }, aMano);
-aiScen("piatto-stima-fatto", "Dopo 'Stima con AI': kcal e macro riempiti, riga 'Stimato con l'AI: controlla i numeri' con la nota del modello.", { risposte: [pesto] }, [...aMano, btn("Stima con AI"), { wait: 600 }]);
-aiScen("piatto-stima-senza-kcal", "Salvataggio con le kcal vuote e l'AI attiva: errore accanto al campo che indica anche la stima.", { risposte: [pesto] }, [...aMano, btn("Aggiungi piatto"), { wait: 300 }]);
-aiScen("piatto-stima-errore", "Limite raggiunto durante la stima: messaggio chiaro, il modulo resta com'è.", { risposte: [{ stato: 429, corpo: { error: { code: "limite", message: "Hai raggiunto il limite di stime di oggi. Riprova domani o inserisci i numeri a mano." } } }] }, [...aMano, btn("Stima con AI"), { wait: 500 }]);
-aiScen("piatto-stima-senza-nome", "'Stima con AI' senza il nome del piatto: invita a scriverlo.", { risposte: [pesto] }, [manuale, btn("Stima con AI"), { wait: 300 }]);
+aiScen("piatto-stima-fatto", "Dopo 'Stima con AI': kcal e macro riempiti, riga 'Stimato con l'AI: controlla i numeri' con la nota del modello.", { risposte: [pesto] }, [...aMano, btn("Stima con l'AI"), { wait: 600 }]);
+aiScen("piatto-stima-senza-kcal", "Salvataggio con le kcal vuote e l'AI attiva: errore accanto al campo che indica anche la stima.", { risposte: [pesto] }, [...aMano, salvaScheda, { wait: 300 }]);
+aiScen("piatto-stima-errore", "Limite raggiunto durante la stima: messaggio chiaro, il modulo resta com'è.", { risposte: [{ stato: 429, corpo: { error: { code: "limite", message: "Hai raggiunto il limite di stime di oggi. Riprova domani o inserisci i numeri a mano." } } }] }, [...aMano, btn("Stima con l'AI"), { wait: 500 }]);
+aiScen("piatto-stima-senza-nome", "'Stima con AI' senza il nome del piatto: invita a scriverlo.", { risposte: [pesto] }, [manuale, btn("Stima con l'AI"), { wait: 300 }]);
 
 // --- Preferiti (T4.4)
 const fav = (id, name, quantity, kcal, p, c, f, fi, salt) => ({ id, name, quantity, kcal, protein: p, carbs: c, fat: f, fiber: fi, salt });
@@ -400,8 +419,8 @@ add("preferiti-dopo-aggiunta-piatto", "Dopo un tocco su 'Mela' con la fascia pre
 });
 favScen("preferiti-salva-piatto", "Piatto toccato: in fondo al modulo 'Salva nei preferiti'.", giornoPasti(), [{ click: "Petto di pollo e verdure" }, { scrollTo: "Salva nei preferiti" }]);
 favScen("preferiti-piatto-salvato", "Dopo 'Salva nei preferiti': conferma 'Salvato nei preferiti.'", giornoPasti(), [{ click: "Petto di pollo e verdure" }, btn("Salva nei preferiti"), { wait: 400 }, { scrollTo: "Salvato nei preferiti" }]);
-favScen("preferiti-salva-pasto", "Intestazione del pasto toccata: pannello 'Salva pasto' con il nome proposto (i nomi dei piatti).", giornoPasti(), [{ clickRole: { role: "button", name: "Pranzo: salva il pasto nei preferiti" } }]);
-favScen("preferiti-pasto-salvato", "Dopo 'Salva pasto' con un nome scelto: conferma 'Pasto salvato nei preferiti.'", giornoPasti(), [{ clickRole: { role: "button", name: "Pranzo: salva il pasto nei preferiti" } }, { fill: ["Nome del pasto", "Pranzo del lunedì"] }, btn("Salva pasto"), { wait: 400 }]);
+favScen("preferiti-salva-pasto", "Intestazione del pasto toccata: pannello 'Salva pasto' con il nome proposto (i nomi dei piatti).", giornoPasti(), [{ clickRole: { role: "button", name: "Pranzo: salvaScheda il pasto nei preferiti" } }]);
+favScen("preferiti-pasto-salvato", "Dopo 'Salva pasto' con un nome scelto: conferma 'Pasto salvato nei preferiti.'", giornoPasti(), [{ clickRole: { role: "button", name: "Pranzo: salvaScheda il pasto nei preferiti" } }, { fill: ["Nome del pasto", "Pranzo del lunedì"] }, btn("Salva pasto"), { wait: 400 }]);
 
 // --- Primo avvio guidato e Collegamenti (T4.5)
 scenarios.push({ id: "primo-avvio-dopo-avviso", descrizione: "Dati illeggibili e nessuna impostazione: prima l'avviso, il primo avvio compare dopo aver chiuso l'avviso.", oggi: "2026-01-08", percorso: "/", dati: "{{non json", primoAvvio: true, fisso: true, passi: [{ clickRole: { role: "button", name: "Ok", exact: true } }] });

@@ -479,7 +479,7 @@ Vincoli di questa fase:
 - Si rigenerano solo gli screenshot degli scenari toccati dal task.
 - Nessuna funzione oltre a quelle elencate (§9).
 
-### T5c.0 Scheda del piatto unica · da fare
+### T5c.0 Scheda del piatto unica · fatto
 - Un solo componente per aggiungere un piatto (dal +, da "Aggiungi piatto") e per modificarne uno esistente (tocco sul piatto in Oggi).
 - Intestazione fissa: "Chiudi" a sinistra, titolo al centro, "Salva" a destra. Resta visibile con la tastiera aperta e mentre il contenuto scorre. "Salva" è disattivato finché non c'è qualcosa da salvare. Spariscono i pulsanti di salvataggio e conferma in fondo; "Annulla" coincide con "Chiudi".
 - Selettore AI | Manuale, lo stesso componente nelle due situazioni: aggiunta su AI, modifica su Manuale.
