@@ -50,3 +50,25 @@ describe("formatWeightDelta (T5b.7)", () => {
     expect(formatWeightDelta(-0.05)).toBe("−0,1");
   });
 });
+
+describe("formati dei pannelli della Settimana (T6.3)", () => {
+  it("intervallo della settimana: stesso mese o mesi diversi", async () => {
+    const { formatWeekRange } = await import("./format");
+    expect(formatWeekRange("2026-10-05")).toBe("5 – 11 ottobre");
+    expect(formatWeekRange("2026-09-28")).toBe("28 set – 4 ott");
+  });
+  it("giorno con numero e giorno in minuscolo", async () => {
+    const { formatWeekdayDay, formatWeekdayLower } = await import("./format");
+    expect(formatWeekdayDay("2026-10-05")).toBe("Lunedì 5");
+    expect(formatWeekdayLower("2026-10-06")).toBe("martedì");
+  });
+});
+
+describe("formatKg", () => {
+  it("sempre un decimale, con la virgola", async () => {
+    const { formatKg } = await import("./format");
+    expect(formatKg(92)).toBe("92,0");
+    expect(formatKg(98.6)).toBe("98,6");
+    expect(formatKg(91.36)).toBe("91,4");
+  });
+});

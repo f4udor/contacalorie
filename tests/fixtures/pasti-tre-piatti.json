@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m81",
+        "id": "m114",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Riso integrale",
@@ -25,7 +25,7 @@
         "quantity": "100 g"
       },
       {
-        "id": "m82",
+        "id": "m115",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Petto di pollo alla piastra",
@@ -40,7 +40,7 @@
         "quantity": "200 g"
       },
       {
-        "id": "m83",
+        "id": "m116",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Zucchine e carote al vapore con un nome molto lungo per verificare che vada a capo",

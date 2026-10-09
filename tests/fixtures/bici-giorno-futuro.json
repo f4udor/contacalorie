@@ -1,0 +1,124 @@
+{
+  "id": "bici-giorno-futuro",
+  "descrizione": "Un giorno futuro (venerdì 9) è rifiutato: errore «Scegli un giorno fino a oggi» sulla riga Giorno e nulla viene salvato.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m292",
+        "date": "2026-01-08",
+        "slot": "colazione",
+        "name": "Cappuccino e brioche",
+        "kcal": 320,
+        "protein": 8,
+        "carbs": 48,
+        "fat": 10,
+        "fiber": 1,
+        "salt": 0.4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m293",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 650,
+        "protein": 22,
+        "carbs": 110,
+        "fat": 12,
+        "fiber": 6,
+        "salt": 1.8,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m294",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Insalata mista con un nome molto lungo che deve andare a capo senza rompere nulla",
+        "kcal": 120,
+        "protein": 3,
+        "carbs": 8,
+        "fat": 8,
+        "fiber": 4,
+        "salt": 0.6,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m295",
+        "date": "2026-01-08",
+        "slot": "spuntino",
+        "name": "Pizza al taglio",
+        "kcal": 1100,
+        "protein": 40,
+        "carbs": 130,
+        "fat": 42,
+        "fiber": 6,
+        "salt": 4.2,
+        "isFree": true,
+        "originalText": null
+      },
+      {
+        "id": "m296",
+        "date": "2026-01-08",
+        "slot": "cena",
+        "name": "Petto di pollo e verdure",
+        "kcal": 480,
+        "protein": 52,
+        "carbs": 18,
+        "fat": 20,
+        "fiber": 7,
+        "salt": 1.4,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "click": "Uscita in bici",
+      "exact": true
+    },
+    {
+      "fill": [
+        "Giorno",
+        "2026-01-09",
+        true
+      ]
+    },
+    {
+      "fill": [
+        "Distanza",
+        "10"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Salva",
+        "exact": true
+      }
+    },
+    {
+      "wait": 400
+    }
+  ]
+}

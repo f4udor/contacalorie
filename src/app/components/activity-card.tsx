@@ -2,10 +2,7 @@ import { bikeKcal, bikeKmTotal } from "@/engine";
 import type { Settings } from "@/engine";
 import type { ActivityRecord } from "@/data";
 import { formatNumber } from "../lib/format";
-
-function Badge({ children }: { children: string }) {
-  return <span className="rounded-full bg-track px-2 py-0.5 text-xs font-semibold text-muted">{children}</span>;
-}
+import { Card, Num } from "./ui/ui";
 
 /** "12,4 km · 410 kcal" / "8 km" / "250 kcal": le parti presenti di una delle due metà della bici. */
 function partText(km: number | null, kcal: number | null): string {
@@ -13,10 +10,10 @@ function partText(km: number | null, kcal: number | null): string {
 }
 
 /**
- * Attività del giorno: passi (in sola lettura) e bici. La bici mostra il totale del giorno; se ci sono entrambe le parti
- * anche il dettaglio. Si tocca solo la parte inserita a mano, che si modifica o si elimina.
+ * Passi e Bici: due schede affiancate con i loro colori (BRIEF §10.5). I passi sono in sola lettura; la bici mostra il totale del giorno
+ * e, se ci sono entrambe le parti, il dettaglio: si tocca solo la parte inserita a mano, che si modifica o si elimina. Senza dati, un trattino.
  */
-export function ActivityCard({ activity, settings, onEditBike }: { activity: ActivityRecord | null; settings: Settings; onEditBike: () => void }) {
+export function ActivityCards({ activity, settings, onEditBike }: { activity: ActivityRecord | null; settings: Settings; onEditBike: () => void }) {
   const hasSteps = activity !== null && activity.steps !== null;
   const hasHealthBike = activity !== null && (activity.bikeKm !== null || activity.bikeKcalHealth !== null);
   const hasManualBike = activity !== null && (activity.bikeKmManual !== null || activity.bikeKcalManual !== null);
@@ -24,60 +21,46 @@ export function ActivityCard({ activity, settings, onEditBike }: { activity: Act
   const km = activity ? bikeKmTotal(activity) : null;
   const manualText = activity ? partText(activity.bikeKmManual, activity.bikeKcalManual) : "";
 
-  const total = hasBike && activity && (
+  const bikeBody = (
     <>
-      <span className="text-[17px] font-semibold">Bici</span>
-      <span className="flex items-center gap-2">
-        {hasHealthBike && !hasManualBike && <Badge>da Salute</Badge>}
-        {hasManualBike && !hasHealthBike && <Badge>a mano</Badge>}
-        <span className="text-[17px] font-semibold tabular-nums">
-          {km !== null && `${formatNumber(km, 1)} km · `}
-          {formatNumber(bikeKcal(activity, settings))} kcal
-        </span>
-      </span>
+      <div className="mt-3">{hasBike && activity ? <BikeNumber km={km} kcal={bikeKcal(activity, settings)} /> : <Num value="–" size="lg" tone="testo-secondario" />}</div>
+      {hasBike && activity && (
+        <p className="mt-1.5 text-[13px] text-testo-secondario">{km !== null ? `${formatNumber(bikeKcal(activity, settings))} kcal` : ""}</p>
+      )}
     </>
   );
 
   return (
-    <section aria-label="Attività">
-      <h2 className="px-1 pb-1.5 text-sm font-semibold uppercase tracking-wide text-muted">Attività</h2>
-      <div className="rounded-2xl bg-card px-4 py-3">
-        {!hasSteps && !hasBike ? (
-          <span className="block py-1 text-[15px] text-muted">Nessuna attività</span>
-        ) : (
-          <div className="flex flex-col divide-y divide-line">
-            {hasSteps && (
-              <div className="flex items-center justify-between gap-3 py-2 first:pt-0 last:pb-0">
-                <span className="text-[17px] font-semibold">Passi</span>
-                <span className="flex items-center gap-2">
-                  {activity.stepsSource === "salute" && <Badge>da Salute</Badge>}
-                  <span className="text-[17px] font-semibold tabular-nums">{formatNumber(activity.steps ?? 0)}</span>
-                </span>
-              </div>
-            )}
-            {hasBike && activity && (
-              <div className="py-2 first:pt-0 last:pb-0">
-                {hasManualBike && !hasHealthBike ? (
-                  <button type="button" onClick={onEditBike} aria-label="Modifica la bici a mano" className="-my-1 flex min-h-11 w-full items-center justify-between gap-3 text-left">
-                    {total}
-                  </button>
-                ) : (
-                  <div className="flex items-center justify-between gap-3">{total}</div>
-                )}
-                {hasManualBike && hasHealthBike && (
-                  <p className="mt-1 flex flex-wrap items-center gap-x-1 text-sm text-muted">
-                    <span>{partText(activity.bikeKm, activity.bikeKcalHealth)} da Salute</span>
-                    <span aria-hidden="true">+</span>
-                    <button type="button" onClick={onEditBike} aria-label="Modifica la bici a mano" className="-my-1.5 min-h-11 rounded-lg px-1 font-semibold text-accent">
-                      {manualText} a mano
-                    </button>
-                  </p>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+    <section aria-label="Passi e bici" className="grid grid-cols-2 gap-3">
+      <Card title="Passi">
+        <div className="mt-3">
+          {hasSteps && activity ? <Num value={formatNumber(activity.steps ?? 0)} size="lg" tone="passi" /> : <Num value="–" size="lg" tone="testo-secondario" />}
+        </div>
+        {hasSteps && activity && <p className="mt-1.5 text-[13px] text-testo-secondario">{activity.stepsSource === "salute" ? "da Salute" : "a mano"}</p>}
+      </Card>
+      {hasManualBike && !hasHealthBike ? (
+        <Card title="Bici" onOpen={onEditBike} openLabel="Modifica la bici a mano">
+          {bikeBody}
+          <p className="mt-0.5 text-[13px] text-testo-secondario">a mano</p>
+        </Card>
+      ) : (
+        <Card title="Bici">
+          {bikeBody}
+          {hasHealthBike && !hasManualBike && <p className="mt-0.5 text-[13px] text-testo-secondario">da Salute</p>}
+          {hasManualBike && hasHealthBike && activity && (
+            <p className="mt-0.5 text-[13px] text-testo-secondario">
+              <span>{partText(activity.bikeKm, activity.bikeKcalHealth)} da Salute</span> +{" "}
+              <button type="button" onClick={onEditBike} aria-label="Modifica la bici a mano" className="min-h-11 text-left font-semibold text-comando">
+                {manualText} a mano
+              </button>
+            </p>
+          )}
+        </Card>
+      )}
     </section>
   );
+}
+
+function BikeNumber({ km, kcal }: { km: number | null; kcal: number }) {
+  return km !== null ? <Num value={formatNumber(km, 1)} unit="km" size="lg" tone="bici" /> : <Num value={formatNumber(kcal)} unit="kcal" size="lg" tone="bici" />;
 }

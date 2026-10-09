@@ -34,13 +34,13 @@ Se compare un errore del tipo "already exists", il file era già stato eseguito:
 ## Passo 2. Crea il codice personale
 
 1. Apri l'app, vai su **Impostazioni**, apri **Collegamenti** e cerca la voce **Salute**.
-2. Premi **Crea codice**.
+2. Premi **Crea il codice**.
 3. Compaiono il **Codice** e l'**Indirizzo**. Premi **Copia** accanto a ciascuno e incollali in un posto sicuro (per esempio in una nota privata) per il passo 3. **Il codice si vede solo questa volta**: quando premi **Fatto** sparisce.
 4. Premi **Fatto**.
 
-**Cosa vedi:** la voce **Salute** diventa «collegata», con «Nessun invio ancora».
+**Cosa vedi:** la voce **Salute** diventa «Attiva», con ultimo invio «Nessuno».
 
-Se perdi il codice: **Rigenera codice** ne crea uno nuovo e invalida il vecchio (il Comando rapido smette di funzionare finché non ci incolli il nuovo). **Disattiva** lo toglie del tutto.
+Se perdi il codice: **Rigenera il codice** ne crea uno nuovo e invalida il vecchio (il Comando rapido smette di inviare finché non lo aggiorni con il nuovo). **Disattiva** lo toglie del tutto.
 
 ---
 
@@ -102,7 +102,7 @@ Se invece vedi:
 - `"Nessuna riga utile"`: i dati letti da Salute non avevano righe di oggi o di ieri con un valore sopra zero;
 - `"Troppe chiamate oggi"`: l'app accetta al massimo 200 chiamate al giorno per utente. Riprova domani.
 
-Poi apri l'app → **Oggi**: nella scheda **Attività** passi e bici compaiono con la fonte «da Salute».
+Poi apri l'app → **Oggi**: nelle schede **Passi** e **Bici** i valori compaiono con la fonte «da Salute».
 
 ---
 
@@ -125,7 +125,7 @@ Aggiungi **sei orari al giorno**, per esempio 07:30, 10:30, 13:30, 16:30, 19:30 
 ## Passo 6. Controlla in Impostazioni
 
 Dopo qualche ora apri **Impostazioni → Collegamenti → Salute**:
-- **Ultimo invio riuscito**: data e ora dell'ultimo invio che ha salvato qualcosa;
+- **Ultimo invio**: data e ora dell'ultimo invio che ha salvato qualcosa;
 - sotto, i **valori ricevuti** per oggi e ieri (passi e km);
 - se l'ultimo tentativo non è riuscito, ne vedi il **motivo**.
 
@@ -136,6 +136,8 @@ Se per più di 24 ore non arriva nessun invio riuscito, in cima a **Oggi** compa
 ## Attenzione: i km possono risultare doppi
 
 Se **un'altra app** (per esempio Strava o l'app del ciclocomputer) scrive in Salute la **stessa uscita** che scrive Fitness, in Salute i km risultano **doppi**, e quindi doppi anche in Personal Health. Soluzioni: registra ogni uscita con **una sola app**, oppure in **Salute → Condivisione → App** togli all'altra app il permesso di scrivere **Distanza in bici**.
+
+**Rimedio nel Comando rapido (provato sul telefono).** Nell'azione che legge la **distanza in bici** aggiungi il filtro **Sorgente è** e scegli l'app con cui registri le uscite (per esempio Strava, oppure l'iPhone se usi Fitness). Così il comando legge solo i km di quell'app e non li somma due volte. Vale per ogni persona con la sua app.
 
 ## Se qualcosa non va
 

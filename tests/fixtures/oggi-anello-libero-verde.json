@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m59",
+        "id": "m92",
         "date": "2026-01-05",
         "slot": "colazione",
         "name": "Colazione",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m60",
+        "id": "m93",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Pizza e dolce",
@@ -38,7 +38,7 @@
         "originalText": null
       },
       {
-        "id": "m61",
+        "id": "m94",
         "date": "2026-01-05",
         "slot": "cena",
         "name": "Cena",

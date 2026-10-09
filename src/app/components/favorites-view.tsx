@@ -9,7 +9,9 @@ import { newId } from "../lib/ids";
 import { SLOTS } from "../lib/meal-form";
 import { isMealFree, saveDish } from "../lib/save-dish";
 import { plural } from "../lib/plural";
-import { SwipeRow, trashIcon, useOpenRow } from "./swipe-row";
+import { SwipeRow, useOpenRow } from "./swipe-row";
+import { IconPlus } from "./ui/icons";
+import { Caption, GroupedList, Segmented } from "./ui/ui";
 
 interface Props {
   store: DataStore;
@@ -19,8 +21,6 @@ interface Props {
   onChanged: () => void;
   onClose: () => void;
 }
-
-const input = "min-h-11 w-full rounded-xl bg-bg px-3 text-[17px] outline-none placeholder:text-muted focus:ring-2 focus:ring-accent";
 
 /** I preferiti (piatti e pasti salvati): si cercano per nome e un tocco li aggiunge al giorno, nella fascia scelta, senza AI. */
 export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, onClose }: Props) {
@@ -73,35 +73,33 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
     }
   };
 
-  if (loadFailed) return <p role="alert" className="rounded-xl bg-bg px-3 py-2.5 text-[15px] font-medium text-bad">Non riesco a leggere i preferiti. Chiudi e riprova.</p>;
-  if (!lists) return <p className="text-[15px] text-muted" aria-busy="true">Carico i preferiti…</p>;
+  if (loadFailed) return <p role="alert" className="px-1 text-[15px] font-medium text-fuori">Non riesco a leggere i preferiti. Chiudi e riprova.</p>;
+  if (!lists) return <p className="px-1 text-[15px] text-testo-secondario" aria-busy="true">Caricamento…</p>;
 
   const meals = filterByName(lists.meals, query);
   const dishes = filterByName(lists.dishes, query);
   const total = lists.meals.length + lists.dishes.length;
 
   const plus = (
-    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true" className="shrink-0 text-accent">
-      <circle cx="12" cy="12" r="10" strokeWidth="1.8" />
-      <path d="M12 8v8M8 12h8" />
-    </svg>
+    <span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-full bg-comando/20 text-comando">
+      <IconPlus size={18} strokeWidth={2.4} />
+    </span>
   );
 
   const row = (kind: "dish" | "meal", id: string, name: string, detail: string | null, kcal: number, onAdd: () => void) => (
-    <li key={`${kind}-${id}`} className="border-t border-line first:border-t-0">
+    <li key={`${kind}-${id}`}>
       <SwipeRow
         id={`${kind}-${id}`}
         openId={rows.openId}
         setOpen={rows.setOpen}
-        className="bg-bg"
-        actions={[{ key: "elimina", label: `Elimina ${name} dai preferiti`, icon: trashIcon, tone: "danger", onClick: () => void remove(kind, id) }]}
+        actions={[{ key: "elimina", label: `Elimina ${name} dai preferiti`, visibleLabel: "Elimina", tone: "danger", onClick: () => void remove(kind, id) }]}
       >
-        <button type="button" disabled={busy} onClick={onAdd} aria-label={`Aggiungi ${name}`} className="flex min-h-14 w-full min-w-0 items-center justify-between gap-3 bg-bg px-4 py-2 text-left disabled:opacity-50">
+        <button type="button" disabled={busy} onClick={onAdd} aria-label={`Aggiungi ${name}`} className="flex min-h-14 w-full min-w-0 items-center justify-between gap-3 px-4 py-2 text-left disabled:opacity-50">
           <span className="min-w-0 flex-1">
-            <span className="block break-words text-[17px] font-semibold leading-snug">{name}</span>
-            {detail && <span className="block break-words text-sm text-muted">{detail}</span>}
+            <span className="block break-words text-[17px] leading-snug">{name}</span>
+            {detail && <span className="block break-words text-[13px] text-testo-secondario">{detail}</span>}
           </span>
-          <span className="shrink-0 text-[16px] tabular-nums text-muted">{formatNumber(kcal)} kcal</span>
+          <span className="shrink-0 text-[13px] tabular-nums text-testo-secondario">{formatNumber(kcal)} kcal</span>
           {plus}
         </button>
       </SwipeRow>
@@ -111,54 +109,27 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
   return (
     <div className="flex flex-col gap-4">
       {total === 0 ? (
-        <p className="rounded-2xl bg-bg px-4 py-4 text-center text-[15px] text-muted">
-          Nessun preferito. Tocca un piatto e scegli «Salva nei preferiti», oppure tocca l&apos;intestazione di un pasto per salvarlo intero.
-        </p>
+        <p className="rounded-elenco bg-tessera px-4 py-4 text-center text-[15px] text-testo-secondario">Nessun preferito. Salvane uno da un piatto o da un pasto.</p>
       ) : (
         <>
-          <div className="flex items-center gap-2">
-            <input
-              id="fav-search"
-              type="search"
-              autoComplete="off"
-              aria-label="Cerca"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Cerca"
-              className={`${input} min-w-0 flex-1`}
-            />
+          <div className="rounded-full bg-tessera px-4">
+            <input id="fav-search" type="search" autoComplete="off" aria-label="Cerca" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Cerca" className="min-h-11 w-full bg-transparent text-[17px] outline-none placeholder:text-testo-secondario" />
           </div>
-          {!initialSlot && (
-            <div className="flex flex-col gap-1.5">
-              <span id="fav-slot" className="text-sm font-semibold text-muted">
-                Aggiungi a
-              </span>
-              <div role="radiogroup" aria-labelledby="fav-slot" className="grid grid-cols-4 gap-1 rounded-xl bg-bg p-1">
-                {SLOTS.map((s) => (
-                  <button key={s.value} type="button" role="radio" aria-checked={slot === s.value} onClick={() => setSlot(s.value)} className={`min-h-11 rounded-lg px-1 text-[15px] font-semibold ${slot === s.value ? "bg-accent text-white" : "text-fg"}`}>
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          {!initialSlot && <Segmented label="Aggiungi a" options={SLOTS} value={slot} onChange={setSlot} />}
           {meals.length > 0 && (
             <section aria-label="Pasti salvati" className="flex flex-col gap-2">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">Pasti</h3>
-              <ul className="overflow-hidden rounded-2xl bg-bg">
-                {meals.map((f) => row("meal", f.id, f.name, plural(f.dishes.length, "piatto", "piatti"), mealTotalKcal(f), () => add(recordsFromFavoriteMeal(f, date, slot, newId))))}
-              </ul>
+              <h3 className="px-1 text-[13px] font-semibold uppercase tracking-wide text-testo-secondario">Pasti</h3>
+              <GroupedList>{meals.map((f) => row("meal", f.id, f.name, `${plural(f.dishes.length, "piatto", "piatti")}`, mealTotalKcal(f), () => add(recordsFromFavoriteMeal(f, date, slot, newId))))}</GroupedList>
             </section>
           )}
           {dishes.length > 0 && (
             <section aria-label="Piatti salvati" className="flex flex-col gap-2">
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-muted">Piatti</h3>
-              <ul className="overflow-hidden rounded-2xl bg-bg">
-                {dishes.map((f) => row("dish", f.id, f.name, f.quantity, f.kcal, () => add(recordsFromFavoriteDish(f, date, slot, newId))))}
-              </ul>
+              <h3 className="px-1 text-[13px] font-semibold uppercase tracking-wide text-testo-secondario">Piatti</h3>
+              <GroupedList>{dishes.map((f) => row("dish", f.id, f.name, f.quantity, f.kcal, () => add(recordsFromFavoriteDish(f, date, slot, newId))))}</GroupedList>
             </section>
           )}
-          {meals.length === 0 && dishes.length === 0 && <p className="px-1 text-[15px] text-muted">Nessun preferito con questo nome.</p>}
+          {meals.length === 0 && dishes.length === 0 && <p className="px-1 text-[15px] text-testo-secondario">Nessun preferito con questo nome.</p>}
+          <Caption>Scorri una riga verso sinistra per eliminarla.</Caption>
         </>
       )}
     </div>

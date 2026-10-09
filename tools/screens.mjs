@@ -1,6 +1,6 @@
 // Genera gli screenshot delle schermate da scenari in tests/fixtures/*.json.
 // Uso: npm run screens [-- --only <id>[,<id>…]] [-- --width 390,375,430] [-- --out docs/screenshots]
-// Per ogni scenario e per tema chiaro e scuro salva <id>-<chiaro|scuro>[-<larghezza>].png
+// Dalla fase 6 l'app ha solo il tema scuro: per ogni scenario salva <id>-scuro[-<larghezza>].png
 // e segnala scorrimento orizzontale e aree toccabili sotto i 44 px.
 import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync } from "node:fs";
@@ -91,8 +91,8 @@ try {
   for (const file of files) {
     const sc = JSON.parse(readFileSync(path.join(fixturesDir, file), "utf8"));
     if (onlyIds && !onlyIds.has(sc.id)) continue;
-    for (const width of widths) {
-      for (const [scheme, label] of [["light", "chiaro"], ["dark", "scuro"]]) {
+    for (const width of sc.larghezze ?? widths) {
+      for (const [scheme, label] of [["dark", "scuro"]]) {
         const context = await browser.newContext({
           viewport: { width, height: HEIGHT },
           colorScheme: scheme,
@@ -160,7 +160,7 @@ try {
           // Stima automatica finta: disponibilità e risposte in ordine (l'ultima si ripete). `ritardo` = millisecondi di attesa.
           const risposte = [...(sc.ai.risposte ?? [])];
           await context.route("**/api/estimate", async (route) => {
-            if (route.request().method() === "GET") return route.fulfill({ json: { available: sc.ai.disponibile !== false } });
+            if (route.request().method() === "GET") return route.fulfill({ json: { available: sc.ai.disponibile !== false, ...(sc.ai.disponibile !== false && sc.ai.modello ? { model: sc.ai.modello, limit: sc.ai.limite ?? 60, usedToday: sc.ai.usate ?? 0 } : {}) } });
             const r = risposte.length > 1 ? risposte.shift() : risposte[0];
             if (r?.ritardo) await new Promise((res) => setTimeout(res, r.ritardo));
             return route.fulfill({ status: r?.stato ?? 200, json: r?.corpo ?? {} });
@@ -171,9 +171,11 @@ try {
         for (const step of sc.passi ?? []) {
           if (step.click) await page.getByText(step.click, { exact: step.exact ?? true }).filter({ visible: true }).first().click();
           else if (step.clickRole) await page.getByRole(step.clickRole.role, { name: step.clickRole.name, exact: step.clickRole.exact }).first().click();
-          else if (step.fill) await page.getByLabel(step.fill[0]).filter({ visible: true }).fill(step.fill[1]);
+          else if (step.fill) await page.getByLabel(step.fill[0], { exact: step.fill[2] ?? false }).and(page.locator("input, textarea, select")).filter({ visible: true }).fill(step.fill[1]);
+          else if (step.select) await page.getByLabel(step.select[0], { exact: true }).filter({ visible: true }).first().selectOption(step.select[1]);
           else if (step.swipe) await touchSwipe(page, page.getByText(step.swipe.text, { exact: true }).first(), step.swipe.dx ?? -140, step.swipe.dy ?? 0);
           else if (step.press) await page.keyboard.press(step.press);
+          else if (step.scrollBottom) await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
           else if (step.scrollTo) await page.getByText(step.scrollTo).filter({ visible: true }).first().scrollIntoViewIfNeeded();
           await page.waitForTimeout(step.wait ?? 350);
         }

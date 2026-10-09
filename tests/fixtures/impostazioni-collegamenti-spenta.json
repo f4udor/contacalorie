@@ -1,6 +1,6 @@
 {
   "id": "impostazioni-collegamenti-spenta",
-  "descrizione": "Impostazioni → Collegamenti: stima automatica 'non configurata', con l'indicazione di dove si attiva.",
+  "descrizione": "Impostazioni → Collegamenti: stime dei pasti non attive: solo lo stato e la frase per inserire a mano.",
   "oggi": "2026-01-08",
   "percorso": "/impostazioni?s=collegamenti",
   "dati": null,
@@ -11,7 +11,7 @@
   },
   "passi": [
     {
-      "scrollTo": "Collegamenti"
+      "scrollTo": "Stime dei pasti"
     }
   ]
 }

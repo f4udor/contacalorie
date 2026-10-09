@@ -14,6 +14,7 @@ describe("docs/COLLEGA-SALUTE.md", () => {
   it("dichiara che i nomi delle azioni non sono stati visti, il doppio conteggio e il telefono bloccato", () => {
     expect(guida).toMatch(/senza averli visti a schermo/);
     expect(guida).toMatch(/risultare doppi/);
+    expect(guida).toContain("Sorgente è");
     expect(guida).toMatch(/bloccato/);
     expect(guida).toMatch(/non è stata provata/);
   });
@@ -45,16 +46,17 @@ describe("docs/COLLEGA-SALUTE.md", () => {
 
   it("i nomi dell'app citati esistono nell'app", () => {
     const sorgenti = [read("src/app/components/health-section.tsx"), read("src/app/components/health-warning.tsx")].join("\n");
-    for (const testo of ["Crea codice", "Copia", "Fatto", "Rigenera codice", "Disattiva", "Nessun invio ancora", "Ultimo invio riuscito", "Nessun dato da Salute da ieri"]) {
+    for (const testo of ["Crea il codice", "Copia il codice", "Fatto", "Rigenera il codice", "Disattiva", "Nessuno", "Ultimo invio", "Nessun dato da Salute da ieri"]) {
       expect(sorgenti).toContain(testo);
     }
   });
 
-  it("la scheda Attività di Oggi citata esiste e mostra la fonte; la guida non manda a funzioni non ancora presenti", () => {
+  it("le schede Passi e Bici di Oggi citate esistono e mostrano la fonte; la guida non manda a funzioni non ancora presenti", () => {
     const card = read("src/app/components/activity-card.tsx");
-    expect(card).toContain("Attività");
+    expect(card).toContain("Passi");
+    expect(card).toContain("Bici");
     expect(card).toContain("da Salute");
-    expect(guida).toContain("scheda **Attività**");
+    expect(guida).toContain("schede **Passi** e **Bici**");
     expect(guida).not.toMatch(/in \*\*Settimana\*\* toccando/);
   });
 

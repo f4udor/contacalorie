@@ -108,7 +108,7 @@ export function draftsToProposal(drafts: readonly MealDraft[]): { ok: true; prop
       for (const k of DISH_NUMBER_KEYS) {
         const r = parseDecimal(d[k]);
         if (r === "empty") {
-          if (k === "kcal") (errors[d.key] ??= {}).kcal = "Inserisci le kcal";
+          if (k === "kcal") (errors[d.key] ??= {}).kcal = "Inserisci le calorie";
         } else if (r === "invalid") (errors[d.key] ??= {})[k] = "Inserisci un numero valido";
         else if (r < 0) (errors[d.key] ??= {})[k] = "Non può essere negativo";
         else nums[k] = r;

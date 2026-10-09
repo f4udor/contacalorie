@@ -9,6 +9,7 @@ import { useLocalData } from "../lib/use-local-data";
 import { plural } from "../lib/plural";
 import { summarize } from "@/data";
 import { ImportSheet } from "./import-sheet";
+import { ActionRow, Caption, GroupedList } from "./ui/ui";
 
 /**
  * L'archivio in cui importare: quello dell'account (Supabase). Nella modalità dimostrativa dell'accesso (solo per gli
@@ -43,12 +44,12 @@ export function ImportSection() {
   const s = summarize(data);
   return (
     <>
-      <p className="text-sm text-muted">
+      <GroupedList>
+        <ActionRow label="Importa i dati di questo dispositivo" onClick={() => setOpen(true)} />
+      </GroupedList>
+      <Caption>
         Su questo dispositivo ci sono dati salvati prima dell&apos;accesso: {plural(s.days, "giorno", "giorni")}, {plural(s.dishes, "piatto", "piatti")}, {plural(s.weighIns, "pesata", "pesate")}.
-      </p>
-      <button type="button" onClick={() => setOpen(true)} className="mt-3 min-h-12 w-full rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent">
-        Importa i dati di questo dispositivo
-      </button>
+      </Caption>
       {open && <ImportSheet local={data} remote={target} onClose={() => setOpen(false)} onLocalCleared={reload} />}
     </>
   );

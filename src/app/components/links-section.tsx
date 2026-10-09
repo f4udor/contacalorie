@@ -1,20 +1,26 @@
 "use client";
 
-import { useAiAvailable } from "../lib/use-ai";
+import { useAiInfo } from "../lib/use-ai";
 import { HealthSection } from "./health-section";
+import { Caption, GroupedList, ValueRow } from "./ui/ui";
 
-/** Pagina "Collegamenti" di Impostazioni: stima automatica (AI) e dati da Salute. */
+/** Pagina "Collegamenti" di Impostazioni: Salute e stime dei pasti, due elenchi con il titolo sopra. */
 export function LinksSection() {
-  const available = useAiAvailable();
-  const text = available === null ? "controllo…" : available ? "attiva" : "non configurata";
+  const info = useAiInfo();
+  const state = info === null ? "Controllo…" : info?.available ? "Attivo" : "Non attivo";
+  const showUsed = info?.available && info.usedToday !== null;
   return (
-    <section id="collegamenti" className="rounded-2xl bg-card p-4" aria-label="Collegamenti">
-      <div className="flex min-h-12 items-center justify-between gap-3">
-        <span className="text-[17px]">Stima automatica (AI)</span>
-        <span className={`text-[17px] font-semibold ${available ? "text-ok" : "text-muted"}`}>{text}</span>
-      </div>
-      {available === false && <p className="mb-2 text-sm text-muted">Senza AI puoi inserire i piatti a mano. Come attivarla: docs/COLLEGA-VERTEX.md.</p>}
+    <div id="collegamenti" className="flex flex-col gap-6" aria-label="Collegamenti">
       <HealthSection />
-    </section>
+      <section className="flex flex-col gap-1.5" aria-label="Stime dei pasti">
+        <h2 className="px-4 text-[13px] font-medium uppercase tracking-wide text-testo-secondario">Stime dei pasti</h2>
+        <GroupedList>
+          {info?.available && info.model && <ValueRow title="Modello" value={info.model} />}
+          <ValueRow title="Stato" value={state} />
+          {showUsed && <ValueRow title="Stime di oggi" value={info.limit !== null ? `${info.usedToday} di ${info.limit}` : String(info.usedToday)} />}
+        </GroupedList>
+        {info !== null && !info.available && <Caption>Senza stime inserisci i piatti a mano.</Caption>}
+      </section>
+    </div>
   );
 }

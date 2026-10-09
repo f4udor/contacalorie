@@ -34,7 +34,7 @@ describe("draftsToProposal", () => {
     expect(r.ok).toBe(false);
     if (!r.ok) {
       const [a, b] = drafts[0].dishes;
-      expect(r.errors[a.key]).toEqual({ kcal: "Inserisci le kcal", protein: "Inserisci un numero valido" });
+      expect(r.errors[a.key]).toEqual({ kcal: "Inserisci le calorie", protein: "Inserisci un numero valido" });
       expect(r.errors[b.key]).toEqual({ fat: "Non può essere negativo" });
     }
   });

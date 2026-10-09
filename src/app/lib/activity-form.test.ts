@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ActivityRecord } from "@/data";
-import { bikeToForm, hasManualBike, parseWhole, validateBikeForm, validateWeight, withManualBike, withoutManualBike } from "./activity-form";
+import { bikeToForm, hasManualBike, parseWhole, validateActivityDay, validateBikeForm, validateWeight, withManualBike, withoutManualBike } from "./activity-form";
 
 describe("parseWhole", () => {
   it("interi con o senza punti delle migliaia", () => {
@@ -21,7 +21,7 @@ const rec = (o: Partial<ActivityRecord> = {}): ActivityRecord => ({ date: "2026-
 
 describe("validateBikeForm", () => {
   it("serve almeno uno tra km e kcal", () => {
-    expect(validateBikeForm({ km: "", kcal: "" })).toEqual({ ok: false, errors: { km: "Inserisci i km o le kcal" } });
+    expect(validateBikeForm({ km: "", kcal: "" })).toEqual({ ok: false, errors: { km: "Inserisci la distanza o le calorie" } });
   });
   it("solo km, con la virgola", () => {
     expect(validateBikeForm({ km: "8,5", kcal: "" })).toEqual({ ok: true, bike: { km: 8.5, kcal: null } });
@@ -77,5 +77,33 @@ describe("validateWeight", () => {
     expect(validateWeight("novanta")).toEqual({ ok: false, error: "Inserisci un numero valido" });
     expect(validateWeight("0")).toEqual({ ok: false, error: "Il peso deve essere maggiore di zero" });
     expect(validateWeight("-4")).toEqual({ ok: false, error: "Il peso deve essere maggiore di zero" });
+  });
+});
+
+describe("giorno dell'uscita in bici (T6.4)", () => {
+  const today = "2026-10-08";
+  it("oggi e i giorni passati vanno bene", () => {
+    expect(validateActivityDay("2026-10-08", today)).toBeNull();
+    expect(validateActivityDay("2026-09-30", today)).toBeNull();
+  });
+  it("un giorno futuro è rifiutato", () => {
+    expect(validateActivityDay("2026-10-09", today)).toBe("Scegli un giorno fino a oggi");
+  });
+  it("un giorno vuoto o inesistente è rifiutato", () => {
+    expect(validateActivityDay("", today)).toBe("Scegli un giorno");
+    expect(validateActivityDay("2026-02-31", today)).toBe("Scegli un giorno");
+  });
+});
+
+describe("cambio di giorno e uscita già presente (T6.4)", () => {
+  const rec = (date: string, km: number | null): ActivityRecord => ({ date, steps: 8000, stepsSource: "salute", bikeKm: 12, bikeKcalHealth: null, bikeSource: "salute", bikeKmManual: km, bikeKcalManual: null });
+  it("cambiando giorno il modulo si riempie con l'uscita a mano di quel giorno", () => {
+    expect(bikeToForm(rec("2026-10-05", 8))).toEqual({ km: "8", kcal: "" });
+    expect(bikeToForm(rec("2026-10-06", null))).toEqual({ km: "", kcal: "" });
+    expect(bikeToForm(null)).toEqual({ km: "", kcal: "" });
+  });
+  it("salvare sostituisce l'uscita a mano del giorno e lascia passi e parte di Salute: una sola uscita a mano per giorno", () => {
+    const next = withManualBike("2026-10-05", { km: 20, kcal: null }, rec("2026-10-05", 8));
+    expect(next).toMatchObject({ steps: 8000, bikeKm: 12, bikeKmManual: 20, bikeKcalManual: null });
   });
 });

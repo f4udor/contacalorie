@@ -1,0 +1,59 @@
+{
+  "id": "oggi-passato-sotto",
+  "descrizione": "Giorno passato rimasto sotto l'obiettivo (1.450 su 2.100): anello e numero nel colore Sotto (grigio), non Comando.",
+  "oggi": "2026-01-08",
+  "percorso": "/?d=2026-01-07",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m420",
+        "date": "2026-01-07",
+        "slot": "colazione",
+        "name": "Cappuccino e brioche",
+        "kcal": 320,
+        "protein": 8,
+        "carbs": 48,
+        "fat": 10,
+        "fiber": 1,
+        "salt": 0.4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m421",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 650,
+        "protein": 22,
+        "carbs": 110,
+        "fat": 12,
+        "fiber": 6,
+        "salt": 1.8,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m422",
+        "date": "2026-01-07",
+        "slot": "cena",
+        "name": "Petto di pollo e verdure",
+        "kcal": 480,
+        "protein": 52,
+        "carbs": 18,
+        "fat": 20,
+        "fiber": 7,
+        "salt": 1.4,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

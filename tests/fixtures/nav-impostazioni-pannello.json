@@ -1,0 +1,69 @@
+{
+  "id": "nav-impostazioni-pannello",
+  "descrizione": "Dall'ingranaggio di Oggi si apre il pannello Impostazioni con la X e l'elenco a sezioni.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m13",
+        "date": "2026-01-08",
+        "slot": "colazione",
+        "name": "Cappuccino e brioche",
+        "kcal": 320,
+        "protein": 8,
+        "carbs": 48,
+        "fat": 10,
+        "fiber": 1,
+        "salt": 0.4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m14",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 650,
+        "protein": 22,
+        "carbs": 110,
+        "fat": 12,
+        "fiber": 6,
+        "salt": 1.8,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m15",
+        "date": "2026-01-08",
+        "slot": "cena",
+        "name": "Petto di pollo e verdure",
+        "kcal": 480,
+        "protein": 52,
+        "carbs": 18,
+        "fat": 20,
+        "fiber": 7,
+        "salt": 1.4,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Impostazioni",
+        "exact": true
+      }
+    }
+  ]
+}

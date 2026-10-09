@@ -4,7 +4,8 @@ import type { ActivityRecord, MealRecord } from "@/data";
 import { loadWeekData } from "./week-data";
 import { buildTodayView } from "./today-view";
 import { weekWeight, weightCard } from "./week-weight";
-import { activityRows, defaultWeighInDate, deleteActivityValue, freeMealOfWeek, markFreeMeal, removeFreeMeal, saveManualBike, weekMeals, weighInsInWeek, withoutActivityValue } from "./week-actions";
+import { saveDish } from "./save-dish";
+import { activityRows, defaultDayInWeek, defaultWeighInDate, deleteActivityValue, freeMealOfWeek, markFreeMeal, removeFreeMeal, saveManualBike, weekMealTitle, weekMeals, weighInsInWeek, withoutActivityValue } from "./week-actions";
 
 const rec = (date: string, o: Partial<ActivityRecord> = {}): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: null, bikeKcalManual: null, ...o });
 const dish = (id: string, date: string, slot: MealRecord["slot"], kcal: number, isFree = false): MealRecord => ({
@@ -130,7 +131,7 @@ describe("dopo una modifica i numeri si ricalcolano", () => {
   it("scheda Peso: con pesate mostra kg e differenza, senza dice «Nessuna pesata»", () => {
     expect(weightCard(null, fmt, fmt)).toEqual({ value: "Nessuna pesata" });
     const w = weekWeight({ monday: WEEK[0], sunday: WEEK[6], weighIns: [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-07", weightKg: 91.4 }], targetWeightKg: 82 });
-    expect(weightCard(w, fmt, fmt)).toEqual({ value: "91.4 kg", hint: "-0.6 kg dalla pesata precedente", tone: "ok" });
+    expect(weightCard(w, fmt, fmt)).toEqual({ value: "91.4 kg", hint: "-0.6 kg dalla precedente", tone: "ok" });
   });
 
   it("passi a mano eliminati: l'obiettivo di Oggi perde il bonus passi", async () => {
@@ -155,5 +156,34 @@ describe("dopo una modifica i numeri si ricalcolano", () => {
     expect(await remaining()).toBe(2100 - 800);
     await removeFreeMeal(store, { date: "2026-01-08", slot: "pranzo" });
     expect(await remaining()).toBe(2100 - 2250);
+  });
+});
+
+describe("pannelli della Settimana (T6.3)", () => {
+  const week = ["2026-10-05", "2026-10-06", "2026-10-07", "2026-10-08", "2026-10-09", "2026-10-10", "2026-10-11"];
+  it("settimana corrente: il pasto o l'uscita si propongono oggi", () => {
+    expect(defaultDayInWeek(week, "2026-10-08")).toBe("2026-10-08");
+  });
+  it("settimana passata: si apre sull'ultimo giorno di quella settimana (la domenica)", () => {
+    expect(defaultDayInWeek(week, "2026-10-14")).toBe("2026-10-11");
+  });
+  it("il pasto si legge come «Cena di martedì»", () => {
+    expect(weekMealTitle({ date: "2026-10-06", slot: "cena" }, (d) => (d === "2026-10-06" ? "martedì" : "?"))).toBe("Cena di martedì");
+    expect(weekMealTitle({ date: "2026-10-08", slot: "pranzo" }, () => "giovedì")).toBe("Pranzo di giovedì");
+  });
+  const record = (id: string, date: string, isFree: boolean): MealRecord => ({ id, date, slot: "cena", name: "Pizza", kcal: 900, protein: 30, carbs: 100, fat: 30, fiber: 3, salt: 3, isFree, originalText: null });
+  it("«Aggiungi pasto libero» in settimana corrente: il pasto di oggi diventa il pasto libero della settimana", async () => {
+    const store = createMemoryDataStore();
+    await saveDish(store, record("a", "2026-10-08", true), true);
+    const w = await loadWeekData(store, "2026-10-05", "2026-10-08");
+    expect(freeMealOfWeek(w.meals)).toMatchObject({ date: "2026-10-08", slot: "cena", isFree: true });
+  });
+  it("«Aggiungi pasto libero» in una settimana passata: conta per quella settimana e non per la corrente", async () => {
+    const store = createMemoryDataStore();
+    await saveDish(store, record("b", "2026-10-04", true), true);
+    const past = await loadWeekData(store, "2026-09-28", "2026-10-08");
+    const current = await loadWeekData(store, "2026-10-05", "2026-10-08");
+    expect(freeMealOfWeek(past.meals)).toMatchObject({ date: "2026-10-04" });
+    expect(freeMealOfWeek(current.meals)).toBeNull();
   });
 });

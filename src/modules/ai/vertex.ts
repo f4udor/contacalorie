@@ -26,6 +26,10 @@ const b64url = (v: string | Buffer) => Buffer.from(v).toString("base64url");
 /** Gemini su Vertex AI, chiamato dal server con un account di servizio (nessuna libreria: firma del token con `node:crypto`). */
 export class VertexProvider implements AiProvider {
   readonly name = "vertex";
+
+  get model(): string {
+    return this.config.model;
+  }
   private token: { value: string; expires: number } | null = null;
 
   constructor(

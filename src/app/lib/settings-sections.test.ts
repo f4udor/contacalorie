@@ -6,8 +6,8 @@ const today = "2026-01-01";
 const man = { sex: "uomo" as const, ageYears: 27, heightCm: 180, weightKg: 100 };
 
 describe("pagine di Impostazioni", () => {
-  it("l'ordine è Profilo, Obiettivi, Attività, Pasto libero, Dati e, in fondo, Collegamenti", () => {
-    expect(SECTIONS.map((s) => s.title)).toEqual(["Profilo", "Obiettivi", "Attività", "Pasto libero", "Dati", "Collegamenti"]);
+  it("l'ordine è Profilo, Obiettivi, Attività, Pasto libero, Esporta i dati e, in fondo, Collegamenti", () => {
+    expect(SECTIONS.map((s) => s.title)).toEqual(["Profilo", "Obiettivi", "Attività", "Pasto libero", "Esporta i dati", "Collegamenti"]);
   });
   it("la pagina viene dall'indirizzo; sconosciuta o assente = l'elenco", () => {
     expect(sectionFromParam("obiettivi")).toBe("obiettivi");
@@ -23,20 +23,22 @@ describe("riassunti delle righe", () => {
     const r = resolveSettings(user, today, weightKg);
     return rowSummaries({ user, settings: r.settings, profileComplete: r.plan !== null, weightKg, healthLinked });
   };
-  it("profilo completo: età e peso; kcal base calcolate; bonus; tetto del pasto libero", () => {
-    expect(summaries(man)).toEqual({ profilo: "27 anni · 100 kg", obiettivi: "2.390 kcal", attivita: "Bonus 50 %", "pasto-libero": "800 kcal", dati: "CSV", collegamenti: "Salute collegata" });
+  it("con peso e obiettivo: «98,6 kg → 90 kg»; kcal base calcolate; Attività senza valore; tetto del pasto libero; Salute attiva", () => {
+    expect(summaries({ ...man, targetWeightKg: 90 }, true, 98.6)).toEqual({ profilo: "98,6 kg → 90 kg", obiettivi: "2.380 kcal", attivita: "", "pasto-libero": "800 kcal", dati: "", collegamenti: "Salute attiva" });
   });
-  it("profilo incompleto: «Da completare» e kcal predefinite", () => {
+  it("senza peso obiettivo: solo il peso; senza peso: «Da completare»", () => {
+    expect(summaries(man).profilo).toBe("100 kg");
+    expect(summaries({ ageYears: 27 }, false, null).profilo).toBe("Da completare");
+  });
+  it("profilo incompleto: kcal predefinite; Salute non attiva", () => {
     const s = summaries({ ageYears: 27 }, false, null);
-    expect(s.profilo).toBe("Da completare");
     expect(s.obiettivi).toBe("2.100 kcal");
-    expect(s.collegamenti).toBe("Salute non collegata");
+    expect(s.collegamenti).toBe("Salute non attiva");
   });
   it("kcal base e tetto scritti a mano; stato di Salute non ancora noto = nessun riassunto", () => {
-    const s = summaries({ ...man, baseKcal: 2000, freeMealCap: 700, bonusShare: 0.35 }, null);
+    const s = summaries({ ...man, baseKcal: 2000, freeMealCap: 700 }, null);
     expect(s.obiettivi).toBe("2.000 kcal");
     expect(s["pasto-libero"]).toBe("700 kcal");
-    expect(s.attivita).toBe("Bonus 35 %");
     expect(s.collegamenti).toBe("");
   });
 });

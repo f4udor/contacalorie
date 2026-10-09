@@ -142,7 +142,7 @@ Finora i dati stavano nel browser di ogni dispositivo. Non vanno persi: l'app li
 
 1. Subito dopo l'accesso, se su quel dispositivo ci sono dati, compare un pannello **"Importa i dati di questo dispositivo"** con quanti giorni, piatti e pesate contiene. Premi **Importa**.
 2. Compare **"Importazione completata"** con quello che è stato aggiunto. Guarda *Oggi* e *Settimana*: devi ritrovare i tuoi pasti.
-3. Quando sei sicuro che sia tutto a posto, premi **Tutto a posto: togli i dati da questo dispositivo** e conferma. Se hai dubbi premi **Tienili per ora**: i dati restano sul dispositivo e la voce rimane in **Impostazioni → Dati**.
+3. Quando sei sicuro che sia tutto a posto, premi **Tutto a posto: rimuovi i dati da questo dispositivo** e conferma. Se hai dubbi premi **Tienili per ora**: i dati restano sul dispositivo e la voce rimane in **Impostazioni → Esporta i dati**.
 
 Se hai usato l'app **su più dispositivi**, ripeti l'importazione su ognuno: i dati si **uniscono** e non si duplicano, nemmeno se ripeti.
 
@@ -179,4 +179,4 @@ Su Vercel cancella le due variabili del passo 6 e ripubblica (passo 7). L'app to
 
 ## Dove stanno i dati e come averne una copia
 
-I dati sono nel tuo progetto Supabase, protetti dalle regole di sicurezza: ognuno vede solo le proprie righe. Puoi scaricarne una copia quando vuoi da **Impostazioni → Dati → Esporta** (file CSV che si aprono con Excel).
+I dati sono nel tuo progetto Supabase, protetti dalle regole di sicurezza: ognuno vede solo le proprie righe. Puoi scaricarne una copia quando vuoi da **Impostazioni → Esporta i dati** (file CSV che si aprono con Excel).

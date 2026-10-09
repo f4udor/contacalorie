@@ -2,38 +2,35 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ReactNode } from "react";
-
-const icon = (children: ReactNode) => (
-  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    {children}
-  </svg>
-);
+import { activeTab } from "../lib/nav";
+import { IconBars, IconLine, IconRing } from "./ui/icons";
 
 const TABS = [
-  { href: "/", label: "Oggi", icon: icon(<><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></>) },
-  { href: "/settimana", label: "Settimana", icon: icon(<><path d="M5 20V11M10 20V6M15 20v-6M20 20V9" /></>) },
-  { href: "/grafici", label: "Grafici", icon: icon(<><path d="M3.5 19.5h17M4.5 15l4.5-5 4 3.5 6-7" /></>) },
-  { href: "/impostazioni", label: "Impostazioni", icon: icon(<><path d="M4 7h10M18 7h2M4 17h2M10 17h10" /><circle cx="16" cy="7" r="2" /><circle cx="8" cy="17" r="2" /></>) },
+  { id: "oggi", href: "/", label: "Oggi", icon: <IconRing size={24} /> },
+  { id: "settimana", href: "/settimana", label: "Settimana", icon: <IconBars size={24} /> },
+  { id: "grafici", href: "/grafici", label: "Grafici", icon: <IconLine size={24} /> },
 ] as const;
 
-/** Barra di navigazione in basso, con rispetto della barra home dell'iPhone. */
+/**
+ * Barra in basso (BRIEF §10.4): capsula sospesa in vetro con tre voci, icona e nome. La voce attiva sta in una pillola più scura
+ * nel colore Comando. Le Impostazioni non sono qui: si aprono dall'ingranaggio delle intestazioni.
+ */
 export function BottomNav() {
-  const pathname = usePathname();
+  const current = activeTab(usePathname());
   return (
     <nav
       aria-label="Navigazione principale"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-[var(--nav)] pb-[env(safe-area-inset-bottom)] backdrop-blur-xl"
+      className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-40 mx-auto max-w-xl rounded-full border border-vetro-bordo bg-vetro p-1 shadow-[inset_0_1px_0_var(--vetro-luce)] backdrop-blur-xl"
     >
-      <ul className="mx-auto flex max-w-xl">
+      <ul className="flex">
         {TABS.map((tab) => {
-          const active = tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href);
+          const active = tab.id === current;
           return (
-            <li key={tab.href} className="flex-1">
+            <li key={tab.id} className="min-w-0 flex-1">
               <Link
                 href={tab.href}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-14 flex-col items-center justify-center gap-0.5 px-1 text-[11px] font-medium ${active ? "text-accent" : "text-muted"}`}
+                className={`flex h-[54px] flex-col items-center justify-center gap-0.5 rounded-full px-1 text-[11px] font-semibold whitespace-nowrap ${active ? "bg-voce-attiva-barra text-comando" : "text-testo"}`}
               >
                 {tab.icon}
                 <span>{tab.label}</span>

@@ -1,6 +1,6 @@
 {
   "id": "settimana-dopo-togli-libero",
-  "descrizione": "Dopo 'Togli pasto libero': la scheda dice 'non usato' e il pasto resta.",
+  "descrizione": "Dopo «Rimuovi pasto libero»: la scheda dice «Non usato» e il pasto resta.",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {
@@ -11,7 +11,7 @@
     },
     "meals": [
       {
-        "id": "m373",
+        "id": "m427",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -25,7 +25,7 @@
         "originalText": null
       },
       {
-        "id": "m374",
+        "id": "m428",
         "date": "2026-01-06",
         "slot": "cena",
         "name": "Pizza margherita",
@@ -39,7 +39,7 @@
         "originalText": null
       },
       {
-        "id": "m375",
+        "id": "m429",
         "date": "2026-01-07",
         "slot": "pranzo",
         "name": "Risotto ai funghi",
@@ -53,7 +53,7 @@
         "originalText": null
       },
       {
-        "id": "m376",
+        "id": "m430",
         "date": "2026-01-07",
         "slot": "pranzo",
         "name": "Tiramisù",
@@ -125,14 +125,17 @@
       }
     },
     {
-      "click": "Togli pasto libero"
+      "click": "Rimuovi pasto libero"
     },
     {
       "wait": 500
     },
     {
-      "click": "Chiudi",
-      "exact": true
+      "clickRole": {
+        "role": "button",
+        "name": "Chiudi",
+        "exact": true
+      }
     }
   ]
 }

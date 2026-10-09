@@ -44,6 +44,8 @@ export interface EstimateRequest {
 /** Unica porta verso un modello AI. Restituisce la risposta grezza (JSON già letto): la valida chi la chiama. */
 export interface AiProvider {
   readonly name: string;
+  /** Identificativo del modello usato (es. «gemini-2.5-flash»), se il provider ne ha uno. Solo il nome: nessun segreto. */
+  readonly model?: string;
   estimateMeals(request: EstimateRequest): Promise<unknown>;
 }
 

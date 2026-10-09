@@ -15,17 +15,18 @@
       }
     },
     {
-      "click": "Bici a mano"
+      "click": "Uscita in bici",
+      "exact": true
     },
     {
       "fill": [
-        "Km in bici",
+        "Distanza",
         "-2"
       ]
     },
     {
       "fill": [
-        "Kcal",
+        "Calorie",
         "1,5"
       ]
     },

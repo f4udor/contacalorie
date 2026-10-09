@@ -72,7 +72,7 @@ export function parseDecimal(text: string): number | "empty" | "invalid" {
 }
 
 /** Frase mostrata accanto a una stima dell'AI che non supera il controllo di coerenza (BRIEF §3.7). */
-export const KCAL_CHECK_MESSAGE = "Le kcal sembrano basse rispetto ai nutrienti: controlla i numeri.";
+export const KCAL_CHECK_MESSAGE = "Calorie basse rispetto ai nutrienti: controlla i numeri.";
 
 /**
  * Il controllo di coerenza sui numeri scritti come testo (si ricalcola a ogni ritocco). Senza kcal valide non c'è nulla da controllare;
@@ -108,7 +108,7 @@ export function validateMealForm(
   for (const key of ["kcal", "protein", "carbs", "fat", "fiber", "salt"] as const) {
     const r = parseDecimal(values[key]);
     if (r === "empty") {
-      if (key === "kcal") errors.kcal = aiAvailable ? "Inserisci le kcal o tocca «Stima con l'AI»" : "Inserisci le kcal";
+      if (key === "kcal") errors.kcal = aiAvailable ? "Inserisci le calorie o tocca «Stima con l'AI»" : "Inserisci le calorie";
     } else if (r === "invalid") {
       errors[key] = "Inserisci un numero valido";
     } else if (r < 0) {
@@ -117,7 +117,7 @@ export function validateMealForm(
       nums[key] = r;
     }
   }
-  if (values.isFree && !freeAllowed) errors.isFree = "Il pasto libero di questa settimana è già stato usato";
+  if (values.isFree && !freeAllowed) errors.isFree = "Già usato questa settimana.";
   if (Object.keys(errors).length > 0) return { ok: false, errors };
   return {
     ok: true,

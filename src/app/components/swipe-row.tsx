@@ -9,6 +9,8 @@ export interface SwipeAction {
   label: string;
   /** Solo icona (cestino): più stretto. */
   icon?: ReactNode;
+  /** Testo mostrato nel pulsante quando `label` è solo per la lettura vocale (es. «Elimina»). */
+  visibleLabel?: string;
   tone: "accent" | "danger";
   /** Larghezza del pulsante in px, se l'etichetta è più lunga del solito. */
   width?: number;
@@ -28,13 +30,15 @@ interface SwipeRowProps {
   actions: SwipeAction[];
   children: ReactNode;
   className?: string;
+  /** Fondo della riga che scorre (di solito una tessera). */
+  surfaceClassName?: string;
 }
 
 /**
  * Riga che scorre verso sinistra e mostra i pulsanti a destra. Scorrendo indietro o toccando altrove si richiude.
  * Verso destra non fa nulla. Il gesto parte solo se il movimento è più orizzontale che verticale, così la pagina scorre normalmente.
  */
-export function SwipeRow({ id, openId, setOpen, actions, children, className = "" }: SwipeRowProps) {
+export function SwipeRow({ id, openId, setOpen, actions, children, className = "", surfaceClassName = "bg-tessera" }: SwipeRowProps) {
   const actionWidth = (a: SwipeAction) => a.width ?? (a.icon ? SWIPE_ICON_ACTION_WIDTH : SWIPE_ACTION_WIDTH);
   const width = actions.reduce((sum, a) => sum + actionWidth(a), 0);
   const isOpen = openId === id;
@@ -100,15 +104,15 @@ export function SwipeRow({ id, openId, setOpen, actions, children, className = "
           <button
             key={a.key}
             type="button"
-            aria-label={a.icon ? a.label : undefined}
+            aria-label={a.icon || a.visibleLabel ? a.label : undefined}
             onClick={() => {
               setOpen(id, false);
               a.onClick();
             }}
-            className={`flex min-h-11 items-center justify-center px-1 text-center text-[15px] font-semibold leading-tight ${a.tone === "danger" ? "bg-bad-btn text-white" : "bg-accent text-white"}`}
+            className={`flex min-h-11 items-center justify-center px-1 text-center text-[15px] font-semibold leading-tight ${a.tone === "danger" ? "bg-fuori text-testo" : "bg-comando text-testo-su-comando"}`}
             style={{ width: actionWidth(a) }}
           >
-            {a.icon ?? a.label}
+            {a.icon ?? a.visibleLabel ?? a.label}
           </button>
         ))}
       </div>
@@ -123,7 +127,7 @@ export function SwipeRow({ id, openId, setOpen, actions, children, className = "
             e.preventDefault();
           }
         }}
-        className="relative bg-card"
+        className={`relative ${surfaceClassName}`}
         style={{ transform: `translateX(${shown}px)`, touchAction: "pan-y", transition: dragOffset === null ? "transform 200ms ease-out" : "none" }}
       >
         {children}

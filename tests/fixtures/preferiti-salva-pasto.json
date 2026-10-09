@@ -1,6 +1,6 @@
 {
   "id": "preferiti-salva-pasto",
-  "descrizione": "Intestazione del pasto toccata: pannello 'Salva pasto' con il nome proposto (i nomi dei piatti).",
+  "descrizione": "Intestazione del pasto toccata: pannello «Salva pasto nei preferiti» con il nome proposto (i nomi dei piatti).",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m359",
+        "id": "m407",
         "date": "2026-01-08",
         "slot": "colazione",
         "name": "Cappuccino e brioche",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m360",
+        "id": "m408",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -38,7 +38,7 @@
         "originalText": null
       },
       {
-        "id": "m361",
+        "id": "m409",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Insalata mista con un nome molto lungo che deve andare a capo senza rompere nulla",
@@ -52,7 +52,7 @@
         "originalText": null
       },
       {
-        "id": "m362",
+        "id": "m410",
         "date": "2026-01-08",
         "slot": "spuntino",
         "name": "Pizza al taglio",
@@ -66,7 +66,7 @@
         "originalText": null
       },
       {
-        "id": "m363",
+        "id": "m411",
         "date": "2026-01-08",
         "slot": "cena",
         "name": "Petto di pollo e verdure",

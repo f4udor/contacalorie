@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { estimateDish, fetchAiAvailable, localDateTime, requestEstimate } from "./ai-client";
 
 const proposal = { meals: [{ slot: "pranzo", dishes: [{ name: "Pera", quantity: null, quantityAssumed: true, kcal: 80, protein: 0.5, carbs: 21, fat: 0.2, fiber: 4, salt: 0, note: "" }] }] };
-type Init = { method: string; headers: Record<string, string>; body: string };
+type Init = { method: string; headers: Record<string, string>; body?: string };
 const reply = (status: number, body: unknown) => async () => ({ ok: status >= 200 && status < 300, status, json: async () => body });
 
 describe("localDateTime", () => {
@@ -22,7 +22,7 @@ describe("requestEstimate", () => {
     expect(r).toEqual({ ok: true, proposal, originalText: "una pera" });
     expect(seen!.url).toBe("/api/estimate");
     expect(seen!.init!.headers.Authorization).toBe("Bearer tok");
-    expect(JSON.parse(seen!.init!.body)).toEqual({ text: "una pera", localDate: "2026-01-08", localTime: "12:30" });
+    expect(JSON.parse(seen!.init!.body ?? "")).toEqual({ text: "una pera", localDate: "2026-01-08", localTime: "12:30" });
   });
 
   it("senza chiave (accesso non richiesto) non manda l'intestazione; con la correzione manda anche la stima precedente", async () => {
@@ -33,7 +33,7 @@ describe("requestEstimate", () => {
     };
     await requestEstimate({ text: "una pera", previous: proposal as never, correction: "piccola" }, null, f);
     expect(init!.headers.Authorization).toBeUndefined();
-    expect(JSON.parse(init!.body)).toMatchObject({ correction: "piccola", previous: proposal });
+    expect(JSON.parse(init!.body ?? "")).toMatchObject({ correction: "piccola", previous: proposal });
   });
 
   it.each([
@@ -80,7 +80,7 @@ describe("estimateDish", () => {
       return { ok: true, status: 200, json: async () => ({ proposal: two }) };
     };
     const r = await estimateDish(" Spaghetti al pesto ", "80 g", null, f);
-    expect(JSON.parse(init!.body).text).toBe("Spaghetti al pesto, 80 g");
+    expect(JSON.parse(init!.body ?? "").text).toBe("Spaghetti al pesto, 80 g");
     expect(r).toMatchObject({ ok: true, numbers: { kcal: 480, protein: 1, carbs: 42 }, note: "pasta pesto" });
   });
   it("senza quantità il testo è solo il nome; gli errori passano com'erano", async () => {
@@ -89,7 +89,33 @@ describe("estimateDish", () => {
       init = i;
       return { ok: true, status: 200, json: async () => ({ proposal }) };
     });
-    expect(JSON.parse(init!.body).text).toBe("Pera");
+    expect(JSON.parse(init!.body ?? "").text).toBe("Pera");
     expect(await estimateDish("Pera", "", null, reply(429, { error: { code: "limite", message: "Limite raggiunto." } }))).toEqual({ ok: false, code: "limite", message: "Limite raggiunto." });
+  });
+});
+
+describe("fetchAiInfo (T6.5)", () => {
+  const reply = (body: unknown, ok = true) => async () => ({ ok, status: ok ? 200 : 500, json: async () => body });
+  it("legge stato, nome del modello, limite e stime di oggi", async () => {
+    const { fetchAiInfo } = await import("./ai-client");
+    expect(await fetchAiInfo(null, reply({ available: true, model: "Gemini 2.5 Flash", limit: 60, usedToday: 4 }))).toEqual({ available: true, model: "Gemini 2.5 Flash", limit: 60, usedToday: 4 });
+  });
+  it("senza modello configurato: nessun nome; senza conteggio: nessun numero", async () => {
+    const { fetchAiInfo } = await import("./ai-client");
+    expect(await fetchAiInfo(null, reply({ available: false, model: null, limit: 60, usedToday: null }))).toEqual({ available: false, model: null, limit: 60, usedToday: null });
+  });
+  it("manda il token dell'utente, se c'è", async () => {
+    const { fetchAiInfo } = await import("./ai-client");
+    let auth: string | undefined;
+    await fetchAiInfo(async () => "tok", async (_url, init) => {
+      auth = init?.headers.Authorization;
+      return { ok: true, status: 200, json: async () => ({ available: true }) };
+    });
+    expect(auth).toBe("Bearer tok");
+  });
+  it("lettura non riuscita: null", async () => {
+    const { fetchAiInfo } = await import("./ai-client");
+    expect(await fetchAiInfo(null, reply({}, false))).toBeNull();
+    expect(await fetchAiInfo(null, async () => { throw new Error("rete"); })).toBeNull();
   });
 });

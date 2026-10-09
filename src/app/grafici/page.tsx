@@ -1,4 +1,4 @@
-import { Card } from "../components/card";
+import { Card } from "../components/ui/ui";
 import { PageTitle } from "../components/page-title";
 
 export default function GraficiPage() {

@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m96",
+        "id": "m129",
         "date": "2026-01-05",
         "slot": "cena",
         "name": "Pizza",
@@ -44,10 +44,10 @@
       }
     },
     {
-      "clickRole": {
-        "role": "radio",
-        "name": "Cena"
-      }
+      "select": [
+        "Pasto",
+        "cena"
+      ]
     },
     {
       "scrollTo": "Pasto libero"

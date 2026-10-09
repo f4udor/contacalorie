@@ -9,8 +9,7 @@ import { plural } from "../lib/plural";
 import { useToday } from "../lib/use-today";
 import { useAuth } from "../auth-provider";
 import { ImportSection } from "./data-import";
-
-const button = "min-h-12 w-full rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent disabled:opacity-50";
+import { ActionRow, Caption, GroupedList } from "./ui/ui";
 
 /** Sezione "Dati" di Impostazioni: esportazione in CSV (browser o account) e, se serve, importazione. */
 export function DataSection() {
@@ -41,23 +40,15 @@ export function DataSection() {
   };
 
   return (
-    <section className="rounded-2xl bg-card p-4" aria-label="Dati">
-      <p className="mb-4 text-sm text-muted">{kind === "supabase" ? "File CSV con i dati del tuo account." : "File CSV con i dati di questo dispositivo."}</p>
-      <div className="flex flex-col gap-3">
-        <button type="button" disabled={busy || !store} onClick={() => run("piatti", dishesCsv, "Non ci sono ancora piatti da esportare.", ["piatto", "piatti"])} className={button}>
-          Esporta i piatti (CSV)
-        </button>
-        <button type="button" disabled={busy || !store} onClick={() => run("pesate-e-attivita", measurementsCsv, "Non ci sono ancora pesate o attività da esportare.", ["giorno", "giorni"])} className={button}>
-          Esporta pesate e attività (CSV)
-        </button>
-        {status && (
-          <p role="status" className="text-sm font-medium text-muted">
-            {status}
-          </p>
-        )}
-      </div>
+    <section className="flex flex-col gap-1.5" aria-label="Dati">
+      <GroupedList>
+        <ActionRow label="Esporta i piatti (CSV)" disabled={busy || !store} onClick={() => run("piatti", dishesCsv, "Non ci sono ancora piatti da esportare.", ["piatto", "piatti"])} />
+        <ActionRow label="Esporta pesate e attività (CSV)" disabled={busy || !store} onClick={() => run("pesate-e-attivita", measurementsCsv, "Non ci sono ancora pesate o attività da esportare.", ["giorno", "giorni"])} />
+      </GroupedList>
+      <Caption>{kind === "supabase" ? "File CSV con i dati del tuo account." : "File CSV con i dati di questo dispositivo."}</Caption>
+      {status && <p role="status" className="px-4 text-[13px] text-testo-secondario">{status}</p>}
       {kind !== null && (
-        <div className="mt-4 border-t border-line pt-4 empty:hidden">
+        <div className="mt-4 flex flex-col gap-1.5 empty:hidden">
           <ImportSection />
         </div>
       )}

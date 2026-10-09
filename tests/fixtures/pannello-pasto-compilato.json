@@ -35,24 +35,29 @@
       ]
     },
     {
-      "click": "Colazione"
+      "select": [
+        "Pasto",
+        "colazione"
+      ]
     },
     {
       "fill": [
-        "Kcal",
+        "Calorie",
         "420"
       ]
     },
     {
       "fill": [
-        "Proteine (g)",
-        "18,5"
+        "Proteine",
+        "18,5",
+        true
       ]
     },
     {
       "fill": [
-        "Carboidrati (g)",
-        "52"
+        "Carboidrati",
+        "52",
+        true
       ]
     }
   ]

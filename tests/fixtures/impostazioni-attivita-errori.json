@@ -8,13 +8,13 @@
   "passi": [
     {
       "fill": [
-        "Kcal per passo",
+        "Calorie per passo",
         "2"
       ]
     },
     {
       "fill": [
-        "Passi da cui si conta il bonus",
+        "Passi oltre cui contano",
         "tanti"
       ]
     },

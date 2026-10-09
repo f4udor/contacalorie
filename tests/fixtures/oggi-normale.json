@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m1",
+        "id": "m34",
         "date": "2026-01-05",
         "slot": "colazione",
         "name": "Cappuccino e brioche",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m2",
+        "id": "m35",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -38,7 +38,7 @@
         "originalText": null
       },
       {
-        "id": "m3",
+        "id": "m36",
         "date": "2026-01-05",
         "slot": "spuntino",
         "name": "Yogurt greco",

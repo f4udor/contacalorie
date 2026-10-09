@@ -89,7 +89,7 @@ describe("scheda Peso: testo e colore della variazione (T5b.7)", () => {
   });
   it("con una pesata precedente il testo lo dice", () => {
     const r = weightCard(run([w("2026-01-02", 93), w("2026-01-06", 92.6)]), (n) => formatNumber(n, 1), formatWeightDelta);
-    expect(r.hint).toBe("−0,4 kg dalla pesata precedente");
+    expect(r.hint).toBe("−0,4 kg dalla precedente");
   });
   it("obiettivo più alto del peso attuale: la variazione positiva è verde, quella negativa rossa", () => {
     expect(card(92.3, { targetWeightKg: 100 })).toMatchObject({ hint: "+0,3 kg dal peso di partenza", tone: "ok" });

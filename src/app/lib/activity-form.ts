@@ -57,7 +57,7 @@ export function validateBikeForm(v: BikeFormValues): { ok: true; bike: ParsedBik
     else out.km = km;
   }
 
-  if (Object.keys(errors).length === 0 && out.km === null && out.kcal === null) errors.km = "Inserisci i km o le kcal";
+  if (Object.keys(errors).length === 0 && out.km === null && out.kcal === null) errors.km = "Inserisci la distanza o le calorie";
   return Object.keys(errors).length > 0 ? { ok: false, errors } : { ok: true, bike: out };
 }
 
@@ -84,4 +84,13 @@ export function validateWeight(text: string): { ok: true; weightKg: number } | {
   if (r === "invalid") return { ok: false, error: "Inserisci un numero valido" };
   if (r <= 0) return { ok: false, error: "Il peso deve essere maggiore di zero" };
   return { ok: true, weightKg: r };
+}
+
+/** Il giorno di un'uscita in bici: una data vera, mai futura (nessun giorno oltre oggi). Restituisce il messaggio d'errore, o null se va bene. */
+export function validateActivityDay(day: string, today: DateKey): string | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return "Scegli un giorno";
+  const [y, m, d] = day.split("-").map(Number);
+  const real = new Date(Date.UTC(y, m - 1, d));
+  if (real.getUTCFullYear() !== y || real.getUTCMonth() !== m - 1 || real.getUTCDate() !== d) return "Scegli un giorno";
+  return day > today ? "Scegli un giorno fino a oggi" : null;
 }

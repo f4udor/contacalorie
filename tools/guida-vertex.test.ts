@@ -43,10 +43,10 @@ describe("docs/COLLEGA-VERTEX.md", () => {
 
   it("i nomi dell'app citati nella guida esistono davvero nell'app", () => {
     const sorgenti = ["src/app/components/ai-estimate.tsx", "src/app/components/links-section.tsx"].map((f) => readFileSync(path.join(root, f), "utf8")).join("\n");
-    for (const testo of ["Cosa hai mangiato?", "Stima", "Correggi", "Rifai la stima", "Conferma", "Collegamenti", "attiva", "non configurata"]) {
+    for (const testo of ["Cosa hai mangiato?", "Stima", "Correggi", "Rifai la stima", "Conferma", "Stime dei pasti", "Stato", "Attivo", "Non attivo", "Modello"]) {
       expect(sorgenti).toContain(testo);
     }
-    expect(guida).toContain("Stima automatica non disponibile");
-    expect(readFileSync(path.join(root, "src/modules/ai/types.ts"), "utf8")).toContain("Stima automatica non disponibile.");
+    expect(guida).toContain("Stima non disponibile. Passa a Manuale.");
+    expect(readFileSync(path.join(root, "src/app/components/ai-estimate.tsx"), "utf8")).toContain("Stima non disponibile. Passa a Manuale.");
   });
 });

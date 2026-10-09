@@ -1,41 +1,32 @@
-import Link from "next/link";
-import { SECTIONS, sectionHref } from "../lib/settings-sections";
+import type { ReactNode } from "react";
+import { Caption, ActionRow, GroupedList, ValueRow } from "./ui/ui";
 import type { SectionId } from "../lib/settings-sections";
 
-const chevron = (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="shrink-0 text-muted">
-    <path d="M9 5l7 7-7 7" />
-  </svg>
-);
-
-function Row({ id, title, summary }: { id: SectionId; title: string; summary: string }) {
+/**
+ * Prima pagina di Impostazioni (BRIEF §10.5, bozza): elenchi raggruppati con il valore attuale a destra, l'azione «Esporta i dati» nel colore
+ * Comando, Collegamenti staccata in fondo e, se c'è l'accesso, l'email e «Esci» nel colore Fuori. Nessun campo modificabile.
+ */
+export function SettingsList({ summaries, onOpen, linksNote, account }: { summaries: Record<SectionId, string>; onOpen: (id: SectionId) => void; linksNote?: string; account?: ReactNode }) {
   return (
-    <Link href={sectionHref(id)} className="flex min-h-12 items-center justify-between gap-3 px-4 py-2">
-      <span className="text-[17px] font-semibold">{title}</span>
-      <span className="flex min-w-0 items-center gap-2">
-        <span className="truncate text-[17px] text-muted">{summary}</span>
-        {chevron}
-      </span>
-    </Link>
-  );
-}
-
-/** Prima pagina di Impostazioni: solo righe che aprono le pagine, ciascuna con un riassunto; Collegamenti staccata in fondo. Nessun campo modificabile. */
-export function SettingsList({ summaries }: { summaries: Record<SectionId, string> }) {
-  const main = SECTIONS.filter((s) => s.id !== "collegamenti");
-  const links = SECTIONS.find((s) => s.id === "collegamenti")!;
-  return (
-    <nav aria-label="Impostazioni" className="flex flex-col gap-6">
-      <ul className="divide-y divide-line overflow-hidden rounded-2xl bg-card">
-        {main.map((s) => (
-          <li key={s.id}>
-            <Row id={s.id} title={s.title} summary={summaries[s.id]} />
-          </li>
-        ))}
-      </ul>
-      <div className="overflow-hidden rounded-2xl bg-card">
-        <Row id={links.id} title={links.title} summary={summaries[links.id]} />
+    <nav aria-label="Impostazioni" className="flex flex-col gap-4">
+      <GroupedList>
+        <ValueRow title="Profilo" value={summaries.profilo} onClick={() => onOpen("profilo")} />
+        <ValueRow title="Obiettivi" value={summaries.obiettivi} onClick={() => onOpen("obiettivi")} />
+      </GroupedList>
+      <GroupedList>
+        <ValueRow title="Attività" value={summaries.attivita || undefined} onClick={() => onOpen("attivita")} />
+        <ValueRow title="Pasto libero" value={summaries["pasto-libero"]} onClick={() => onOpen("pasto-libero")} />
+      </GroupedList>
+      <GroupedList>
+        <ActionRow label="Esporta i dati" onClick={() => onOpen("dati")} />
+      </GroupedList>
+      <div className="flex flex-col gap-1.5">
+        <GroupedList>
+          <ValueRow title="Collegamenti" value={summaries.collegamenti || undefined} onClick={() => onOpen("collegamenti")} />
+        </GroupedList>
+        {linksNote && <Caption>{linksNote}</Caption>}
       </div>
+      {account}
     </nav>
   );
 }

@@ -28,12 +28,12 @@ describe("docs/COLLEGA-SUPABASE.md", () => {
   });
 
   it("i nomi dei pulsanti dell'app citati nella guida esistono davvero nell'app", () => {
-    const sorgenti = ["src/app/components/login-screen.tsx", "src/app/components/import-sheet.tsx", "src/app/impostazioni-screen.tsx", "src/app/components/data-section.tsx"]
+    const sorgenti = ["src/app/components/login-screen.tsx", "src/app/components/import-sheet.tsx", "src/app/components/settings-view.tsx", "src/app/components/data-section.tsx"]
       .map((f) => readFileSync(path.join(root, f), "utf8"))
       .join("\n");
     for (const testo of ["Invia il codice", "Invia un nuovo codice", "Accedi", "Importa", "Tienili per ora", "Esci", "Esporta"]) {
       expect(sorgenti).toContain(testo);
     }
-    expect(sorgenti).toContain("Tutto a posto: togli i dati da questo dispositivo");
+    expect(sorgenti).toContain("Tutto a posto: rimuovi i dati da questo dispositivo");
   });
 });

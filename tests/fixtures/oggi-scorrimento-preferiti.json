@@ -1,6 +1,6 @@
 {
   "id": "oggi-scorrimento-preferiti",
-  "descrizione": "Dopo «Preferiti»: il piatto è salvato, la riga si richiude e compare la conferma.",
+  "descrizione": "Dopo «Salva nei preferiti»: il piatto è salvato, la riga si richiude e compare la conferma.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m378",
+        "id": "m432",
         "date": "2026-01-08",
         "slot": "colazione",
         "name": "Cappuccino e brioche",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m379",
+        "id": "m433",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -38,7 +38,7 @@
         "originalText": null
       },
       {
-        "id": "m380",
+        "id": "m434",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Insalata di pomodorini",
@@ -52,7 +52,7 @@
         "originalText": null
       },
       {
-        "id": "m381",
+        "id": "m435",
         "date": "2026-01-08",
         "slot": "cena",
         "name": "Frittata con zucchine",
@@ -78,7 +78,7 @@
       }
     },
     {
-      "click": "Preferiti",
+      "click": "Salva nei preferiti",
       "exact": true
     },
     {

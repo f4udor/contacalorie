@@ -24,10 +24,10 @@ describe("parseDecimal", () => {
 });
 
 describe("validateMealForm: kcal vuote", () => {
-  it("senza AI: 'Inserisci le kcal'; con l'AI attiva il messaggio indica anche la stima", () => {
+  it("senza AI: 'Inserisci le calorie'; con l'AI attiva il messaggio indica anche la stima", () => {
     const v = { ...emptyMealForm("cena"), name: "Pasta" };
-    expect(validateMealForm(v, true)).toEqual({ ok: false, errors: { kcal: "Inserisci le kcal" } });
-    expect(validateMealForm(v, true, true)).toEqual({ ok: false, errors: { kcal: "Inserisci le kcal o tocca «Stima con l'AI»" } });
+    expect(validateMealForm(v, true)).toEqual({ ok: false, errors: { kcal: "Inserisci le calorie" } });
+    expect(validateMealForm(v, true, true)).toEqual({ ok: false, errors: { kcal: "Inserisci le calorie o tocca «Stima con l'AI»" } });
   });
 });
 
@@ -44,7 +44,7 @@ describe("validateMealForm", () => {
 
   it("senza kcal: errore sul campo kcal", () => {
     const r = validateMealForm({ ...base, kcal: "" }, true);
-    expect(r).toEqual({ ok: false, errors: { kcal: "Inserisci le kcal" } });
+    expect(r).toEqual({ ok: false, errors: { kcal: "Inserisci le calorie" } });
   });
 
   it("numeri non validi e negativi: errore per campo, nessun salvataggio", () => {
@@ -76,7 +76,7 @@ describe("validateMealForm", () => {
 
   it("pasto libero rifiutato se la settimana ne ha già uno", () => {
     const r = validateMealForm({ ...base, isFree: true }, false);
-    expect(r).toEqual({ ok: false, errors: { isFree: "Il pasto libero di questa settimana è già stato usato" } });
+    expect(r).toEqual({ ok: false, errors: { isFree: "Già usato questa settimana." } });
     expect(validateMealForm({ ...base, isFree: true }, true).ok).toBe(true);
   });
 });

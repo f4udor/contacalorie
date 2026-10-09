@@ -30,8 +30,9 @@
     },
     {
       "fill": [
-        "Proteine (g)",
-        "venti"
+        "Proteine",
+        "venti",
+        true
       ]
     },
     {
