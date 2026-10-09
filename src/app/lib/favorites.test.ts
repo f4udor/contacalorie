@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { FavoriteDish, FavoriteMeal, MealRecord } from "@/data";
 import { createMemoryDataStore } from "@/data";
-import { defaultMealName, deleteFavorite, favoriteForDish, favoriteForMeal, filterByName, mealTotalKcal, normalizeText, recordsFromFavoriteDish, recordsFromFavoriteMeal, sameDish } from "./favorites";
+import { defaultMealName, deleteFavorite, favoriteForDish, favoriteForMeal, filterByName, isFavoriteDish, mealTotalKcal, normalizeText, recordsFromFavoriteDish, recordsFromFavoriteMeal, sameDish, toggleFavoriteDish } from "./favorites";
 
 const dish = (name: string, quantity: string | null = null, kcal = 100): MealRecord => ({ id: `d-${name}`, date: "2026-01-07", slot: "cena", name, quantity, kcal, protein: 10, carbs: 20, fat: 5, fiber: 2, salt: 0.5, isFree: true, originalText: "testo" });
 const ids = () => {
@@ -98,5 +98,52 @@ describe("eliminare un preferito (T5b.5)", () => {
     await store.saveFavoriteDish(fav("a", "Mela"));
     await deleteFavorite(store, "dish", "zzz");
     expect(await store.listFavoriteDishes()).toHaveLength(1);
+  });
+});
+
+describe("un piatto è tra i preferiti (T5c.1)", () => {
+  const fav = (id: string, name: string, quantity: string | null): FavoriteDish => ({ id, name, quantity, kcal: 100, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0 });
+
+  it("confronto con maiuscole e spazi diversi", () => {
+    expect(sameDish({ name: "  Pasta   al  Pomodoro ", quantity: " 80   G " }, { name: "pasta al pomodoro", quantity: "80 g" })).toBe(true);
+    expect(isFavoriteDish([fav("a", "PASTA", "80 g")], { name: " pasta ", quantity: "80  g" })).toBe(true);
+    expect(isFavoriteDish([fav("a", "Pasta", null)], { name: "pasta", quantity: undefined })).toBe(true);
+  });
+  it("gli accenti contano: «Caffè» e «Caffe» sono piatti diversi", () => {
+    expect(sameDish({ name: "Caffè", quantity: null }, { name: "Caffe", quantity: null })).toBe(false);
+  });
+  it("quantità diversa = piatto diverso", () => {
+    expect(isFavoriteDish([fav("a", "Pasta", "80 g")], { name: "Pasta", quantity: "100 g" })).toBe(false);
+    expect(isFavoriteDish([fav("a", "Pasta", "80 g")], { name: "Pasta", quantity: null })).toBe(false);
+  });
+  it("salva, rimuovi, salva di nuovo: mai due righe", async () => {
+    const store = createMemoryDataStore();
+    const next = ids();
+    expect(await toggleFavoriteDish(store, dish("Pasta", "80 g"), next)).toBe("salvato");
+    expect(await store.listFavoriteDishes()).toHaveLength(1);
+    expect(await toggleFavoriteDish(store, dish("PASTA", " 80  g "), next)).toBe("rimosso");
+    expect(await store.listFavoriteDishes()).toHaveLength(0);
+    expect(await toggleFavoriteDish(store, dish("Pasta", "80 g"), next)).toBe("salvato");
+    expect(await store.listFavoriteDishes()).toHaveLength(1);
+  });
+  it("salvare un piatto già presente aggiorna la riga e non ne crea una seconda", () => {
+    const existing = [fav("f1", "pasta", "80 g")];
+    const r = favoriteForDish(existing, dish("  Pasta ", "80 G", 450), ids());
+    expect(r.updated).toBe(true);
+    expect(r.favorite.id).toBe("f1");
+  });
+  it("rimuovere toglie anche i doppioni già presenti (l'etichetta passa a «Salva»); gli altri piatti restano", async () => {
+    const store = createMemoryDataStore();
+    await store.saveFavoriteDish(fav("a", "Pasta", "80 g"));
+    await store.saveFavoriteDish(fav("b", "pasta", "80 G"));
+    await store.saveFavoriteDish(fav("c", "Pasta", "100 g"));
+    expect(await toggleFavoriteDish(store, dish("Pasta", "80 g"), ids())).toBe("rimosso");
+    expect((await store.listFavoriteDishes()).map((f) => f.id)).toEqual(["c"]);
+  });
+  it("pasto con lo stesso nome (maiuscole e spazi diversi): aggiornato, non duplicato", () => {
+    const existing: FavoriteMeal[] = [{ id: "p7", name: "Cena  leggera", slot: "cena", dishes: [] }];
+    const r = favoriteForMeal(existing, " cena LEGGERA ", "cena", [dish("X")], ids());
+    expect(r.updated).toBe(true);
+    expect(r.favorite.id).toBe("p7");
   });
 });

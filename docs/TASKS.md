@@ -491,7 +491,7 @@ Vincoli di questa fase:
 - Pesata e "Bici a mano" prendono la stessa intestazione con "Salva" in alto, senza altre modifiche.
 - Test della logica (stato di "Salva", passaggio tra AI e Manuale, stima che sostituisce i numeri, correzione a parole in modifica). Screenshot: aggiunta e modifica, AI e Manuale, con contenuto lungo scorso a metà (intestazione visibile), in chiaro e scuro. Nel diario, sotto "Non verificato": l'intestazione con la tastiera vera dell'iPhone.
 
-### T5c.1 Preferiti senza doppioni · da fare
+### T5c.1 Preferiti senza doppioni · fatto
 - Un piatto "è tra i preferiti" se esiste un preferito con lo stesso nome e la stessa quantità, senza badare a maiuscole e a spazi ripetuti o in testa e in coda.
 - Dove oggi compare "Preferiti" o "Salva nei preferiti" per un piatto (scorrimento in Oggi, scheda del piatto), se il piatto è già tra i preferiti compare "Rimuovi dai preferiti", che lo toglie subito. Salvare un piatto già presente non crea mai una seconda riga.
 - Lo stesso per "Salva pasto": un pasto preferito con lo stesso nome viene aggiornato, non duplicato.

@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { hasFreeMealInWeek } from "@/engine";
 import type { DateKey, Day, MealSlot, Settings } from "@/engine";
 import type { ActivityRecord, DataStore, MealRecord } from "@/data";
-import { defaultMealName, favoriteForDish, favoriteForMeal } from "../lib/favorites";
+import { defaultMealName, favoriteForMeal, isFavoriteDish, toggleFavoriteDish } from "../lib/favorites";
 import { newId } from "../lib/ids";
 import { isMealFree, saveDish } from "../lib/save-dish";
 import { hasManualBike } from "../lib/activity-form";
@@ -207,17 +207,32 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
   const { store, days, settings, onChanged, onClose } = ctx;
   const [mode, setMode] = useState<Mode>("manuale");
   const [favoriteStatus, setFavoriteStatus] = useState<string | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [saving, setSaving] = useState(false);
   const freeAllowedFor = (slot: MealSlot) => !hasFreeMealInWeek(days, { date: meal.date, slot });
   const initial = mealToForm(meal);
   const form = useDishForm(initial, freeAllowedFor, meal.originalText ?? null);
 
-  const saveFavorite = async () => {
+  useEffect(() => {
+    let alive = true;
+    store.listFavoriteDishes().then(
+      (list) => alive && setIsFavorite(isFavoriteDish(list, meal)),
+      () => {
+        // L'avviso in cima lo spiega.
+      },
+    );
+    return () => {
+      alive = false;
+    };
+  }, [store, meal]);
+
+  /** Salva il piatto com'è già salvato (non le modifiche non ancora salvate nella scheda) nei preferiti, o lo toglie se c'è già. */
+  const toggleFavorite = async () => {
     try {
-      const { favorite, updated } = favoriteForDish(await store.listFavoriteDishes(), meal, newId);
-      await store.saveFavoriteDish(favorite);
-      setFavoriteStatus(updated ? "Preferito aggiornato." : "Salvato nei preferiti.");
+      const done = await toggleFavoriteDish(store, meal, newId);
+      setIsFavorite(done === "salvato");
+      setFavoriteStatus(done === "salvato" ? "Salvato nei preferiti." : "Tolto dai preferiti.");
     } catch {
       // L'avviso in cima lo spiega; si può riprovare.
     }
@@ -299,8 +314,8 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
         </div>
         {mode === "ai" && <DishEditAi values={form.values} busy={form.busy} error={form.aiError} note={form.aiNote} onCorrect={form.correct} />}
         <div className="mt-4 flex flex-col gap-2 border-t border-line pt-4">
-          <button type="button" onClick={saveFavorite} className="min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent">
-            Salva nei preferiti
+          <button type="button" onClick={toggleFavorite} className="min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent">
+            {isFavorite ? "Rimuovi dai preferiti" : "Salva nei preferiti"}
           </button>
           {favoriteStatus && (
             <p role="status" className="text-center text-[15px] font-semibold text-ok">

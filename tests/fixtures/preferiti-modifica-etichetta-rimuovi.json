@@ -1,6 +1,6 @@
 {
-  "id": "preferiti-pasto-salvato",
-  "descrizione": "Dopo 'Salva pasto' con un nome scelto: conferma 'Pasto salvato nei preferiti.'",
+  "id": "preferiti-modifica-etichetta-rimuovi",
+  "descrizione": "Scheda del piatto già tra i preferiti: in fondo «Rimuovi dai preferiti» al posto di «Salva nei preferiti».",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m364",
+        "id": "m382",
         "date": "2026-01-08",
         "slot": "colazione",
         "name": "Cappuccino e brioche",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m365",
+        "id": "m383",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -38,7 +38,7 @@
         "originalText": null
       },
       {
-        "id": "m366",
+        "id": "m384",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Insalata mista con un nome molto lungo che deve andare a capo senza rompere nulla",
@@ -52,7 +52,7 @@
         "originalText": null
       },
       {
-        "id": "m367",
+        "id": "m385",
         "date": "2026-01-08",
         "slot": "spuntino",
         "name": "Pizza al taglio",
@@ -66,7 +66,7 @@
         "originalText": null
       },
       {
-        "id": "m368",
+        "id": "m386",
         "date": "2026-01-08",
         "slot": "cena",
         "name": "Petto di pollo e verdure",
@@ -81,32 +81,29 @@
       }
     ],
     "activity": [],
-    "weighIns": []
+    "weighIns": [],
+    "favoriteDishes": [
+      {
+        "id": "fp",
+        "name": "pasta al pomodoro",
+        "quantity": null,
+        "kcal": 650,
+        "protein": 22,
+        "carbs": 110,
+        "fat": 12,
+        "fiber": 6,
+        "salt": 1.8
+      }
+    ]
   },
   "scorre": true,
   "fisso": true,
   "passi": [
     {
-      "clickRole": {
-        "role": "button",
-        "name": "Pranzo: salva il pasto nei preferiti"
-      }
+      "click": "Pasta al pomodoro"
     },
     {
-      "fill": [
-        "Nome del pasto",
-        "Pranzo del lunedì"
-      ]
-    },
-    {
-      "clickRole": {
-        "role": "button",
-        "name": "Salva pasto",
-        "exact": true
-      }
-    },
-    {
-      "wait": 400
+      "scrollTo": "Elimina piatto"
     }
   ]
 }

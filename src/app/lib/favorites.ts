@@ -3,6 +3,8 @@ import type { DataStore, DishBody, FavoriteDish, FavoriteMeal, MealRecord } from
 
 const MAX_NAME = 40;
 
+type NameAndQuantity = { name: string; quantity?: string | null };
+
 /** Minuscole e senza accenti, per cercare "caffe" e trovare "Caffè". */
 export function normalizeText(text: string): string {
   return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
@@ -19,9 +21,34 @@ export function defaultMealName(dishes: readonly Pick<MealRecord, "name">[]): st
   return joined.length > MAX_NAME ? `${joined.slice(0, MAX_NAME - 1).trimEnd()}…` : joined;
 }
 
-/** Un piatto è "lo stesso" se ha lo stesso nome e la stessa quantità: salvarlo di nuovo aggiorna il preferito invece di duplicarlo. */
-export function sameDish(a: Pick<DishBody, "name" | "quantity">, b: Pick<DishBody, "name" | "quantity">): boolean {
-  return normalizeText(a.name) === normalizeText(b.name) && normalizeText(a.quantity ?? "") === normalizeText(b.quantity ?? "");
+/** Per riconoscere "lo stesso" testo: senza maiuscole e con gli spazi ripetuti, in testa e in coda ridotti. Gli accenti contano. */
+export function sameKey(text: string | null | undefined): string {
+  return (text ?? "").trim().replace(/\s+/g, " ").toLowerCase();
+}
+
+/** Un piatto è "lo stesso" se ha lo stesso nome e la stessa quantità (senza badare a maiuscole e spazi): è così che si sa se è tra i preferiti. */
+export function sameDish(a: NameAndQuantity, b: NameAndQuantity): boolean {
+  return sameKey(a.name) === sameKey(b.name) && sameKey(a.quantity) === sameKey(b.quantity);
+}
+
+/** Il piatto è tra i preferiti. */
+export function isFavoriteDish(favorites: readonly NameAndQuantity[], dish: NameAndQuantity): boolean {
+  return favorites.some((f) => sameDish(f, dish));
+}
+
+/**
+ * Preferiti di un piatto con un tocco: se è già tra i preferiti lo toglie (anche i doppioni già esistenti, altrimenti l'etichetta non cambierebbe),
+ * altrimenti lo salva. Un piatto già presente non crea mai una seconda riga. Restituisce cosa è successo.
+ */
+export async function toggleFavoriteDish(store: DataStore, dish: Pick<MealRecord, keyof DishBody>, makeId: () => string): Promise<"salvato" | "rimosso"> {
+  const existing = await store.listFavoriteDishes();
+  const same = existing.filter((f) => sameDish(f, dish));
+  if (same.length > 0) {
+    for (const f of same) await store.deleteFavoriteDish(f.id);
+    return "rimosso";
+  }
+  await store.saveFavoriteDish(favoriteForDish(existing, dish, makeId).favorite);
+  return "salvato";
 }
 
 /** Il preferito da salvare per un piatto: se ce n'è già uno uguale lo sostituisce (stesso id). */
@@ -34,7 +61,7 @@ export function favoriteForDish(existing: readonly FavoriteDish[], dish: Pick<Me
 /** Il preferito da salvare per un pasto; lo stesso nome sostituisce il pasto già salvato. */
 export function favoriteForMeal(existing: readonly FavoriteMeal[], name: string, slot: MealSlot, dishes: readonly MealRecord[], makeId: () => string): { favorite: FavoriteMeal; updated: boolean } {
   const clean = name.trim() || defaultMealName(dishes);
-  const same = existing.find((f) => normalizeText(f.name) === normalizeText(clean));
+  const same = existing.find((f) => sameKey(f.name) === sameKey(clean));
   return { favorite: { id: same?.id ?? makeId(), name: clean, slot, dishes: dishes.map(dishBody) }, updated: same !== undefined };
 }
 

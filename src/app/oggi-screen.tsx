@@ -1,8 +1,8 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
-import type { MealRecord } from "@/data";
+import { useCallback, useEffect, useState } from "react";
+import type { FavoriteDish, MealRecord } from "@/data";
 import type { MealSlot } from "@/engine";
 import { useDataStore } from "./data-provider";
 import { ActivityCard } from "./components/activity-card";
@@ -13,7 +13,7 @@ import { DayHeader } from "./components/day-header";
 import { KcalRing } from "./components/kcal-ring";
 import { NutrientCard } from "./components/nutrient-card";
 import { formatNumber, formatSigned } from "./lib/format";
-import { favoriteForDish } from "./lib/favorites";
+import { isFavoriteDish, toggleFavoriteDish } from "./lib/favorites";
 import { newId } from "./lib/ids";
 import { currentWeight, buildTodayView, hasCompositionDetail } from "./lib/today-view";
 import { useToday } from "./lib/use-today";
@@ -32,15 +32,37 @@ export function OggiScreen() {
   const [panel, setPanel] = useState<{ kind: "add"; slot?: MealSlot } | { kind: "edit"; meal: MealRecord } | { kind: "bike" } | { kind: "saveMeal"; slot: MealSlot } | null>(null);
 
   const [favoriteNote, setFavoriteNote] = useState<string | null>(null);
+  const [favorites, setFavorites] = useState<FavoriteDish[]>([]);
+  const panelOpen = panel !== null;
+  const loadFavorites = useCallback(() => {
+    if (!store) return Promise.resolve();
+    return store.listFavoriteDishes().then(setFavorites, () => {
+      // L'avviso in cima lo spiega.
+    });
+  }, [store]);
+  // Si rileggono all'apertura e dopo ogni pannello (un piatto può essere stato salvato o tolto dai preferiti lì dentro).
+  useEffect(() => {
+    if (!store) return;
+    let alive = true;
+    store.listFavoriteDishes().then(
+      (list) => alive && setFavorites(list),
+      () => {
+        // L'avviso in cima lo spiega.
+      },
+    );
+    return () => {
+      alive = false;
+    };
+  }, [store, panelOpen]);
 
   if (!today || !date) return <main aria-busy="true" />;
 
   const favoriteDish = async (dish: MealRecord) => {
     if (!store) return;
     try {
-      const { favorite, updated } = favoriteForDish(await store.listFavoriteDishes(), dish, newId);
-      await store.saveFavoriteDish(favorite);
-      setFavoriteNote(updated ? "Preferito aggiornato." : "Salvato nei preferiti.");
+      const done = await toggleFavoriteDish(store, dish, newId);
+      await loadFavorites();
+      setFavoriteNote(done === "salvato" ? "Salvato nei preferiti." : "Tolto dai preferiti.");
       setTimeout(() => setFavoriteNote(null), 3000);
     } catch {
       // L'avviso in cima lo spiega; si può riprovare.
@@ -96,7 +118,7 @@ export function OggiScreen() {
               <NutrientCard key={n.key} n={n} wide={i === view.nutrients.length - 1 && view.nutrients.length % 2 === 1} />
             ))}
           </div>
-          <MealList dishes={meals} settings={data!.settings} onSelectDish={(meal) => setPanel({ kind: "edit", meal })} onAddDish={(slot) => setPanel({ kind: "add", slot })} onSaveMeal={(slot) => setPanel({ kind: "saveMeal", slot })} onFavoriteDish={favoriteDish} onDeleteDish={deleteDish} />
+          <MealList dishes={meals} settings={data!.settings} onSelectDish={(meal) => setPanel({ kind: "edit", meal })} onAddDish={(slot) => setPanel({ kind: "add", slot })} onSaveMeal={(slot) => setPanel({ kind: "saveMeal", slot })} isFavorite={(d) => isFavoriteDish(favorites, d)} onFavoriteDish={favoriteDish} onDeleteDish={deleteDish} />
           {favoriteNote && (
             <p role="status" className="px-1 text-center text-sm font-semibold text-ok">
               {favoriteNote}
