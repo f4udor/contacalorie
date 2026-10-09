@@ -261,10 +261,72 @@ Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate,
 | 5 | Dati da Salute tramite Comando rapido e avviso; nuova regola del recupero; schede della Settimana toccabili; scorrimento per eliminare |
 | 5b | Ritocchi dopo la prova sul telefono: attività in sola lettura e bici a mano, colori dell'anello, pasto libero e ricetta nella proposta AI, regola del crudo, controllo di coerenza, preferiti eliminabili scorrendo, media nella Settimana, segno della variazione di peso |
 | 5c | Scheda del piatto unica per aggiunta e modifica, preferiti senza doppioni, colore della linea della media, obiettivi calcolati dal profilo, Impostazioni a sezioni |
-| 6 | Testi e grafica (da definire) |
+| 6 | Testi e grafica: tema solo scuro, stile di §10, nuova navigazione |
 | 6b | Grafici |
 | 7 | Promemoria (opzionale) |
 
 ## 9. Fuori dalla prima versione
 
 Sfida mattutina e programmi di allenamento, gestione inviti nell'app (gli accessi si gestiscono da Supabase), attività diverse da bici e passi, app nativa, foto del piatto, Strava, velocità media e durata delle uscite, obiettivo del giorno modificabile a mano, nutrienti modificabili giorno per giorno, email del guardiano, app a pagamento per leggere Salute, passi inseriti a mano, più uscite in bici a mano nello stesso giorno, soglie dell'anello modificabili da Impostazioni, livello di attività nel profilo (l'attività conta già con bici e passi), piani sotto il metabolismo basale.
+
+## 10. Stile (dalla fase 6)
+
+Riferimento visivo: `docs/design/bozza-fase-6.html` (si apre nel browser) e `docs/design/bozza-fase-6.png`. La bozza fissa direzione, colori, forme e gerarchie di Oggi, Settimana, scheda del piatto e Impostazioni; non è codice da copiare e i suoi numeri sono d'esempio. Dove la bozza e questo paragrafo non dicono nulla, si sceglie la soluzione più vicina all'app Fitness di Apple e la si scrive nel diario.
+
+### 10.1 Principi
+- **Solo tema scuro.** Il tema chiaro non esiste più: niente `prefers-color-scheme`, niente varianti chiare, screenshot solo scuri.
+- **Nero pieno** come sfondo, schede opache senza bordo con angoli ampi. Nessuna ombra sulle schede.
+- **Vetro solo in tre punti:** barra di navigazione, tasto +, intestazione che resta in alto quando si scorre. Tutto il resto è opaco. La sfocatura non deve mai essere l'unica cosa che rende leggibile un testo: sotto c'è sempre un colore di fondo semitrasparente.
+- **Un colore ha un solo significato**, ovunque (§10.2).
+- **Numeri** in carattere arrotondato di sistema (`ui-rounded`, con ricaduta sul font di sistema), peso medio, non grassetto; unità piccola, in maiuscolo, accanto al numero ("12,4 KM", "39 KCAL"). Titoli di schermata grandi e in grassetto.
+- Aree toccabili di almeno 44 px. Rispetto delle aree sicure dell'iPhone. Animazioni brevi e sobrie, disattivate con `prefers-reduced-motion`.
+
+### 10.2 Colori
+
+| Nome | Valore | Uso, e solo questo |
+|---|---|---|
+| Sfondo | `#000000` | Fondo dell'app |
+| Scheda | `#151517` | Schede |
+| Tessera | `#222224` | Elementi dentro una scheda o un pannello: piatti, elenchi, tasti a pillola |
+| Pannello | `#111113` | Fondo dei pannelli che salgono |
+| Testo | `#f5f5f7` | Testo principale |
+| Testo secondario | `#98989f` | Etichette, unità, note |
+| Separatore | `#323234` | Linee tra le righe di un elenco |
+| Comando | `#a6ff00` | Tutto ciò che si tocca per agire (testo dei tasti, voce attiva della barra, tasto +, "Salva") e l'anello della giornata **in corso** |
+| In obiettivo | `#0a84ff` | Giudizio positivo: anello raggiunto, nutriente nel verde di §3.5, saldo positivo, peso che si avvicina |
+| Attenzione | `#ffd60a` | Il "giallo" di §3.5 |
+| Fuori | `#ff453a` | Il "rosso" di §3.5; azioni distruttive ("Elimina", "Esci") |
+| Sotto | `#8e8e93` | Giorno **concluso** rimasto sotto `ringGreenBelow` |
+| Passi | `#a78bfa` | Numeri e grafici dei passi |
+| Bici | `#ff9f0a` | Numeri e grafici della bici |
+| Linea obiettivo | `#fa114f` | Solo la linea dell'obiettivo nei grafici |
+| Linea media | `#f5f5f7` | Solo la linea tratteggiata della media |
+
+I colori sono variabili di stile con questi nomi di ruolo, definite in un solo file. Nessun colore scritto a mano nei componenti.
+
+**Corrispondenza con le regole.** Il motore non cambia: i suoi stati restano quelli di §3.5. Cambia solo il colore con cui si mostrano: "verde" → In obiettivo (blu); "giallo" → Attenzione; "rosso" → Fuori; "accento" → Comando (lime) se il giorno è oggi o futuro, Sotto (grigio) se il giorno è passato. Passi e bici non esprimono mai un giudizio: hanno solo il loro colore.
+
+### 10.3 Forme e componenti
+Pochi componenti condivisi, usati ovunque:
+- **Scheda**: raggio 24 px, margine interno 16 px. Titolo in alto a sinistra; se la scheda si apre, una freccia in un cerchietto grigio in alto a destra.
+- **Tessera**: raggio 16 px, dentro una scheda. Ogni piatto di un pasto è una tessera separata (nome, quantità sotto in piccolo, kcal a destra).
+- **Elenco raggruppato**: righe in un contenitore con raggio 22 px, separate da una linea sottile. Riga bianca con valore grigio e freccia a destra se apre una pagina; riga nel colore Comando, senza freccia, se esegue un'azione; riga nel colore Fuori se è distruttiva.
+- **Tasto a pillola**: largo quanto il contenitore, fondo Tessera, testo nel colore Comando. Un solo tasto pieno (fondo Comando, testo nero) per pannello: l'azione principale.
+- **Intestazione dei pannelli**: X in un cerchio a sinistra, titolo al centro, azione principale a destra (per esempio "Salva", piena). Sempre visibile.
+- **Selettore a segmenti** (AI | Manuale): capsula con la voce attiva più chiara.
+- **Numero con unità**: il componente unico per tutti i numeri in evidenza.
+
+### 10.4 Navigazione
+- **Barra in basso**: capsula sospesa in vetro, tre voci con icona e nome (Oggi, Settimana, Grafici). La voce attiva sta in una pillola più scura, nel colore Comando.
+- **Tasto +**: cerchio di 52 px nel colore Comando al 62% di opacità, opaco (senza sfumature né alone), sospeso in basso a destra **sopra** la barra e staccato da essa di almeno 12 px. In fondo a ogni schermata c'è spazio vuoto sufficiente perché, a fine pagina, il + e la barra non coprano contenuto.
+- **Impostazioni**: non sono più nella barra. Si aprono da un tasto a ingranaggio in alto a destra in Oggi, come pannello con la X. Dentro, l'elenco a sezioni di §2.
+- **Icone**: disegnate nel repository come SVG a tratto, nello stile delle icone di sistema Apple; nessuna libreria di icone salvo motivo scritto nel diario.
+
+### 10.5 Schermate
+- **Oggi**: scheda "Calorie" con anello a sinistra e, a destra, "Rimaste" (o "Oltre") con il numero grande e sotto "2.061 di 2.100". Griglia dei nutrienti a due colonne: nome, numero colorato secondo lo stato, obiettivo in grigio, barretta dello stesso colore. Pasti: una scheda per pasto con i piatti come tessere e "+ Aggiungi piatto". Passi e Bici: due schede affiancate con i loro colori.
+- **Settimana**: scheda "Calorie" con le sette barre (angoli arrotondati, colore secondo lo stato del giorno), griglia orizzontale puntinata, **linea dell'obiettivo continua** da lunedì a domenica, a gradini dove l'obiettivo cambia da un giorno all'altro, e linea della media tratteggiata; legenda in alto a destra. Sotto, schede a due colonne: Saldo, Media, Passi e Bici (ciascuna con un mini grafico a barre sottili dei sette giorni su griglia puntinata), Peso, Pasto libero.
+- **Scheda del piatto, proposta dell'AI, preferiti, pesata, bici**: pannelli con l'intestazione di §10.3, campi in elenchi raggruppati.
+- **Grafici**: resta com'è nei contenuti; prende solo colori, schede e caratteri nuovi.
+
+### 10.6 Testi
+I nomi di comandi, titoli ed etichette sono in `docs/TESTI.md`, tabella "com'è → come diventa", approvata dall'utente. Regole: un comando dice esattamente cosa fa ("Aggiungi uscita in bici", non "Bici a mano"); niente gergo interno; niente paragrafi di spiegazione; maiuscola solo a inizio frase.

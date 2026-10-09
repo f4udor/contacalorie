@@ -519,3 +519,69 @@ Vincoli di questa fase:
 
 ### T5c.5 Report di fase · da fare
 Scrivi `docs/REPORT-FASE-5c.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: l'istruzione SQL da eseguire su Supabase prima del merge e un controllo da fare sul telefono per ogni task.
+
+## Fase 6: testi e grafica
+
+**Non iniziare questa fase finché l'utente non lo chiede espressamente e finché `docs/TESTI.md` non esiste nel repository.**
+
+Obiettivo: l'app cambia aspetto e parole, non comportamento. Tema solo scuro su nero pieno, ispirato all'app Fitness. Regole in `docs/BRIEF.md` §10; riferimento visivo in `docs/design/bozza-fase-6.html` e `.png`; testi in `docs/TESTI.md`.
+
+I task si eseguono in quest'ordine: prima le fondamenta, poi una schermata alla volta.
+
+Vincoli di questa fase:
+- **Nessuna modifica al comportamento.** `src/engine`, `src/data`, `src/modules`, le route del server e il database non si toccano. Nessun test del motore si tocca. Unica eccezione: i test che controllano testi o nomi di colore mostrati a schermo, che si aggiornano ai nuovi.
+- Niente SQL da eseguire: se un task sembra richiederlo, è sbagliato il task. Scrivilo nel diario e prosegui senza.
+- Ogni colore, raggio e carattere passa dalle variabili di §10.2 e dai componenti di §10.3: nessun valore scritto a mano nelle schermate.
+- Screenshot solo in tema scuro, a 390 px. Ogni task rigenera gli scenari delle schermate che tocca ed elimina i loro file `-chiaro`. Il revisore confronta con la bozza.
+- La bozza fissa la direzione, non i pixel: dove un caso reale non c'è nella bozza (stati vuoti, errori, testi lunghi, schermi stretti), vale §10 e la scelta più vicina a Fitness, annotata nel diario.
+- Nessuna nuova dipendenza salvo motivo scritto nel diario. Nessuna funzione nuova.
+
+### T6.0 Fondamenta dello stile · da fare
+- Un solo file con le variabili di §10.2 (nomi di ruolo), i raggi e i caratteri. Rimosso tutto ciò che riguarda il tema chiaro: regole `prefers-color-scheme`, varianti chiare, colori chiari.
+- Componenti condivisi di §10.3: scheda, tessera, elenco raggruppato con i tre tipi di riga, tasto a pillola (normale e pieno), intestazione dei pannelli, selettore a segmenti, numero con unità, freccia nel cerchietto.
+- Corrispondenza tra stati del motore e colori di §10.2 in una sola funzione delle schermate, con test: oggi sotto obiettivo → Comando; giorno passato sotto obiettivo → Sotto; "verde" → In obiettivo; "giallo" → Attenzione; "rosso" → Fuori.
+- Lo script degli screenshot produce solo il tema scuro. Il controllo automatico (scorrimento orizzontale, aree sotto 44 px) resta.
+- Pagina di prova interna (non raggiungibile dalla navigazione) che mostra tutti i componenti e tutti i colori con il loro nome: è lo screenshot di questo task.
+- A fine task l'app deve ancora funzionare e compilare, anche se le schermate non usano ancora i componenti nuovi.
+
+### T6.1 Navigazione: barra, tasto + e Impostazioni · da fare
+- Barra in basso, tasto + e ingranaggio come in §10.4. Tre icone SVG a tratto (anello, barre, linea).
+- Impostazioni esce dalla barra e si apre da Oggi come pannello; le sue pagine interne restano quelle della fase 5c. L'indirizzo diretto delle Impostazioni continua a funzionare.
+- L'avviso di Oggi sui dati da Salute porta ancora a Collegamenti.
+- Spazio in fondo a ogni schermata come in §10.4. Su schermi stretti (375 px) le tre voci non vanno a capo e non si toccano con il +.
+- Test della logica di navigazione toccata. Screenshot: barra con ciascuna voce attiva, pannello Impostazioni aperto, fine pagina di Oggi con il + che non copre contenuto, 375 px.
+- Nel diario, sotto "Non verificato": resa della sfocatura e prestazioni su un iPhone vero.
+
+### T6.2 Oggi · da fare
+- Schermata come in §10.5 e nella bozza: scheda Calorie, griglia dei nutrienti, pasti con i piatti in tessere, schede Passi e Bici.
+- Tutti gli stati esistenti restano e prendono lo stile nuovo: giorno senza pasti, giorno passato e futuro, anello nei quattro colori più "Sotto", "Oltre" quando si sfora, riga di composizione dell'obiettivo (base, bici, passi, recupero), pasto libero, piatto segnalato dal controllo di coerenza, avviso di Salute, bici con parte da Salute e parte a mano, scorrimento a sinistra sui piatti.
+- Testi di questa schermata da `docs/TESTI.md`.
+- Screenshot di tutti gli scenari di Oggi, solo scuri.
+
+### T6.3 Settimana · da fare
+- Schermata come in §10.5 e nella bozza. Il grafico usa una sola scala per barre, linea dell'obiettivo, linea della media e griglia.
+- Linea dell'obiettivo continua a gradini, anche nei giorni futuri (con l'anteprima di §3.3) e nelle settimane senza dati. Linea della media assente quando non c'è media. Le due etichette della legenda non si sovrappongono.
+- Mini grafici di passi e bici: sette giorni, barre sottili, scala sul massimo della settimana; settimana senza dati = griglia vuota e trattino al posto del numero.
+- I pannelli di Peso, Bici, Passi e Pasto libero prendono intestazione, elenchi e tasti nuovi, senza cambiare cosa fanno.
+- Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari della Settimana, solo scuri.
+
+### T6.4 Pannelli di inserimento · da fare
+- Scheda del piatto (aggiunta e modifica, AI e Manuale), proposta dell'AI con interruttore del pasto libero, preferiti, pesata, bici: intestazione, selettore, elenchi raggruppati e tasti di §10.3, come nella bozza della scheda del piatto.
+- I campi restano comodi da toccare e da leggere con la tastiera aperta; una quantità lunga va a capo senza coprire il valore accanto.
+- Stati esistenti conservati: caricamento della stima, errore, AI non disponibile, limite giornaliero, pasto libero disattivato, riga dei preferiti aperta con il cestino.
+- Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari dei pannelli, solo scuri.
+
+### T6.5 Impostazioni, primo avvio, accesso, Grafici · da fare
+- Impostazioni e le sue pagine come nella bozza: elenchi raggruppati, valore attuale a destra, azioni nel colore Comando, "Esci" nel colore Fuori. Collegamenti resta staccata in fondo.
+- Primo avvio e accesso con email e codice: stesso stile, stessi passi.
+- Grafici: solo colori, schede e caratteri nuovi (§10.5).
+- Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari di queste schermate, solo scuri.
+
+### T6.6 Passata finale dei testi e pulizia · da fare
+- Ogni voce della colonna "com'è" di `docs/TESTI.md` non compare più in nessuna schermata; un test lo controlla sui testi dell'interfaccia.
+- Nessun colore, raggio o carattere scritto a mano fuori dal file delle variabili: un controllo automatico (anche solo una ricerca nel codice, fatta da uno script) lo verifica, con le eccezioni elencate nel diario.
+- In `docs/screenshots/` non resta nessun file `-chiaro`.
+- Le guide (`docs/COLLEGA-*.md`) citano i nomi nuovi di pulsanti e sezioni.
+
+### T6.7 Report di fase · da fare
+Scrivi `docs/REPORT-FASE-6.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: per ogni schermata, cosa guardare sul telefono e, a parte, le cose che si giudicano solo su un iPhone vero (sfocatura della barra, scorrevolezza, tasto + a fine pagina, carattere arrotondato dei numeri).
