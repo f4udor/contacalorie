@@ -17,6 +17,8 @@
   --warn-fill: #ffcc00;
   --bad-fill: #ff3b30;
   --bad-btn: #c8001a;
+  /* Linea tratteggiata della media in Settimana: colore proprio (viola), né linea dell'obiettivo né semaforo. */
+  --avg-line: #8e3fb5;
   --nav: rgba(249, 249, 249, 0.92);
   --scrim: rgba(0, 0, 0, 0.35);
   color-scheme: light dark;
@@ -38,6 +40,7 @@
     --warn-fill: #ffd60a;
     --bad-fill: #ff453a;
     --bad-btn: #c8001a;
+    --avg-line: #bf5af2;
     --nav: rgba(28, 28, 30, 0.92);
     --scrim: rgba(0, 0, 0, 0.6);
   }
@@ -58,6 +61,7 @@
   --color-warn-fill: var(--warn-fill);
   --color-bad-fill: var(--bad-fill);
   --color-bad-btn: var(--bad-btn);
+  --color-avg-line: var(--avg-line);
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, "Segoe UI", sans-serif;
 }
 

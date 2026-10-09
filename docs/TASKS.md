@@ -498,7 +498,7 @@ Vincoli di questa fase:
 - I doppioni già esistenti non si toccano: si eliminano a mano scorrendo.
 - Test: confronto con maiuscole e spazi diversi; quantità diversa = piatto diverso; salva, rimuovi, salva di nuovo; pasto con lo stesso nome. Screenshot delle due etichette.
 
-### T5c.2 Colore della linea della media · da fare
+### T5c.2 Colore della linea della media · fatto
 - La linea tratteggiata della media e la sua voce in legenda prendono un colore proprio, diverso da quello della linea dell'obiettivo e non verde, giallo o rosso; contrasto sufficiente in chiaro e scuro. Il colore è una variabile di stile con un nome suo, così la fase 6 lo cambia in un punto solo.
 - Rigenerati i quattro scenari `settimana-media-*`.
 
