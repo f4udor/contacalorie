@@ -517,5 +517,5 @@ Vincoli di questa fase:
 - Le funzioni di Collegamenti e Dati restano identiche: cambiano solo posto.
 - Test della logica (riassunti delle righe, passaggio calcolato/personalizzato, pulsante della prima data possibile). Screenshot: elenco, ogni pagina, Obiettivi nei tre stati (calcolato, personalizzato, non raggiungibile) e con profilo incompleto, primo avvio.
 
-### T5c.5 Report di fase · da fare
+### T5c.5 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-5c.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: l'istruzione SQL da eseguire su Supabase prima del merge e un controllo da fare sul telefono per ogni task.
