@@ -1,0 +1,30 @@
+{
+  "id": "impostazioni-obiettivi-scrivi",
+  "descrizione": "Scrivendo 2.000 nelle kcal base l'etichetta passa da «calcolato» a «personalizzato» e compare «Usa il valore calcolato».",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=obiettivi",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "sex": "uomo",
+      "ageYears": 27,
+      "heightCm": 180,
+      "weightKg": 100,
+      "targetWeightKg": 90,
+      "targetDate": "2026-10-28",
+      "onboardingDone": true
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "passi": [
+    {
+      "fill": [
+        "Kcal base",
+        "2000"
+      ]
+    }
+  ]
+}

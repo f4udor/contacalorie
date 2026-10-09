@@ -2,7 +2,7 @@
   "id": "impostazioni-collegamenti-spenta",
   "descrizione": "Impostazioni → Collegamenti: stima automatica 'non configurata', con l'indicazione di dove si attiva.",
   "oggi": "2026-01-08",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=collegamenti",
   "dati": null,
   "scorre": true,
   "ai": {

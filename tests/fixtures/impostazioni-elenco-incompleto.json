@@ -1,0 +1,9 @@
+{
+  "id": "impostazioni-elenco-incompleto",
+  "descrizione": "Impostazioni con profilo incompleto e Salute non collegata: «Da completare», kcal predefinite.",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni",
+  "dati": null,
+  "scorre": true,
+  "fisso": true
+}

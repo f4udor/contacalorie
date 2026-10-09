@@ -1,0 +1,33 @@
+{
+  "id": "impostazioni-profilo-salvato",
+  "descrizione": "Dopo aver scelto «Donna» e salvato: messaggio «Salvato.».",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=profilo",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "radio",
+        "name": "Donna",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Età (anni)",
+        "30"
+      ]
+    },
+    {
+      "click": "Salva",
+      "exact": true
+    },
+    {
+      "wait": 500
+    },
+    {
+      "scrollTo": "Salvato."
+    }
+  ]
+}

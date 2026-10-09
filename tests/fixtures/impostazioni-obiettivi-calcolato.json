@@ -1,0 +1,22 @@
+{
+  "id": "impostazioni-obiettivi-calcolato",
+  "descrizione": "Obiettivi con profilo completo e piano raggiungibile: kcal base 2.140, proteine 160 g e grassi 70 g «calcolato»; metabolismo basale 2.000 con la sua riga.",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=obiettivi",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "sex": "uomo",
+      "ageYears": 27,
+      "heightCm": 180,
+      "weightKg": 100,
+      "targetWeightKg": 90,
+      "targetDate": "2026-10-28",
+      "onboardingDone": true
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

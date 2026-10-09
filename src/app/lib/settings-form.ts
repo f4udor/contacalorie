@@ -7,8 +7,9 @@ export type SettingsFieldKey =
   | "heightCm"
   | "ageYears"
   | "targetWeightKg"
+  | "sex"
+  | "targetDate"
   | "baseKcal"
-  | "floorKcal"
   | "recoveryMaxPerDay"
   | "creditCap"
   | "proteinGramsManual"
@@ -22,7 +23,7 @@ export type SettingsFieldKey =
   | "bonusShare"
   | "freeMealCap";
 
-type Kind = "decimal" | "whole" | "percent";
+type Kind = "decimal" | "whole" | "percent" | "sex" | "date";
 
 interface FieldRule {
   kind: Kind;
@@ -39,8 +40,9 @@ export const FIELD_RULES: Record<SettingsFieldKey, FieldRule> = {
   heightCm: { kind: "decimal", min: 0, positive: true, max: 300 },
   ageYears: { kind: "whole", min: 1, max: 120 },
   targetWeightKg: { kind: "decimal", min: 0, positive: true, max: 500 },
+  sex: { kind: "sex", min: 0, max: 0 },
+  targetDate: { kind: "date", min: 0, max: 0 },
   baseKcal: { kind: "decimal", min: 0, positive: true, max: 10000 },
-  floorKcal: { kind: "decimal", min: 0, max: 10000 },
   recoveryMaxPerDay: { kind: "decimal", min: 0, max: 2000 },
   creditCap: { kind: "decimal", min: 0, max: 5000 },
   proteinGramsManual: { kind: "decimal", min: 0, max: 1000 },
@@ -58,7 +60,7 @@ export const FIELD_RULES: Record<SettingsFieldKey, FieldRule> = {
 export const FIELD_KEYS = Object.keys(FIELD_RULES) as SettingsFieldKey[];
 
 /** Campi del profilo: "Ripristina valori predefiniti" non li tocca. */
-export const PERSONAL_KEYS: readonly SettingsFieldKey[] = ["weightKg", "heightCm", "ageYears", "targetWeightKg"];
+export const PERSONAL_KEYS: readonly SettingsFieldKey[] = ["weightKg", "heightCm", "ageYears", "targetWeightKg", "sex", "targetDate"];
 
 export type SettingsFormValues = Record<SettingsFieldKey, string>;
 export type SettingsFormErrors = Partial<Record<SettingsFieldKey, string>>;
@@ -85,17 +87,38 @@ function checkRange(n: number, rule: FieldRule, suffix = ""): string | null {
   return null;
 }
 
+/** Data scritta AAAA-MM-GG e davvero esistente (non il 31 febbraio). */
+export function isValidDateText(t: string): boolean {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(t)) return false;
+  const [y, m, d] = t.split("-").map(Number);
+  const date = new Date(Date.UTC(y, m - 1, d));
+  return date.getUTCFullYear() === y && date.getUTCMonth() === m - 1 && date.getUTCDate() === d;
+}
+
 /**
- * Controlla tutto il modulo. Un campo vuoto significa "usa il valore predefinito" (viene tolto dalle impostazioni salvate).
+ * Controlla i campi indicati (di una pagina di Impostazioni). Un campo vuoto significa "usa il valore predefinito" (viene tolto dalle impostazioni salvate).
  * Se un solo campo non è valido non si salva nulla.
  */
-export function validateSettingsForm(values: SettingsFormValues): { ok: true; patch: SettingsPatch } | { ok: false; errors: SettingsFormErrors } {
+export function validateSettingsFields(values: SettingsFormValues, keys: readonly SettingsFieldKey[]): { ok: true; patch: SettingsPatch } | { ok: false; errors: SettingsFormErrors } {
   const errors: SettingsFormErrors = {};
   const patch: Record<string, number | string | undefined> = {};
 
-  for (const key of FIELD_KEYS) {
+  for (const key of keys) {
     const rule = FIELD_RULES[key];
     const raw = values[key];
+
+    if (rule.kind === "sex") {
+      if (raw === "") patch[key] = undefined;
+      else if (raw === "uomo" || raw === "donna") patch[key] = raw;
+      else errors[key] = "Scegli uomo o donna";
+      continue;
+    }
+    if (rule.kind === "date") {
+      if (raw.trim() === "") patch[key] = undefined;
+      else if (isValidDateText(raw.trim())) patch[key] = raw.trim();
+      else errors[key] = "Inserisci una data valida";
+      continue;
+    }
 
     const r = rule.kind === "whole" ? parseWhole(raw) : parseDecimal(raw);
     if (r === "empty") {
@@ -112,9 +135,16 @@ export function validateSettingsForm(values: SettingsFormValues): { ok: true; pa
   return Object.keys(errors).length > 0 ? { ok: false, errors } : { ok: true, patch: patch as SettingsPatch };
 }
 
+/** Controlla tutto il modulo (tutti i campi). */
+export function validateSettingsForm(values: SettingsFormValues) {
+  return validateSettingsFields(values, FIELD_KEYS);
+}
+
 /** Patch che toglie tutte le regole personalizzate e lascia il profilo. */
 export function defaultsPatch(): SettingsPatch {
   const patch: Record<string, undefined> = {};
   for (const key of FIELD_KEYS) if (!PERSONAL_KEYS.includes(key)) patch[key] = undefined;
+  // La soglia minima non ha più un campo: è il metabolismo basale (o il valore predefinito); un vecchio valore salvato si toglie.
+  patch.floorKcal = undefined;
   return patch as SettingsPatch;
 }

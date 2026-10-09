@@ -1,0 +1,29 @@
+{
+  "id": "impostazioni-attivita-errori",
+  "descrizione": "Attività con valori non validi: errori accanto ai campi.",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=attivita",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "fill": [
+        "Kcal per passo",
+        "2"
+      ]
+    },
+    {
+      "fill": [
+        "Passi da cui si conta il bonus",
+        "tanti"
+      ]
+    },
+    {
+      "click": "Salva",
+      "exact": true
+    },
+    {
+      "scrollTo": "Controlla i campi"
+    }
+  ]
+}

@@ -509,7 +509,7 @@ Vincoli di questa fase:
 - **Questo task aggiunge una regola: i casi da A a Z di §3.6 e §3.8 restano identici e i loro test non si toccano** (usano impostazioni senza profilo completo o con valori espliciti).
 - Test: casi da AA ad AH di §3.9; data passata; peso obiettivo già raggiunto; peso preso dall'ultima pesata invece che dal profilo; utente esistente con base salvata.
 
-### T5c.4 Impostazioni a sezioni e primo avvio · da fare
+### T5c.4 Impostazioni a sezioni e primo avvio · fatto
 - Impostazioni diventa un elenco di righe che aprono ciascuna la sua pagina, con "Indietro": Profilo, Obiettivi, Attività, Pasto libero, Dati; staccata in fondo, Collegamenti. Nella prima pagina nessun campo modificabile. Ogni riga mostra a destra un riassunto breve (per esempio "2.140 kcal", "Salute collegata").
 - Obiettivi (§2 e §3.9): kcal base, proteine e grassi mostrano il numero e un'etichetta "calcolato" o "personalizzato"; scrivendo un numero diventa personalizzato, "Usa il valore calcolato" lo riporta alla formula. Metabolismo basale in sola lettura con la riga "La base del giorno non scende sotto questo valore". Il campo "soglia minima" sparisce. Piano non raggiungibile: una riga chiara con la prima data possibile e un pulsante che la imposta. Profilo incompleto: invito a completarlo, con il collegamento alla pagina Profilo.
 - Testi: ogni campo ha un nome comprensibile senza spiegazione e al massimo una riga breve sotto. Via i paragrafi e i "valore suggerito". Solo le pagine di Impostazioni e del primo avvio: il resto dell'app non si tocca.

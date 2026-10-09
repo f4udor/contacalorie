@@ -1,0 +1,56 @@
+{
+  "id": "primo-avvio-3-a-mano",
+  "descrizione": "Schermata 3 con la base cambiata a mano (2.000): l'etichetta diventa «personalizzate».",
+  "oggi": "2026-01-01",
+  "percorso": "/",
+  "dati": null,
+  "primoAvvio": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "radio",
+        "name": "Uomo",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Età (anni)",
+        "27"
+      ]
+    },
+    {
+      "fill": [
+        "Altezza (cm)",
+        "180"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Avanti",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Peso (kg)",
+        "100"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Avanti",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Cambia la base a mano (kcal)",
+        "2000"
+      ]
+    }
+  ]
+}

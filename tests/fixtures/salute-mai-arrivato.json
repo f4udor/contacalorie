@@ -2,7 +2,7 @@
   "id": "salute-mai-arrivato",
   "descrizione": "Codice appena creato, nessun invio ancora.",
   "oggi": "2026-01-08",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=collegamenti",
   "dati": null,
   "scorre": true,
   "passi": [

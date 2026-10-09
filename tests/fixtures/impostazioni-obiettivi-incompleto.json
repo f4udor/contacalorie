@@ -1,0 +1,8 @@
+{
+  "id": "impostazioni-obiettivi-incompleto",
+  "descrizione": "Obiettivi con profilo incompleto: invito a completare il profilo con il collegamento «Vai al Profilo»; kcal base predefinite.",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=obiettivi",
+  "dati": null,
+  "scorre": true
+}

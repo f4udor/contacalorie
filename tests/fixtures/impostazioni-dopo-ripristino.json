@@ -1,8 +1,8 @@
 {
   "id": "impostazioni-dopo-ripristino",
-  "descrizione": "Dopo il ripristino: regole di nuovo vuote (predefinite), peso del profilo mantenuto.",
+  "descrizione": "Dopo il ripristino: Obiettivi con regole di nuovo predefinite, peso del profilo mantenuto.",
   "oggi": "2026-01-08",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=dati",
   "dati": {
     "version": 1,
     "settings": {
@@ -28,6 +28,21 @@
     },
     {
       "wait": 500
+    },
+    {
+      "clickRole": {
+        "role": "link",
+        "name": "Indietro"
+      }
+    },
+    {
+      "clickRole": {
+        "role": "link",
+        "name": "Obiettivi"
+      }
+    },
+    {
+      "wait": 400
     }
   ]
 }

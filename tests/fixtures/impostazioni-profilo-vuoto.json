@@ -1,0 +1,8 @@
+{
+  "id": "impostazioni-profilo-vuoto",
+  "descrizione": "Pagina Profilo senza dati: campi vuoti.",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=profilo",
+  "dati": null,
+  "scorre": true
+}

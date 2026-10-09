@@ -280,7 +280,7 @@ scenarios.push({ id: "dopo-esci", descrizione: "Dopo 'Esci': si torna alla scher
 // --- Esportazione (T3.6)
 const datiImportBase = () => ({ ...settimanaCompleta, weighIns: [{ date: "2026-01-05", weightKg: 93 }, { date: "2026-01-09", weightKg: 92 }] });
 const dati = (id, descrizione, dati, passi, extra = {}) =>
-  scenarios.push({ id, descrizione, oggi: "2026-01-11", percorso: "/impostazioni", dati, scorre: true, passi, ...extra });
+  scenarios.push({ id, descrizione, oggi: "2026-01-11", percorso: "/impostazioni?s=dati", dati, scorre: true, passi, ...extra });
 dati("impostazioni-dati", "Impostazioni → Dati: i due pulsanti di esportazione (con dati sul dispositivo).", datiImportBase(), [{ scrollTo: "Esporta i piatti" }]);
 dati("esporta-piatti", "Dopo 'Esporta i piatti': il file CSV viene scaricato e la pagina dice quale e quanti piatti.", datiImportBase(), [{ click: "Esporta i piatti (CSV)" }, { wait: 600 }, { scrollTo: "Scaricato" }]);
 dati("esporta-pesate", "Dopo 'Esporta pesate e attività': file e numero di giorni.", datiImportBase(), [{ click: "Esporta pesate e attività (CSV)" }, { wait: 600 }, { scrollTo: "Scaricato" }]);
@@ -295,7 +295,7 @@ importa("importa-proposta", "Primo accesso con dati su questo dispositivo: l'app
 importa("importa-fatto", "Dopo 'Importa': riepilogo di cosa è stato aggiunto; i dati restano anche sul dispositivo finché non si conferma.", [btn("Importa"), { wait: 800 }]);
 importa("importa-conferma", "Prima di togliere i dati dal dispositivo chiede conferma e dice che restano nell'account.", [btn("Importa"), { wait: 800 }, btn("Tutto a posto: togli i dati da questo dispositivo")]);
 importa("importa-dopo-togli", "Dopo aver tolto i dati dal dispositivo: nessuna nuova proposta (qui l'app mostra il giorno vuoto perché in questa prova l'archivio dell'account è finto).", [btn("Importa"), { wait: 800 }, btn("Tutto a posto: togli i dati da questo dispositivo"), btn("Togli da questo dispositivo"), { wait: 600 }], { fisso: false, scorre: true });
-importa("importa-in-impostazioni", "Dopo 'Più tardi' la voce resta in Impostazioni → Dati, finché ci sono dati da importare.", [btn("Più tardi"), { wait: 400 }, { scrollTo: "Importa i dati di questo dispositivo" }], { percorso: "/impostazioni", fisso: false, scorre: true });
+importa("importa-in-impostazioni", "Dopo 'Più tardi' la voce resta in Impostazioni → Dati, finché ci sono dati da importare.", [btn("Più tardi"), { wait: 400 }, { scrollTo: "Importa i dati di questo dispositivo" }], { percorso: "/impostazioni?s=dati", fisso: false, scorre: true });
 importa("importa-pasti-misti", "Pasto con un piatto libero e uno normale insieme (salvati prima dei pasti composti): avviso che il pasto libero ora vale per tutti i piatti.", [], {
   dati: data({ meals: [meal("2026-01-05", "pranzo", "Pizza", 900, 30, 120, 30, 5, 3.5, { isFree: true }), meal("2026-01-05", "pranzo", "Insalata", 100, 2, 8, 6, 3, 0.3)] }),
 });
@@ -426,20 +426,27 @@ favScen("preferiti-pasto-salvato", "Dopo 'Salva pasto' con un nome scelto: confe
 scenarios.push({ id: "primo-avvio-dopo-avviso", descrizione: "Dati illeggibili e nessuna impostazione: prima l'avviso, il primo avvio compare dopo aver chiuso l'avviso.", oggi: "2026-01-08", percorso: "/", dati: "{{non json", primoAvvio: true, fisso: true, passi: [{ clickRole: { role: "button", name: "Ok", exact: true } }] });
 const pa = (id, descrizione, passi, extra = {}) => scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/", dati: null, primoAvvio: true, fisso: true, passi, ...extra });
 const avanti = btn("Avanti");
-pa("primo-avvio-1", "Primo avvio, schermata 1 di 3: il peso (campo vuoto), Salta in alto, Avanti.", []);
-pa("primo-avvio-2", "Schermata 2 di 3: il peso obiettivo, con Indietro.", [{ fill: ["Peso (kg)", "92,5"] }, avanti]);
-pa("primo-avvio-3", "Schermata 3 di 3: le kcal base già precompilate a 2.100, pulsante Fine.", [{ fill: ["Peso (kg)", "92,5"] }, avanti, { fill: ["Peso obiettivo (kg)", "82"] }, avanti]);
-pa("primo-avvio-errore", "Peso non valido: errore accanto al campo, non si va avanti.", [{ fill: ["Peso (kg)", "novanta"] }, avanti]);
-add("primo-avvio-fine", "Dopo Fine con peso 92,5 kg e obiettivo 82 kg: si arriva in Oggi e le proteine sono 1,8 × 82 = 150 g.", "2026-01-08", null, {
+const uomo = { clickRole: { role: "radio", name: "Uomo", exact: true } };
+const suDiTe = [uomo, { fill: ["Età (anni)", "27"] }, { fill: ["Altezza (cm)", "180"] }];
+const tuoPeso = [{ fill: ["Peso (kg)", "100"] }, { fill: ["Peso obiettivo (kg)", "90"] }];
+pa("primo-avvio-1", "Primo avvio, schermata 1 di 3: sesso, età e altezza (campi vuoti), Salta in alto, Avanti.", []);
+pa("primo-avvio-2", "Schermata 2 di 3: peso, peso obiettivo e data, con Indietro.", [...suDiTe, avanti]);
+pa("primo-avvio-3", "Schermata 3 di 3: kcal base calcolate (2.390 con peso 100 kg senza obiettivo) e metabolismo basale (2.000), con la possibilità di cambiare la base a mano; pulsante Fine.", [...suDiTe, avanti, { fill: ["Peso (kg)", "100"] }, avanti], { oggi: "2026-01-01" });
+pa("primo-avvio-3-obiettivo", "Schermata 3 con peso obiettivo 90 kg entro il 28 ottobre: kcal base calcolate 2.140, basale 2.000.", [...suDiTe, avanti, ...tuoPeso, { fill: ["Data obiettivo", "2026-10-28"] }, avanti], { oggi: "2026-01-01" });
+pa("primo-avvio-3-non-raggiungibile", "Schermata 3 con una data troppo vicina: la base resta al minimo (2.000) e l'app dice la prima data possibile.", [...suDiTe, avanti, ...tuoPeso, { fill: ["Data obiettivo", "2026-04-11"] }, avanti], { oggi: "2026-01-01" });
+pa("primo-avvio-3-incompleto", "Schermata 3 con il profilo incompleto (solo il peso): kcal base predefinite 2.100, nessun basale, invito a completare in Impostazioni.", [avanti, { fill: ["Peso (kg)", "100"] }, avanti], { oggi: "2026-01-01" });
+pa("primo-avvio-3-a-mano", "Schermata 3 con la base cambiata a mano (2.000): l'etichetta diventa «personalizzate».", [...suDiTe, avanti, { fill: ["Peso (kg)", "100"] }, avanti, { fill: ["Cambia la base a mano (kcal)", "2000"] }], { oggi: "2026-01-01" });
+pa("primo-avvio-errore", "Età non valida: errore accanto al campo, non si va avanti.", [{ fill: ["Età (anni)", "venti"] }, avanti]);
+add("primo-avvio-fine", "Dopo Fine con profilo completo (uomo, 27 anni, 180 cm, 100 kg): si arriva in Oggi con l'obiettivo calcolato (2.390 kcal).", "2026-01-08", null, {
   primoAvvio: true,
-  passi: [{ fill: ["Peso (kg)", "92,5"] }, avanti, { fill: ["Peso obiettivo (kg)", "82"] }, avanti, btn("Fine"), { wait: 1200 }],
+  passi: [...suDiTe, avanti, { fill: ["Peso (kg)", "100"] }, avanti, btn("Fine"), { wait: 1200 }],
 });
 add("primo-avvio-salta", "Dopo Salta: si arriva in Oggi con tutto predefinito; riaprendo l'app il primo avvio non ricompare.", "2026-01-08", null, {
   primoAvvio: true,
   passi: [btn("Salta"), { wait: 1200 }],
 });
-scenarios.push({ id: "impostazioni-collegamenti-attiva", descrizione: "Impostazioni → Collegamenti: stima automatica 'attiva'.", oggi: "2026-01-08", percorso: "/impostazioni", dati: null, scorre: true, ai: { risposte: [] }, passi: [{ scrollTo: "Collegamenti" }] });
-scenarios.push({ id: "impostazioni-collegamenti-spenta", descrizione: "Impostazioni → Collegamenti: stima automatica 'non configurata', con l'indicazione di dove si attiva.", oggi: "2026-01-08", percorso: "/impostazioni", dati: null, scorre: true, ai: { disponibile: false, risposte: [] }, passi: [{ scrollTo: "Collegamenti" }] });
+scenarios.push({ id: "impostazioni-collegamenti-attiva", descrizione: "Impostazioni → Collegamenti: stima automatica 'attiva'.", oggi: "2026-01-08", percorso: "/impostazioni?s=collegamenti", dati: null, scorre: true, ai: { risposte: [] }, passi: [{ scrollTo: "Collegamenti" }] });
+scenarios.push({ id: "impostazioni-collegamenti-spenta", descrizione: "Impostazioni → Collegamenti: stima automatica 'non configurata', con l'indicazione di dove si attiva.", oggi: "2026-01-08", percorso: "/impostazioni?s=collegamenti", dati: null, scorre: true, ai: { disponibile: false, risposte: [] }, passi: [{ scrollTo: "Collegamenti" }] });
 
 // --- Peso nella Settimana (T4b.5)
 const conPeso = (settings, weighIns) => ({ ...settimanaCompleta, settings, weighIns });
@@ -457,30 +464,51 @@ sett("settimana-peso-solo", "Settimana senza pasti né attività ma con una pesa
 // --- Impostazioni (T2.7)
 const imp = (id, descrizione, oggi, dati, extra = {}) => scenarios.push({ id, descrizione, oggi, percorso: "/impostazioni", dati, scorre: true, ...extra });
 const salva = { click: "Salva", exact: true };
-imp("impostazioni-predefinite", "Nessuna impostazione salvata: i campi sono vuoti e mostrano i valori predefiniti; senza peso la formula chiede il peso.", "2026-01-08", null);
-imp("impostazioni-compilate", "Profilo, proteine manuali (150 g) con la formula visibile e 'Torna alla formula', altre regole cambiate.", "2026-01-08", data({
-  settings: { weightKg: 92.5, heightCm: 178, ageYears: 41, targetWeightKg: 82, baseKcal: 2000, floorKcal: 1700, proteinGramsManual: 150, margin: 0.12, bonusShare: 0.4, kcalPerStep: 0.04, freeMealCap: 900 },
-}));
-imp("impostazioni-errori", "Valori non validi: errori accanto ai campi, nulla viene salvato.", "2026-01-08", null, {
-  passi: [{ fill: ["Peso (kg)", "novanta"] }, { fill: ["Età (anni)", "40,5"] }, { fill: ["Kcal base", "-5"] }, { fill: ["Margine dei semafori (%)", "80"] }, { fill: ["Soglia passi", "tanti"] }, { fill: ["Tetto di kcal", "-1"] }, salva, { scrollTo: "Controlla i campi" }],
+const pagina = (s) => `/impostazioni?s=${s}`;
+// Profilo completo (come i casi AA-AB di §3.9, oggi = 1 gennaio): uomo, 27 anni, 180 cm, 100 kg; obiettivo 90 kg.
+const profiloAB = { sex: "uomo", ageYears: 27, heightCm: 180, weightKg: 100, targetWeightKg: 90, targetDate: "2026-10-28", onboardingDone: true };
+const conProfilo = (over = {}) => data({ settings: { ...profiloAB, ...over } });
+const O1 = "2026-01-01";
+imp("impostazioni-elenco", "Impostazioni: solo righe (Profilo, Obiettivi, Attività, Pasto libero, Dati) con il riassunto a destra e, staccata, Collegamenti con «Salute collegata»; nessun campo.", O1, conProfilo(), { fisso: true, salute: { active: true, codeCreatedAt: "2025-12-20T08:00:00Z", lastSuccessAt: "2025-12-31T07:40:00Z", lastAttempt: { at: "2025-12-31T07:40:00Z", success: true, detail: null } } });
+imp("impostazioni-elenco-incompleto", "Impostazioni con profilo incompleto e Salute non collegata: «Da completare», kcal predefinite.", O1, null, { fisso: true });
+imp("impostazioni-profilo", "Pagina Profilo: sesso, età, altezza, peso, peso obiettivo e data, con «Indietro».", O1, conProfilo(), { percorso: pagina("profilo") });
+imp("impostazioni-profilo-vuoto", "Pagina Profilo senza dati: campi vuoti.", O1, null, { percorso: pagina("profilo") });
+imp("impostazioni-profilo-errori", "Profilo con valori non validi: errori accanto ai campi, nulla viene salvato.", O1, null, {
+  percorso: pagina("profilo"),
+  passi: [{ fill: ["Peso (kg)", "novanta"] }, { fill: ["Età (anni)", "40,5"] }, { fill: ["Altezza (cm)", "1000"] }, salva, { scrollTo: "Controlla i campi" }],
 });
-imp("impostazioni-salvato", "Dopo aver salvato peso 92 kg: messaggio 'Salvato.' e la formula propone 130 g di proteine.", "2026-01-08", null, {
-  passi: [{ fill: ["Peso (kg)", "92"] }, salva, { wait: 500 }, { scrollTo: "Salvato." }],
+imp("impostazioni-profilo-salvato", "Dopo aver scelto «Donna» e salvato: messaggio «Salvato.».", O1, null, { percorso: pagina("profilo"), passi: [{ clickRole: { role: "radio", name: "Donna", exact: true } }, { fill: ["Età (anni)", "30"] }, salva, { wait: 500 }, { scrollTo: "Salvato." }] });
+imp("impostazioni-obiettivi-calcolato", "Obiettivi con profilo completo e piano raggiungibile: kcal base 2.140, proteine 160 g e grassi 70 g «calcolato»; metabolismo basale 2.000 con la sua riga.", O1, conProfilo(), { percorso: pagina("obiettivi") });
+imp("impostazioni-obiettivi-personalizzato", "Obiettivi con kcal base 2.100 e proteine 150 g scritte a mano: «personalizzato» e «Usa il valore calcolato»; i grassi restano «calcolato».", O1, conProfilo({ baseKcal: 2100, proteinGramsManual: 150 }), { percorso: pagina("obiettivi") });
+imp("impostazioni-obiettivi-non-raggiungibile", "Obiettivo con data troppo vicina: la riga dice che la base resta al minimo e propone la prima data possibile (16 luglio 2026) con «Imposta questa data».", O1, conProfilo({ targetDate: "2026-04-11" }), { percorso: pagina("obiettivi") });
+imp("impostazioni-obiettivi-data-impostata", "Dopo «Imposta questa data»: la riga sparisce e la base calcolata sale oltre il minimo.", O1, conProfilo({ targetDate: "2026-04-11" }), { percorso: pagina("obiettivi"), passi: [{ click: "Imposta questa data" }, { wait: 500 }] });
+imp("impostazioni-obiettivi-incompleto", "Obiettivi con profilo incompleto: invito a completare il profilo con il collegamento «Vai al Profilo»; kcal base predefinite.", O1, null, { percorso: pagina("obiettivi") });
+imp("impostazioni-obiettivi-scrivi", "Scrivendo 2.000 nelle kcal base l'etichetta passa da «calcolato» a «personalizzato» e compare «Usa il valore calcolato».", O1, conProfilo(), { percorso: pagina("obiettivi"), passi: [{ fill: ["Kcal base", "2000"] }] });
+imp("impostazioni-obiettivi-torna-calcolato", "Dopo «Usa il valore calcolato»: la base torna al numero calcolato (2.140) e «calcolato».", O1, conProfilo({ baseKcal: 2100 }), { percorso: pagina("obiettivi"), passi: [{ click: "Usa il valore calcolato" }] });
+imp("impostazioni-obiettivi-errori", "Valori non validi negli Obiettivi: errori accanto ai campi, nulla viene salvato.", O1, null, {
+  percorso: pagina("obiettivi"),
+  passi: [{ fill: ["Kcal base", "-5"] }, { fill: ["Margine dei semafori (%)", "80"] }, { fill: ["Sale massimo (g)", "0"] }, salva, { scrollTo: "Controlla i campi" }],
 });
-imp("impostazioni-ripristina", "Ripristina valori predefiniti: chiede conferma e dice cosa resta.", "2026-01-08", data({ settings: { weightKg: 92.5, baseKcal: 2000, margin: 0.12 } }), {
+imp("impostazioni-attivita", "Pagina Attività: kcal per km, per passo, passi da cui si conta il bonus e quota di bonus.", O1, null, { percorso: pagina("attivita") });
+imp("impostazioni-attivita-errori", "Attività con valori non validi: errori accanto ai campi.", O1, null, { percorso: pagina("attivita"), passi: [{ fill: ["Kcal per passo", "2"] }, { fill: ["Passi da cui si conta il bonus", "tanti"] }, salva, { scrollTo: "Controlla i campi" }] });
+imp("impostazioni-pasto-libero", "Pagina Pasto libero: il tetto di kcal.", O1, data({ settings: { freeMealCap: 900, onboardingDone: true } }), { percorso: pagina("pasto-libero") });
+imp("impostazioni-pasto-libero-errore", "Pasto libero con tetto negativo: errore accanto al campo.", O1, null, { percorso: pagina("pasto-libero"), passi: [{ fill: ["Tetto di kcal del pasto libero", "-1"] }, salva, { scrollTo: "Controlla i campi" }] });
+imp("impostazioni-ripristina", "Dati → Ripristina valori predefiniti: chiede conferma e dice cosa resta.", "2026-01-08", data({ settings: { weightKg: 92.5, baseKcal: 2000, margin: 0.12 } }), {
+  percorso: pagina("dati"),
   fisso: true,
   passi: [{ click: "Ripristina valori predefiniti" }],
 });
-imp("impostazioni-dopo-ripristino", "Dopo il ripristino: regole di nuovo vuote (predefinite), peso del profilo mantenuto.", "2026-01-08", data({ settings: { weightKg: 92.5, baseKcal: 2000, margin: 0.12 } }), {
-  passi: [{ click: "Ripristina valori predefiniti" }, { clickRole: { role: "button", name: "Ripristina", exact: true } }, { wait: 500 }],
+imp("impostazioni-dopo-ripristino", "Dopo il ripristino: Obiettivi con regole di nuovo predefinite, peso del profilo mantenuto.", "2026-01-08", data({ settings: { weightKg: 92.5, baseKcal: 2000, margin: 0.12 } }), {
+  percorso: pagina("dati"),
+  passi: [{ click: "Ripristina valori predefiniti" }, { clickRole: { role: "button", name: "Ripristina", exact: true } }, { wait: 500 }, { clickRole: { role: "link", name: "Indietro" } }, { clickRole: { role: "link", name: "Obiettivi" } }, { wait: 400 }],
 });
-add("dopo-kcal-base", "Kcal base cambiata a 2.000 nelle Impostazioni: Oggi mostra obiettivo 2.000.", "2026-01-08", null, {
-  percorso: "/impostazioni",
+add("dopo-kcal-base", "Kcal base cambiata a 2.000 negli Obiettivi: Oggi mostra obiettivo 2.000.", "2026-01-08", null, {
+  percorso: pagina("obiettivi"),
   passi: [{ fill: ["Kcal base", "2000"] }, salva, { wait: 500 }, { click: "Oggi", exact: true }, { wait: 500 }],
 });
 // --- Salute (T5.1). "Adesso" negli screenshot: giovedì 2026-01-08, 09:00 a Roma = 08:00 UTC.
 const salute = (stato) => ({ active: false, codeCreatedAt: null, lastSuccessAt: null, lastAttempt: null, ...stato });
-const sal = (id, descrizione, st, extra = {}) => scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/impostazioni", dati: null, scorre: true, passi: [{ scrollTo: "Salute" }], ...(st ? { salute: salute(st) } : {}), ...extra });
+const sal = (id, descrizione, st, extra = {}) => scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/impostazioni?s=collegamenti", dati: null, scorre: true, passi: [{ scrollTo: "Salute" }], ...(st ? { salute: salute(st) } : {}), ...extra });
 sal("salute-senza-accesso", "Impostazioni → Collegamenti → Salute con i dati solo sul dispositivo: dice che serve l'accesso.", null);
 sal("salute-senza-codice", "Salute senza codice: spiegazione e pulsante 'Crea codice'.", {});
 sal("salute-codice-creato", "Appena creato: il codice compare una sola volta, con 'Copia' e l'indirizzo.", {}, { passi: [{ click: "Crea codice" }, { wait: 400 }, { scrollTo: "Fatto" }] });

@@ -2,7 +2,7 @@
   "id": "importa-in-impostazioni",
   "descrizione": "Dopo 'Più tardi' la voce resta in Impostazioni → Dati, finché ci sono dati da importare.",
   "oggi": "2026-01-11",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=dati",
   "dati": {
     "version": 1,
     "settings": {
