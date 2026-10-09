@@ -524,12 +524,12 @@ Scrivi `docs/REPORT-FASE-5c.md` come indicato in `CLAUDE.md` e fermati. Nella pa
 
 **Non iniziare questa fase finché l'utente non lo chiede espressamente e finché `docs/TESTI.md` non esiste nel repository.**
 
-Obiettivo: l'app cambia aspetto e parole, non comportamento. Tema solo scuro su nero pieno, ispirato all'app Fitness. Regole in `docs/BRIEF.md` §10; riferimento visivo in `docs/design/bozza-fase-6.html` e `.png`; testi in `docs/TESTI.md`.
+Obiettivo: l'app cambia aspetto e parole, non comportamento. Tema solo scuro su nero pieno, ispirato all'app Fitness. Regole in `docs/BRIEF.md` §10; riferimento visivo in `docs/design/bozza-fase-6.html` e nelle immagini `docs/design/bozza-*.png`; testi in `docs/TESTI.md`.
 
 I task si eseguono in quest'ordine: prima le fondamenta, poi una schermata alla volta.
 
 Vincoli di questa fase:
-- **Nessuna modifica al comportamento.** `src/engine`, `src/data`, `src/modules`, le route del server e il database non si toccano. Nessun test del motore si tocca. Unica eccezione: i test che controllano testi o nomi di colore mostrati a schermo, che si aggiornano ai nuovi.
+- **Nessuna modifica al comportamento**, salvo le tre aggiunte piccole dichiarate nei task: frecce delle settimane nei pannelli (T6.3), "Aggiungi pasto libero" (T6.3), nome del modello in Collegamenti (T6.5). `src/engine`, `src/data` e il database non si toccano; `src/modules` e le route del server solo per T6.5. Nessun test del motore si tocca. I test che controllano testi o nomi di colore mostrati a schermo si aggiornano ai nuovi.
 - Niente SQL da eseguire: se un task sembra richiederlo, è sbagliato il task. Scrivilo nel diario e prosegui senza.
 - Ogni colore, raggio e carattere passa dalle variabili di §10.2 e dai componenti di §10.3: nessun valore scritto a mano nelle schermate.
 - Screenshot solo in tema scuro, a 390 px. Ogni task rigenera gli scenari delle schermate che tocca ed elimina i loro file `-chiaro`. Il revisore confronta con la bozza.
@@ -562,17 +562,22 @@ Vincoli di questa fase:
 - Schermata come in §10.5 e nella bozza. Il grafico usa una sola scala per barre, linea dell'obiettivo, linea della media e griglia.
 - Linea dell'obiettivo continua a gradini, anche nei giorni futuri (con l'anteprima di §3.3) e nelle settimane senza dati. Linea della media assente quando non c'è media. Le due etichette della legenda non si sovrappongono.
 - Mini grafici di passi e bici: sette giorni, barre sottili, scala sul massimo della settimana; settimana senza dati = griglia vuota e trattino al posto del numero.
-- I pannelli di Peso, Bici, Passi e Pasto libero prendono intestazione, elenchi e tasti nuovi, senza cambiare cosa fanno.
+- I pannelli di Passi, Bici, Peso e Pasto libero diventano quelli di §10.5 e della bozza `bozza-2-dalla-settimana.png`.
+- **Aggiunta: frecce delle settimane** nei pannelli Passi, Bici e Pasto libero. Si parte dalla settimana della schermata; le frecce caricano la settimana precedente o successiva dentro il pannello; chiudendo, la schermata sotto è rimasta dov'era. Niente freccia in avanti oltre la settimana corrente.
+- **Aggiunta: "Aggiungi pasto libero"** nel pannello Pasto libero, quando la settimana non ne ha uno: apre il pannello Aggiungi con l'interruttore già acceso. Per una settimana passata il pannello Aggiungi si apre sull'ultimo giorno di quella settimana, con il giorno modificabile.
+- "Aggiungi uscita in bici" nel pannello Bici (oggi "+ A mano") e "Aggiungi pesata" nel pannello Peso sono tasti pieni in fondo. Le eliminazioni restano come oggi (scorrimento, solo sui valori a mano).
+- Test: cambio di settimana nel pannello senza effetto sulla schermata; nessuna settimana futura; pasto libero aggiunto dal pannello in settimana corrente e passata.
 - Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari della Settimana, solo scuri.
 
 ### T6.4 Pannelli di inserimento · da fare
-- Scheda del piatto (aggiunta e modifica, AI e Manuale), proposta dell'AI con interruttore del pasto libero, preferiti, pesata, bici: intestazione, selettore, elenchi raggruppati e tasti di §10.3, come nella bozza della scheda del piatto.
+- Scheda del piatto (aggiunta e modifica, AI e Manuale), proposta dell'AI con interruttore del pasto libero, preferiti, pesata, uscita in bici: come in §10.5 e nelle bozze `bozza-1-principali.png` (scheda del piatto) e `bozza-3-dal-tasto-piu.png`.
 - I campi restano comodi da toccare e da leggere con la tastiera aperta; una quantità lunga va a capo senza coprire il valore accanto.
 - Stati esistenti conservati: caricamento della stima, errore, AI non disponibile, limite giornaliero, pasto libero disattivato, riga dei preferiti aperta con il cestino.
 - Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari dei pannelli, solo scuri.
 
 ### T6.5 Impostazioni, primo avvio, accesso, Grafici · da fare
 - Impostazioni e le sue pagine come nella bozza: elenchi raggruppati, valore attuale a destra, azioni nel colore Comando, "Esci" nel colore Fuori. Collegamenti resta staccata in fondo.
+- Collegamenti come in §10.5 e in `bozza-4-collegamenti.png`. **Aggiunta: nome del modello.** Il server espone il nome del modello configurato (solo il nome, nessun segreto; con il provider finto dice "Modello di prova") e la pagina lo mostra in forma leggibile ("gemini-2.5-flash" → "Gemini 2.5 Flash"), con stato e stime di oggi sul limite. Test della conversione del nome e del caso senza modello configurato.
 - Primo avvio e accesso con email e codice: stesso stile, stessi passi.
 - Grafici: solo colori, schede e caratteri nuovi (§10.5).
 - Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari di queste schermate, solo scuri.

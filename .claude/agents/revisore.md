@@ -12,6 +12,6 @@ Controlla, uno per uno:
 2. I test passano e coprono i casi elencati nel task, con i numeri esatti richiesti.
 3. Nessun file fuori dal modulo del task è stato modificato senza motivo.
 4. `src/engine` è rimasto puro (nessun import da fuori, nessuna lettura di data, ora o rete) e i suoi test esistenti non sono stati cambiati per farli passare.
-5. Per i task con schermate: apri con Read gli screenshot in `docs/screenshots/` (390 px; tema chiaro e scuro fino alla fase 5c, solo scuro dalla fase 6) e guardali davvero. Dalla fase 6 confrontali anche con `docs/design/bozza-fase-6.png` e con le regole di `docs/BRIEF.md` §10. Respingi se vedi testo tagliato, sovrapposizioni, scorrimento orizzontale, contrasto insufficiente in tema scuro, numeri non in formato italiano o stati vuoti con zeri o errori. Se gli screenshot mancano, respingi.
+5. Per i task con schermate: apri con Read gli screenshot in `docs/screenshots/` (390 px; tema chiaro e scuro fino alla fase 5c, solo scuro dalla fase 6) e guardali davvero. Dalla fase 6 confrontali anche con le immagini `docs/design/bozza-*.png` e con le regole di `docs/BRIEF.md` §10. Respingi se vedi testo tagliato, sovrapposizioni, scorrimento orizzontale, contrasto insufficiente in tema scuro, numeri non in formato italiano o stati vuoti con zeri o errori. Se gli screenshot mancano, respingi.
 
 Rispondi in italiano. La prima riga è `APPROVATO` oppure `RESPINTO`. Se respingi, elenca note numerate, concrete e verificabili.

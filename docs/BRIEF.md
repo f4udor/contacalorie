@@ -271,7 +271,7 @@ Sfida mattutina e programmi di allenamento, gestione inviti nell'app (gli access
 
 ## 10. Stile (dalla fase 6)
 
-Riferimento visivo: `docs/design/bozza-fase-6.html` (si apre nel browser) e `docs/design/bozza-fase-6.png`. La bozza fissa direzione, colori, forme e gerarchie di Oggi, Settimana, scheda del piatto e Impostazioni; non è codice da copiare e i suoi numeri sono d'esempio. Dove la bozza e questo paragrafo non dicono nulla, si sceglie la soluzione più vicina all'app Fitness di Apple e la si scrive nel diario.
+Riferimento visivo: `docs/design/bozza-fase-6.html` (si apre nel browser) e le immagini `docs/design/bozza-*.png`: schermate principali, pannelli aperti dalla Settimana, pannelli aperti dal tasto +, Collegamenti. La bozza fissa direzione, colori, forme e gerarchie; non è codice da copiare e i suoi numeri sono d'esempio. Dove la bozza e questo paragrafo non dicono nulla, si sceglie la soluzione più vicina all'app Fitness di Apple e la si scrive nel diario.
 
 ### 10.1 Principi
 - **Solo tema scuro.** Il tema chiaro non esiste più: niente `prefers-color-scheme`, niente varianti chiare, screenshot solo scuri.
@@ -325,7 +325,12 @@ Pochi componenti condivisi, usati ovunque:
 ### 10.5 Schermate
 - **Oggi**: scheda "Calorie" con anello a sinistra e, a destra, "Rimaste" (o "Oltre") con il numero grande e sotto "2.061 di 2.100". Griglia dei nutrienti a due colonne: nome, numero colorato secondo lo stato, obiettivo in grigio, barretta dello stesso colore. Pasti: una scheda per pasto con i piatti come tessere e "+ Aggiungi piatto". Passi e Bici: due schede affiancate con i loro colori.
 - **Settimana**: scheda "Calorie" con le sette barre (angoli arrotondati, colore secondo lo stato del giorno), griglia orizzontale puntinata, **linea dell'obiettivo continua** da lunedì a domenica, a gradini dove l'obiettivo cambia da un giorno all'altro, e linea della media tratteggiata; legenda in alto a destra. Sotto, schede a due colonne: Saldo, Media, Passi e Bici (ciascuna con un mini grafico a barre sottili dei sette giorni su griglia puntinata), Peso, Pasto libero.
-- **Scheda del piatto, proposta dell'AI, preferiti, pesata, bici**: pannelli con l'intestazione di §10.3, campi in elenchi raggruppati.
+- **Pannelli aperti dalla Settimana** (come nella bozza):
+  - **Passi** e **Bici**: in alto le frecce per passare alla settimana precedente e successiva restando nel pannello; il numero grande nel colore della misura (media dei passi al giorno; km della settimana); grafico a barre dei sette giorni; elenco dei soli giorni che hanno un valore, con la fonte. Bici mostra il dettaglio "4,4 km da Salute + 8 km a mano" e in fondo il tasto pieno "Aggiungi uscita in bici". Cambiare settimana nel pannello non cambia la settimana della schermata sotto.
+  - **Peso**: ultima pesata con la variazione, storico completo in un elenco unico (senza frecce delle settimane), tasto pieno "Aggiungi pesata".
+  - **Pasto libero**: frecce delle settimane; stato della settimana; elenco dei pasti della settimana con "Segna"; tasto pieno "Aggiungi pasto libero", che apre il pannello Aggiungi con l'interruttore "Pasto libero" già acceso. Se la settimana ha già un pasto libero: il pasto, "Togli pasto libero", e niente tasto di aggiunta.
+- **Pannelli aperti dal tasto +** (come nella bozza): Aggiungi (selettore, campo, "Stima", poi Preferiti, Pesata, Uscita in bici); proposta dell'AI (pasto e interruttore "Pasto libero" in un elenco, piatti in tessere, correzione a parole, "Rifai la stima"); Preferiti (ricerca, pasti e piatti con il + nel colore Comando; scorrendo una riga a sinistra compare "Elimina" su fondo Fuori, come tessera separata); Uscita in bici; Pesata. "Copia da ieri" non esiste (tolta nella fase 4b) e non va reintrodotta.
+- **Collegamenti**: sezione "Salute" (stato, ultimo invio, valori ricevuti oggi, "Rigenera il codice", "Disattiva") e sezione "Stime dei pasti" con il nome leggibile del modello in uso (per esempio "Gemini 2.5 Flash", ricavato dal modello configurato sul server), lo stato e le stime fatte oggi sul limite.
 - **Grafici**: resta com'è nei contenuti; prende solo colori, schede e caratteri nuovi.
 
 ### 10.6 Testi
