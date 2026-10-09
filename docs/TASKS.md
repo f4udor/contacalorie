@@ -587,7 +587,7 @@ Vincoli di questa fase:
 - Ogni voce della colonna "com'è" di `docs/TESTI.md` non compare più in nessuna schermata; un test lo controlla sui testi dell'interfaccia.
 - Nessun colore, raggio o carattere scritto a mano fuori dal file delle variabili: un controllo automatico (anche solo una ricerca nel codice, fatta da uno script) lo verifica, con le eccezioni elencate nel diario.
 - In `docs/screenshots/` non resta nessun file `-chiaro`.
-- Le guide (`docs/COLLEGA-*.md`) citano i nomi nuovi di pulsanti e sezioni.
+- Le guide (`docs/COLLEGA-*.md`) citano i nomi nuovi di pulsanti e sezioni. `docs/COLLEGA-SALUTE.md` spiega il filtro "Sorgente è" sulla distanza in bici per evitare il doppio conteggio (§5), oggi assente dalla guida.
 
 ### T6.7 Report di fase · da fare
 Scrivi `docs/REPORT-FASE-6.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: per ogni schermata, cosa guardare sul telefono e, a parte, le cose che si giudicano solo su un iPhone vero (sfocatura della barra, scorrevolezza, tasto + a fine pagina, carattere arrotondato dei numeri).
