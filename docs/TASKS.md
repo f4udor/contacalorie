@@ -602,7 +602,7 @@ I task si eseguono in quest'ordine.
 
 Vincoli di questa fase:
 - **Fase piccola: il credito è quasi finito.** Si tocca solo ciò che i task nominano. Niente riscritture, niente riordino del codice, niente miglioramenti non richiesti: ciò che si nota in più si scrive nel report, non si corregge.
-- Nessuna modifica al comportamento, ai testi o ai calcoli. `src/engine`, `src/data`, `src/modules`, le route del server e il database non si toccano. Niente SQL.
+- Nessuna modifica al comportamento, ai testi o ai calcoli, salvo il saldo mostrato in Settimana (T6b.4), unico task che tocca `src/engine`. `src/data`, `src/modules`, le route del server e il database non si toccano. Niente SQL.
 - Colori, raggi e caratteri solo dalle variabili di §10.2 e dai componenti di §10.3.
 - Screenshot solo scuri a 390 px, e solo degli scenari toccati dal task più quelli elencati in T6b.3. Non si rigenera l'intera raccolta.
 - Nessuna nuova dipendenza.
@@ -639,5 +639,11 @@ Stessa regola, cercata dove non è stata segnalata. Si controlla, non si ridiseg
 - Lo script non si ferma più al primo scenario rotto: prosegue ed elenca alla fine quelli falliti, uscendo con errore.
 - Si rigenerano i 13 scenari `nav-*` e `pasti-*` rimasti alla versione precedente alla fase 6. Nel report: l'elenco dei file rigenerati.
 
-### T6b.4 Report di fase · da fare
+### T6b.4 Saldo della Settimana sui giorni conclusi · da fare
+Difetto visto sul telefono: con un solo giorno concluso (2.080 su 2.200, margine 120) la scheda Saldo mostrava 300, perché contava anche oggi, ancora in corso.
+- Motore: il saldo del riepilogo della settimana segue `docs/BRIEF.md` §3.3 "Saldo mostrato in Settimana": esclude oggi, che arriva già come parametro. **I test esistenti di questo saldo si aggiornano alla nuova regola.** La funzione del saldo usata per l'obiettivo del giorno, il recupero e l'anteprima non si tocca, e nessun altro test del motore cambia: i casi da A a Z e da AA ad AH restano identici.
+- Scheda Saldo: sotto il numero la dicitura "sui giorni conclusi", come nella scheda Media. Senza saldo, trattino e nessun colore.
+- Test: casi AJ, AK, AL e AM. Screenshot della scheda con saldo e con trattino.
+
+### T6b.5 Report di fase · da fare
 Scrivi `docs/REPORT-FASE-6b.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: un controllo da fare sul telefono per ogni task e, a parte, l'elenco delle incongruenze trovate in T6b.1 e non corrette.

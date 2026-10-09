@@ -104,7 +104,16 @@ La soglia minima vale per la base: il bonus attività si somma sopra. Ogni luned
 
 **Anteprima dei giorni futuri.** Quando si mostra l'obiettivo di un giorno successivo a oggi, i giorni tra oggi e quel giorno che non hanno pasti contano come se si mangiasse esattamente il loro obiettivo; oggi conta con le kcal reali se sono sopra l'obiettivo, altrimenti come se si raggiungesse l'obiettivo. Così un debito di 250 kcal appare come −100, −100, −50 e non viene mostrato più volte.
 
-**Saldo mostrato in Settimana.** È lo stesso saldo della regola (con il tetto al margine), calcolato fino al giorno più recente con pasti.
+**Saldo mostrato in Settimana.** È lo stesso saldo della regola (con il tetto al margine), calcolato sui soli **giorni conclusi**: i giorni con pasti precedenti a oggi. Oggi è in corso e non conta, come per la media (§3.8): i pasti ancora da fare sembrerebbero margine. Per una settimana passata contano tutti i giorni con pasti. Senza giorni conclusi con pasti il saldo non c'è e la scheda mostra un trattino. La regola dell'obiettivo qui sopra non cambia: usava già solo i giorni precedenti.
+
+Casi di verifica (base 2.100, nessuna attività, `creditCap` 300):
+
+| Caso | Situazione | Saldo mostrato |
+|---|---|---|
+| AJ | Lunedì 1.900 kcal; oggi è martedì, mangiate finora 600 | +200 (non 300) |
+| AK | Oggi è lunedì, mangiate finora 600 | nessuno (trattino) |
+| AL | Lunedì 2.500 kcal; oggi è martedì senza pasti | −400 |
+| AM | Settimana passata: lunedì 1.900, domenica 2.000, altri giorni vuoti | +300 (tetto) |
 
 ### 3.4 Obiettivi dei nutrienti
 - Proteine = `proteinPerKgTarget × peso obiettivo` se il peso obiettivo è impostato, altrimenti `proteinPerKg × peso`; arrotondate ai 5 g. Il peso è l'ultima pesata, o quello del profilo se non ci sono pesate.
