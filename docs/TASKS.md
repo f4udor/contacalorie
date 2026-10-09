@@ -529,7 +529,7 @@ Obiettivo: l'app cambia aspetto e parole, non comportamento. Tema solo scuro su 
 I task si eseguono in quest'ordine: prima le fondamenta, poi una schermata alla volta.
 
 Vincoli di questa fase:
-- **Nessuna modifica al comportamento**, salvo le tre aggiunte piccole dichiarate nei task: frecce delle settimane nei pannelli (T6.3), "Aggiungi pasto libero" (T6.3), nome del modello in Collegamenti (T6.5). `src/engine`, `src/data` e il database non si toccano; `src/modules` e le route del server solo per T6.5. Nessun test del motore si tocca. I test che controllano testi o nomi di colore mostrati a schermo si aggiornano ai nuovi.
+- **Nessuna modifica al comportamento**, salvo le quattro aggiunte piccole dichiarate nei task: frecce delle settimane nei pannelli (T6.3), "Aggiungi pasto libero" (T6.3), scelta del giorno nell'Uscita in bici (T6.4), nome del modello in Collegamenti (T6.5). `src/engine`, `src/data` e il database non si toccano; `src/modules` e le route del server solo per T6.5. Nessun test del motore si tocca. I test che controllano testi o nomi di colore mostrati a schermo si aggiornano ai nuovi.
 - Niente SQL da eseguire: se un task sembra richiederlo, è sbagliato il task. Scrivilo nel diario e prosegui senza.
 - Ogni colore, raggio e carattere passa dalle variabili di §10.2 e dai componenti di §10.3: nessun valore scritto a mano nelle schermate.
 - Screenshot solo in tema scuro, a 390 px. Ogni task rigenera gli scenari delle schermate che tocca ed elimina i loro file `-chiaro`. Il revisore confronta con la bozza.
@@ -573,6 +573,8 @@ Vincoli di questa fase:
 ### T6.4 Pannelli di inserimento · da fare
 - Scheda del piatto (aggiunta e modifica, AI e Manuale), proposta dell'AI con interruttore del pasto libero, preferiti, pesata, uscita in bici: come in §10.5 e nelle bozze `bozza-1-principali.png` (scheda del piatto) e `bozza-3-dal-tasto-piu.png`.
 - I campi restano comodi da toccare e da leggere con la tastiera aperta; una quantità lunga va a capo senza coprire il valore accanto.
+- **Aggiunta: giorno dell'Uscita in bici.** La riga "Giorno" apre il calendario di sistema dell'iPhone (campo data nativo, lo stesso componente della "Data obiettivo" del profilo): nessun elenco di giorni e nessun calendario disegnato a mano. Si apre sul giorno da cui si arriva (il giorno di Oggi o la riga toccata nel pannello Bici). Nessun giorno futuro. Se il giorno scelto ha già un'uscita a mano, la scheda ne carica i valori e "Salva" la sostituisce: resta una sola uscita a mano per giorno (§5). Test: cambio di giorno, giorno futuro rifiutato, giorno con uscita esistente.
+- Nella scheda del piatto in Manuale, "Stima con l'AI" sta **sopra** la riga "Calorie" (tra nome e quantità e i numeri), sia in aggiunta sia in modifica. Qui la bozza `bozza-1-principali.png` è superata: lo mostrava sotto i numeri.
 - Stati esistenti conservati: caricamento della stima, errore, AI non disponibile, limite giornaliero, pasto libero disattivato, riga dei preferiti aperta con il cestino.
 - Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari dei pannelli, solo scuri.
 
