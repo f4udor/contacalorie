@@ -2,7 +2,7 @@
   "id": "salute-dopo-fatto",
   "descrizione": "Dopo 'Fatto': il codice non si vede più, restano stato e pulsanti.",
   "oggi": "2026-01-08",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=collegamenti",
   "dati": null,
   "scorre": true,
   "passi": [

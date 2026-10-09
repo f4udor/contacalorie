@@ -1,0 +1,28 @@
+{
+  "id": "impostazioni-obiettivi-torna-calcolato",
+  "descrizione": "Dopo «Usa il valore calcolato»: la base torna al numero calcolato (2.140) e «calcolato».",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=obiettivi",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "sex": "uomo",
+      "ageYears": 27,
+      "heightCm": 180,
+      "weightKg": 100,
+      "targetWeightKg": 90,
+      "targetDate": "2026-10-28",
+      "onboardingDone": true,
+      "baseKcal": 2100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "passi": [
+    {
+      "click": "Usa il valore calcolato"
+    }
+  ]
+}

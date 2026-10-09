@@ -1,0 +1,8 @@
+{
+  "id": "impostazioni-attivita",
+  "descrizione": "Pagina Attività: kcal per km, per passo, passi da cui si conta il bonus e quota di bonus.",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=attivita",
+  "dati": null,
+  "scorre": true
+}

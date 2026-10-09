@@ -187,13 +187,14 @@ export function ActivityWeekPanel({ kind, store, data, dates, onChanged, onClose
       onChanged();
     };
     return (
-      <Sheet open onClose={onClose} title="Bici a mano">
+      <Sheet open onClose={onClose} title="Bici a mano" bar={{ formId: "bike-form" }}>
         <div className="flex flex-col gap-3">
           <button type="button" onClick={() => setEditing(null)} className="-ml-2 flex min-h-11 w-fit items-center px-2 text-[17px] font-semibold text-accent">
             ‹ Indietro
           </button>
           <p className="text-[15px] font-semibold">{formatDateLong(editing)}</p>
           <BikeForm
+            formId="bike-form"
             existing={existing}
             kcalPerKm={data.settings.kcalPerKm}
             onSubmit={async (bike) => {

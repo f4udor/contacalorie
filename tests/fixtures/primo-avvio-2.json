@@ -1,6 +1,6 @@
 {
   "id": "primo-avvio-2",
-  "descrizione": "Schermata 2 di 3: il peso obiettivo, con Indietro.",
+  "descrizione": "Schermata 2 di 3: peso, peso obiettivo e data, con Indietro.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": null,
@@ -8,9 +8,22 @@
   "fisso": true,
   "passi": [
     {
+      "clickRole": {
+        "role": "radio",
+        "name": "Uomo",
+        "exact": true
+      }
+    },
+    {
       "fill": [
-        "Peso (kg)",
-        "92,5"
+        "Età (anni)",
+        "27"
+      ]
+    },
+    {
+      "fill": [
+        "Altezza (cm)",
+        "180"
       ]
     },
     {

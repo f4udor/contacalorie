@@ -1,0 +1,62 @@
+{
+  "id": "primo-avvio-3-non-raggiungibile",
+  "descrizione": "Schermata 3 con una data troppo vicina: la base resta al minimo (2.000) e l'app dice la prima data possibile.",
+  "oggi": "2026-01-01",
+  "percorso": "/",
+  "dati": null,
+  "primoAvvio": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "radio",
+        "name": "Uomo",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Età (anni)",
+        "27"
+      ]
+    },
+    {
+      "fill": [
+        "Altezza (cm)",
+        "180"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Avanti",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Peso (kg)",
+        "100"
+      ]
+    },
+    {
+      "fill": [
+        "Peso obiettivo (kg)",
+        "90"
+      ]
+    },
+    {
+      "fill": [
+        "Data obiettivo",
+        "2026-04-11"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Avanti",
+        "exact": true
+      }
+    }
+  ]
+}

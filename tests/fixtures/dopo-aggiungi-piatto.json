@@ -73,8 +73,11 @@
       ]
     },
     {
-      "click": "Aggiungi piatto",
-      "exact": true
+      "clickRole": {
+        "role": "button",
+        "name": "Salva",
+        "exact": true
+      }
     },
     {
       "wait": 600

@@ -10,6 +10,8 @@ export interface SwipeAction {
   /** Solo icona (cestino): più stretto. */
   icon?: ReactNode;
   tone: "accent" | "danger";
+  /** Larghezza del pulsante in px, se l'etichetta è più lunga del solito. */
+  width?: number;
   onClick: () => void;
 }
 
@@ -33,7 +35,8 @@ interface SwipeRowProps {
  * Verso destra non fa nulla. Il gesto parte solo se il movimento è più orizzontale che verticale, così la pagina scorre normalmente.
  */
 export function SwipeRow({ id, openId, setOpen, actions, children, className = "" }: SwipeRowProps) {
-  const width = actions.reduce((sum, a) => sum + (a.icon ? SWIPE_ICON_ACTION_WIDTH : SWIPE_ACTION_WIDTH), 0);
+  const actionWidth = (a: SwipeAction) => a.width ?? (a.icon ? SWIPE_ICON_ACTION_WIDTH : SWIPE_ACTION_WIDTH);
+  const width = actions.reduce((sum, a) => sum + actionWidth(a), 0);
   const isOpen = openId === id;
   const rootRef = useRef<HTMLDivElement>(null);
   const [dragOffset, setDragOffset] = useState<number | null>(null);
@@ -102,8 +105,8 @@ export function SwipeRow({ id, openId, setOpen, actions, children, className = "
               setOpen(id, false);
               a.onClick();
             }}
-            className={`flex min-h-11 items-center justify-center text-[15px] font-semibold ${a.tone === "danger" ? "bg-bad-btn text-white" : "bg-accent text-white"}`}
-            style={{ width: a.icon ? SWIPE_ICON_ACTION_WIDTH : SWIPE_ACTION_WIDTH }}
+            className={`flex min-h-11 items-center justify-center px-1 text-center text-[15px] font-semibold leading-tight ${a.tone === "danger" ? "bg-bad-btn text-white" : "bg-accent text-white"}`}
+            style={{ width: actionWidth(a) }}
           >
             {a.icon ?? a.label}
           </button>

@@ -23,7 +23,7 @@ export function NutrientCard({ n, wide = false }: { n: NutrientView; wide?: bool
     <div className={`rounded-2xl bg-card p-3.5 ${wide ? "col-span-2" : ""}`}>
       <h3 className="text-sm font-semibold text-muted">{n.name}</h3>
       {n.needsWeight && n.key === "protein" ? (
-        <Link href="/impostazioni" className="mt-1 flex min-h-11 items-center text-[15px] font-semibold leading-snug text-accent">
+        <Link href="/impostazioni?s=profilo" className="mt-1 flex min-h-11 items-center text-[15px] font-semibold leading-snug text-accent">
           Inserisci il peso
         </Link>
       ) : (

@@ -1,0 +1,23 @@
+{
+  "id": "impostazioni-pasto-libero-errore",
+  "descrizione": "Pasto libero con tetto negativo: errore accanto al campo.",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=pasto-libero",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "fill": [
+        "Tetto di kcal del pasto libero",
+        "-1"
+      ]
+    },
+    {
+      "click": "Salva",
+      "exact": true
+    },
+    {
+      "scrollTo": "Controlla i campi"
+    }
+  ]
+}

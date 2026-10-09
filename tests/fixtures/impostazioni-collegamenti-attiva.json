@@ -2,7 +2,7 @@
   "id": "impostazioni-collegamenti-attiva",
   "descrizione": "Impostazioni → Collegamenti: stima automatica 'attiva'.",
   "oggi": "2026-01-08",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=collegamenti",
   "dati": null,
   "scorre": true,
   "ai": {

@@ -37,7 +37,8 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Aggiungi piatto"
+        "name": "Salva",
+        "exact": true
       }
     }
   ]

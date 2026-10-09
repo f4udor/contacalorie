@@ -56,3 +56,8 @@ export function formatDayMonth(date: DateKey): string {
 export function formatDateLong(date: DateKey): string {
   return `${formatWeekday(date)} ${formatDayMonth(date)}`;
 }
+
+/** "16 luglio 2026" */
+export function formatDateFull(date: DateKey): string {
+  return new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(utcDate(date));
+}

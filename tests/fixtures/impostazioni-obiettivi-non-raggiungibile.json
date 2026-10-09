@@ -1,0 +1,22 @@
+{
+  "id": "impostazioni-obiettivi-non-raggiungibile",
+  "descrizione": "Obiettivo con data troppo vicina: la riga dice che la base resta al minimo e propone la prima data possibile (16 luglio 2026) con «Imposta questa data».",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=obiettivi",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "sex": "uomo",
+      "ageYears": 27,
+      "heightCm": 180,
+      "weightKg": 100,
+      "targetWeightKg": 90,
+      "targetDate": "2026-04-11",
+      "onboardingDone": true
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

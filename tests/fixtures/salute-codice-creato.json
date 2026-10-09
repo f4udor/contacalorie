@@ -2,7 +2,7 @@
   "id": "salute-codice-creato",
   "descrizione": "Appena creato: il codice compare una sola volta, con 'Copia' e l'indirizzo.",
   "oggi": "2026-01-08",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=collegamenti",
   "dati": null,
   "scorre": true,
   "passi": [

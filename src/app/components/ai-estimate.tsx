@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
+import type { ReactNode, RefObject } from "react";
 import type { DateKey, MealSlot } from "@/engine";
 import type { DataStore } from "@/data";
 import type { MealProposal } from "@/modules/ai";
@@ -28,6 +28,15 @@ interface Props {
   fixedSlot?: MealSlot;
   /** Il resto del pannello: compare solo finché non c'è una proposta da controllare. */
   children: ReactNode;
+  /** Chi ospita la scheda ("Salva" è nell'intestazione): qui riceve il modo di confermare la proposta. */
+  handleRef: RefObject<AiEstimateHandle | null>;
+  /** Avvisa quando "Salva" deve accendersi (c'è una proposta con almeno un piatto) o spegnersi. */
+  onCanSaveChange: (canSave: boolean) => void;
+}
+
+export interface AiEstimateHandle {
+  /** Conferma la proposta: salva i piatti. Se ci sono errori nei numeri li mostra e non salva. */
+  confirm: () => Promise<void>;
 }
 
 const NUMBER_LABELS: Record<DishNumberKey, string> = { kcal: "Kcal", protein: "Proteine (g)", carbs: "Carboidrati (g)", fat: "Grassi (g)", fiber: "Fibre (g)", salt: "Sale (g)" };
@@ -38,7 +47,7 @@ const primary = "min-h-12 rounded-xl bg-accent px-4 text-[17px] font-semibold te
 const secondary = "min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent disabled:opacity-50";
 
 /** Campo "Cosa hai mangiato?" in cima al pannello Aggiungi, con la proposta da controllare e confermare. */
-export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose, fixedSlot, children }: Props) {
+export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose, fixedSlot, children, handleRef, onCanSaveChange }: Props) {
   const { getAccessToken } = useAuth();
   const available = useAiAvailable();
   const [text, setText] = useState("");
@@ -84,13 +93,6 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
     else setError(r.message);
   };
 
-  const cancel = () => {
-    setDrafts(null);
-    setOriginal(null);
-    setError(null);
-    setErrors({});
-  };
-
   const confirm = async () => {
     if (!drafts || !original) return;
     const r = draftsToProposal(drafts);
@@ -114,6 +116,15 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
       setBusy(false);
     }
   };
+
+  const canSave = drafts !== null && hasDishes(drafts) && !busy;
+  useEffect(() => {
+    handleRef.current = { confirm };
+  });
+  useEffect(() => {
+    onCanSaveChange(canSave);
+  }, [canSave, onCanSaveChange]);
+  useEffect(() => () => onCanSaveChange(false), [onCanSaveChange]);
 
   const setDish = (mealKey: string, dishKey: string, patch: Partial<DishDraft>) =>
     setDrafts((ds) => ds && ds.map((m) => (m.key === mealKey ? { ...m, dishes: m.dishes.map((d) => (d.key === dishKey ? { ...d, ...patch } : d)) } : m)));
@@ -266,7 +277,7 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
       ))}
 
       {!hasDishes(drafts) ? (
-        <p className="text-[15px] font-medium">Non è rimasto nessun piatto: annulla e scrivi di nuovo.</p>
+        <p className="text-[15px] font-medium">Non è rimasto nessun piatto: chiudi e scrivi di nuovo.</p>
       ) : (
         <div className="flex flex-col gap-2">
           <label htmlFor="ai-correction" className="text-sm font-semibold text-muted">
@@ -283,14 +294,6 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
           {error}
         </p>
       )}
-      <div className="flex flex-col gap-2">
-        <button type="button" onClick={confirm} disabled={busy || !hasDishes(drafts)} className={primary}>
-          Conferma
-        </button>
-        <button type="button" onClick={cancel} disabled={busy} className={secondary}>
-          Annulla
-        </button>
-      </div>
     </div>
   );
 }

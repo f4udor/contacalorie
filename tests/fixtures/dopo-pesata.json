@@ -24,7 +24,11 @@
       ]
     },
     {
-      "click": "Salva pesata"
+      "clickRole": {
+        "role": "button",
+        "name": "Salva",
+        "exact": true
+      }
     },
     {
       "wait": 600

@@ -2,7 +2,7 @@
   "id": "salute-ultimo-fallito",
   "descrizione": "L'ultimo tentativo non è riuscito: compare il motivo.",
   "oggi": "2026-01-08",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=collegamenti",
   "dati": null,
   "scorre": true,
   "passi": [

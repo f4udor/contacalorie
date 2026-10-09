@@ -2,16 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { useDataProblem, useDataStore } from "../data-provider";
-import { initialOnboardingValues, needsOnboarding, onboardingPatch, SKIP_PATCH } from "../lib/onboarding";
-import type { OnboardingValues } from "../lib/onboarding";
+import { checkOnboardingStep, initialOnboardingValues, needsOnboarding, onboardingPatch, onboardingSummary, ONBOARDING_STEPS, SKIP_PATCH } from "../lib/onboarding";
+import type { OnboardingKey, OnboardingValues } from "../lib/onboarding";
+import { formatDateFull, formatNumber } from "../lib/format";
 import type { SettingsFormErrors } from "../lib/settings-form";
+import { todayKey } from "../lib/today";
 import { TextField } from "./field";
+import { ChoiceField, DateField } from "./settings-fields";
 
-const STEPS = [
-  { key: "weightKg", title: "Il tuo peso", text: "Serve per calcolare le proteine. Puoi cambiarlo quando vuoi in Impostazioni.", label: "Peso (kg)" },
-  { key: "targetWeightKg", title: "Il tuo peso obiettivo", text: "Se lo indichi, le proteine si calcolano su questo peso. Puoi lasciarlo vuoto.", label: "Peso obiettivo (kg)" },
-  { key: "baseKcal", title: "Le kcal di ogni giorno", text: "Le kcal di base della tua giornata. Sono già quelle predefinite: cambiale solo se sai quali ti servono.", label: "Kcal base" },
-] as const;
+const TITLES = ["Su di te", "Il tuo obiettivo", "Le tue kcal"] as const;
+
+const LABELS: Record<Exclude<OnboardingKey, "sex" | "targetDate" | "baseKcal">, string> = {
+  ageYears: "Età (anni)",
+  heightCm: "Altezza (cm)",
+  weightKg: "Peso (kg)",
+  targetWeightKg: "Peso obiettivo (kg)",
+};
 
 /** Primo avvio guidato: tre schermate brevi per chi non ha ancora nessuna impostazione. Compare sopra l'app e si può saltare. */
 export function Onboarding() {
@@ -50,13 +56,16 @@ export function Onboarding() {
     }
   };
 
-  const current = STEPS[step];
-  const last = step === STEPS.length - 1;
+  const keys = ONBOARDING_STEPS[step];
+  const last = step === ONBOARDING_STEPS.length - 1;
+  const set = (key: OnboardingKey) => (v: string) => setValues((o) => ({ ...o, [key]: v }));
+  const today = todayKey();
+  const summary = last ? onboardingSummary(values, today) : null;
 
   const next = () => {
-    const r = onboardingPatch(values);
-    if (!r.ok && r.errors[current.key]) {
-      setErrors({ [current.key]: r.errors[current.key] });
+    const found = checkOnboardingStep(values, keys);
+    if (Object.keys(found).length > 0) {
+      setErrors(found);
       return;
     }
     setErrors({});
@@ -64,40 +73,87 @@ export function Onboarding() {
       setStep(step + 1);
       return;
     }
+    const r = onboardingPatch(values);
     if (!r.ok) {
-      // Un campo di un passo precedente non è valido: si torna a quello.
-      const bad = STEPS.findIndex((s) => r.errors[s.key]);
+      // Un campo di una schermata precedente non è valido: si torna a quella.
+      const bad = ONBOARDING_STEPS.findIndex((ks) => ks.some((k) => r.errors[k]));
       setErrors(r.errors);
-      setStep(bad);
+      setStep(Math.max(bad, 0));
       return;
     }
     void finish(r.patch);
   };
 
+  const field = (key: Exclude<OnboardingKey, "sex" | "targetDate" | "baseKcal">) => (
+    <TextField key={key} id={`onb-${key}`} label={LABELS[key]} value={values[key]} onChange={set(key)} error={errors[key]} inputMode={key === "ageYears" ? "numeric" : "decimal"} />
+  );
+
   return (
-    <div role="dialog" aria-modal="true" aria-labelledby="onb-title" className="fixed inset-0 z-[55] flex flex-col bg-bg pt-[env(safe-area-inset-top)]">
+    <div role="dialog" aria-modal="true" aria-labelledby="onb-title" className="fixed inset-0 z-[55] flex flex-col overflow-y-auto bg-bg pt-[env(safe-area-inset-top)]">
       <div className="mx-auto flex w-full max-w-xl flex-1 flex-col px-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
         <div className="flex min-h-14 items-center justify-between">
           <p className="text-[15px] font-semibold text-muted" aria-live="polite">
-            {step + 1} di {STEPS.length}
+            {step + 1} di {ONBOARDING_STEPS.length}
           </p>
           <button type="button" disabled={busy} onClick={() => void finish(SKIP_PATCH)} className="min-h-11 px-2 text-[17px] font-semibold text-accent disabled:opacity-50">
             Salta
           </button>
         </div>
         <p className="mt-2 text-sm font-semibold uppercase tracking-wide text-muted">Benvenuto</p>
-        <h1 id="onb-title" className="mt-1 text-[34px] font-bold leading-tight tracking-tight">
-          {current.title}
+        <h1 id="onb-title" className="mb-6 mt-1 text-[34px] font-bold leading-tight tracking-tight">
+          {TITLES[step]}
         </h1>
-        <p className="mb-6 mt-2 text-[17px] text-muted">{current.text}</p>
-        <div className="rounded-2xl bg-card p-4">
-          <TextField
-            id={`onb-${current.key}`}
-            label={current.label}
-            value={values[current.key]}
-            onChange={(v) => setValues((o) => ({ ...o, [current.key]: v }))}
-            error={errors[current.key]}
-          />
+        <div className="flex flex-col gap-4 rounded-2xl bg-card p-4">
+          {step === 0 && (
+            <>
+              <ChoiceField
+                id="onb-sex"
+                label="Sesso"
+                value={values.sex}
+                onChange={set("sex")}
+                error={errors.sex}
+                options={[
+                  { value: "uomo", label: "Uomo" },
+                  { value: "donna", label: "Donna" },
+                ]}
+              />
+              {field("ageYears")}
+              {field("heightCm")}
+            </>
+          )}
+          {step === 1 && (
+            <>
+              {field("weightKg")}
+              {field("targetWeightKg")}
+              <DateField id="onb-targetDate" label="Data obiettivo" value={values.targetDate} onChange={set("targetDate")} error={errors.targetDate} />
+            </>
+          )}
+          {last && (
+            <>
+              <div className="flex items-baseline justify-between gap-3">
+                <span className="text-sm font-semibold text-muted">Kcal base {values.baseKcal.trim() !== "" ? "personalizzate" : summary?.calculated ? "calcolate" : "predefinite"}</span>
+                <span data-onb-base className="text-[22px] font-bold tabular-nums">
+                  {summary ? formatNumber(summary.baseKcal) : "–"} kcal
+                </span>
+              </div>
+              {summary?.minimum != null && (
+                <div>
+                  <div className="flex items-baseline justify-between gap-3">
+                    <span className="text-sm font-semibold text-muted">Metabolismo basale</span>
+                    <span className="text-[17px] font-semibold tabular-nums">{formatNumber(summary.minimum)} kcal</span>
+                  </div>
+                  <p className="mt-1 text-sm text-muted">La base del giorno non scende sotto questo valore</p>
+                </div>
+              )}
+              {summary && !summary.calculated && <p className="text-sm text-muted">Con sesso, età, altezza e peso le kcal si calcolano da sole: puoi completarli in Impostazioni.</p>}
+              {summary?.earliestDate && (
+                <p className="text-[15px] font-medium" data-unreachable>
+                  Con la data scelta la base resta al minimo. Prima data possibile: <strong>{formatDateFull(summary.earliestDate)}</strong>
+                </p>
+              )}
+              <TextField id="onb-baseKcal" label="Cambia la base a mano (kcal)" value={values.baseKcal} onChange={set("baseKcal")} error={errors.baseKcal} placeholder={summary ? formatNumber(summary.baseKcal) : undefined} />
+            </>
+          )}
         </div>
         <div className="mt-auto flex flex-col gap-2 pt-6">
           <button type="button" disabled={busy} onClick={next} className="min-h-12 rounded-xl bg-accent px-4 text-[17px] font-semibold text-white disabled:opacity-50">

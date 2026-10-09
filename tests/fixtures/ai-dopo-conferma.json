@@ -83,7 +83,7 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Conferma",
+        "name": "Salva",
         "exact": true
       }
     },

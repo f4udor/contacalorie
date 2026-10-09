@@ -108,7 +108,7 @@ export function validateMealForm(
   for (const key of ["kcal", "protein", "carbs", "fat", "fiber", "salt"] as const) {
     const r = parseDecimal(values[key]);
     if (r === "empty") {
-      if (key === "kcal") errors.kcal = aiAvailable ? "Inserisci le kcal o tocca «Stima con AI»" : "Inserisci le kcal";
+      if (key === "kcal") errors.kcal = aiAvailable ? "Inserisci le kcal o tocca «Stima con l'AI»" : "Inserisci le kcal";
     } else if (r === "invalid") {
       errors[key] = "Inserisci un numero valido";
     } else if (r < 0) {

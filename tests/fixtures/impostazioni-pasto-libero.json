@@ -1,0 +1,17 @@
+{
+  "id": "impostazioni-pasto-libero",
+  "descrizione": "Pagina Pasto libero: il tetto di kcal.",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=pasto-libero",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "freeMealCap": 900,
+      "onboardingDone": true
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

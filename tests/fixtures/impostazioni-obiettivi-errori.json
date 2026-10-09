@@ -1,0 +1,35 @@
+{
+  "id": "impostazioni-obiettivi-errori",
+  "descrizione": "Valori non validi negli Obiettivi: errori accanto ai campi, nulla viene salvato.",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=obiettivi",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "fill": [
+        "Kcal base",
+        "-5"
+      ]
+    },
+    {
+      "fill": [
+        "Margine dei semafori (%)",
+        "80"
+      ]
+    },
+    {
+      "fill": [
+        "Sale massimo (g)",
+        "0"
+      ]
+    },
+    {
+      "click": "Salva",
+      "exact": true
+    },
+    {
+      "scrollTo": "Controlla i campi"
+    }
+  ]
+}

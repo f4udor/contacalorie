@@ -174,7 +174,7 @@ try {
           else if (step.fill) await page.getByLabel(step.fill[0]).filter({ visible: true }).fill(step.fill[1]);
           else if (step.swipe) await touchSwipe(page, page.getByText(step.swipe.text, { exact: true }).first(), step.swipe.dx ?? -140, step.swipe.dy ?? 0);
           else if (step.press) await page.keyboard.press(step.press);
-          else if (step.scrollTo) await page.getByText(step.scrollTo).first().scrollIntoViewIfNeeded();
+          else if (step.scrollTo) await page.getByText(step.scrollTo).filter({ visible: true }).first().scrollIntoViewIfNeeded();
           await page.waitForTimeout(step.wait ?? 350);
         }
         // La pagina intera in una sola immagine, con la barra in basso al suo posto.
