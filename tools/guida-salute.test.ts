@@ -50,11 +50,12 @@ describe("docs/COLLEGA-SALUTE.md", () => {
     }
   });
 
-  it("la scheda Attività di Oggi citata esiste e mostra la fonte; la guida non manda a funzioni non ancora presenti", () => {
+  it("le schede Passi e Bici di Oggi citate esistono e mostrano la fonte; la guida non manda a funzioni non ancora presenti", () => {
     const card = read("src/app/components/activity-card.tsx");
-    expect(card).toContain("Attività");
+    expect(card).toContain("Passi");
+    expect(card).toContain("Bici");
     expect(card).toContain("da Salute");
-    expect(guida).toContain("scheda **Attività**");
+    expect(guida).toContain("schede **Passi** e **Bici**");
     expect(guida).not.toMatch(/in \*\*Settimana\*\* toccando/);
   });
 

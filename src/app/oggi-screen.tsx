@@ -5,14 +5,13 @@ import { useCallback, useEffect, useState } from "react";
 import type { FavoriteDish, MealRecord } from "@/data";
 import type { MealSlot } from "@/engine";
 import { useDataStore } from "./data-provider";
-import { ActivityCard } from "./components/activity-card";
+import { ActivityCards } from "./components/activity-card";
 import { AddPanel, EditBikePanel, EditMealPanel, SaveMealPanel } from "./components/add-panel";
 import { MealList } from "./components/meal-list";
-import { Card } from "./components/ui/ui";
 import { ScreenHeader } from "./components/screen-header";
 import { AddButton } from "./components/add-button";
 import { SettingsPanel } from "./components/settings-view";
-import { KcalRing } from "./components/kcal-ring";
+import { CalorieCard } from "./components/kcal-ring";
 import { NutrientCard } from "./components/nutrient-card";
 import { formatDateLong, formatDayMonth, formatNumber, formatSigned, formatWeekday } from "./lib/format";
 import { dayNav } from "./lib/nav";
@@ -68,7 +67,7 @@ export function OggiScreen() {
     try {
       const done = await toggleFavoriteDish(store, dish, newId);
       await loadFavorites();
-      setFavoriteNote(done === "salvato" ? "Salvato nei preferiti." : "Tolto dai preferiti.");
+      setFavoriteNote(done === "salvato" ? "Salvato nei preferiti." : "Rimosso dai preferiti.");
       setTimeout(() => setFavoriteNote(null), 3000);
     } catch {
       // L'avviso in cima lo spiega; si può riprovare.
@@ -119,16 +118,17 @@ export function OggiScreen() {
       </div>
       {view && (
         <div className="flex flex-col gap-3">
-          <Card className="flex flex-col items-center pb-5 pt-6">
-            <KcalRing remaining={view.remaining} progress={view.ringProgress} color={view.ringColor} eaten={view.eaten} target={view.target} empty={!view.hasMeals} />
-            {hasCompositionDetail(view.composition) && (
-            <p className="mt-4 text-center text-sm text-muted" aria-label="Composizione dell'obiettivo">
-              {view.composition
-                .map((c) => `${c.label} ${c.signed ? formatSigned(c.amount) : formatNumber(c.amount)}`)
-                .join(" · ")}
-            </p>
-            )}
-          </Card>
+          <CalorieCard
+            remaining={view.remaining}
+            progress={view.ringProgress}
+            color={view.ringColor}
+            eaten={view.eaten}
+            target={view.target}
+            empty={!view.hasMeals}
+            date={date}
+            today={today}
+            composition={hasCompositionDetail(view.composition) ? view.composition.map((c) => `${c.label} ${c.signed ? formatSigned(c.amount) : formatNumber(c.amount)}`).join(" · ") : null}
+          />
           <div className="grid grid-cols-2 gap-3">
             {view.nutrients.map((n, i) => (
               <NutrientCard key={n.key} n={n} onOpenProfile={() => setSettings({ section: "profilo" })} wide={i === view.nutrients.length - 1 && view.nutrients.length % 2 === 1} />
@@ -136,11 +136,11 @@ export function OggiScreen() {
           </div>
           <MealList dishes={meals} settings={data!.settings} onSelectDish={(meal) => setPanel({ kind: "edit", meal })} onAddDish={(slot) => setPanel({ kind: "add", slot })} onSaveMeal={(slot) => setPanel({ kind: "saveMeal", slot })} isFavorite={(d) => isFavoriteDish(favorites, d)} onFavoriteDish={favoriteDish} onDeleteDish={deleteDish} />
           {favoriteNote && (
-            <p role="status" className="px-1 text-center text-sm font-semibold text-ok">
+            <p role="status" className="px-1 text-center text-[14px] font-semibold text-in-obiettivo">
               {favoriteNote}
             </p>
           )}
-          <ActivityCard activity={activity} settings={data!.settings} onEditBike={() => setPanel({ kind: "bike" })} />
+          <ActivityCards activity={activity} settings={data!.settings} onEditBike={() => setPanel({ kind: "bike" })} />
         </div>
       )}
       <AddButton onClick={() => setPanel({ kind: "add" })} />

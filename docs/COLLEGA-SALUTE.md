@@ -102,7 +102,7 @@ Se invece vedi:
 - `"Nessuna riga utile"`: i dati letti da Salute non avevano righe di oggi o di ieri con un valore sopra zero;
 - `"Troppe chiamate oggi"`: l'app accetta al massimo 200 chiamate al giorno per utente. Riprova domani.
 
-Poi apri l'app → **Oggi**: nella scheda **Attività** passi e bici compaiono con la fonte «da Salute».
+Poi apri l'app → **Oggi**: nelle schede **Passi** e **Bici** i valori compaiono con la fonte «da Salute».
 
 ---
 

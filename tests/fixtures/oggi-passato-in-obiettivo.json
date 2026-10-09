@@ -1,0 +1,59 @@
+{
+  "id": "oggi-passato-in-obiettivo",
+  "descrizione": "Giorno passato che ha raggiunto l'obiettivo (2.050 su 2.100): anello e numero in blu (In obiettivo).",
+  "oggi": "2026-01-08",
+  "percorso": "/?d=2026-01-07",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m408",
+        "date": "2026-01-07",
+        "slot": "colazione",
+        "name": "Colazione",
+        "kcal": 450,
+        "protein": 15,
+        "carbs": 60,
+        "fat": 14,
+        "fiber": 3,
+        "salt": 0.5,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m409",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 900,
+        "protein": 40,
+        "carbs": 110,
+        "fat": 28,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m410",
+        "date": "2026-01-07",
+        "slot": "cena",
+        "name": "Cena",
+        "kcal": 700,
+        "protein": 45,
+        "carbs": 70,
+        "fat": 25,
+        "fiber": 6,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

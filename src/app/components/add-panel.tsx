@@ -232,7 +232,7 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
     try {
       const done = await toggleFavoriteDish(store, meal, newId);
       setIsFavorite(done === "salvato");
-      setFavoriteStatus(done === "salvato" ? "Salvato nei preferiti." : "Tolto dai preferiti.");
+      setFavoriteStatus(done === "salvato" ? "Salvato nei preferiti." : "Rimosso dai preferiti.");
     } catch {
       // L'avviso in cima lo spiega; si può riprovare.
     }

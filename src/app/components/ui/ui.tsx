@@ -219,7 +219,7 @@ export function Segmented<T extends string>({ options, value, onChange, label }:
   );
 }
 
-const NUM_SIZE = { sm: "text-[20px]", md: "text-[28px]", lg: "text-[40px]", xl: "text-[52px]" } as const;
+const NUM_SIZE = { sm: "text-[22px]", md: "text-[28px]", lg: "text-[40px]", xl: "text-[52px]" } as const;
 
 /**
  * Numero con unità: il componente unico per i numeri in evidenza. Carattere arrotondato di sistema, peso medio;

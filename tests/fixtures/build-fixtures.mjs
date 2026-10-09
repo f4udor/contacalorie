@@ -557,6 +557,14 @@ const debito250 = data({
 });
 add("oggi-anteprima-venerdi", "Giorno futuro (venerdì) con debito di 250 kcal da lunedì: l'anteprima dà 2.000 (−100), non il debito ripetuto.", "2026-01-08", debito250, { percorso: "/?d=2026-01-09" });
 add("oggi-anteprima-domenica", "Domenica in anteprima: il debito è stato estinto nei giorni intermedi, obiettivo 2.100 e nessuna riga di recupero.", "2026-01-08", debito250, { percorso: "/?d=2026-01-11" });
+add("oggi-passato-sotto", "Giorno passato rimasto sotto l'obiettivo (1.450 su 2.100): anello e numero nel colore Sotto (grigio), non Comando.", "2026-01-08", data({
+  settings: { weightKg: 100 },
+  meals: [meal("2026-01-07", "colazione", "Cappuccino e brioche", 320, 8, 48, 10, 1, 0.4), meal("2026-01-07", "pranzo", "Pasta al pomodoro", 650, 22, 110, 12, 6, 1.8), meal("2026-01-07", "cena", "Petto di pollo e verdure", 480, 52, 18, 20, 7, 1.4)],
+}), { percorso: "/?d=2026-01-07" });
+add("oggi-passato-in-obiettivo", "Giorno passato che ha raggiunto l'obiettivo (2.050 su 2.100): anello e numero in blu (In obiettivo).", "2026-01-08", data({
+  settings: { weightKg: 100 },
+  meals: [meal("2026-01-07", "colazione", "Colazione", 450, 15, 60, 14, 3, 0.5), meal("2026-01-07", "pranzo", "Pranzo", 900, 40, 110, 28, 8, 2), meal("2026-01-07", "cena", "Cena", 700, 45, 70, 25, 6, 2)],
+}), { percorso: "/?d=2026-01-07" });
 add("oggi-debito-piccolo", "Lunedì 2.111 kcal (debito 11, sotto la soglia di 25): martedì obiettivo 2.100 e nessuna riga di recupero.", "2026-01-06", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", 2111, 90, 200, 60, 20, 4)] }));
 sett("settimana-anteprima", "Settimana con debito di 250 kcal e oggi giovedì: le linee dell'obiettivo dei giorni futuri sono 2.000, 2.000, 2.050, 2.100.", "2026-01-08", debito250);
 
@@ -593,8 +601,8 @@ settScheda("settimana-pannello-passi-vuoto", "Pannello Passi senza nessun valore
 settScheda("settimana-pannello-libero", "Pasto libero presente: giorno, fascia, kcal e 'Togli pasto libero'.", conLibero, [tocca("Pasto libero")]);
 settScheda("settimana-pannello-libero-scegli", "Nessun pasto libero: elenco dei pasti della settimana con 'Segna come libero'.", settimanaPiena, [tocca("Pasto libero")]);
 settScheda("settimana-pannello-libero-vuoto", "Nessun pasto libero e nessun pasto nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Pasto libero")]);
-settScheda("settimana-dopo-elimina-bici", "Dopo aver eliminato la bici a mano di martedì e chiuso il pannello: il totale dei km (da 45,6 a 25,6) si è aggiornato.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Elimina la bici a mano di Martedì 6 gennaio", exact: true } }, { wait: 500 }, { click: "Chiudi", exact: true }]);
-settScheda("settimana-dopo-togli-libero", "Dopo 'Togli pasto libero': la scheda dice 'non usato' e il pasto resta.", conLibero, [tocca("Pasto libero"), { click: "Togli pasto libero" }, { wait: 500 }, { click: "Chiudi", exact: true }]);
+settScheda("settimana-dopo-elimina-bici", "Dopo aver eliminato la bici a mano di martedì e chiuso il pannello: il totale dei km (da 45,6 a 25,6) si è aggiornato.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Elimina la bici a mano di Martedì 6 gennaio", exact: true } }, { wait: 500 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }]);
+settScheda("settimana-dopo-togli-libero", "Dopo 'Togli pasto libero': la scheda dice 'non usato' e il pasto resta.", conLibero, [tocca("Pasto libero"), { click: "Togli pasto libero" }, { wait: 500 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }]);
 
 scenarios.push({
   id: "oggi-dopo-modifica-settimana",
@@ -603,7 +611,7 @@ scenarios.push({
   percorso: "/settimana",
   dati: data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pranzo", 700, 30, 80, 20, 5, 2)], activity: [activity("2026-01-08", { steps: 9000, stepsSource: "manuale" })] }),
   scorre: true,
-  passi: [tocca("Passi medi"), { clickRole: { role: "button", name: "Elimina il valore di Giovedì 8 gennaio", exact: true } }, { wait: 400 }, { click: "Chiudi", exact: true }, { clickRole: { role: "link", name: "Oggi", exact: true } }, { wait: 600 }],
+  passi: [tocca("Passi medi"), { clickRole: { role: "button", name: "Elimina il valore di Giovedì 8 gennaio", exact: true } }, { wait: 400 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }, { clickRole: { role: "link", name: "Oggi", exact: true } }, { wait: 600 }],
 });
 // --- Scorrimento a sinistra per le azioni (T5.5), con il tocco simulato del browser.
 const giornoConPiatti = data({
@@ -616,12 +624,12 @@ const giornoConPiatti = data({
   ],
 });
 const sw = (text, dx = -140) => ({ swipe: { text, dx } });
-add("oggi-scorrimento-aperto", "Piatto scorso a sinistra: a destra compaiono «Preferiti» e il cestino.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro")] });
+add("oggi-scorrimento-aperto", "Piatto scorso a sinistra: a destra compaiono «Salva nei preferiti» e il cestino.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro")] });
 add("oggi-scorrimento-due-righe", "Una sola riga aperta alla volta: scorrendo un secondo piatto il primo si richiude.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), sw("Frittata con zucchine")] });
-add("oggi-scorrimento-preferiti", "Dopo «Preferiti»: il piatto è salvato, la riga si richiude e compare la conferma.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), { click: "Preferiti", exact: true }, { wait: 500 }] });
+add("oggi-scorrimento-preferiti", "Dopo «Salva nei preferiti»: il piatto è salvato, la riga si richiude e compare la conferma.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), { click: "Salva nei preferiti", exact: true }, { wait: 500 }] });
 const preferitoPasta = { favoriteDishes: [{ id: "fp", name: "pasta al pomodoro", quantity: null, kcal: 650, protein: 22, carbs: 110, fat: 12, fiber: 6, salt: 1.8 }] };
-add("oggi-scorrimento-gia-preferito", "Piatto già tra i preferiti (stesso nome, maiuscole diverse): scorrendo compare «Rimuovi dai preferiti» al posto di «Preferiti»; l'altro piatto ha ancora «Preferiti».", "2026-01-08", { ...giornoConPiatti, ...preferitoPasta }, { passi: [sw("Pasta al pomodoro", -190)] });
-add("oggi-scorrimento-rimosso", "Dopo «Rimuovi dai preferiti»: conferma «Tolto dai preferiti.»; scorrendo di nuovo il piatto torna «Preferiti».", "2026-01-08", { ...giornoConPiatti, ...preferitoPasta }, { passi: [sw("Pasta al pomodoro", -190), { click: "Rimuovi dai preferiti", exact: true }, { wait: 500 }, sw("Pasta al pomodoro", -190)] });
+add("oggi-scorrimento-gia-preferito", "Piatto già tra i preferiti (stesso nome, maiuscole diverse): scorrendo compare «Rimuovi dai preferiti» al posto di «Salva nei preferiti»; l'altro piatto ha ancora «Salva nei preferiti».", "2026-01-08", { ...giornoConPiatti, ...preferitoPasta }, { passi: [sw("Pasta al pomodoro", -190)] });
+add("oggi-scorrimento-rimosso", "Dopo «Rimuovi dai preferiti»: conferma «Rimosso dai preferiti.»; scorrendo di nuovo il piatto torna «Salva nei preferiti».", "2026-01-08", { ...giornoConPiatti, ...preferitoPasta }, { passi: [sw("Pasta al pomodoro", -190), { click: "Rimuovi dai preferiti", exact: true }, { wait: 500 }, sw("Pasta al pomodoro", -190)] });
 add("preferiti-modifica-etichetta-rimuovi", "Scheda del piatto già tra i preferiti: in fondo «Rimuovi dai preferiti» al posto di «Salva nei preferiti».", "2026-01-08", { ...giornoPasti(), ...preferitoPasta }, { fisso: true, passi: [{ click: "Pasta al pomodoro" }, { scrollTo: "Elimina piatto" }] });
 add("oggi-scorrimento-cestino", "Dopo il cestino: il piatto è eliminato subito, senza conferma, e i totali si ricalcolano.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), { clickRole: { role: "button", name: "Elimina Pasta al pomodoro", exact: true } }, { wait: 500 }] });
 add("oggi-scorrimento-a-destra", "Scorrimento verso destra: non succede nulla.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro", 140)] });

@@ -553,7 +553,7 @@ Vincoli di questa fase:
 - Test della logica di navigazione toccata. Screenshot: barra con ciascuna voce attiva, pannello Impostazioni aperto, fine pagina di Oggi con il + che non copre contenuto, 375 px.
 - Nel diario, sotto "Non verificato": resa della sfocatura e prestazioni su un iPhone vero.
 
-### T6.2 Oggi · da fare
+### T6.2 Oggi · fatto
 - Schermata come in §10.5 e nella bozza: scheda Calorie, griglia dei nutrienti, pasti con i piatti in tessere, schede Passi e Bici.
 - Tutti gli stati esistenti restano e prendono lo stile nuovo: giorno senza pasti, giorno passato e futuro, anello nei quattro colori più "Sotto", "Oltre" quando si sfora, riga di composizione dell'obiettivo (base, bici, passi, recupero), pasto libero, piatto segnalato dal controllo di coerenza, avviso di Salute, bici con parte da Salute e parte a mano, scorrimento a sinistra sui piatti.
 - Testi di questa schermata da `docs/TESTI.md`.

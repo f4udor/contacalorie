@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m410",
+        "id": "m416",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Pranzo",
@@ -58,8 +58,11 @@
       "wait": 400
     },
     {
-      "click": "Chiudi",
-      "exact": true
+      "clickRole": {
+        "role": "button",
+        "name": "Chiudi",
+        "exact": true
+      }
     },
     {
       "clickRole": {

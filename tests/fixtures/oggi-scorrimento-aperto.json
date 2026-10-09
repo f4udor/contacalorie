@@ -1,6 +1,6 @@
 {
   "id": "oggi-scorrimento-aperto",
-  "descrizione": "Piatto scorso a sinistra: a destra compaiono «Preferiti» e il cestino.",
+  "descrizione": "Piatto scorso a sinistra: a destra compaiono «Salva nei preferiti» e il cestino.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m411",
+        "id": "m417",
         "date": "2026-01-08",
         "slot": "colazione",
         "name": "Cappuccino e brioche",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m412",
+        "id": "m418",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -38,7 +38,7 @@
         "originalText": null
       },
       {
-        "id": "m413",
+        "id": "m419",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Insalata di pomodorini",
@@ -52,7 +52,7 @@
         "originalText": null
       },
       {
-        "id": "m414",
+        "id": "m420",
         "date": "2026-01-08",
         "slot": "cena",
         "name": "Frittata con zucchine",

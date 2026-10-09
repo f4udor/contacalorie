@@ -77,8 +77,8 @@ try {
   let page = await newPage();
   await touch(page, "Pasta al pomodoro", -140);
   check("scorrendo a sinistra la riga si apre", await rowOpen(page, "Pasta al pomodoro"));
-  const sizes = await page.evaluate(() => [...document.querySelectorAll('[data-swipe-row][data-open="true"] button')].filter((b) => b.getAttribute("aria-label")?.startsWith("Elimina") || b.textContent === "Preferiti").map((b) => [b.getBoundingClientRect().width, b.getBoundingClientRect().height]));
-  check("«Preferiti» e il cestino sono visibili e grandi almeno 44 px", sizes.length === 2 && sizes.every(([w, h]) => w >= 44 && h >= 44), JSON.stringify(sizes));
+  const sizes = await page.evaluate(() => [...document.querySelectorAll('[data-swipe-row][data-open="true"] button')].filter((b) => b.getAttribute("aria-label")?.startsWith("Elimina") || b.textContent === "Salva nei preferiti").map((b) => [b.getBoundingClientRect().width, b.getBoundingClientRect().height]));
+  check("«Salva nei preferiti» e il cestino sono visibili e grandi almeno 44 px", sizes.length === 2 && sizes.every(([w, h]) => w >= 44 && h >= 44), JSON.stringify(sizes));
 
   // 2. Una sola riga aperta alla volta.
   await touch(page, "Frittata con zucchine", -140);
@@ -129,12 +129,12 @@ try {
   check("il cestino elimina subito, senza conferma", (await page.getByText("Pasta al pomodoro", { exact: true }).count()) === 0 && !(await dialog(page)));
   await page.context().close();
 
-  // 9. «Preferiti» salva il piatto.
+  // 9. «Salva nei preferiti» salva il piatto.
   page = await newPage();
   await touch(page, "Pasta al pomodoro", -140);
-  await page.getByRole("button", { name: "Preferiti", exact: true }).filter({ visible: true }).click();
+  await page.getByRole("button", { name: "Salva nei preferiti", exact: true }).filter({ visible: true }).click();
   await page.waitForTimeout(500);
-  check("«Preferiti» salva il piatto e lo dice", await page.getByText("Salvato nei preferiti.").isVisible());
+  check("«Salva nei preferiti» salva il piatto e lo dice", await page.getByText("Salvato nei preferiti.").isVisible());
   check("e la riga si richiude", (await open(page)) === 0);
   await page.context().close();
 
