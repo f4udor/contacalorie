@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { createMemoryDataStore } from "@/data";
 import type { MealRecord } from "@/data";
-import { loadWeekData } from "./week-data";
+import { latestWeighInWeight, loadWeekData } from "./week-data";
 
 function meal(id: string, date: string, kcal: number): MealRecord {
   return { id, date, name: id, slot: "pranzo", kcal, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0, isFree: false, originalText: null };
@@ -35,5 +35,44 @@ describe("loadWeekData", () => {
     expect(w.settings.baseKcal).toBe(2000);
     expect(w.settings.floorKcal).toBe(1800);
     expect(w.userSettings.weightKg).toBe(90);
+  });
+
+  it("profilo completo senza kcal base a mano: base calcolata (AB) e soglia minima = basale; il piano è disponibile", async () => {
+    const s = createMemoryDataStore();
+    await s.saveSettings({ sex: "uomo", ageYears: 27, heightCm: 180, weightKg: 100, targetWeightKg: 90, targetDate: "2026-10-28" });
+    const w = await loadWeekData(s, "2026-01-01", "2026-01-01");
+    expect(w.settings.baseKcal).toBe(2140);
+    expect(w.settings.floorKcal).toBe(2000);
+    expect(w.baseIsManual).toBe(false);
+    expect(w.plan?.unreachable).toBe(false);
+  });
+
+  it("utente esistente con kcal base salvata: la tiene come personalizzata; la soglia diventa il basale con il profilo completo", async () => {
+    const s = createMemoryDataStore();
+    await s.saveSettings({ baseKcal: 2000, floorKcal: 1700, sex: "uomo", ageYears: 27, heightCm: 180, weightKg: 100 });
+    const w = await loadWeekData(s, "2026-01-08", "2026-01-08");
+    expect(w.settings.baseKcal).toBe(2000);
+    expect(w.baseIsManual).toBe(true);
+    expect(w.settings.floorKcal).toBe(2000);
+  });
+
+  it("il peso è l'ultima pesata fino a oggi, non quello del profilo; una pesata futura non conta", async () => {
+    const s = createMemoryDataStore();
+    await s.saveSettings({ sex: "uomo", ageYears: 27, heightCm: 180, weightKg: 100 });
+    await s.saveWeighIn({ date: "2026-01-05", weightKg: 90 });
+    await s.saveWeighIn({ date: "2026-02-01", weightKg: 80 });
+    const w = await loadWeekData(s, "2026-01-08", "2026-01-08");
+    expect(w.plan?.basal).toBe(1895);
+    expect(w.settings.baseKcal).toBe(2270);
+    expect(latestWeighInWeight([{ date: "2026-01-05", weightKg: 90 }], "2026-01-04")).toBeUndefined();
+  });
+
+  it("profilo incompleto (senza sesso): i default di oggi", async () => {
+    const s = createMemoryDataStore();
+    await s.saveSettings({ ageYears: 27, heightCm: 180, weightKg: 100 });
+    const w = await loadWeekData(s, "2026-01-08", "2026-01-08");
+    expect(w.plan).toBeNull();
+    expect(w.settings.baseKcal).toBe(2100);
+    expect(w.settings.floorKcal).toBe(1800);
   });
 });

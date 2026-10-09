@@ -1,0 +1,33 @@
+{
+  "id": "impostazioni-elenco",
+  "descrizione": "Impostazioni: solo righe (Profilo, Obiettivi, Attività, Pasto libero, Dati) con il riassunto a destra e, staccata, Collegamenti con «Salute collegata»; nessun campo.",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "sex": "uomo",
+      "ageYears": 27,
+      "heightCm": 180,
+      "weightKg": 100,
+      "targetWeightKg": 90,
+      "targetDate": "2026-10-28",
+      "onboardingDone": true
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "salute": {
+    "active": true,
+    "codeCreatedAt": "2025-12-20T08:00:00Z",
+    "lastSuccessAt": "2025-12-31T07:40:00Z",
+    "lastAttempt": {
+      "at": "2025-12-31T07:40:00Z",
+      "success": true,
+      "detail": null
+    }
+  }
+}

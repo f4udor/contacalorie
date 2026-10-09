@@ -1,0 +1,35 @@
+{
+  "id": "impostazioni-profilo-errori",
+  "descrizione": "Profilo con valori non validi: errori accanto ai campi, nulla viene salvato.",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=profilo",
+  "dati": null,
+  "scorre": true,
+  "passi": [
+    {
+      "fill": [
+        "Peso (kg)",
+        "novanta"
+      ]
+    },
+    {
+      "fill": [
+        "Età (anni)",
+        "40,5"
+      ]
+    },
+    {
+      "fill": [
+        "Altezza (cm)",
+        "1000"
+      ]
+    },
+    {
+      "click": "Salva",
+      "exact": true
+    },
+    {
+      "scrollTo": "Controlla i campi"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "impostazioni-obiettivi-personalizzato",
+  "descrizione": "Obiettivi con kcal base 2.100 e proteine 150 g scritte a mano: «personalizzato» e «Usa il valore calcolato»; i grassi restano «calcolato».",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=obiettivi",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "sex": "uomo",
+      "ageYears": 27,
+      "heightCm": 180,
+      "weightKg": 100,
+      "targetWeightKg": 90,
+      "targetDate": "2026-10-28",
+      "onboardingDone": true,
+      "baseKcal": 2100,
+      "proteinGramsManual": 150
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

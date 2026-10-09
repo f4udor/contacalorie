@@ -1,0 +1,30 @@
+{
+  "id": "impostazioni-obiettivi-data-impostata",
+  "descrizione": "Dopo «Imposta questa data»: la riga sparisce e la base calcolata sale oltre il minimo.",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=obiettivi",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "sex": "uomo",
+      "ageYears": 27,
+      "heightCm": 180,
+      "weightKg": 100,
+      "targetWeightKg": 90,
+      "targetDate": "2026-04-11",
+      "onboardingDone": true
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "passi": [
+    {
+      "click": "Imposta questa data"
+    },
+    {
+      "wait": 500
+    }
+  ]
+}

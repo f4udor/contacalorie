@@ -25,7 +25,7 @@ export function WeekChart({ bars, today, avg }: { bars: WeekBar[]; today: string
       </span>
       {avg && (
         <span data-avg-label className="flex items-center gap-1.5 tabular-nums">
-          <span aria-hidden="true" className="block w-5 border-t-2 border-dashed border-muted" />
+          <span aria-hidden="true" className="block w-5 border-t-2 border-dashed border-avg-line" />
           media {formatNumber(avg.kcal)}
         </span>
       )}
@@ -38,7 +38,7 @@ export function WeekChart({ bars, today, avg }: { bars: WeekBar[]; today: string
           <li key={b.date} className="flex-1">
             <Link href={isToday ? "/" : `/?d=${b.date}`} aria-label={label} className="flex min-h-11 flex-col items-center gap-1 px-0.5">
               <span className="relative block w-full" style={{ height: CHART_HEIGHT }}>
-                {avg && <span aria-hidden="true" data-avg-line className="absolute inset-x-0 z-10 block border-t-2 border-dashed border-muted" style={{ bottom: `calc(${avg.ratio * 100}% - 1px)` }} />}
+                {avg && <span aria-hidden="true" data-avg-line className="absolute inset-x-0 z-10 block border-t-2 border-dashed border-avg-line" style={{ bottom: `calc(${avg.ratio * 100}% - 1px)` }} />}
                 {b.hasMeals && (
                   <span
                     className="absolute inset-x-1.5 bottom-0 block rounded-t-lg"

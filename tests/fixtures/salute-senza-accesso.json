@@ -2,7 +2,7 @@
   "id": "salute-senza-accesso",
   "descrizione": "Impostazioni → Collegamenti → Salute con i dati solo sul dispositivo: dice che serve l'accesso.",
   "oggi": "2026-01-08",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=collegamenti",
   "dati": null,
   "scorre": true,
   "passi": [

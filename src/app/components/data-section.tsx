@@ -41,11 +41,8 @@ export function DataSection() {
   };
 
   return (
-    <section className="mt-3 rounded-2xl bg-card p-4" aria-label="Dati">
-      <h2 className="text-[22px] font-bold leading-tight">Dati</h2>
-      <p className="mb-4 mt-1 text-sm text-muted">
-        Scarica i tuoi dati in file CSV, che si aprono con Excel, Numbers o Fogli. {kind === "supabase" ? "Sono i dati del tuo account." : "Sono i dati salvati su questo dispositivo."}
-      </p>
+    <section className="rounded-2xl bg-card p-4" aria-label="Dati">
+      <p className="mb-4 text-sm text-muted">{kind === "supabase" ? "File CSV con i dati del tuo account." : "File CSV con i dati di questo dispositivo."}</p>
       <div className="flex flex-col gap-3">
         <button type="button" disabled={busy || !store} onClick={() => run("piatti", dishesCsv, "Non ci sono ancora piatti da esportare.", ["piatto", "piatti"])} className={button}>
           Esporta i piatti (CSV)

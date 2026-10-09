@@ -2,7 +2,7 @@
   "id": "impostazioni-dati",
   "descrizione": "Impostazioni → Dati: i due pulsanti di esportazione (con dati sul dispositivo).",
   "oggi": "2026-01-11",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=dati",
   "dati": {
     "version": 1,
     "settings": {

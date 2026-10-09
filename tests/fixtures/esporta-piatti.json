@@ -2,7 +2,7 @@
   "id": "esporta-piatti",
   "descrizione": "Dopo 'Esporta i piatti': il file CSV viene scaricato e la pagina dice quale e quanti piatti.",
   "oggi": "2026-01-11",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=dati",
   "dati": {
     "version": 1,
     "settings": {

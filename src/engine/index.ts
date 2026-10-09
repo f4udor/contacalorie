@@ -11,3 +11,4 @@ export * from "./traffic";
 export * from "./week";
 export * from "./preview";
 export * from "./coherence";
+export * from "./profile";

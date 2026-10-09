@@ -1,0 +1,22 @@
+{
+  "id": "impostazioni-profilo",
+  "descrizione": "Pagina Profilo: sesso, età, altezza, peso, peso obiettivo e data, con «Indietro».",
+  "oggi": "2026-01-01",
+  "percorso": "/impostazioni?s=profilo",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "sex": "uomo",
+      "ageYears": 27,
+      "heightCm": 180,
+      "weightKg": 100,
+      "targetWeightKg": 90,
+      "targetDate": "2026-10-28",
+      "onboardingDone": true
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

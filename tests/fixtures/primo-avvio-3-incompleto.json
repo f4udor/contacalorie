@@ -1,0 +1,31 @@
+{
+  "id": "primo-avvio-3-incompleto",
+  "descrizione": "Schermata 3 con il profilo incompleto (solo il peso): kcal base predefinite 2.100, nessun basale, invito a completare in Impostazioni.",
+  "oggi": "2026-01-01",
+  "percorso": "/",
+  "dati": null,
+  "primoAvvio": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Avanti",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Peso (kg)",
+        "100"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Avanti",
+        "exact": true
+      }
+    }
+  ]
+}

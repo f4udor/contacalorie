@@ -1,8 +1,8 @@
 {
   "id": "dopo-kcal-base",
-  "descrizione": "Kcal base cambiata a 2.000 nelle Impostazioni: Oggi mostra obiettivo 2.000.",
+  "descrizione": "Kcal base cambiata a 2.000 negli Obiettivi: Oggi mostra obiettivo 2.000.",
   "oggi": "2026-01-08",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=obiettivi",
   "dati": null,
   "scorre": true,
   "passi": [

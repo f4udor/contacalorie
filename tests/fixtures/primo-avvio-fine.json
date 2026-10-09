@@ -1,6 +1,6 @@
 {
   "id": "primo-avvio-fine",
-  "descrizione": "Dopo Fine con peso 92,5 kg e obiettivo 82 kg: si arriva in Oggi e le proteine sono 1,8 × 82 = 150 g.",
+  "descrizione": "Dopo Fine con profilo completo (uomo, 27 anni, 180 cm, 100 kg): si arriva in Oggi con l'obiettivo calcolato (2.390 kcal).",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": null,
@@ -8,9 +8,22 @@
   "primoAvvio": true,
   "passi": [
     {
+      "clickRole": {
+        "role": "radio",
+        "name": "Uomo",
+        "exact": true
+      }
+    },
+    {
       "fill": [
-        "Peso (kg)",
-        "92,5"
+        "Età (anni)",
+        "27"
+      ]
+    },
+    {
+      "fill": [
+        "Altezza (cm)",
+        "180"
       ]
     },
     {
@@ -22,8 +35,8 @@
     },
     {
       "fill": [
-        "Peso obiettivo (kg)",
-        "82"
+        "Peso (kg)",
+        "100"
       ]
     },
     {

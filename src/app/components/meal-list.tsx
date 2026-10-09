@@ -17,14 +17,16 @@ interface MealListProps {
   onAddDish: (slot: MealSlot) => void;
   /** Tocco sull'intestazione di un pasto: salvarlo nei preferiti. */
   onSaveMeal: (slot: MealSlot) => void;
-  /** Scorrendo un piatto a sinistra: salvarlo nei preferiti. */
+  /** Il piatto è già tra i preferiti: compare «Rimuovi dai preferiti» al posto di «Preferiti». */
+  isFavorite: (dish: MealRecord) => boolean;
+  /** Scorrendo un piatto a sinistra: salvarlo nei preferiti o toglierlo. */
   onFavoriteDish: (dish: MealRecord) => void;
   /** Scorrendo un piatto a sinistra: eliminarlo subito, senza conferma. */
   onDeleteDish: (dish: MealRecord) => void;
 }
 
 /** I pasti del giorno: una scheda per fascia, con totali, piatti elencati e "Aggiungi piatto". */
-export function MealList({ dishes, settings, onSelectDish, onAddDish, onSaveMeal, onFavoriteDish, onDeleteDish }: MealListProps) {
+export function MealList({ dishes, settings, onSelectDish, onAddDish, onSaveMeal, isFavorite, onFavoriteDish, onDeleteDish }: MealListProps) {
   const rows = useOpenRow();
   const byId = new Map(dishes.map((d) => [d.id, d]));
   const groups = groupMeals(dishes);
@@ -63,7 +65,9 @@ export function MealList({ dishes, settings, onSelectDish, onAddDish, onSaveMeal
                       openId={rows.openId}
                       setOpen={rows.setOpen}
                       actions={[
-                        { key: "preferiti", label: "Preferiti", tone: "accent", onClick: () => onFavoriteDish(dish) },
+                        isFavorite(dish)
+                          ? { key: "preferiti", label: "Rimuovi dai preferiti", tone: "accent", width: 112, onClick: () => onFavoriteDish(dish) }
+                          : { key: "preferiti", label: "Preferiti", tone: "accent", onClick: () => onFavoriteDish(dish) },
                         { key: "elimina", label: `Elimina ${d.name}`, icon: trashIcon, tone: "danger", onClick: () => onDeleteDish(dish) },
                       ]}
                     >

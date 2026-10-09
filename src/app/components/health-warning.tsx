@@ -9,7 +9,7 @@ export function HealthWarning() {
   const { link } = useHealthLink();
   if (!link || !shouldWarnHealth(link, new Date())) return null;
   return (
-    <Link href="/impostazioni#collegamenti" className="mb-3 flex min-h-12 items-center justify-between gap-3 rounded-2xl bg-warn-fill px-4 py-3 text-[15px] font-semibold text-black">
+    <Link href="/impostazioni?s=collegamenti" className="mb-3 flex min-h-12 items-center justify-between gap-3 rounded-2xl bg-warn-fill px-4 py-3 text-[15px] font-semibold text-black">
       <span>Nessun dato da Salute da ieri</span>
       <span aria-hidden="true">›</span>
     </Link>

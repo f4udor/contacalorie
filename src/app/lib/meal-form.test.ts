@@ -27,7 +27,7 @@ describe("validateMealForm: kcal vuote", () => {
   it("senza AI: 'Inserisci le kcal'; con l'AI attiva il messaggio indica anche la stima", () => {
     const v = { ...emptyMealForm("cena"), name: "Pasta" };
     expect(validateMealForm(v, true)).toEqual({ ok: false, errors: { kcal: "Inserisci le kcal" } });
-    expect(validateMealForm(v, true, true)).toEqual({ ok: false, errors: { kcal: "Inserisci le kcal o tocca «Stima con AI»" } });
+    expect(validateMealForm(v, true, true)).toEqual({ ok: false, errors: { kcal: "Inserisci le kcal o tocca «Stima con l'AI»" } });
   });
 });
 

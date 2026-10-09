@@ -33,7 +33,7 @@ Se compare un errore del tipo "already exists", il file era già stato eseguito:
 
 ## Passo 2. Crea il codice personale
 
-1. Apri l'app, vai su **Impostazioni** e scorri fino a **Collegamenti**, voce **Salute**.
+1. Apri l'app, vai su **Impostazioni**, apri **Collegamenti** e cerca la voce **Salute**.
 2. Premi **Crea codice**.
 3. Compaiono il **Codice** e l'**Indirizzo**. Premi **Copia** accanto a ciascuno e incollali in un posto sicuro (per esempio in una nota privata) per il passo 3. **Il codice si vede solo questa volta**: quando premi **Fatto** sparisce.
 4. Premi **Fatto**.

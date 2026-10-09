@@ -1,16 +1,29 @@
 {
   "id": "primo-avvio-3",
-  "descrizione": "Schermata 3 di 3: le kcal base già precompilate a 2.100, pulsante Fine.",
-  "oggi": "2026-01-08",
+  "descrizione": "Schermata 3 di 3: kcal base calcolate (2.390 con peso 100 kg senza obiettivo) e metabolismo basale (2.000), con la possibilità di cambiare la base a mano; pulsante Fine.",
+  "oggi": "2026-01-01",
   "percorso": "/",
   "dati": null,
   "primoAvvio": true,
   "fisso": true,
   "passi": [
     {
+      "clickRole": {
+        "role": "radio",
+        "name": "Uomo",
+        "exact": true
+      }
+    },
+    {
       "fill": [
-        "Peso (kg)",
-        "92,5"
+        "Età (anni)",
+        "27"
+      ]
+    },
+    {
+      "fill": [
+        "Altezza (cm)",
+        "180"
       ]
     },
     {
@@ -22,8 +35,8 @@
     },
     {
       "fill": [
-        "Peso obiettivo (kg)",
-        "82"
+        "Peso (kg)",
+        "100"
       ]
     },
     {

@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 // @ts-expect-error file .mjs senza tipi
-import { UPDATE_HEADER_PHASE_5, UPDATE_HEADER_PHASE_5B, buildSetupSql, buildUpdateSql } from "./build-setup-sql.mjs";
+import { UPDATE_HEADER_PHASE_5, UPDATE_HEADER_PHASE_5B, UPDATE_HEADER_PHASE_5C, buildSetupSql, buildUpdateSql } from "./build-setup-sql.mjs";
 
 const root = path.resolve(__dirname, "..");
 
@@ -35,7 +35,7 @@ describe("supabase/setup.sql", () => {
 
   it("aggiornamento-fase-5.sql è aggiornato e contiene solo le migrazioni dalla 10", () => {
     const update = readFileSync(path.join(root, "supabase/aggiornamento-fase-5.sql"), "utf8");
-    expect(update).toBe(buildUpdateSql(path.join(root, "supabase/migrations"), 10, UPDATE_HEADER_PHASE_5));
+    expect(update).toBe(buildUpdateSql(path.join(root, "supabase/migrations"), 10, UPDATE_HEADER_PHASE_5, 14));
     const names = [...update.matchAll(/-- ===== (\S+\.sql) =====/g)].map((m) => m[1]);
     expect(names[0]).toBe("20260101000010_ingresso_salute.sql");
     expect(names.every((n) => Number(n.slice(0, 14)) >= 20260101000010)).toBe(true);
@@ -43,10 +43,20 @@ describe("supabase/setup.sql", () => {
 
   it("aggiornamento-fase-5b.sql è aggiornato e contiene solo le migrazioni dalla 13", () => {
     const update = readFileSync(path.join(root, "supabase/aggiornamento-fase-5b.sql"), "utf8");
-    expect(update).toBe(buildUpdateSql(path.join(root, "supabase/migrations"), 13, UPDATE_HEADER_PHASE_5B));
+    expect(update).toBe(buildUpdateSql(path.join(root, "supabase/migrations"), 13, UPDATE_HEADER_PHASE_5B, 14));
     const names = [...update.matchAll(/-- ===== (\S+\.sql) =====/g)].map((m) => m[1]);
     expect(names[0]).toBe("20260101000013_bici_a_mano.sql");
     expect(names.every((n) => Number(n.slice(0, 14)) >= 20260101000013)).toBe(true);
+  });
+
+  it("aggiornamento-fase-5c.sql è aggiornato e contiene solo la migrazione 15: sesso e data dell'obiettivo, solo aggiunte", () => {
+    const update = readFileSync(path.join(root, "supabase/aggiornamento-fase-5c.sql"), "utf8");
+    expect(update).toBe(buildUpdateSql(path.join(root, "supabase/migrations"), 15, UPDATE_HEADER_PHASE_5C));
+    const names = [...update.matchAll(/-- ===== (\S+\.sql) =====/g)].map((m) => m[1]);
+    expect(names).toEqual(["20260101000015_profilo_obiettivi.sql"]);
+    expect(update).toContain("add column sex text");
+    expect(update).toContain("add column target_date date");
+    expect(update).not.toMatch(/drop column|rename column|drop table/i);
   });
 
   it("la bici a mano (fase 5b): due colonne nuove, spostamento dei vecchi valori, l'ingresso non tocca la parte a mano", () => {

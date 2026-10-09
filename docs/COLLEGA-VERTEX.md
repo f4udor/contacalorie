@@ -119,7 +119,7 @@ I nomi vanno scritti **esattamente** così, maiuscole e trattini bassi compresi.
 Le variabili contano solo dalla prossima pubblicazione: se salti questo passo non cambia nulla.
 
 1. Su Vercel premi **Deployments**; sulla riga più recente premi i tre puntini **⋯** e scegli **Redeploy**, poi conferma con **Redeploy**. Aspetta che lo stato diventi **Ready** (di solito un minuto).
-2. Apri l'app (accedi se serve). Vai in **Impostazioni**: nella sezione **Collegamenti** la voce *Stima automatica (AI)* deve dire **attiva**. Se dice *non configurata*, vedi "Se qualcosa non va".
+2. Apri l'app (accedi se serve). Vai in **Impostazioni** e apri **Collegamenti**: la voce *Stima automatica (AI)* deve dire **attiva**. Se dice *non configurata*, vedi "Se qualcosa non va".
 3. Torna in **Oggi**, premi **+**. In cima scrivi, per esempio, *anelli di totano e un'insalata di pomodorini* e premi **Stima**.
 4. Compare la proposta: due piatti nel pasto della fascia giusta, con le quantità segnate **ipotizzata**. Controlla i numeri, correggi se serve (o scrivi una correzione in **Correggi** e premi **Rifai la stima**), poi premi **Conferma**.
 

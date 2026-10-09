@@ -2,7 +2,7 @@
   "id": "salute-senza-codice",
   "descrizione": "Salute senza codice: spiegazione e pulsante 'Crea codice'.",
   "oggi": "2026-01-08",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=collegamenti",
   "dati": null,
   "scorre": true,
   "passi": [

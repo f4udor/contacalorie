@@ -1,6 +1,6 @@
 {
   "id": "primo-avvio-errore",
-  "descrizione": "Peso non valido: errore accanto al campo, non si va avanti.",
+  "descrizione": "Età non valida: errore accanto al campo, non si va avanti.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": null,
@@ -9,8 +9,8 @@
   "passi": [
     {
       "fill": [
-        "Peso (kg)",
-        "novanta"
+        "Età (anni)",
+        "venti"
       ]
     },
     {

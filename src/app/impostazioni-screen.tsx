@@ -1,51 +1,65 @@
 "use client";
 
-import { useState } from "react";
-import { DataSection } from "./components/data-section";
-import { LinksSection } from "./components/links-section";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { resolveSettings } from "@/engine";
+import { ActivityPage, DataPage, FreeMealPage, GoalsPage, LinksPage, ProfilePage } from "./components/settings-pages";
 import { PageTitle } from "./components/page-title";
-import { SettingsForm } from "./components/settings-form";
+import { SettingsList } from "./components/settings-list";
 import { useAuth } from "./auth-provider";
 import { useDataStore } from "./data-provider";
+import { useHealthLink } from "./lib/use-health-link";
+import { rowSummaries, SECTIONS, sectionFromParam } from "./lib/settings-sections";
 import { useToday } from "./lib/use-today";
 import { useUserSettings } from "./lib/use-user-settings";
+import { latestWeighInWeight } from "./lib/week-data";
 
-/** Schermata Impostazioni. */
+/** Schermata Impostazioni: l'elenco delle pagine, oppure la pagina scelta (`?s=…`) con «Indietro». */
 export function ImpostazioniScreen() {
   const store = useDataStore();
   const today = useToday();
+  const section = sectionFromParam(useSearchParams().get("s"));
   const { loaded, reload } = useUserSettings();
-  const [formKey, setFormKey] = useState(0);
+  const { link } = useHealthLink();
   const { email, signOut } = useAuth();
 
+  if (section === null) {
+    const weightKg = loaded && today ? (latestWeighInWeight(loaded.weighIns, today) ?? loaded.settings.weightKg ?? null) : null;
+    const resolved = loaded && today ? resolveSettings(loaded.settings as Record<string, unknown>, today, weightKg) : null;
+    return (
+      <main>
+        <PageTitle>Impostazioni</PageTitle>
+        {loaded && resolved && (
+          <SettingsList
+            summaries={rowSummaries({ user: loaded.settings, settings: resolved.settings, profileComplete: resolved.plan !== null, weightKg, healthLinked: link === null ? null : link.active })}
+          />
+        )}
+        {email !== null && signOut && (
+          <section className="mt-6 rounded-2xl bg-card p-4" aria-label="Account">
+            <p className="break-all text-[17px] font-semibold">{email}</p>
+            <button type="button" onClick={() => signOut()} className="mt-4 min-h-12 w-full rounded-xl bg-bg px-4 text-[17px] font-semibold text-bad">
+              Esci
+            </button>
+          </section>
+        )}
+      </main>
+    );
+  }
+
+  const title = SECTIONS.find((s) => s.id === section)!.title;
+  const pageProps = store && today && loaded ? { store, settings: loaded.settings, weighIns: loaded.weighIns, today, onChanged: reload } : null;
   return (
     <main>
-      <PageTitle>Impostazioni</PageTitle>
-      {store && today && loaded && (
-        <SettingsForm
-          key={formKey}
-          store={store}
-          settings={loaded.settings}
-          weighIns={loaded.weighIns}
-          today={today}
-          onChanged={(reset) => {
-            reload();
-            if (reset) setFormKey((k) => k + 1);
-          }}
-        />
-      )}
-      <LinksSection />
-      <DataSection />
-      {email !== null && signOut && (
-        <section className="mt-3 rounded-2xl bg-card p-4" aria-label="Account">
-          <h2 className="text-[22px] font-bold leading-tight">Account</h2>
-          <p className="mb-4 mt-1 text-sm text-muted">L&apos;account con cui hai effettuato l&apos;accesso su questo dispositivo.</p>
-          <p className="break-all text-[17px] font-semibold">{email}</p>
-          <button type="button" onClick={() => signOut()} className="mt-4 min-h-12 w-full rounded-xl bg-bg px-4 text-[17px] font-semibold text-bad">
-            Esci
-          </button>
-        </section>
-      )}
+      <Link href="/impostazioni" className="-ml-2 flex min-h-11 w-fit items-center gap-1 px-2 pt-2 text-[17px] font-semibold text-accent">
+        <span aria-hidden="true">‹</span> Indietro
+      </Link>
+      <PageTitle>{title}</PageTitle>
+      {section === "collegamenti" && <LinksPage />}
+      {section === "dati" && store && <DataPage store={store} onChanged={reload} />}
+      {pageProps && section === "profilo" && <ProfilePage {...pageProps} />}
+      {pageProps && section === "obiettivi" && <GoalsPage {...pageProps} />}
+      {pageProps && section === "attivita" && <ActivityPage {...pageProps} />}
+      {pageProps && section === "pasto-libero" && <FreeMealPage {...pageProps} />}
     </main>
   );
 }

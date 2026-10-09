@@ -28,19 +28,24 @@ export const SETTINGS_COLUMNS: readonly (readonly [keyof UserSettings, string])[
   ["proteinGramsManual", "protein_grams_manual"],
   ["fatGramsManual", "fat_grams_manual"],
   ["onboardingDone", "onboarding_done"],
+  ["sex", "sex"],
+  ["targetDate", "target_date"],
 ];
+
+/** Campi di testo (gli altri sono numeri, tranne `onboardingDone`). */
+const TEXT_KEYS: readonly (keyof UserSettings)[] = ["sex", "targetDate"];
 
 const num = (v: unknown): number => (typeof v === "string" ? Number(v) : (v as number));
 const numOrNull = (v: unknown): number | null => (v === null || v === undefined ? null : num(v));
 
 /** Riga di `settings` → impostazioni (le colonne vuote non compaiono). */
 export function rowToSettings(row: Row | null): UserSettings {
-  const out: Record<string, number | boolean> = {};
+  const out: Record<string, number | boolean | string> = {};
   if (!row) return out as UserSettings;
   for (const [key, column] of SETTINGS_COLUMNS) {
     const v = row[column];
     if (v === null || v === undefined) continue;
-    out[key] = key === "onboardingDone" ? Boolean(v) : num(v);
+    out[key] = key === "onboardingDone" ? Boolean(v) : TEXT_KEYS.includes(key) ? String(v) : num(v);
   }
   return out as UserSettings;
 }

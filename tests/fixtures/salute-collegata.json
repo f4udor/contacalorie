@@ -2,7 +2,7 @@
   "id": "salute-collegata",
   "descrizione": "Salute collegata: ultimo invio, valori di oggi e di ieri.",
   "oggi": "2026-01-08",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=collegamenti",
   "dati": {
     "version": 1,
     "settings": {},

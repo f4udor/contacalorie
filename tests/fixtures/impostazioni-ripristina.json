@@ -1,8 +1,8 @@
 {
   "id": "impostazioni-ripristina",
-  "descrizione": "Ripristina valori predefiniti: chiede conferma e dice cosa resta.",
+  "descrizione": "Dati → Ripristina valori predefiniti: chiede conferma e dice cosa resta.",
   "oggi": "2026-01-08",
-  "percorso": "/impostazioni",
+  "percorso": "/impostazioni?s=dati",
   "dati": {
     "version": 1,
     "settings": {
