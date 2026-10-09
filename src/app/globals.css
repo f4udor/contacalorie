@@ -90,25 +90,6 @@
   --font-sans: var(--font-testo);
   --font-cifre: var(--font-cifre);
 
-  /*
-   * Nomi vecchi (fino alla fase 5c), ancora usati dalle schermate non ancora ridisegnate: puntano ai ruoli nuovi.
-   * Si tolgono in T6.6, quando tutte le schermate usano i nomi di ruolo.
-   */
-  --color-bg: var(--tessera);
-  --color-card: var(--scheda);
-  --color-fg: var(--testo);
-  --color-muted: var(--testo-secondario);
-  --color-line: var(--separatore);
-  --color-track: var(--tessera);
-  --color-accent: var(--comando);
-  --color-ok: var(--in-obiettivo);
-  --color-warn: var(--attenzione);
-  --color-bad: var(--fuori);
-  --color-ok-fill: var(--in-obiettivo);
-  --color-warn-fill: var(--attenzione);
-  --color-bad-fill: var(--fuori);
-  --color-bad-btn: var(--fuori);
-  --color-avg-line: var(--linea-media);
 }
 
 html {

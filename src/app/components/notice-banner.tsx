@@ -9,7 +9,7 @@ export function NoticeBanner() {
   const btn = "-my-2 min-h-11 min-w-11 rounded-full px-3 font-semibold";
   return (
     <div className="pointer-events-none fixed inset-x-0 top-[calc(env(safe-area-inset-top)+0.5rem)] z-[60] mx-auto max-w-xl px-4">
-      <div role="alert" className="pointer-events-auto flex items-start justify-between gap-3 rounded-2xl bg-warn-fill px-4 py-3 text-sm font-medium text-black shadow-lg">
+      <div role="alert" className="pointer-events-auto flex items-start justify-between gap-3 rounded-tessera bg-attenzione px-4 py-3 text-sm font-medium text-testo-su-comando shadow-lg">
         <span>{problem.text}</span>
         <span className="-mr-2 flex shrink-0 items-center">
           {problem.kind === "lettura" && (

@@ -47,7 +47,7 @@ export function ImportSheet({ local, remote, onClose, onLocalCleared }: Props) {
   };
 
   return (
-    <Sheet open onClose={onClose} title={stage === "conferma" ? "Togliere i dati?" : "Importa i dati di questo dispositivo"}>
+    <Sheet open onClose={onClose} title={stage === "conferma" ? "Rimuovere i dati?" : "Importa i dati di questo dispositivo"}>
       {stage === "proponi" && (
         <div className="flex flex-col gap-4">
           <p className="text-[17px]">
@@ -82,16 +82,16 @@ export function ImportSheet({ local, remote, onClose, onLocalCleared }: Props) {
             {result.addedFavorites > 0 && `, ${plural(result.addedFavorites, "preferito", "preferiti")}`}.
             {result.alreadyThere > 0 && ` Già presenti e lasciati com'erano: ${plural(result.alreadyThere, "elemento", "elementi")}.`}
           </p>
-          <p className="text-[15px] text-testo-secondario">Controlla che sia tutto a posto. I dati sono ancora anche su questo dispositivo: toglili solo quando sei sicuro.</p>
-          <PillButton filled onClick={() => setStage("conferma")}>Tutto a posto: togli i dati da questo dispositivo</PillButton>
+          <p className="text-[15px] text-testo-secondario">Controlla che sia tutto a posto. I dati sono ancora anche su questo dispositivo: rimuovili solo quando sei sicuro.</p>
+          <PillButton filled onClick={() => setStage("conferma")}>Tutto a posto: rimuovi i dati da questo dispositivo</PillButton>
           <PillButton onClick={onClose}>Tienili per ora</PillButton>
         </div>
       )}
 
       {stage === "conferma" && (
         <div className="flex flex-col gap-4" role="alertdialog" aria-label="Conferma">
-          <p className="text-[17px]">Togliere i dati da questo dispositivo? Restano nel tuo account online e li vedi anche qui, dopo l&apos;accesso.</p>
-          <PillButton filled onClick={clearLocal}>Togli da questo dispositivo</PillButton>
+          <p className="text-[17px]">Rimuovere i dati da questo dispositivo? Restano nel tuo account online e li vedi anche qui, dopo l&apos;accesso.</p>
+          <PillButton filled onClick={clearLocal}>Rimuovi da questo dispositivo</PillButton>
           <PillButton onClick={() => setStage("fatto")}>Annulla</PillButton>
         </div>
       )}

@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { IconChevronLeft } from "./components/ui/icons";
+import { CircleButton } from "./components/ui/ui";
 import { PageTitle } from "./components/page-title";
 import { settingsTitle, SettingsView } from "./components/settings-view";
 import { sectionFromParam, sectionHref } from "./lib/settings-sections";
@@ -15,9 +17,11 @@ export function ImpostazioniScreen() {
   return (
     <main>
       {section !== null && (
-        <button type="button" onClick={() => router.push("/impostazioni")} className="-ml-2 flex min-h-11 w-fit items-center gap-1 px-2 pt-2 text-[17px] font-semibold text-accent">
-          <span aria-hidden="true">‹</span> Indietro
-        </button>
+        <div className="pt-2">
+          <CircleButton label="Indietro" onClick={() => router.push("/impostazioni")}>
+            <IconChevronLeft size={18} />
+          </CircleButton>
+        </div>
       )}
       <PageTitle>{settingsTitle(section)}</PageTitle>
       <SettingsView section={section} onNavigate={(s) => router.push(s === null ? "/impostazioni" : sectionHref(s))} />

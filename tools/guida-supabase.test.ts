@@ -34,6 +34,6 @@ describe("docs/COLLEGA-SUPABASE.md", () => {
     for (const testo of ["Invia il codice", "Invia un nuovo codice", "Accedi", "Importa", "Tienili per ora", "Esci", "Esporta"]) {
       expect(sorgenti).toContain(testo);
     }
-    expect(sorgenti).toContain("Tutto a posto: togli i dati da questo dispositivo");
+    expect(sorgenti).toContain("Tutto a posto: rimuovi i dati da questo dispositivo");
   });
 });

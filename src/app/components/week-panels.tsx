@@ -192,7 +192,7 @@ export function WeightPanel({ store, initialMonday, today, onChanged, onClose }:
         {all.length === 0 ? (
           <p className="text-[15px] text-testo-secondario">Nessuna pesata.</p>
         ) : (
-          <GroupedList label="Pesate">
+          <GroupedList label="Peso">
             {all.map((w) => (
               <DayRow
                 key={w.date}

@@ -140,7 +140,7 @@ export function Onboarding() {
                 </li>
                 {summary?.minimum != null && (
                   <li className="flex min-h-12 items-baseline justify-between gap-3 px-4 py-2.5">
-                    <span className="text-[17px]">Metabolismo basale</span>
+                    <span className="text-[17px]">Metabolismo basale stimato</span>
                     <span className="text-[17px] tabular-nums text-testo-secondario">{formatNumber(summary.minimum)} kcal</span>
                   </li>
                 )}
@@ -148,11 +148,11 @@ export function Onboarding() {
                   <RowInput id="onb-baseKcal" value={values.baseKcal} onChange={set("baseKcal")} inputMode="decimal" placeholder="facoltative" invalid={Boolean(errors.baseKcal)} />
                 </FieldRow>
               </GroupedList>
-              {summary?.minimum != null && <Caption>La base del giorno non scende sotto questo valore</Caption>}
+              {summary?.minimum != null && <Caption>È una stima dal profilo, non una misura precisa. Le calorie di base non scendono sotto questo valore.</Caption>}
               {summary && !summary.calculated && <Caption>Completa il profilo in Impostazioni per calcolarle.</Caption>}
               {summary?.earliestDate && (
                 <p className="px-4 text-[15px] font-medium text-attenzione" data-unreachable>
-                  Con la data scelta la base resta al minimo. Prima data possibile: <strong>{formatDateFull(summary.earliestDate)}</strong>
+                  Data troppo vicina. Prima data possibile: <strong>{formatDateFull(summary.earliestDate)}</strong>
                 </p>
               )}
             </>

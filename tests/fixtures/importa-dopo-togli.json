@@ -279,14 +279,14 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Tutto a posto: togli i dati da questo dispositivo",
+        "name": "Tutto a posto: rimuovi i dati da questo dispositivo",
         "exact": true
       }
     },
     {
       "clickRole": {
         "role": "button",
-        "name": "Togli da questo dispositivo",
+        "name": "Rimuovi da questo dispositivo",
         "exact": true
       }
     },

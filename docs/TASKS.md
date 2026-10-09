@@ -585,7 +585,7 @@ Vincoli di questa fase:
 - Grafici: solo colori, schede e caratteri nuovi (§10.5).
 - Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari di queste schermate, solo scuri.
 
-### T6.6 Passata finale dei testi e pulizia · da fare
+### T6.6 Passata finale dei testi e pulizia · fatto
 - Ogni voce della colonna "com'è" di `docs/TESTI.md` non compare più in nessuna schermata; un test lo controlla sui testi dell'interfaccia.
 - Nessun colore, raggio o carattere scritto a mano fuori dal file delle variabili: un controllo automatico (anche solo una ricerca nel codice, fatta da uno script) lo verifica, con le eccezioni elencate nel diario.
 - In `docs/screenshots/` non resta nessun file `-chiaro`.

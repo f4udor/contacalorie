@@ -12,7 +12,7 @@ Questa guida serve ad attivare la **stima automatica dei pasti**: scrivi (o dett
 - una **carta di pagamento** per attivare la fatturazione di Google Cloud (Vertex AI non funziona senza; con l'uso di una persona sola i costi sono di pochi centesimi al mese, vedi "Quanto costa" in fondo);
 - l'accesso al tuo progetto su **Vercel**, dove è pubblicata l'app.
 
-**Cosa succede se non fai nulla.** L'app continua a funzionare come adesso: il campo «Cosa hai mangiato?» dice «Stima automatica non disponibile» e puoi inserire i piatti a mano, con i numeri. Il collegamento è facoltativo e si può togliere in qualsiasi momento (vedi in fondo).
+**Cosa succede se non fai nulla.** L'app continua a funzionare come adesso: il campo «Cosa hai mangiato?» dice «Stima non disponibile. Passa a Manuale.» e puoi inserire i piatti a mano, con i numeri. Il collegamento è facoltativo e si può togliere in qualsiasi momento (vedi in fondo).
 
 **Cosa riceve l'AI.** Solo il testo che scrivi, la data e l'ora (per capire se è colazione o cena) e, quando correggi una stima, la stima precedente. Niente peso, obiettivi, email o altri tuoi dati. Le chiamate partono dal server dell'app, mai dal telefono, e solo se hai fatto l'accesso.
 
@@ -138,7 +138,7 @@ Ora la chiave sta su Vercel e il file non serve più: **cancellalo** dalla carte
 | Cosa succede | Cosa fare |
 |---|---|
 | In Impostazioni → Collegamenti c'è scritto **Non attivo** | Mancano delle variabili del passo 7, hanno il nome sbagliato, oppure `VERTEX_CREDENTIALS_JSON` non contiene un JSON intero (deve iniziare con `{` e finire con `}`). Controlla e **ripubblica** (passo 8). |
-| «Stima automatica non disponibile» | Come sopra: la stima si accende solo con tutte e quattro le variabili. |
+| «Stima non disponibile. Passa a Manuale.» | Come sopra: la stima si accende solo con tutte e quattro le variabili. |
 | «Non riesco a raggiungere il servizio di stima» | Se la connessione c'è, di solito è un errore di Google: modello non disponibile nella regione (ricontrolla il passo 3), API non abilitata (passo 2), fatturazione non collegata (passo 1) o ruolo mancante (passo 4: *Vertex AI User*). Su Vercel, in **Logs**, il messaggio di Google dice quale. |
 | «La stima ricevuta non è utilizzabile» | Il modello ha risposto in modo strano: riprova, magari con parole diverse. Non viene salvato nulla. |
 | «Hai raggiunto il limite di stime di oggi» | Hai fatto tutte le stime del giorno (60, o il numero di `AI_DAILY_LIMIT`). Riprova domani oppure inserisci i piatti a mano. |

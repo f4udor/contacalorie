@@ -40,7 +40,7 @@ Se compare un errore del tipo "already exists", il file era già stato eseguito:
 
 **Cosa vedi:** la voce **Salute** diventa «Attiva», con ultimo invio «Nessuno».
 
-Se perdi il codice: **Rigenera il codice** ne crea uno nuovo e invalida il vecchio (il Comando rapido smette di funzionare finché non ci incolli il nuovo). **Disattiva** lo toglie del tutto.
+Se perdi il codice: **Rigenera il codice** ne crea uno nuovo e invalida il vecchio (il Comando rapido smette di inviare finché non lo aggiorni con il nuovo). **Disattiva** lo toglie del tutto.
 
 ---
 
@@ -136,6 +136,8 @@ Se per più di 24 ore non arriva nessun invio riuscito, in cima a **Oggi** compa
 ## Attenzione: i km possono risultare doppi
 
 Se **un'altra app** (per esempio Strava o l'app del ciclocomputer) scrive in Salute la **stessa uscita** che scrive Fitness, in Salute i km risultano **doppi**, e quindi doppi anche in Personal Health. Soluzioni: registra ogni uscita con **una sola app**, oppure in **Salute → Condivisione → App** togli all'altra app il permesso di scrivere **Distanza in bici**.
+
+**Rimedio nel Comando rapido (provato sul telefono).** Nell'azione che legge la **distanza in bici** aggiungi il filtro **Sorgente è** e scegli l'app con cui registri le uscite (per esempio Strava, oppure l'iPhone se usi Fitness). Così il comando legge solo i km di quell'app e non li somma due volte. Vale per ogni persona con la sua app.
 
 ## Se qualcosa non va
 

@@ -14,6 +14,7 @@ describe("docs/COLLEGA-SALUTE.md", () => {
   it("dichiara che i nomi delle azioni non sono stati visti, il doppio conteggio e il telefono bloccato", () => {
     expect(guida).toMatch(/senza averli visti a schermo/);
     expect(guida).toMatch(/risultare doppi/);
+    expect(guida).toContain("Sorgente è");
     expect(guida).toMatch(/bloccato/);
     expect(guida).toMatch(/non è stata provata/);
   });
