@@ -608,7 +608,7 @@ Vincoli di questa fase:
 - Nessuna nuova dipendenza.
 
 ### T6b.0 Pannelli della Settimana ad altezza stabile · da fare
-Difetto visto sul telefono: nel pannello Passi, passando con la freccia da una settimana con dati (5-11 ottobre) a una senza (28 settembre-4 ottobre), il pannello si accorcia e la riga con le frecce scende di circa un terzo dello schermo. Il dito non ritrova più i tasti.
+Difetto visto sul telefono: nel pannello Passi, passando con la freccia da una settimana con dati (5-11 ottobre) a una senza (28 settembre-4 ottobre), il pannello si accorcia e la riga con le frecce scende di circa un terzo dello schermo. Il dito non ritrova più i tasti. Lo stesso difetto è stato visto sul telefono anche nei pannelli Bici e Pasto libero.
 - I pannelli Passi, Bici e Pasto libero seguono §10.3 "Comandi fermi": altezza fissa uguale per ogni settimana, scelta in modo che una settimana piena (sette righe) si veda senza tagli strani; l'elenco scorre dentro il pannello se non ci sta. Il pannello Peso usa la stessa altezza, per coerenza.
 - Intestazione (X, titolo), riga delle frecce, numero grande e grafico restano alla stessa distanza dal bordo alto dello schermo in ogni settimana. Senza dati: trattino alto quanto il numero, griglia vuota alta quanto il grafico.
 - I tasti pieni in fondo ("Aggiungi uscita in bici", "Aggiungi pasto libero", "Aggiungi pesata") restano alla stessa altezza sullo schermo in ogni settimana, anche quando l'elenco scorre.
