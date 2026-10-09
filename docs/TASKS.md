@@ -546,7 +546,7 @@ Vincoli di questa fase:
 
 ### T6.1 Navigazione: barra, tasto + e Impostazioni · da fare
 - Barra in basso, tasto + e ingranaggio come in §10.4. Tre icone SVG a tratto (anello, barre, linea).
-- Pillole "Oggi" e "Questa settimana" come in §10.4 (in Oggi sostituisce il tasto "Oggi" attuale): visibili solo lontano dal presente, anche nei pannelli con le frecce delle settimane. Test: assente sul presente, presente altrove, il tocco riporta al presente.
+- Intestazione di Oggi e Settimana come in §10.4: frecce, tasto icona di ritorno al presente tra le due frecce (in Oggi sostituisce il tasto "Oggi" attuale), ingranaggio. Lo stesso tasto nei pannelli con le frecce delle settimane. Test: disattivato sul presente, attivo altrove, il tocco riporta al presente. Screenshot dell'intestazione a 375 px con il titolo "Settimana" intero e i quattro tasti visibili.
 - Impostazioni esce dalla barra e si apre come pannello dall'ingranaggio, presente in Oggi e in Settimana; le sue pagine interne restano quelle della fase 5c. L'indirizzo diretto delle Impostazioni continua a funzionare.
 - L'avviso di Oggi sui dati da Salute porta ancora a Collegamenti.
 - Spazio in fondo a ogni schermata come in §10.4. Su schermi stretti (375 px) le tre voci non vanno a capo e non si toccano con il +.
