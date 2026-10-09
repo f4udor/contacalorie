@@ -591,5 +591,5 @@ Vincoli di questa fase:
 - In `docs/screenshots/` non resta nessun file `-chiaro`.
 - Le guide (`docs/COLLEGA-*.md`) citano i nomi nuovi di pulsanti e sezioni. `docs/COLLEGA-SALUTE.md` spiega il filtro "Sorgente è" sulla distanza in bici per evitare il doppio conteggio (§5), oggi assente dalla guida.
 
-### T6.7 Report di fase · da fare
+### T6.7 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-6.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: per ogni schermata, cosa guardare sul telefono e, a parte, le cose che si giudicano solo su un iPhone vero (sfocatura della barra, scorrevolezza, tasto + a fine pagina, carattere arrotondato dei numeri).
