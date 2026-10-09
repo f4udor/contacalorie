@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="margin:0">
+<title>Bozza fase 6</title>
+<style>
+/* Layout: due telefoni affiancati (Oggi e Settimana) nella direzione scelta; sotto, la legenda dei colori. */
+:root{
+  --bg:#f3f3f6; --fg:#16161a; --muted:#6a6a75; --line:#dcdce3;
+  --sys:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --round:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  /* dentro i telefoni: tema scuro unico, per scelta */
+  --card:#151517; --tile:#222224; --p-fg:#f5f5f7; --p-muted:#98989f; --grid:#3a3a3c;
+  --acc:#a6ff00; --ok:#0a84ff; --warn:#ffd60a; --bad:#ff453a;
+  --steps:#a78bfa; --bike:#ff9f0a; --avg:#f5f5f7;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#0e0e11; --fg:#f2f2f5; --muted:#9a9aa6; --line:#2a2a31; color-scheme:dark } }
+:root[data-theme="dark"]{ --bg:#0e0e11; --fg:#f2f2f5; --muted:#9a9aa6; --line:#2a2a31; color-scheme:dark }
+body{background:var(--bg);color:var(--fg);font-family:var(--sys);font-size:15px;line-height:1.45}
+.wrap{max-width:900px;margin:0 auto;padding-inline:16px;padding-block:28px 48px;display:flex;flex-direction:column;gap:24px}
+h1{font-size:26px;margin:0;letter-spacing:-.02em;text-wrap:balance}
+.lede{color:var(--muted);margin:0;max-width:62ch}
+.pair{display:flex;flex-wrap:wrap;gap:28px;justify-content:center}
+.col{flex:1 1 340px;max-width:390px;min-width:0;display:flex;flex-direction:column;gap:12px}
+.tag{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:10px 22px;margin:0;padding:0;list-style:none;color:var(--muted);font-size:14px}
+.legend li{display:flex;align-items:center;gap:8px}
+.legend i{width:12px;height:12px;border-radius:50%;border:1px solid var(--line)}
+
+.phone{position:relative;border-radius:38px;overflow:hidden;background:#000;color:var(--p-fg);padding:22px 14px 104px;display:flex;flex-direction:column;gap:10px;border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:8px;padding-inline:4px}
+.top>div:first-child{min-width:0}
+.day{white-space:nowrap}
+.day{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--p-muted);font-weight:600}
+.big{font-size:24px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.nav{display:flex;gap:5px;flex:none}
+.nav .now{color:var(--acc)}.nav .now.off{color:#48484a}
+.nav span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:17px;background:var(--card);color:var(--p-fg)}
+.card{border-radius:24px;padding:16px;background:var(--card);min-width:0}
+.ct{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:15px}
+.chev{width:22px;height:22px;border-radius:50%;background:#48484a;color:#c7c7cc;display:grid;place-items:center;font-size:14px;line-height:1}
+.num{font-family:var(--round);font-weight:500;letter-spacing:-.01em}
+.num small{font-size:.5em;font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.lbl{font-size:13px;color:var(--p-muted)}
+.ringrow{display:flex;align-items:center;gap:18px;margin-top:8px}
+.ring{position:relative;width:132px;height:132px;flex:none}
+.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.ring .c{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bar{height:5px;border-radius:3px;margin-top:10px;background:var(--tile);overflow:hidden}
+.bar i{display:block;height:100%;border-radius:3px}
+.meal{display:flex;flex-direction:column;gap:8px}
+.dish{display:flex;justify-content:space-between;gap:12px;align-items:center;background:var(--tile);border-radius:16px;padding:11px 13px}
+.dish div{min-width:0}
+.dish .q{font-size:12px;color:var(--p-muted)}
+.dish .k{white-space:nowrap}
+.add{color:var(--acc);font-weight:600;font-size:14px;padding:2px 4px}
+.tab{position:absolute;left:12px;right:12px;bottom:16px;height:62px;border-radius:31px;padding:5px;display:flex;align-items:stretch;font-size:11px;font-weight:600;
+  background:rgba(38,38,40,.6);border:1px solid rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.18);-webkit-backdrop-filter:blur(24px) saturate(170%);backdrop-filter:blur(24px) saturate(170%)}
+.tab span{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:var(--p-fg);border-radius:26px}
+.tab span svg{width:22px;height:22px}
+.tab .on{background:rgba(0,0,0,.55);color:var(--acc)}
+.plus{position:absolute;right:16px;bottom:104px;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-size:28px;font-weight:300;color:#0b1400;
+  background:rgba(166,255,0,.62);border:1px solid rgba(255,255,255,.18);box-shadow:0 6px 16px rgba(0,0,0,.45);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.chart{width:100%;height:auto;display:block;margin-top:10px}
+.key{display:flex;gap:14px;font-size:11px;color:var(--p-muted);justify-content:flex-end}
+.key b{display:inline-block;width:16px;border-top:2px solid var(--p-muted);vertical-align:middle;margin-right:5px}
+.key b.d{border-top:2px dashed var(--avg)}
+.key b.t{border-top-color:#fa114f}
+.mini{width:100%;height:46px;display:block;margin-top:8px}
+.sheet{background:#111113;padding:16px 14px 28px;gap:14px}
+.sheet .card{background:var(--tile)}
+.sh{display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:17px}
+.x{width:40px;height:40px;border-radius:50%;background:#2a2a2c;display:grid;place-items:center;font-size:18px}
+.save{background:var(--acc);color:#000;border-radius:20px;padding:9px 16px;font-size:15px;font-weight:600}
+.seg{display:flex;background:#222224;border-radius:22px;padding:4px;font-weight:600;font-size:14px}
+.seg span{flex:1;text-align:center;padding:8px;border-radius:18px;color:var(--p-muted)}
+.seg .on{background:#3a3a3c;color:var(--p-fg)}
+.list{border-radius:22px;background:var(--tile);padding:0 16px}
+.list>div{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-top:1px solid #323234;font-size:16px}
+.list>div:first-child{border-top:0}
+.list .r{color:var(--p-muted);font-size:15px;text-align:right;min-width:0}
+.list .go{color:#6e6e73;margin-left:8px}
+.list .a{color:var(--acc)} .list .d{color:var(--bad)}
+.btn{border-radius:26px;background:var(--tile);color:var(--acc);font-weight:600;font-size:16px;text-align:center;padding:14px}
+.cap{font-size:12px;color:var(--p-muted);padding:0 16px;margin-top:-6px}
+.h2{font-size:20px;margin:12px 0 0;letter-spacing:-.01em}
+.wk{display:flex;align-items:center;justify-content:space-between;background:var(--tile);border-radius:22px;padding:6px;font-weight:600;font-size:15px}
+.wk i{width:34px;height:34px;border-radius:50%;background:#3a3a3c;display:grid;place-items:center;font-style:normal;font-size:17px}
+.stat{padding:0 6px}
+.stat .lbl{margin-bottom:2px}
+.sw{width:50px;height:30px;border-radius:15px;background:var(--acc);position:relative;flex:none}
+.sw::after{content:"";position:absolute;right:2px;top:2px;width:26px;height:26px;border-radius:50%;background:#fff}
+.sw.off{background:#3a3a3c}.sw.off::after{right:auto;left:2px}
+.ta{background:var(--tile);border-radius:22px;padding:16px;min-height:96px;color:var(--p-muted);font-size:16px}
+.srch{background:var(--tile);border-radius:14px;padding:11px 14px;color:var(--p-muted);font-size:15px}
+.pc{width:30px;height:30px;border-radius:50%;background:rgba(166,255,0,.16);color:var(--acc);display:grid;place-items:center;font-size:20px;flex:none}
+.list .two{display:flex;flex-direction:column;min-width:0}
+.list .two small{font-size:12px;color:var(--p-muted)}
+.list .v{font-family:var(--round);font-weight:500;font-size:17px;white-space:nowrap}
+.swipe{display:flex;gap:8px;align-items:stretch}
+.swipe .dish{flex:1;margin-left:-70px}
+.swipe .tr{width:62px;border-radius:16px;background:var(--bad);display:grid;place-items:center;font-size:13px;font-weight:600;color:#fff}
+.btn.full{background:var(--acc);color:#000}
+.save.off{background:var(--tile);color:#6e6e73}
+.sectl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--p-muted);font-weight:600;padding:0 6px;margin-bottom:-6px}
+.foot{color:var(--muted);font-size:13px;margin:0;max-width:70ch}
+</style>
+
+<div class="wrap">
+  <div>
+    <div class="tag">Personal Health · fase 6</div>
+    <h1>Nero pieno, comandi verdi, obiettivo blu</h1>
+  </div>
+  <p class="lede">Base nera come Fitness. Il vetro resta solo sulla barra in basso e sul pulsante +. I piatti sono tessere separate dentro la scheda del pasto. Numeri in carattere arrotondato, ogni misura con il suo colore.</p>
+  <div class="pair">
+    <div class="col"><div class="tag">Oggi</div><div class="phone" id="oggi"></div></div>
+    <div class="col"><div class="tag">Settimana</div><div class="phone" id="sett"></div></div>
+    <div class="col"><div class="tag">Scheda del piatto</div><div class="phone sheet">
+      <div class="sh"><span class="x">✕</span><span>Modifica piatto</span><span class="save">Salva</span></div>
+      <div class="seg"><span>AI</span><span class="on">Manuale</span></div>
+      <div class="list"><div><span>Nome</span><span class="r">Pasta al pomodoro</span></div><div><span>Quantità</span><span class="r">100 g pasta a crudo, 80 g sugo, 5 g olio</span></div></div>
+      <div class="list"><div><span>Calorie</span><span class="r num" style="color:var(--p-fg)">430 kcal</span></div><div><span>Proteine</span><span class="r">13 g</span></div><div><span>Carboidrati</span><span class="r">72 g</span></div><div><span>Grassi</span><span class="r">9 g</span></div><div><span>Fibre</span><span class="r">4 g</span></div><div><span>Sale</span><span class="r">0,8 g</span></div></div>
+      <div class="btn">Stima con l'AI</div>
+      <div class="list"><div class="a">Rimuovi dai preferiti</div><div class="d">Elimina piatto</div></div>
+    </div></div>
+    <div class="col"><div class="tag">Impostazioni</div><div class="phone sheet">
+      <div class="sh"><span class="x">✕</span><span>Impostazioni</span><span style="width:40px"></span></div>
+      <div class="list"><div><span>Profilo</span><span class="r">98,6 kg → 90 kg<span class="go">›</span></span></div><div><span>Obiettivi</span><span class="r">2.140 kcal<span class="go">›</span></span></div></div>
+      <div class="list"><div><span>Attività</span><span class="r"><span class="go">›</span></span></div><div><span>Pasto libero</span><span class="r">800 kcal<span class="go">›</span></span></div></div>
+      <div class="list"><div class="a">Esporta i dati</div></div>
+      <div class="list"><div><span>Collegamenti</span><span class="r">Salute attiva<span class="go">›</span></span></div></div>
+      <div class="cap">Salute e modello AI. Ultimo invio oggi alle 02:40.</div>
+      <div class="list"><div class="d">Esci</div></div>
+    </div></div>
+  </div>
+<h2 class="h2">Dalla Settimana</h2><div class="pair"><div class="col"><div class="tag">Tocco su Passi</div><div class="phone sheet"><div class="sh"><span class="x">✕</span><span>Passi</span><span style="width:40px"></span></div><div class="wk"><i>‹</i><span>5 – 11 ottobre</span><i>›</i></div><div class="stat"><div class="lbl">Media al giorno</div><div class="num" style="font-size:38px;color:var(--steps)">6.480</div></div><svg class="chart" viewBox="0 0 322 150" style="margin-top:4px"><line x1="0" x2="322" y1="84" y2="84" stroke="#3a3a3c" stroke-dasharray="1 4"/><line x1="0" x2="322" y1="47" y2="47" stroke="#3a3a3c" stroke-dasharray="1 4"/><line x1="0" x2="322" y1="10" y2="10" stroke="#3a3a3c" stroke-dasharray="1 4"/><rect x="14" y="33.0" width="18" height="87.0" rx="6" fill="#a78bfa"/><text x="23" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">L</text><rect x="59" y="10.0" width="18" height="110.0" rx="6" fill="#a78bfa"/><text x="68" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">M</text><rect x="104" y="54.7" width="18" height="65.3" rx="6" fill="#a78bfa"/><text x="113" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">M</text><rect x="149" y="96.5" width="18" height="23.5" rx="6" fill="#a78bfa"/><text x="158" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">G</text><text x="203" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">V</text><text x="248" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">S</text><text x="293" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">D</text></svg><div class="list"><div><span class="two"><span>Lunedì 5</span><small>da Salute</small></span><span class="v" >7.200</span></div><div><span class="two"><span>Martedì 6</span><small>da Salute</small></span><span class="v" >9.100</span></div><div><span class="two"><span>Mercoledì 7</span><small>da Salute</small></span><span class="v" >5.400</span></div><div><span class="two"><span>Giovedì 8</span><small>da Salute</small></span><span class="v" >1.942</span></div></div></div></div><div class="col"><div class="tag">Tocco su Bici</div><div class="phone sheet"><div class="sh"><span class="x">✕</span><span>Bici</span><span style="width:40px"></span></div><div class="wk"><i>‹</i><span>5 – 11 ottobre</span><i>›</i></div><div class="stat"><div class="lbl">Questa settimana</div><div class="num" style="font-size:38px;color:var(--bike)">57,9<small> km</small></div></div><svg class="chart" viewBox="0 0 322 150" style="margin-top:4px"><line x1="0" x2="322" y1="84" y2="84" stroke="#3a3a3c" stroke-dasharray="1 4"/><line x1="0" x2="322" y1="47" y2="47" stroke="#3a3a3c" stroke-dasharray="1 4"/><line x1="0" x2="322" y1="10" y2="10" stroke="#3a3a3c" stroke-dasharray="1 4"/><text x="23" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">L</text><text x="68" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">M</text><rect x="104" y="10.0" width="18" height="110.0" rx="6" fill="#ff9f0a"/><text x="113" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">M</text><rect x="149" y="90.0" width="18" height="30.0" rx="6" fill="#ff9f0a"/><text x="158" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">G</text><text x="203" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">V</text><text x="248" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">S</text><text x="293" y="140" text-anchor="middle" font-size="12" font-weight="600" fill="#98989f">D</text></svg><div class="list"><div><span class="two"><span>Mercoledì 7</span><small>da Salute</small></span><span class="v" >45,5 km</span></div><div><span class="two"><span>Giovedì 8</span><small>4,4 km da Salute + 8 km a mano</small></span><span class="v" >12,4 km</span></div></div><div class="btn full">Aggiungi uscita in bici</div></div></div><div class="col"><div class="tag">Tocco su Peso</div><div class="phone sheet"><div class="sh"><span class="x">✕</span><span>Peso</span><span style="width:40px"></span></div><div class="stat"><div class="lbl">Ultima pesata</div><div class="num" style="font-size:38px">98,6<small> kg</small></div><div class="num" style="font-size:16px;color:var(--ok)">−0,4 kg dalla precedente</div></div><div class="list"><div><span class="two"><span>Lunedì 5 ottobre</span><small></small></span><span class="v" >98,6 kg</span></div><div><span class="two"><span>Lunedì 28 settembre</span><small></small></span><span class="v" >99,0 kg</span></div><div><span class="two"><span>Lunedì 21 settembre</span><small></small></span><span class="v" >99,7 kg</span></div></div><div class="btn full">Aggiungi pesata</div></div></div><div class="col"><div class="tag">Tocco su Pasto libero</div><div class="phone sheet"><div class="sh"><span class="x">✕</span><span>Pasto libero</span><span style="width:40px"></span></div><div class="wk"><i>‹</i><span>5 – 11 ottobre</span><i>›</i></div><div class="stat"><div class="lbl">Questa settimana</div><div class="num" style="font-size:30px">Non usato</div></div><div class="sectl">Scegli il pasto</div><div class="list"><div><span class="two"><span>Cena di martedì</span><small>Pizza margherita, birra · 1.310 kcal</small></span><span class="a" style="font-size:15px;font-weight:600">Segna</span></div><div><span class="two"><span>Pranzo di giovedì</span><small>Polpette, pasta · 1.150 kcal</small></span><span class="a" style="font-size:15px;font-weight:600">Segna</span></div><div><span class="two"><span>Cena di lunedì</span><small>Risotto ai funghi · 640 kcal</small></span><span class="a" style="font-size:15px;font-weight:600">Segna</span></div></div><div class="btn full">Aggiungi pasto libero</div></div></div></div><h2 class="h2">Dal tasto +</h2><div class="pair"><div class="col"><div class="tag">Aggiungi</div><div class="phone sheet"><div class="sh"><span class="x">✕</span><span>Aggiungi</span><span class="save off">Salva</span></div><div class="seg"><span class="on">AI</span><span>Manuale</span></div><div class="ta">Cosa hai mangiato?</div><div class="btn full">Stima</div><div class="list"><div><span>Preferiti</span><span class="r"><span class="go">›</span></span></div></div><div class="list"><div><span>Pesata</span><span class="r"><span class="go">›</span></span></div><div><span>Uscita in bici</span><span class="r"><span class="go">›</span></span></div></div></div></div><div class="col"><div class="tag">Proposta dell'AI</div><div class="phone sheet"><div class="sh"><span class="x">✕</span><span>Aggiungi</span><span class="save">Salva</span></div><div class="seg"><span class="on">AI</span><span>Manuale</span></div><div class="list"><div><span>Pasto</span><span class="r">Pranzo<span class="go">›</span></span></div><div><span>Pasto libero</span><span class="sw off"></span></div></div><div class="dish"><div><div>Polpette di maiale al sugo</div><div class="q">200 g carne, 10 g pangrattato, 300 g salsa</div></div><div class="k num">720</div></div><div class="dish"><div><div>Pasta al pomodoro</div><div class="q">100 g pasta a crudo, 80 g sugo, 5 g olio · ipotizzata</div></div><div class="k num">430</div></div><div class="cap" style="margin-top:0">Tocca un piatto per correggere i numeri.</div><div class="ta" style="min-height:52px">Correggi a parole</div><div class="btn">Rifai la stima</div></div></div><div class="col"><div class="tag">Preferiti</div><div class="phone sheet"><div class="sh"><span class="x">✕</span><span>Preferiti</span><span style="width:40px"></span></div><div class="srch">Cerca</div><div class="sectl">Pasti</div><div class="list"><div><span class="two"><span>Colazione solita</span><small>Yogurt, avena, banana · 420 kcal</small></span><span class="pc">+</span></div></div><div class="sectl">Piatti</div><div class="list"><div><span class="two"><span>Pasta al pomodoro</span><small>100 g pasta a crudo, 80 g sugo · 430 kcal</small></span><span class="pc">+</span></div><div><span class="two"><span>Petto di pollo alla piastra</span><small>200 g · 330 kcal</small></span><span class="pc">+</span></div></div><div class="swipe"><div class="dish"><div><div>Insalata di pomodorini</div><div class="q">250 g pomodorini, 10 g olio · 135 kcal</div></div></div><div class="tr">Elimina</div></div><div class="cap" style="margin-top:0">Scorri una riga verso sinistra per eliminarla.</div></div></div><div class="col"><div class="tag">Uscita in bici</div><div class="phone sheet"><div class="sh"><span class="x">✕</span><span>Uscita in bici</span><span class="save">Salva</span></div><div class="list"><div><span>Giorno</span><span class="r">Giovedì 8 ottobre<span class="go">›</span></span></div><div><span>Distanza</span><span class="r" style="color:var(--p-fg)">8 km</span></div><div><span>Calorie</span><span class="r">facoltative</span></div></div><div class="cap">Senza calorie le calcola l'app: 27 kcal per km. Si somma ai km arrivati da Salute.</div><div class="list"><div class="d">Elimina uscita</div></div></div></div></div><h2 class="h2">Dalle Impostazioni</h2><div class="pair"><div class="col"><div class="tag">Collegamenti</div><div class="phone sheet">
+<div class="sh"><span class="x">‹</span><span>Collegamenti</span><span style="width:40px"></span></div>
+<div class="sectl">Salute</div>
+<div class="list"><div><span>Stato</span><span class="r" style="color:var(--ok)">Attiva</span></div><div><span>Ultimo invio</span><span class="r">oggi alle 02:40</span></div><div><span>Ricevuti oggi</span><span class="r">1.942 passi · 12,4 km</span></div></div>
+<div class="list"><div class="a">Rigenera il codice</div><div class="d">Disattiva</div></div>
+<div class="cap" style="margin-top:0">Rigenerando il codice il Comando rapido smette di inviare finché non lo aggiorni.</div>
+<div class="sectl">Stime dei pasti</div>
+<div class="list"><div><span>Modello</span><span class="r">Gemini 2.5 Flash</span></div><div><span>Stato</span><span class="r" style="color:var(--ok)">Attivo</span></div><div><span>Stime di oggi</span><span class="r">4 di 60</span></div></div>
+</div></div></div>
+
+  <ul class="legend">
+    <li><i style="background:var(--ok)"></i>in obiettivo</li>
+    <li><i style="background:var(--warn)"></i>attenzione</li>
+    <li><i style="background:var(--bad)"></i>fuori</li>
+    <li><i style="background:var(--acc)"></i>comandi e giornata in corso</li>
+    <li><i style="background:#8e8e93"></i>giorno chiuso sotto obiettivo</li>
+    <li><i style="background:#fa114f"></i>linea dell'obiettivo</li>
+    <li><i style="background:var(--steps)"></i>passi</li>
+    <li><i style="background:var(--bike)"></i>bici</li>
+  </ul>
+  <p class="foot">Verde, giallo e rosso significano sempre un giudizio rispetto a un obiettivo. Viola e arancione sono solo l'identità di passi e bici e non giudicano nulla.</p>
+</div>
+
+<script>
+const ico={Oggi:'<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="38 51" transform="rotate(-90 12 12)"/>',
+  Settimana:'<rect x="4" y="11" width="4" height="9" rx="2" fill="currentColor"/><rect x="10" y="5" width="4" height="15" rx="2" fill="currentColor"/><rect x="16" y="8" width="4" height="12" rx="2" fill="currentColor"/>',
+  Grafici:'<polyline points="3,17 9,11 13,14 21,6" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>'};
+const tab=on=>`<div class="tab">${["Oggi","Settimana","Grafici"].map(t=>`<span class="${t===on?"on":""}"><svg viewBox="0 0 24 24">${ico[t]}</svg>${t}</span>`).join("")}</div><div class="plus">+</div>`;
+const R=54,C=2*Math.PI*R;
+const macro=(l,v,t,p,c)=>`<div class="card"><div class="lbl">${l}</div><div class="num" style="font-size:22px;color:var(${c})">${v}<span style="font-size:13px;color:var(--p-muted);font-family:var(--sys);font-weight:500"> / ${t}</span></div><div class="bar"><i style="width:${p}%;background:var(${c})"></i></div></div>`;
+document.getElementById("oggi").innerHTML=`
+  <div class="top"><div><div class="day">Giovedì 8 ottobre</div><div class="big">Oggi</div></div><div class="nav"><span>‹</span><span class="now off"><svg viewBox="0 0 24 24" width="17" height="17"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg></span><span>›</span><span>⚙</span></div></div>
+  <div class="card"><div class="ct">Calorie</div>
+    <div class="ringrow"><div class="ring"><svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="${R}" fill="none" stroke="#0a2440" stroke-width="18"/><circle cx="66" cy="66" r="${R}" fill="none" stroke="#0a84ff" stroke-width="18" stroke-linecap="round" stroke-dasharray="${C*.981} ${C}"/></svg></div>
+      <div><div class="lbl">Rimaste</div><div class="num" style="font-size:40px;line-height:1;color:var(--ok)">39<small> kcal</small></div><div class="lbl" style="margin-top:6px">2.061 di 2.100</div></div></div></div>
+  <div class="grid">${macro("Proteine","132","140 g",94,"--ok")}${macro("Carboidrati","219","228 g",96,"--ok")}${macro("Grassi","68","70 g",97,"--ok")}${macro("Fibre","14","30 g",47,"--warn")}</div>
+  <div class="card meal"><div class="ct"><span>Pranzo</span><span class="num" style="font-size:17px">1.150<small> kcal</small></span></div>
+    <div class="dish"><div><div>Polpette di maiale al sugo</div><div class="q">200 g carne, 10 g pangrattato, 300 g salsa</div></div><div class="k num">720</div></div>
+    <div class="dish"><div><div>Pasta al pomodoro</div><div class="q">100 g pasta a crudo, 80 g sugo, 5 g olio</div></div><div class="k num">430</div></div>
+    <div class="add">+ Aggiungi piatto</div></div>
+  <div class="grid">
+    <div class="card"><div class="ct">Passi</div><div class="num" style="font-size:26px;color:var(--steps)">1.942</div><div class="lbl">da Salute</div></div>
+    <div class="card"><div class="ct">Bici</div><div class="num" style="font-size:26px;color:var(--bike)">12,4<small> km</small></div><div class="lbl">+335 kcal</div></div>
+  </div>${tab("Oggi")}`;
+
+/* grafico settimana: una sola scala, 0–2600 kcal su 120 px */
+const days=["L","M","M","G","V","S","D"], kc=[2040,2180,1990,2061,null,null,null], tgt=[2100,2100,2435,2100,2100,2100,2100];
+const H=120,T0=14,y=v=>T0+H-(v/2600)*H, col=(v,t)=>{const d=v-t;return d<-150?"#8e8e93":d<=50?"#0a84ff":d<=200?"#ffd60a":"#ff453a"};
+const avg=Math.round((2040+2180+1990)/3);
+let g="";
+[650,1300,1950,2600].forEach(v=>g+=`<line x1="0" x2="322" y1="${y(v)}" y2="${y(v)}" stroke="#3a3a3c" stroke-width="1" stroke-dasharray="1 4"/>`);
+days.forEach((d,i)=>{const x=8+i*45;
+  if(kc[i])g+=`<rect x="${x}" y="${y(kc[i])}" width="30" height="${T0+H-y(kc[i])}" rx="7" fill="${col(kc[i],tgt[i])}"/>`;
+  g+=`<text x="${x+15}" y="${T0+H+18}" text-anchor="middle" font-size="12" font-weight="600" fill="${i===3?"#f5f5f7":"#98989f"}">${d}</text>`;});
+g+=`<path d="${tgt.map((t,i)=>`${i?"L":"M"}${i?i*45+0.5:0} ${y(t)} L${i<6?(i+1)*45+0.5:322} ${y(t)}`).join(" ")}" fill="none" stroke="#fa114f" stroke-width="2" stroke-linejoin="round"/>`;
+g+=`<line x1="0" x2="322" y1="${y(avg)}" y2="${y(avg)}" stroke="#f5f5f7" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+const mini=(vals,max,c)=>`<svg class="mini" viewBox="0 0 140 46" preserveAspectRatio="none">${[0,1,2,3,4,5,6].map(i=>`<line x1="${8+i*20}" x2="${8+i*20}" y1="2" y2="40" stroke="#3a3a3c" stroke-width="1" stroke-dasharray="1 3"/>`).join("")}${vals.map((v,i)=>v?`<rect x="${6+i*20}" y="${40-(v/max)*36}" width="4" height="${(v/max)*36}" rx="2" fill="${c}"/>`:"").join("")}</svg>`;
+document.getElementById("sett").innerHTML=`
+  <div class="top"><div><div class="day">28 set – 4 ott</div><div class="big">Settimana</div></div><div class="nav"><span>‹</span><span class="now"><svg viewBox="0 0 24 24" width="17" height="17"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="3.2" fill="currentColor"/></svg></span><span>›</span><span>⚙</span></div></div>
+  <div class="card"><div class="ct"><span>Calorie</span><span class="key"><span><b class="t"></b>obiettivo</span><span><b class="d"></b>media ${avg.toLocaleString("it-IT")}</span></span></div>
+    <svg class="chart" viewBox="0 0 322 158">${g}</svg></div>
+  <div class="grid">
+    <div class="card"><div class="ct">Saldo</div><div class="num" style="font-size:26px;color:var(--ok)">+125<small> kcal</small></div><div class="lbl">di margine</div></div>
+    <div class="card"><div class="ct">Media</div><div class="num" style="font-size:26px">${avg.toLocaleString("it-IT")}<small> kcal</small></div><div class="lbl">sui giorni conclusi</div></div>
+    <div class="card"><div class="ct">Passi <span class="chev">›</span></div><div class="lbl">Media</div><div class="num" style="font-size:26px;color:var(--steps)">6.480</div>${mini([7200,9100,5400,1942,0,0,0],9100,"#a78bfa")}</div>
+    <div class="card"><div class="ct">Bici <span class="chev">›</span></div><div class="lbl">Questa settimana</div><div class="num" style="font-size:26px;color:var(--bike)">57,9<small> km</small></div>${mini([0,0,45.5,12.4,0,0,0],45.5,"#ff9f0a")}</div>
+    <div class="card"><div class="ct">Peso <span class="chev">›</span></div><div class="num" style="font-size:26px">98,6<small> kg</small></div><div class="num" style="font-size:15px;color:var(--ok)">−0,4 kg</div></div>
+    <div class="card"><div class="ct">Pasto libero <span class="chev">›</span></div><div class="num" style="font-size:22px">Non usato</div><div class="lbl">1 a settimana</div></div>
+  </div>${tab("Settimana")}`;
+</script>
+
+</body></html>

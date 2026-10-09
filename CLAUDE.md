@@ -59,7 +59,7 @@ Lavora in autonomia, senza chiedere conferme all'utente: nessuno sta guardando. 
 - I test passano e coprono i casi elencati nel task.
 - Nessun file fuori dal modulo del task è stato modificato senza motivo.
 - `src/engine` è rimasto puro e i suoi test esistenti non sono stati cambiati per farli passare.
-- Per i task con schermate: screenshot a 390 px di larghezza, tema chiaro e scuro, senza testo tagliato, sovrapposizioni o scorrimento orizzontale.
+- Per i task con schermate: screenshot a 390 px di larghezza (tema chiaro e scuro fino alla fase 5c; dalla fase 6 solo scuro), senza testo tagliato, sovrapposizioni o scorrimento orizzontale.
 
 ## Limiti
 
@@ -82,4 +82,6 @@ Quando tutti i task della fase sono `fatto` o `bloccato`, scrivi `docs/REPORT-FA
 
 ## Stile dell'interfaccia
 
-Struttura chiara come l'app Salute di Apple, con anelli di avanzamento come Fitness. Font di sistema, titoli grandi, schede arrotondate su sfondo neutro, tema chiaro e scuro automatici, un solo colore d'accento più verde, giallo e rosso riservati ai semafori. Inserimenti in pannelli che salgono dal basso. Nessuna decorazione. Testi dell'interfaccia in italiano.
+Fino alla fase 5c: struttura chiara come l'app Salute di Apple, anelli come Fitness, font di sistema, schede arrotondate su sfondo neutro, tema chiaro e scuro automatici, un solo colore d'accento più verde, giallo e rosso per i semafori.
+
+Dalla fase 6 vale `docs/BRIEF.md` §10: tema solo scuro su nero pieno, ispirato all'app Fitness, con la bozza di riferimento in `docs/design/`. Inserimenti in pannelli che salgono dal basso. Nessuna decorazione. Testi dell'interfaccia in italiano.

@@ -519,3 +519,77 @@ Vincoli di questa fase:
 
 ### T5c.5 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-5c.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: l'istruzione SQL da eseguire su Supabase prima del merge e un controllo da fare sul telefono per ogni task.
+
+## Fase 6: testi e grafica
+
+**Non iniziare questa fase finché l'utente non lo chiede espressamente e finché `docs/TESTI.md` non esiste nel repository.**
+
+Obiettivo: l'app cambia aspetto e parole, non comportamento. Tema solo scuro su nero pieno, ispirato all'app Fitness. Regole in `docs/BRIEF.md` §10; riferimento visivo in `docs/design/bozza-fase-6.html` e nelle immagini `docs/design/bozza-*.png`; testi in `docs/TESTI.md`.
+
+I task si eseguono in quest'ordine: prima le fondamenta, poi una schermata alla volta.
+
+Vincoli di questa fase:
+- **Nessuna modifica al comportamento**, salvo le quattro aggiunte piccole dichiarate nei task: frecce delle settimane nei pannelli (T6.3), "Aggiungi pasto libero" (T6.3), scelta del giorno nell'Uscita in bici (T6.4), nome del modello in Collegamenti (T6.5). `src/engine`, `src/data` e il database non si toccano; `src/modules` e le route del server solo per T6.5. Nessun test del motore si tocca. I test che controllano testi o nomi di colore mostrati a schermo si aggiornano ai nuovi.
+- Niente SQL da eseguire: se un task sembra richiederlo, è sbagliato il task. Scrivilo nel diario e prosegui senza.
+- Ogni colore, raggio e carattere passa dalle variabili di §10.2 e dai componenti di §10.3: nessun valore scritto a mano nelle schermate.
+- Screenshot solo in tema scuro, a 390 px. Ogni task rigenera gli scenari delle schermate che tocca ed elimina i loro file `-chiaro`. Il revisore confronta con la bozza.
+- La bozza fissa la direzione, non i pixel: dove un caso reale non c'è nella bozza (stati vuoti, errori, testi lunghi, schermi stretti), vale §10 e la scelta più vicina a Fitness, annotata nel diario.
+- Nessuna nuova dipendenza salvo motivo scritto nel diario. Nessuna funzione nuova.
+
+### T6.0 Fondamenta dello stile · da fare
+- Un solo file con le variabili di §10.2 (nomi di ruolo), i raggi e i caratteri. Rimosso tutto ciò che riguarda il tema chiaro: regole `prefers-color-scheme`, varianti chiare, colori chiari.
+- Componenti condivisi di §10.3: scheda, tessera, elenco raggruppato con i tre tipi di riga, tasto a pillola (normale e pieno), intestazione dei pannelli, selettore a segmenti, numero con unità, freccia nel cerchietto.
+- Corrispondenza tra stati del motore e colori di §10.2 in una sola funzione delle schermate, con test: oggi sotto obiettivo → Comando; giorno passato sotto obiettivo → Sotto; "verde" → In obiettivo; "giallo" → Attenzione; "rosso" → Fuori.
+- Lo script degli screenshot produce solo il tema scuro. Il controllo automatico (scorrimento orizzontale, aree sotto 44 px) resta.
+- Pagina di prova interna (non raggiungibile dalla navigazione) che mostra tutti i componenti e tutti i colori con il loro nome: è lo screenshot di questo task.
+- A fine task l'app deve ancora funzionare e compilare, anche se le schermate non usano ancora i componenti nuovi.
+
+### T6.1 Navigazione: barra, tasto + e Impostazioni · da fare
+- Barra in basso, tasto + e ingranaggio come in §10.4. Tre icone SVG a tratto (anello, barre, linea).
+- Intestazione di Oggi e Settimana come in §10.4: frecce, tasto icona di ritorno al presente tra le due frecce (in Oggi sostituisce il tasto "Oggi" attuale), ingranaggio. Lo stesso tasto nei pannelli con le frecce delle settimane. Test: disattivato sul presente, attivo altrove, il tocco riporta al presente. Screenshot dell'intestazione a 375 px con il titolo "Settimana" intero e i quattro tasti visibili.
+- Impostazioni esce dalla barra e si apre come pannello dall'ingranaggio, presente in Oggi e in Settimana; le sue pagine interne restano quelle della fase 5c. L'indirizzo diretto delle Impostazioni continua a funzionare.
+- L'avviso di Oggi sui dati da Salute porta ancora a Collegamenti.
+- Spazio in fondo a ogni schermata come in §10.4. Su schermi stretti (375 px) le tre voci non vanno a capo e non si toccano con il +.
+- Test della logica di navigazione toccata. Screenshot: barra con ciascuna voce attiva, pannello Impostazioni aperto, fine pagina di Oggi con il + che non copre contenuto, 375 px.
+- Nel diario, sotto "Non verificato": resa della sfocatura e prestazioni su un iPhone vero.
+
+### T6.2 Oggi · da fare
+- Schermata come in §10.5 e nella bozza: scheda Calorie, griglia dei nutrienti, pasti con i piatti in tessere, schede Passi e Bici.
+- Tutti gli stati esistenti restano e prendono lo stile nuovo: giorno senza pasti, giorno passato e futuro, anello nei quattro colori più "Sotto", "Oltre" quando si sfora, riga di composizione dell'obiettivo (base, bici, passi, recupero), pasto libero, piatto segnalato dal controllo di coerenza, avviso di Salute, bici con parte da Salute e parte a mano, scorrimento a sinistra sui piatti.
+- Testi di questa schermata da `docs/TESTI.md`.
+- Screenshot di tutti gli scenari di Oggi, solo scuri.
+
+### T6.3 Settimana · da fare
+- Schermata come in §10.5 e nella bozza. Il grafico usa una sola scala per barre, linea dell'obiettivo, linea della media e griglia.
+- Linea dell'obiettivo continua a gradini, anche nei giorni futuri (con l'anteprima di §3.3) e nelle settimane senza dati. Linea della media assente quando non c'è media. Le due etichette della legenda non si sovrappongono.
+- Mini grafici di passi e bici: sette giorni, barre sottili, scala sul massimo della settimana; settimana senza dati = griglia vuota e trattino al posto del numero.
+- I pannelli di Passi, Bici, Peso e Pasto libero diventano quelli di §10.5 e della bozza `bozza-2-dalla-settimana.png`.
+- **Aggiunta: frecce delle settimane** nei pannelli Passi, Bici e Pasto libero. Si parte dalla settimana della schermata; le frecce caricano la settimana precedente o successiva dentro il pannello; chiudendo, la schermata sotto è rimasta dov'era. Niente freccia in avanti oltre la settimana corrente.
+- **Aggiunta: "Aggiungi pasto libero"** nel pannello Pasto libero, quando la settimana non ne ha uno: apre il pannello Aggiungi con l'interruttore già acceso. Per una settimana passata il pannello Aggiungi si apre sull'ultimo giorno di quella settimana, con il giorno modificabile.
+- "Aggiungi uscita in bici" nel pannello Bici (oggi "+ A mano") e "Aggiungi pesata" nel pannello Peso sono tasti pieni in fondo. Le eliminazioni restano come oggi (scorrimento, solo sui valori a mano).
+- Test: cambio di settimana nel pannello senza effetto sulla schermata; nessuna settimana futura; pasto libero aggiunto dal pannello in settimana corrente e passata.
+- Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari della Settimana, solo scuri.
+
+### T6.4 Pannelli di inserimento · da fare
+- Scheda del piatto (aggiunta e modifica, AI e Manuale), proposta dell'AI con interruttore del pasto libero, preferiti, pesata, uscita in bici: come in §10.5 e nelle bozze `bozza-1-principali.png` (scheda del piatto) e `bozza-3-dal-tasto-piu.png`.
+- I campi restano comodi da toccare e da leggere con la tastiera aperta; una quantità lunga va a capo senza coprire il valore accanto.
+- **Aggiunta: giorno dell'Uscita in bici.** La riga "Giorno" apre il calendario di sistema dell'iPhone (campo data nativo, lo stesso componente della "Data obiettivo" del profilo): nessun elenco di giorni e nessun calendario disegnato a mano. Si apre sul giorno da cui si arriva (il giorno di Oggi o la riga toccata nel pannello Bici). Nessun giorno futuro. Se il giorno scelto ha già un'uscita a mano, la scheda ne carica i valori e "Salva" la sostituisce: resta una sola uscita a mano per giorno (§5). Test: cambio di giorno, giorno futuro rifiutato, giorno con uscita esistente.
+- Nella scheda del piatto in Manuale, "Stima con l'AI" sta **sopra** la riga "Calorie" (tra nome e quantità e i numeri), sia in aggiunta sia in modifica. Qui la bozza `bozza-1-principali.png` è superata: lo mostrava sotto i numeri.
+- Stati esistenti conservati: caricamento della stima, errore, AI non disponibile, limite giornaliero, pasto libero disattivato, riga dei preferiti aperta con il cestino.
+- Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari dei pannelli, solo scuri.
+
+### T6.5 Impostazioni, primo avvio, accesso, Grafici · da fare
+- Impostazioni e le sue pagine come nella bozza: elenchi raggruppati, valore attuale a destra, azioni nel colore Comando, "Esci" nel colore Fuori. Collegamenti resta staccata in fondo.
+- Collegamenti come in §10.5 e in `bozza-4-collegamenti.png`. **Aggiunta: nome del modello.** Il server espone il nome del modello configurato (solo il nome, nessun segreto; con il provider finto dice "Modello di prova") e la pagina lo mostra in forma leggibile ("gemini-2.5-flash" → "Gemini 2.5 Flash"), con stato e stime di oggi sul limite. Test della conversione del nome e del caso senza modello configurato.
+- Primo avvio e accesso con email e codice: stesso stile, stessi passi.
+- Grafici: solo colori, schede e caratteri nuovi (§10.5).
+- Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari di queste schermate, solo scuri.
+
+### T6.6 Passata finale dei testi e pulizia · da fare
+- Ogni voce della colonna "com'è" di `docs/TESTI.md` non compare più in nessuna schermata; un test lo controlla sui testi dell'interfaccia.
+- Nessun colore, raggio o carattere scritto a mano fuori dal file delle variabili: un controllo automatico (anche solo una ricerca nel codice, fatta da uno script) lo verifica, con le eccezioni elencate nel diario.
+- In `docs/screenshots/` non resta nessun file `-chiaro`.
+- Le guide (`docs/COLLEGA-*.md`) citano i nomi nuovi di pulsanti e sezioni. `docs/COLLEGA-SALUTE.md` spiega il filtro "Sorgente è" sulla distanza in bici per evitare il doppio conteggio (§5), oggi assente dalla guida.
+
+### T6.7 Report di fase · da fare
+Scrivi `docs/REPORT-FASE-6.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: per ogni schermata, cosa guardare sul telefono e, a parte, le cose che si giudicano solo su un iPhone vero (sfocatura della barra, scorrevolezza, tasto + a fine pagina, carattere arrotondato dei numeri).
