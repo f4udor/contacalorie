@@ -1,0 +1,8 @@
+{
+  "id": "nav-grafici",
+  "descrizione": "Barra con Grafici attiva.",
+  "oggi": "2026-01-08",
+  "percorso": "/grafici",
+  "dati": null,
+  "fisso": true
+}

@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m344",
+        "id": "m377",
         "date": "2026-01-08",
         "slot": "colazione",
         "name": "Cappuccino e brioche",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m345",
+        "id": "m378",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -38,7 +38,7 @@
         "originalText": null
       },
       {
-        "id": "m346",
+        "id": "m379",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Insalata mista con un nome molto lungo che deve andare a capo senza rompere nulla",
@@ -52,7 +52,7 @@
         "originalText": null
       },
       {
-        "id": "m347",
+        "id": "m380",
         "date": "2026-01-08",
         "slot": "spuntino",
         "name": "Pizza al taglio",
@@ -66,7 +66,7 @@
         "originalText": null
       },
       {
-        "id": "m348",
+        "id": "m381",
         "date": "2026-01-08",
         "slot": "cena",
         "name": "Petto di pollo e verdure",

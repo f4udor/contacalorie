@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m9",
+        "id": "m42",
         "date": "2026-01-05",
         "slot": "colazione",
         "name": "Pane e marmellata",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m10",
+        "id": "m43",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Pasta al ragù",

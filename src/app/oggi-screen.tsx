@@ -9,10 +9,14 @@ import { ActivityCard } from "./components/activity-card";
 import { AddPanel, EditBikePanel, EditMealPanel, SaveMealPanel } from "./components/add-panel";
 import { MealList } from "./components/meal-list";
 import { Card } from "./components/ui/ui";
-import { DayHeader } from "./components/day-header";
+import { ScreenHeader } from "./components/screen-header";
+import { AddButton } from "./components/add-button";
+import { SettingsPanel } from "./components/settings-view";
 import { KcalRing } from "./components/kcal-ring";
 import { NutrientCard } from "./components/nutrient-card";
-import { formatNumber, formatSigned } from "./lib/format";
+import { formatDateLong, formatDayMonth, formatNumber, formatSigned, formatWeekday } from "./lib/format";
+import { dayNav } from "./lib/nav";
+import type { SectionId } from "./lib/settings-sections";
 import { isFavoriteDish, toggleFavoriteDish } from "./lib/favorites";
 import { newId } from "./lib/ids";
 import { currentWeight, buildTodayView, hasCompositionDetail } from "./lib/today-view";
@@ -31,6 +35,8 @@ export function OggiScreen() {
   const store = useDataStore();
   const [panel, setPanel] = useState<{ kind: "add"; slot?: MealSlot } | { kind: "edit"; meal: MealRecord } | { kind: "bike" } | { kind: "saveMeal"; slot: MealSlot } | null>(null);
 
+  // Pannello delle Impostazioni (aperto dall'ingranaggio): `null` = chiuso, altrimenti la pagina aperta (`section: null` = l'elenco).
+  const [settings, setSettings] = useState<{ section: SectionId | null } | null>(null);
   const [favoriteNote, setFavoriteNote] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<FavoriteDish[]>([]);
   const panelOpen = panel !== null;
@@ -98,9 +104,19 @@ export function OggiScreen() {
       : null;
 
   return (
-    <main className="pb-24">
-      <HealthWarning />
-      <DayHeader date={date} today={today} />
+    <main>
+      <ScreenHeader
+        kicker={date === today ? formatDateLong(date) : formatDayMonth(date)}
+        title={date === today ? "Oggi" : formatWeekday(date)}
+        nav={dayNav(date, today)}
+        prevLabel="Giorno precedente"
+        nextLabel="Giorno successivo"
+        nowLabel="Torna a oggi"
+        onSettings={() => setSettings({ section: null })}
+      />
+      <div className="pt-3">
+        <HealthWarning onOpen={() => setSettings({ section: "collegamenti" })} />
+      </div>
       {view && (
         <div className="flex flex-col gap-3">
           <Card className="flex flex-col items-center pb-5 pt-6">
@@ -115,7 +131,7 @@ export function OggiScreen() {
           </Card>
           <div className="grid grid-cols-2 gap-3">
             {view.nutrients.map((n, i) => (
-              <NutrientCard key={n.key} n={n} wide={i === view.nutrients.length - 1 && view.nutrients.length % 2 === 1} />
+              <NutrientCard key={n.key} n={n} onOpenProfile={() => setSettings({ section: "profilo" })} wide={i === view.nutrients.length - 1 && view.nutrients.length % 2 === 1} />
             ))}
           </div>
           <MealList dishes={meals} settings={data!.settings} onSelectDish={(meal) => setPanel({ kind: "edit", meal })} onAddDish={(slot) => setPanel({ kind: "add", slot })} onSaveMeal={(slot) => setPanel({ kind: "saveMeal", slot })} isFavorite={(d) => isFavoriteDish(favorites, d)} onFavoriteDish={favoriteDish} onDeleteDish={deleteDish} />
@@ -127,16 +143,8 @@ export function OggiScreen() {
           <ActivityCard activity={activity} settings={data!.settings} onEditBike={() => setPanel({ kind: "bike" })} />
         </div>
       )}
-      <button
-        type="button"
-        aria-label="Aggiungi"
-        onClick={() => setPanel({ kind: "add" })}
-        className="fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-[max(1rem,calc((100vw-36rem)/2+1rem))] z-30 flex h-14 w-14 items-center justify-center rounded-full bg-accent text-white shadow-lg"
-      >
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true">
-          <path d="M12 5v14M5 12h14" />
-        </svg>
-      </button>
+      <AddButton onClick={() => setPanel({ kind: "add" })} />
+      {settings && <SettingsPanel section={settings.section} onSectionChange={(section) => setSettings({ section })} onClose={() => setSettings(null)} />}
       {panelContext && panel?.kind === "add" && <AddPanel {...panelContext} initialSlot={panel.slot} />}
       {panelContext && panel?.kind === "bike" && <EditBikePanel {...panelContext} />}
       {panelContext && panel?.kind === "saveMeal" && <SaveMealPanel {...panelContext} slot={panel.slot} />}

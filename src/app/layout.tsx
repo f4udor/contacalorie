@@ -28,7 +28,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <DataProvider>
           <AuthGate>
-            <div className="mx-auto flex min-h-dvh w-full flex-col max-w-xl px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-[env(safe-area-inset-top)]">
+            {/* In fondo c'è spazio per la barra, per il tasto + e per il respiro tra i due (BRIEF §10.4). */}
+            <div className="mx-auto flex min-h-dvh w-full max-w-xl flex-col px-4 pb-[calc(10rem+env(safe-area-inset-bottom))]">
               <NoticeBanner />
               {children}
             </div>

@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { SECTIONS, sectionHref } from "../lib/settings-sections";
+import { SECTIONS } from "../lib/settings-sections";
 import type { SectionId } from "../lib/settings-sections";
 
 const chevron = (
@@ -8,20 +7,20 @@ const chevron = (
   </svg>
 );
 
-function Row({ id, title, summary }: { id: SectionId; title: string; summary: string }) {
+function Row({ id, title, summary, onOpen }: { id: SectionId; title: string; summary: string; onOpen: (id: SectionId) => void }) {
   return (
-    <Link href={sectionHref(id)} className="flex min-h-12 items-center justify-between gap-3 px-4 py-2">
+    <button type="button" onClick={() => onOpen(id)} className="flex min-h-12 w-full items-center justify-between gap-3 px-4 py-2 text-left">
       <span className="text-[17px] font-semibold">{title}</span>
       <span className="flex min-w-0 items-center gap-2">
         <span className="truncate text-[17px] text-muted">{summary}</span>
         {chevron}
       </span>
-    </Link>
+    </button>
   );
 }
 
 /** Prima pagina di Impostazioni: solo righe che aprono le pagine, ciascuna con un riassunto; Collegamenti staccata in fondo. Nessun campo modificabile. */
-export function SettingsList({ summaries }: { summaries: Record<SectionId, string> }) {
+export function SettingsList({ summaries, onOpen }: { summaries: Record<SectionId, string>; onOpen: (id: SectionId) => void }) {
   const main = SECTIONS.filter((s) => s.id !== "collegamenti");
   const links = SECTIONS.find((s) => s.id === "collegamenti")!;
   return (
@@ -29,12 +28,12 @@ export function SettingsList({ summaries }: { summaries: Record<SectionId, strin
       <ul className="divide-y divide-line overflow-hidden rounded-2xl bg-card">
         {main.map((s) => (
           <li key={s.id}>
-            <Row id={s.id} title={s.title} summary={summaries[s.id]} />
+            <Row id={s.id} title={s.title} summary={summaries[s.id]} onOpen={onOpen} />
           </li>
         ))}
       </ul>
       <div className="overflow-hidden rounded-2xl bg-card">
-        <Row id={links.id} title={links.title} summary={summaries[links.id]} />
+        <Row id={links.id} title={links.title} summary={summaries[links.id]} onOpen={onOpen} />
       </div>
     </nav>
   );

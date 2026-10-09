@@ -61,3 +61,8 @@ export function formatDateLong(date: DateKey): string {
 export function formatDateFull(date: DateKey): string {
   return new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" }).format(utcDate(date));
 }
+
+/** "5 gen" (mese abbreviato, senza punto) */
+export function formatDayMonthShort(date: DateKey): string {
+  return new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short", timeZone: "UTC" }).format(utcDate(date)).replace(".", "");
+}

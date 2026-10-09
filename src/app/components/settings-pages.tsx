@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { DEFAULT_SETTINGS } from "@/engine";
 import type { DateKey } from "@/engine";
@@ -8,7 +7,8 @@ import type { DataStore, UserSettings, WeighIn } from "@/data";
 import { formatDateFull, formatNumber } from "../lib/format";
 import { defaultsPatch } from "../lib/settings-form";
 import type { SettingsFieldKey } from "../lib/settings-form";
-import { buildGoalsView, goalLabel, sectionHref } from "../lib/settings-sections";
+import { buildGoalsView, goalLabel } from "../lib/settings-sections";
+import type { SectionId } from "../lib/settings-sections";
 import { latestWeighInWeight } from "../lib/week-data";
 import { ChoiceField, DateField, SaveBar, useFieldsForm } from "./settings-fields";
 import { DataSection } from "./data-section";
@@ -26,6 +26,8 @@ interface PageProps {
   today: DateKey;
   /** Rilegge le impostazioni dopo un salvataggio. */
   onChanged: () => void;
+  /** Apre un'altra pagina di Impostazioni (per «Vai al Profilo»). */
+  onNavigate: (section: SectionId) => void;
 }
 
 const card = "flex flex-col gap-4 rounded-2xl bg-card p-4";
@@ -99,7 +101,7 @@ function GoalField({ id, label, unit, manual, calculated, kind, onChange, error 
 }
 
 /** Obiettivi: kcal base e nutrienti (calcolati o personalizzati), basale in sola lettura, regole del recupero e dei semafori. */
-export function GoalsPage({ store, settings, weighIns, today, onChanged }: PageProps) {
+export function GoalsPage({ store, settings, weighIns, today, onChanged, onNavigate }: PageProps) {
   const keys: SettingsFieldKey[] = ["baseKcal", "proteinGramsManual", "fatGramsManual", "fiberMin", "saltMax", "recoveryMaxPerDay", "creditCap", "margin"];
   const f = useFieldsForm(store, settings, keys, onChanged);
   // I valori calcolati vengono dalle impostazioni salvate (non da quelle in corso di modifica).
@@ -128,9 +130,9 @@ export function GoalsPage({ store, settings, weighIns, today, onChanged }: PageP
       {!view.profileComplete && (
         <div className="flex items-center justify-between gap-3 rounded-2xl bg-card p-4" data-profile-hint>
           <p className="text-[15px] font-medium">Completa il profilo per calcolare le tue kcal.</p>
-          <Link href={sectionHref("profilo")} className="flex min-h-11 shrink-0 items-center text-[15px] font-semibold text-accent">
+          <button type="button" onClick={() => onNavigate("profilo")} className="flex min-h-11 shrink-0 items-center text-[15px] font-semibold text-accent">
             Vai al Profilo
-          </Link>
+          </button>
         </div>
       )}
       {view.earliestDate && (

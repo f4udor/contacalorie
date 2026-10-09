@@ -91,7 +91,7 @@ try {
   for (const file of files) {
     const sc = JSON.parse(readFileSync(path.join(fixturesDir, file), "utf8"));
     if (onlyIds && !onlyIds.has(sc.id)) continue;
-    for (const width of widths) {
+    for (const width of sc.larghezze ?? widths) {
       for (const [scheme, label] of [["dark", "scuro"]]) {
         const context = await browser.newContext({
           viewport: { width, height: HEIGHT },
@@ -174,6 +174,7 @@ try {
           else if (step.fill) await page.getByLabel(step.fill[0]).filter({ visible: true }).fill(step.fill[1]);
           else if (step.swipe) await touchSwipe(page, page.getByText(step.swipe.text, { exact: true }).first(), step.swipe.dx ?? -140, step.swipe.dy ?? 0);
           else if (step.press) await page.keyboard.press(step.press);
+          else if (step.scrollBottom) await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
           else if (step.scrollTo) await page.getByText(step.scrollTo).filter({ visible: true }).first().scrollIntoViewIfNeeded();
           await page.waitForTimeout(step.wait ?? 350);
         }

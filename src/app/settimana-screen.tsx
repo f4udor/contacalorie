@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { addDays, weekDates, weekStart } from "@/engine";
 import type { DateKey } from "@/engine";
@@ -9,19 +8,17 @@ import { Card } from "./components/ui/ui";
 import { ActivityWeekPanel, FreeMealPanel, WeightPanel } from "./components/week-panels";
 import { useDataStore } from "./data-provider";
 import { WeekChart } from "./components/week-chart";
-import { formatDayMonth, formatNumber, formatSigned, formatWeightDelta } from "./lib/format";
+import { formatDayMonthShort, formatNumber, formatSigned, formatWeightDelta } from "./lib/format";
+import { weekNav } from "./lib/nav";
+import type { SectionId } from "./lib/settings-sections";
+import { ScreenHeader } from "./components/screen-header";
+import { SettingsPanel } from "./components/settings-view";
 import { useToday } from "./lib/use-today";
 import { useWeekData } from "./lib/use-week-data";
 import { buildWeekView } from "./lib/week-view";
 import { weekWeight, weightCard } from "./lib/week-weight";
 
 const DATE_PARAM = /^\d{4}-\d{2}-\d{2}$/;
-
-const arrow = (d: string) => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-    <path d={d} />
-  </svg>
-);
 
 interface StatProps {
   label: string;
@@ -70,13 +67,12 @@ export function SettimanaScreen() {
   const { data, reload } = useWeekData(monday);
   const store = useDataStore();
   const [panel, setPanel] = useState<"peso" | "bici" | "passi" | "libero" | null>(null);
+  // Pannello delle Impostazioni (aperto dall'ingranaggio): `null` = chiuso, altrimenti la pagina aperta (`section: null` = l'elenco).
+  const [settings, setSettings] = useState<{ section: SectionId | null } | null>(null);
 
   if (!today || !monday) return <main aria-busy="true" />;
 
   const sunday = addDays(monday, 6);
-  const isCurrent = monday === weekStart(today);
-  const href = (d: DateKey) => (d === weekStart(today) ? "/settimana" : `/settimana?w=${d}`);
-  const btn = "flex min-h-11 min-w-11 items-center justify-center rounded-full bg-card text-accent";
   const view = data ? buildWeekView({ date: monday, days: data.days, settings: data.settings, today }) : null;
   const s = view?.summary;
   const weight = data ? weekWeight({ monday, sunday, weighIns: data.weighIns, profileWeightKg: data.userSettings.weightKg, targetWeightKg: data.userSettings.targetWeightKg }) : null;
@@ -94,25 +90,16 @@ export function SettimanaScreen() {
 
   return (
     <main>
-      <header className="pb-3 pt-4">
-        <div className="flex min-h-11 items-center justify-end gap-2">
-          {!isCurrent && (
-            <Link href="/settimana" className="flex min-h-11 items-center whitespace-nowrap rounded-full bg-card px-4 text-[15px] font-semibold text-accent">
-              Questa settimana
-            </Link>
-          )}
-          <Link href={href(addDays(monday, -7))} aria-label="Settimana precedente" className={btn}>
-            {arrow("M15 5l-7 7 7 7")}
-          </Link>
-          <Link href={href(addDays(monday, 7))} aria-label="Settimana successiva" className={btn}>
-            {arrow("M9 5l7 7-7 7")}
-          </Link>
-        </div>
-        <h1 className="mt-1 text-[34px] font-bold leading-tight tracking-tight">Settimana</h1>
-        <p className="text-[17px] font-medium text-muted">
-          {formatDayMonth(monday)} – {formatDayMonth(sunday)}
-        </p>
-      </header>
+      <ScreenHeader
+        kicker={`${formatDayMonthShort(monday)} – ${formatDayMonthShort(sunday)}`}
+        title="Settimana"
+        nav={weekNav(monday, today)}
+        prevLabel="Settimana precedente"
+        nextLabel="Settimana successiva"
+        nowLabel="Torna a questa settimana"
+        onSettings={() => setSettings({ section: null })}
+      />
+      <div className="pt-3" />
 
       {view && s && (
         <div className="flex flex-col gap-3">
@@ -159,6 +146,7 @@ export function SettimanaScreen() {
         const common = { store, data, dates: weekDates(monday), today, onChanged: reload, onClose: () => setPanel(null) };
         return panel === "peso" ? <WeightPanel {...common} /> : panel === "libero" ? <FreeMealPanel {...common} /> : <ActivityWeekPanel {...common} kind={panel} />;
       })()}
+      {settings && <SettingsPanel section={settings.section} onSectionChange={(section) => setSettings({ section })} onClose={() => setSettings(null)} />}
     </main>
   );
 }

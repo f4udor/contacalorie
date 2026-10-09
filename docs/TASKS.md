@@ -544,7 +544,7 @@ Vincoli di questa fase:
 - Pagina di prova interna (non raggiungibile dalla navigazione) che mostra tutti i componenti e tutti i colori con il loro nome: è lo screenshot di questo task.
 - A fine task l'app deve ancora funzionare e compilare, anche se le schermate non usano ancora i componenti nuovi.
 
-### T6.1 Navigazione: barra, tasto + e Impostazioni · da fare
+### T6.1 Navigazione: barra, tasto + e Impostazioni · fatto
 - Barra in basso, tasto + e ingranaggio come in §10.4. Tre icone SVG a tratto (anello, barre, linea).
 - Intestazione di Oggi e Settimana come in §10.4: frecce, tasto icona di ritorno al presente tra le due frecce (in Oggi sostituisce il tasto "Oggi" attuale), ingranaggio. Lo stesso tasto nei pannelli con le frecce delle settimane. Test: disattivato sul presente, attivo altrove, il tocco riporta al presente. Screenshot dell'intestazione a 375 px con il titolo "Settimana" intero e i quattro tasti visibili.
 - Impostazioni esce dalla barra e si apre come pannello dall'ingranaggio, presente in Oggi e in Settimana; le sue pagine interne restano quelle della fase 5c. L'indirizzo diretto delle Impostazioni continua a funzionare.

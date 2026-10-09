@@ -148,10 +148,10 @@ export function PillButton({ children, filled = false, disabled, type = "button"
   );
 }
 
-/** Tasto tondo con un'icona (frecce delle intestazioni, ingranaggio): 36 px visibili dentro un'area toccabile di 44 px. */
+/** Tasto tondo con un'icona (frecce delle intestazioni, ingranaggio): 32 px visibili dentro un'area toccabile di 44 px. */
 export function CircleButton({ label, children, onClick, href, disabled, tone = "testo" }: RowAction & { label: string; children: ReactNode; disabled?: boolean; tone?: Extract<Role, "testo" | "comando"> }) {
   const color = disabled ? "text-cerchio-freccia" : ROLE_TEXT[tone];
-  const inner = <span className={`grid size-9 place-items-center rounded-full bg-scheda ${color}`}>{children}</span>;
+  const inner = <span className={`grid size-8 place-items-center rounded-full bg-scheda ${color}`}>{children}</span>;
   const cls = "grid size-11 shrink-0 place-items-center disabled:pointer-events-none";
   if (href && !disabled) return <Link href={href} aria-label={label} className={cls}>{inner}</Link>;
   return (
@@ -163,6 +163,8 @@ export function CircleButton({ label, children, onClick, href, disabled, tone = 
 
 interface SheetHeaderProps {
   title: string;
+  /** Id del titolo, per `aria-labelledby` del pannello. */
+  titleId?: string;
   /** «x» = X in un cerchio (lettura vocale «Chiudi»); «back» = freccia ‹ in un cerchio («Indietro»). */
   closeKind?: "x" | "back";
   onClose: () => void;
@@ -173,13 +175,13 @@ interface SheetHeaderProps {
 }
 
 /** Intestazione dei pannelli: X in un cerchio a sinistra, titolo al centro, azione principale a destra. Sempre visibile. */
-export function SheetHeader({ title, closeKind = "x", onClose, action, className = "" }: SheetHeaderProps) {
+export function SheetHeader({ title, titleId, closeKind = "x", onClose, action, className = "" }: SheetHeaderProps) {
   return (
     <div className={`grid min-h-11 grid-cols-[1fr_auto_1fr] items-center gap-2 ${className}`}>
       <button type="button" onClick={onClose} aria-label={closeKind === "x" ? "Chiudi" : "Indietro"} className="grid size-11 place-items-center justify-self-start">
         <span className="grid size-10 place-items-center rounded-full bg-cerchio text-testo">{closeKind === "x" ? <IconX size={18} /> : <IconChevronLeft size={18} />}</span>
       </button>
-      <h2 className="min-w-0 truncate text-center text-[17px] font-semibold">{title}</h2>
+      <h2 id={titleId} className="min-w-0 truncate text-center text-[17px] font-semibold">{title}</h2>
       {action ? (
         <button
           type={action.form ? "submit" : "button"}

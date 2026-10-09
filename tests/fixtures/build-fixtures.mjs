@@ -24,6 +24,28 @@ scenarios.push({ id: "prova-stile", descrizione: "Pagina di prova interna (T6.0)
 scenarios.push({ id: "grafici-in-arrivo", descrizione: "Grafici mostra solo 'In arrivo'.", oggi: "2026-01-08", percorso: "/grafici", dati: null });
 scenarios.push({ id: "avviso-dati-illeggibili", descrizione: "Dati salvati corrotti: l'app riparte vuota e mostra l'avviso (il primo avvio guidato compare dopo aver chiuso l'avviso).", oggi: "2026-01-08", percorso: "/", dati: "{{non json", scorre: true });
 
+// --- Navigazione (T6.1): barra, ingranaggio, pannello Impostazioni, intestazione stretta, fine pagina
+const navDati = () => data({
+  settings: { weightKg: 100 },
+  meals: [
+    meal("2026-01-08", "colazione", "Cappuccino e brioche", 320, 8, 48, 10, 1, 0.4),
+    meal("2026-01-08", "pranzo", "Pasta al pomodoro", 650, 22, 110, 12, 6, 1.8),
+    meal("2026-01-08", "cena", "Petto di pollo e verdure", 480, 52, 18, 20, 7, 1.4),
+  ],
+});
+add("nav-oggi", "Barra in basso con Oggi attiva (pillola scura, colore Comando), tasto + sospeso sopra la barra, intestazione con le quattro icone.", "2026-01-08", navDati(), { fisso: true });
+scenarios.push({ id: "nav-settimana", descrizione: "Barra con Settimana attiva e intestazione della Settimana (tasto di ritorno al presente disattivato sulla settimana corrente).", oggi: "2026-01-08", percorso: "/settimana", dati: navDati(), fisso: true });
+scenarios.push({ id: "nav-settimana-altra", descrizione: "Settimana precedente: il tasto di ritorno al presente è attivo (colore Comando).", oggi: "2026-01-08", percorso: "/settimana?w=2026-01-05", dati: navDati(), fisso: true });
+scenarios.push({ id: "nav-grafici", descrizione: "Barra con Grafici attiva.", oggi: "2026-01-08", percorso: "/grafici", dati: null, fisso: true });
+add("nav-oggi-altro-giorno", "Ieri: il tasto di ritorno al presente (cerchio con il punto) è attivo, nel colore Comando; titolo con il nome del giorno.", "2026-01-08", navDati(), { percorso: "/?d=2026-01-07", fisso: true });
+add("nav-impostazioni-pannello", "Dall'ingranaggio di Oggi si apre il pannello Impostazioni con la X e l'elenco a sezioni.", "2026-01-08", navDati(), { fisso: true, passi: [{ clickRole: { role: "button", name: "Impostazioni", exact: true } }] });
+add("nav-impostazioni-pagina", "Nel pannello, una pagina interna (Obiettivi): a sinistra la freccia ‹ in un cerchio.", "2026-01-08", navDati(), { fisso: true, passi: [{ clickRole: { role: "button", name: "Impostazioni", exact: true } }, { clickRole: { role: "button", name: "Obiettivi" } }] });
+scenarios.push({ id: "nav-impostazioni-settimana", descrizione: "L'ingranaggio c'è anche in Settimana e apre lo stesso pannello.", oggi: "2026-01-08", percorso: "/settimana", dati: navDati(), fisso: true, passi: [{ clickRole: { role: "button", name: "Impostazioni", exact: true } }] });
+add("nav-intestazione-375", "Intestazione di Oggi a 375 px: titolo e i quattro tasti (indietro, ritorno al presente, avanti, ingranaggio) su una riga; le tre voci della barra non vanno a capo e non si toccano con il +.", "2026-01-08", navDati(), { fisso: true, larghezze: [375] });
+scenarios.push({ id: "nav-settimana-375", descrizione: "Intestazione della Settimana a 375 px con il titolo «Settimana» intero e i quattro tasti visibili.", oggi: "2026-01-08", percorso: "/settimana?w=2026-01-05", dati: navDati(), fisso: true, larghezze: [375] });
+add("nav-fine-pagina", "Fine pagina di Oggi: sotto l'ultimo contenuto c'è spazio vuoto, il tasto + e la barra non coprono nulla.", "2026-01-08", navDati(), { fisso: true, passi: [{ scrollBottom: true }], larghezze: [375] });
+add("nav-avviso-salute", "Avviso sui dati da Salute: toccandolo si apre il pannello Impostazioni su Collegamenti.", "2026-01-08", navDati(), { fisso: true, salute: { active: true, codeCreatedAt: "2026-01-02T08:00:00Z", lastSuccessAt: "2026-01-07T02:00:00Z" }, passi: [{ click: "Nessun dato da Salute da ieri" }] });
+
 // --- Oggi: anello e nutrienti (T2.2)
 add("oggi-vuoto", "Giorno senza pasti e profilo senza peso: anello pieno di kcal rimaste, barrette neutre, invito a inserire il peso.", "2026-01-08", null);
 

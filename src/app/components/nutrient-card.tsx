@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Light } from "@/engine";
 import { formatNumber } from "../lib/format";
 import type { NutrientView } from "../lib/today-view";
@@ -18,14 +17,14 @@ const LIGHT_LABEL: Record<Light, string> = {
 };
 
 /** Scheda di un nutriente: nome, assunto su obiettivo e barretta a semaforo. */
-export function NutrientCard({ n, wide = false }: { n: NutrientView; wide?: boolean }) {
+export function NutrientCard({ n, wide = false, onOpenProfile }: { n: NutrientView; wide?: boolean; onOpenProfile: () => void }) {
   return (
     <div className={`rounded-2xl bg-card p-3.5 ${wide ? "col-span-2" : ""}`}>
       <h3 className="text-sm font-semibold text-muted">{n.name}</h3>
       {n.needsWeight && n.key === "protein" ? (
-        <Link href="/impostazioni?s=profilo" className="mt-1 flex min-h-11 items-center text-[15px] font-semibold leading-snug text-accent">
+        <button type="button" onClick={onOpenProfile} className="mt-1 flex min-h-11 items-center text-left text-[15px] font-semibold leading-snug text-accent">
           Inserisci il peso
-        </Link>
+        </button>
       ) : (
         <p className="mt-1 text-[22px] font-bold leading-tight tabular-nums">
           {n.empty ? "–" : formatNumber(n.taken, n.decimals)}
