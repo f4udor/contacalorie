@@ -12,14 +12,16 @@ Navigazione in basso: **Oggi, Settimana, Grafici, Impostazioni**.
 1. Data con frecce per cambiare giorno e tasto "Oggi".
 2. Anello delle kcal: rimaste al centro; sotto, la riga di composizione dell'obiettivo ("Base 2.100 · bici +400 · passi +75 · recupero −100"), solo se c'è qualcosa oltre alla base.
 3. Griglia di schede dei nutrienti: proteine, carboidrati, grassi, fibre, sale. Ogni scheda: nome, "assunto su obiettivo", barretta colorata a semaforo.
-4. Pasti del giorno: Colazione, Pranzo, Cena, Spuntino. Ogni pasto è composto da uno o più piatti e mostra il totale di kcal e macro, con i piatti elencati sotto ed etichetta "libero" se lo è. Ogni piatto si modifica o elimina; ogni pasto ha il suo "Aggiungi piatto". Scorrendo un piatto verso sinistra compaiono "Preferiti" e il cestino; il cestino elimina subito, senza conferma.
+4. Pasti del giorno: Colazione, Pranzo, Cena, Spuntino. Ogni pasto è composto da uno o più piatti e mostra il totale di kcal e macro, con i piatti elencati sotto ed etichetta "libero" se lo è. Ogni piatto si modifica o elimina; ogni pasto ha il suo "Aggiungi piatto". Scorrendo un piatto verso sinistra compaiono "Preferiti" e il cestino; il cestino elimina subito, senza conferma. Se il piatto è già tra i preferiti (stesso nome e stessa quantità, senza badare a maiuscole e spazi), al posto di "Preferiti" c'è "Rimuovi dai preferiti": un piatto non finisce mai due volte tra i preferiti.
 5. Attività: passi e bici (km, kcal), con la fonte ("da Salute" o "manuale"). I passi sono in sola lettura: toccarli non apre nulla. Della bici si tocca solo la parte inserita a mano (§5).
 6. Avviso in cima se i dati da Salute non arrivano da più di un giorno (§5).
 7. Pulsante **+** sempre visibile.
 
 ### Pannello Aggiungi (dal +)
 - In cima: un campo di testo "Cosa hai mangiato?". L'utente scrive o detta con il microfono della tastiera dell'iPhone, il modello AI restituisce uno o più pasti con i loro piatti stimati, l'utente conferma, corregge i numeri a mano oppure invia una correzione a voce o testo ("il totano era di più") che aggiorna la stima.
-- Accanto al titolo un selettore **AI | Manuale**; si apre sempre su AI. "Manuale" mostra il piatto a mano con nome e quantità: i numeri sono facoltativi e, se restano vuoti, li stima il modello AI e l'utente conferma.
+- **Una sola scheda per aggiungere e per modificare un piatto**, con gli stessi comandi nello stesso posto. In alto: "Chiudi" a sinistra, il titolo, "Salva" a destra, sempre visibili anche con la tastiera aperta e con il contenuto che scorre; nessun pulsante di salvataggio in fondo.
+- Sotto il titolo lo stesso selettore **AI | Manuale**: in aggiunta si apre su AI, in modifica su Manuale. In modifica, AI mostra il campo per correggere a parole la stima del piatto ("era di più"). In Manuale c'è sempre il pulsante "Stima con l'AI", che riempie kcal e nutrienti da nome e quantità anche quando i campi hanno già dei numeri; l'utente vede i nuovi numeri e salva.
+- Accanto al titolo un selettore **AI | Manuale**; in aggiunta si apre sempre su AI. "Manuale" mostra il piatto a mano con nome e quantità: i numeri sono facoltativi e, se restano vuoti, li stima il modello AI e l'utente conferma.
 - La proposta dell'AI mostra ogni piatto su una riga (nome, quantità, kcal); toccandola si aprono i numeri da correggere. Ogni pasto proposto ha il suo interruttore "Pasto libero", con le stesse regole dell'inserimento a mano; se l'utente lo ha detto nella frase arriva già acceso e si può spegnere. Un piatto la cui stima non supera il controllo di coerenza (§3.7) mostra un avviso breve.
 - "Aggiungi piatto" sotto un pasto apre lo stesso pannello, su AI, con la fascia già fissata.
 - Preferiti (piatti e pasti salvati): ogni riga ha un + per aggiungerla e si elimina scorrendola verso sinistra, con lo stesso gesto e lo stesso cestino dei piatti in Oggi (subito, senza conferma).
@@ -36,8 +38,9 @@ Navigazione in basso: **Oggi, Settimana, Grafici, Impostazioni**.
 - Peso, kcal e deficit, macro medi, attività. Periodo: 4 settimane, 3 mesi, tutto.
 
 ### Impostazioni
-- Profilo: peso, altezza, età, peso obiettivo.
-- Obiettivi: kcal base, soglia minima, recupero massimo al giorno, margine massimo della settimana, grammi dei nutrienti (proposti, ritoccabili), margine dei semafori.
+La schermata è un elenco di sezioni, come le Impostazioni dell'iPhone: ogni riga apre la sua pagina, con "Indietro". Ordine: Profilo, Obiettivi, Attività, Pasto libero, Dati e, staccata in fondo, Collegamenti. Niente campi nella prima pagina: così non si toccano per sbaglio le cose delicate. Ogni campo ha un nome chiaro e al massimo una riga di spiegazione breve; niente paragrafi.
+- Profilo: sesso, età, altezza, peso, peso obiettivo, data entro cui raggiungerlo.
+- Obiettivi: kcal base e grammi dei nutrienti, ciascuno mostrato come valore **calcolato** dal profilo (§3.9) oppure **personalizzato** se l'utente lo ha scritto a mano, con "Usa il valore calcolato" per tornare indietro; metabolismo basale in sola lettura (è il minimo sotto cui la base non scende); recupero massimo al giorno, margine massimo della settimana, margine dei semafori. Il campo "soglia minima" non c'è più.
 - Attività: kcal per km, kcal per passo, soglia passi, quota di bonus.
 - Pasto libero: tetto di kcal.
 - Collegamenti: modello AI, codice personale per il Comando rapido di Salute.
@@ -67,13 +70,15 @@ Tutti i valori sono impostazioni con questi default.
 | `saltMax` | 5 g |
 | `margin` | 0,10 |
 | `overLimit` | 1,5 |
+| `sedentaryFactor` | 1,2 |
+| `kcalPerKg` | 7700 |
 | `ringGreenBelow` | 150 kcal |
 | `ringGreenAbove` | 50 kcal |
 | `ringYellowAbove` | 200 kcal |
 | `kcalCheckShare` | 0,20 |
 | `kcalCheckMin` | 40 kcal |
 
-Le ultime cinque sono costanti del motore in `defaults.ts`: non hanno un campo in Impostazioni né una colonna nel database.
+`sedentaryFactor`, `kcalPerKg` e le ultime cinque sono costanti del motore in `defaults.ts`: non hanno un campo in Impostazioni né una colonna nel database.
 
 ### 3.1 Kcal contate nel budget
 Un pasto è l'insieme dei piatti di una fascia (colazione, pranzo, cena, spuntino) in un giorno. `kcalBudget(giorno)` = somma delle kcal dei piatti, dove per un pasto libero la somma dei suoi piatti conta `min(somma, freeMealCap)`. Le kcal mostrate come "mangiate" sono sempre quelle reali.
@@ -172,6 +177,33 @@ Casi di verifica aggiuntivi (obiettivo del giorno 2.100):
 | X | Oggi è lunedì, con pasti solo oggi | Nessuna media |
 | Y | Settimana passata con 7 giorni di pasti | Media sui 7 giorni |
 
+### 3.9 Obiettivi calcolati dal profilo
+Formule fisse, rudimentali ma dichiarate. Servono: sesso, età, altezza (cm), peso (ultima pesata, o quello del profilo). Per il piano servono anche peso obiettivo e data.
+
+- `basale` = `10 × peso + 6,25 × altezza − 5 × età + 5` per un uomo, `− 161` per una donna (Mifflin-St Jeor).
+- `minimo` = `basale` arrotondato alla decina. Sostituisce `floorKcal` in §3.3: la base del giorno non scende mai sotto il metabolismo basale.
+- `fabbisogno` = `basale × sedentaryFactor` (1,2). Giornata sedentaria apposta: bici e passi si sommano già con il bonus di §3.2 e non devono contare due volte.
+- `scartoAlGiorno` = `(peso − peso obiettivo) × kcalPerKg` (7.700) `/ giorni da oggi alla data`. Positivo per chi vuole scendere, negativo per chi vuole salire. Senza peso obiettivo o senza data vale 0.
+- `kcalBaseCalcolata` = `max(minimo, fabbisogno − scartoAlGiorno)`, arrotondata alla decina.
+- **Piano non raggiungibile.** Se `fabbisogno − scartoAlGiorno < minimo`, la base resta al minimo e l'app lo dice, con la prima data possibile: oggi + `arrotonda per eccesso((peso − peso obiettivo) × kcalPerKg / (fabbisogno − minimo))` giorni. Non si scende sotto il basale per nessun motivo.
+- Data già passata o peso obiettivo già raggiunto: scarto 0.
+- `baseKcal` usata da tutte le regole = valore scritto a mano dall'utente, se c'è; altrimenti `kcalBaseCalcolata`. Lo stesso per proteine e grassi (§3.4), che erano già calcolati.
+- Profilo incompleto (manca sesso, età o altezza): valgono i default della tabella (`baseKcal` 2100, `floorKcal` 1800) e Obiettivi invita a completare il profilo.
+- Il motore riceve "oggi" come parametro. Chi ha già una kcal base salvata la tiene come valore personalizzato finché non sceglie "Usa il valore calcolato".
+
+Casi di verifica (oggi = 1 gennaio):
+
+| # | Situazione | Risultato atteso |
+|---|---|---|
+| AA | Uomo, 27 anni, 180 cm, 100 kg | Basale 1.995, minimo 2.000, fabbisogno 2.394 |
+| AB | Come AA, obiettivo 90 kg tra 300 giorni | Scarto 257; kcal base 2.140 |
+| AC | Come AA, obiettivo 90 kg tra 100 giorni | Scarto 770: non raggiungibile. Kcal base 2.000; prima data possibile tra 196 giorni |
+| AD | Come AA, senza peso obiettivo | Kcal base 2.390 |
+| AE | Donna, 30 anni, 165 cm, 65 kg | Basale 1.370 (1.370,25), minimo 1.370, fabbisogno 1.644 |
+| AF | Uomo, 25 anni, 175 cm, 60 kg, obiettivo 65 kg tra 200 giorni | Basale 1.574, fabbisogno 1.889, scarto −193: kcal base 2.080 |
+| AG | Come AB, con kcal base scritta a mano 2.100 | Kcal base 2.100, minimo 2.000 |
+| AH | Profilo senza sesso | Kcal base 2.100, minimo 1.800 |
+
 ## 4. Pasti e modello AI
 
 - **Cosa riceve il modello**: solo il testo scritto o dettato dall'utente, la data e l'ora locali (per dedurre la fascia) ed eventualmente la stima precedente con la correzione. Nessun altro dato dell'utente: niente peso, obiettivi, email.
@@ -228,9 +260,11 @@ Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate,
 | 4b | Ritocchi delle schermate: AI o Manuale, proposta compatta, preferiti, peso nella Settimana |
 | 5 | Dati da Salute tramite Comando rapido e avviso; nuova regola del recupero; schede della Settimana toccabili; scorrimento per eliminare |
 | 5b | Ritocchi dopo la prova sul telefono: attività in sola lettura e bici a mano, colori dell'anello, pasto libero e ricetta nella proposta AI, regola del crudo, controllo di coerenza, preferiti eliminabili scorrendo, media nella Settimana, segno della variazione di peso |
-| 6 | Grafici |
+| 5c | Scheda del piatto unica per aggiunta e modifica, preferiti senza doppioni, colore della linea della media, obiettivi calcolati dal profilo, Impostazioni a sezioni |
+| 6 | Testi e grafica (da definire) |
+| 6b | Grafici |
 | 7 | Promemoria (opzionale) |
 
 ## 9. Fuori dalla prima versione
 
-Sfida mattutina e programmi di allenamento, gestione inviti nell'app (gli accessi si gestiscono da Supabase), attività diverse da bici e passi, app nativa, foto del piatto, Strava, velocità media e durata delle uscite, obiettivo del giorno modificabile a mano, nutrienti modificabili giorno per giorno, email del guardiano, app a pagamento per leggere Salute, passi inseriti a mano, più uscite in bici a mano nello stesso giorno, soglie dell'anello modificabili da Impostazioni.
+Sfida mattutina e programmi di allenamento, gestione inviti nell'app (gli accessi si gestiscono da Supabase), attività diverse da bici e passi, app nativa, foto del piatto, Strava, velocità media e durata delle uscite, obiettivo del giorno modificabile a mano, nutrienti modificabili giorno per giorno, email del guardiano, app a pagamento per leggere Salute, passi inseriti a mano, più uscite in bici a mano nello stesso giorno, soglie dell'anello modificabili da Impostazioni, livello di attività nel profilo (l'attività conta già con bici e passi), piani sotto il metabolismo basale.

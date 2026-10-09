@@ -465,3 +465,57 @@ Vincoli di questa fase:
 
 ### T5b.8 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-5b.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: l'istruzione SQL da eseguire su Supabase prima del merge e l'elenco dei controlli da fare sul telefono, uno per task.
+
+## Fase 5c: scheda del piatto, preferiti, obiettivi calcolati, Impostazioni
+
+Obiettivo: inserire e correggere un piatto con una sola scheda, sempre uguale; obiettivi che derivano dal profilo; Impostazioni ordinate e difficili da toccare per sbaglio. Regole del brief in §2, §3.3 e §3.9.
+
+I task sono in ordine di valore: si eseguono in quest'ordine.
+
+Vincoli di questa fase:
+- Nessuna chiave reale e nessuna chiamata di rete reale nei test: Supabase e Vertex restano simulati.
+- Il database cresce per aggiunte: le sole colonne nuove sono quelle del profilo in T5c.3. Le istruzioni SQL da eseguire a mano su Supabase stanno in `supabase/aggiornamento-fase-5c.sql`; `supabase/setup.sql` va rigenerato.
+- **Niente restyling e niente riscrittura generale dei testi**: colori, forme e nomi dei comandi esistenti restano quelli di oggi, salvo dove un task lo chiede. Grafica e testi sono la fase 6.
+- Si rigenerano solo gli screenshot degli scenari toccati dal task.
+- Nessuna funzione oltre a quelle elencate (§9).
+
+### T5c.0 Scheda del piatto unica · da fare
+- Un solo componente per aggiungere un piatto (dal +, da "Aggiungi piatto") e per modificarne uno esistente (tocco sul piatto in Oggi).
+- Intestazione fissa: "Chiudi" a sinistra, titolo al centro, "Salva" a destra. Resta visibile con la tastiera aperta e mentre il contenuto scorre. "Salva" è disattivato finché non c'è qualcosa da salvare. Spariscono i pulsanti di salvataggio e conferma in fondo; "Annulla" coincide con "Chiudi".
+- Selettore AI | Manuale, lo stesso componente nelle due situazioni: aggiunta su AI, modifica su Manuale.
+  - AI in aggiunta: come oggi (testo, proposta, correzione, "Rifai la stima"); "Salva" conferma la proposta.
+  - AI in modifica: campo per correggere a parole il piatto aperto; la stima aggiornata compare nella stessa scheda e "Salva" la applica.
+  - Manuale, in entrambe: nome, quantità, kcal e nutrienti, con "Stima con l'AI" sempre presente. Con i numeri già scritti li sostituisce con la nuova stima (resta tutto modificabile prima di salvare).
+- Passando da AI a Manuale e ritorno non si perde quello che è stato scritto.
+- In modifica restano, in fondo e ben separati dal resto, "Elimina" e l'azione sui preferiti (T5c.1).
+- Pesata e "Bici a mano" prendono la stessa intestazione con "Salva" in alto, senza altre modifiche.
+- Test della logica (stato di "Salva", passaggio tra AI e Manuale, stima che sostituisce i numeri, correzione a parole in modifica). Screenshot: aggiunta e modifica, AI e Manuale, con contenuto lungo scorso a metà (intestazione visibile), in chiaro e scuro. Nel diario, sotto "Non verificato": l'intestazione con la tastiera vera dell'iPhone.
+
+### T5c.1 Preferiti senza doppioni · da fare
+- Un piatto "è tra i preferiti" se esiste un preferito con lo stesso nome e la stessa quantità, senza badare a maiuscole e a spazi ripetuti o in testa e in coda.
+- Dove oggi compare "Preferiti" o "Salva nei preferiti" per un piatto (scorrimento in Oggi, scheda del piatto), se il piatto è già tra i preferiti compare "Rimuovi dai preferiti", che lo toglie subito. Salvare un piatto già presente non crea mai una seconda riga.
+- Lo stesso per "Salva pasto": un pasto preferito con lo stesso nome viene aggiornato, non duplicato.
+- I doppioni già esistenti non si toccano: si eliminano a mano scorrendo.
+- Test: confronto con maiuscole e spazi diversi; quantità diversa = piatto diverso; salva, rimuovi, salva di nuovo; pasto con lo stesso nome. Screenshot delle due etichette.
+
+### T5c.2 Colore della linea della media · da fare
+- La linea tratteggiata della media e la sua voce in legenda prendono un colore proprio, diverso da quello della linea dell'obiettivo e non verde, giallo o rosso; contrasto sufficiente in chiaro e scuro. Il colore è una variabile di stile con un nome suo, così la fase 6 lo cambia in un punto solo.
+- Rigenerati i quattro scenari `settimana-media-*`.
+
+### T5c.3 Obiettivi calcolati dal profilo · da fare
+- Motore: nuova funzione pura che applica §3.9 e restituisce basale, minimo, fabbisogno, scarto al giorno, kcal base calcolata e, se il piano non è raggiungibile, i giorni alla prima data possibile. Costanti `sedentaryFactor` e `kcalPerKg` in `defaults.ts`. "Oggi" arriva come parametro.
+- Profilo: per aggiunta, sesso (`uomo` / `donna`) e data dell'obiettivo. Età, altezza, peso e peso obiettivo ci sono già.
+- La kcal base e la soglia minima usate da tutte le regole (§3.3) passano da una sola funzione: valore a mano se c'è, altrimenti calcolato; con profilo incompleto, i default di oggi. **Chi ha già una kcal base salvata la tiene come personalizzata**: dopo l'aggiornamento i numeri di un utente esistente non cambiano da soli, tranne la soglia minima, che diventa il basale appena il profilo è completo.
+- **Questo task aggiunge una regola: i casi da A a Z di §3.6 e §3.8 restano identici e i loro test non si toccano** (usano impostazioni senza profilo completo o con valori espliciti).
+- Test: casi da AA ad AH di §3.9; data passata; peso obiettivo già raggiunto; peso preso dall'ultima pesata invece che dal profilo; utente esistente con base salvata.
+
+### T5c.4 Impostazioni a sezioni e primo avvio · da fare
+- Impostazioni diventa un elenco di righe che aprono ciascuna la sua pagina, con "Indietro": Profilo, Obiettivi, Attività, Pasto libero, Dati; staccata in fondo, Collegamenti. Nella prima pagina nessun campo modificabile. Ogni riga mostra a destra un riassunto breve (per esempio "2.140 kcal", "Salute collegata").
+- Obiettivi (§2 e §3.9): kcal base, proteine e grassi mostrano il numero e un'etichetta "calcolato" o "personalizzato"; scrivendo un numero diventa personalizzato, "Usa il valore calcolato" lo riporta alla formula. Metabolismo basale in sola lettura con la riga "La base del giorno non scende sotto questo valore". Il campo "soglia minima" sparisce. Piano non raggiungibile: una riga chiara con la prima data possibile e un pulsante che la imposta. Profilo incompleto: invito a completarlo, con il collegamento alla pagina Profilo.
+- Testi: ogni campo ha un nome comprensibile senza spiegazione e al massimo una riga breve sotto. Via i paragrafi e i "valore suggerito". Solo le pagine di Impostazioni e del primo avvio: il resto dell'app non si tocca.
+- Primo avvio: chiede sesso, età, altezza, peso, peso obiettivo e data, poi mostra kcal base calcolata e basale, con la possibilità di cambiare la base a mano. Chi ha già fatto il primo avvio non lo rivede.
+- Le funzioni di Collegamenti e Dati restano identiche: cambiano solo posto.
+- Test della logica (riassunti delle righe, passaggio calcolato/personalizzato, pulsante della prima data possibile). Screenshot: elenco, ogni pagina, Obiettivi nei tre stati (calcolato, personalizzato, non raggiungibile) e con profilo incompleto, primo avvio.
+
+### T5c.5 Report di fase · da fare
+Scrivi `docs/REPORT-FASE-5c.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: l'istruzione SQL da eseguire su Supabase prima del merge e un controllo da fare sul telefono per ogni task.
