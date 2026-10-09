@@ -233,7 +233,7 @@ Salute e Promemoria di Apple non sono raggiungibili da un server: i dati arrivan
 - **Codice personale.** L'ingresso è protetto da un codice generato in Impostazioni → Collegamenti, uno per utente. Si vede in chiaro una sola volta; nel database resta solo l'impronta. Rigenerarlo invalida il precedente.
 - **Guardiano.** Se esiste un codice e da più di 24 ore non arriva un invio riuscito, Oggi mostra un avviso. Nessuna email.
 - Ogni invio registra data, ora ed esito; Impostazioni mostra l'ultimo invio riuscito e i valori ricevuti.
-- Avvertenza per chi usa l'app: se un'altra app (per esempio Strava) scrive la stessa uscita in Salute, i km risultano doppi. Si registra con una sola app, oppure si toglie all'altra il permesso di scrivere "Distanza in bici".
+- **Doppio conteggio.** Se due app scrivono la stessa uscita in Salute (per esempio Strava e l'iPhone), i km risultano doppi. Rimedio verificato sul telefono: nel Comando rapido la distanza in bici si legge con il filtro "Sorgente è" sull'app con cui si registrano le uscite (per Mauro: Strava). Vale per ogni utente con la sua app; `docs/COLLEGA-SALUTE.md` lo spiega.
 
 ### Rimandati
 - **Ingresso pasto**: testo dettato a Siri che crea una stima in attesa di conferma.
@@ -267,7 +267,7 @@ Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate,
 
 ## 9. Fuori dalla prima versione
 
-Sfida mattutina e programmi di allenamento, gestione inviti nell'app (gli accessi si gestiscono da Supabase), attività diverse da bici e passi, app nativa, foto del piatto, Strava, velocità media e durata delle uscite, obiettivo del giorno modificabile a mano, nutrienti modificabili giorno per giorno, email del guardiano, app a pagamento per leggere Salute, passi inseriti a mano, più uscite in bici a mano nello stesso giorno, soglie dell'anello modificabili da Impostazioni, livello di attività nel profilo (l'attività conta già con bici e passi), piani sotto il metabolismo basale.
+Sfida mattutina e programmi di allenamento, gestione inviti nell'app (gli accessi si gestiscono da Supabase), attività diverse da bici e passi, app nativa, foto del piatto, collegamento diretto all'API di Strava (i km arrivano comunque tramite Salute), velocità media e durata delle uscite, obiettivo del giorno modificabile a mano, nutrienti modificabili giorno per giorno, email del guardiano, app a pagamento per leggere Salute, passi inseriti a mano, più uscite in bici a mano nello stesso giorno, soglie dell'anello modificabili da Impostazioni, livello di attività nel profilo (l'attività conta già con bici e passi), piani sotto il metabolismo basale.
 
 ## 10. Stile (dalla fase 6)
 
@@ -336,3 +336,10 @@ Pochi componenti condivisi, usati ovunque:
 
 ### 10.6 Testi
 I nomi di comandi, titoli ed etichette sono in `docs/TESTI.md`, tabella "com'è → come diventa", approvata dall'utente. Regole: un comando dice esattamente cosa fa ("Aggiungi uscita in bici", non "Bici a mano"); niente gergo interno; niente paragrafi di spiegazione; maiuscola solo a inizio frase.
+
+## 11. Idee future
+
+Non decise e non pianificate: nessun task le anticipa. L'elenco aggiornato sta nel contesto del progetto su Claude; qui solo ciò che conviene sapere per non chiudersi delle strade.
+- Dispensa di ingredienti con i loro valori e piatti composti dall'AI secondo criteri dell'utente, con kcal e nutrienti sommati dall'app. Il campo "quantità" con ingredienti e grammi (§4) è il primo mattone: non va trasformato in qualcosa di incompatibile.
+- Viste di Oggi e Settimana compatte e personalizzabili, con trend.
+- Calorie reali delle uscite in bici lette da Salute.
