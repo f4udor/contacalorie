@@ -26,6 +26,8 @@ interface Props {
   onClose: () => void;
   /** Se c'è, tutti i piatti proposti vanno in questa fascia (non si sceglie). */
   fixedSlot?: MealSlot;
+  /** Aperto da «Aggiungi pasto libero»: il primo pasto proposto parte con l'interruttore acceso, se la settimana lo consente. */
+  forceFree?: boolean;
   /** Il resto del pannello: compare solo finché non c'è una proposta da controllare. */
   children: ReactNode;
   /** Chi ospita la scheda ("Salva" è nell'intestazione): qui riceve il modo di confermare la proposta. */
@@ -47,7 +49,7 @@ const primary = "min-h-12 rounded-xl bg-accent px-4 text-[17px] font-semibold te
 const secondary = "min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent disabled:opacity-50";
 
 /** Campo "Cosa hai mangiato?" in cima al pannello Aggiungi, con la proposta da controllare e confermare. */
-export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose, fixedSlot, children, handleRef, onCanSaveChange }: Props) {
+export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose, fixedSlot, forceFree = false, children, handleRef, onCanSaveChange }: Props) {
   const { getAccessToken } = useAuth();
   const available = useAiAvailable();
   const [text, setText] = useState("");
@@ -63,7 +65,10 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
 
   const start = (proposal: MealProposal, originalText: string) => {
     setOriginal({ proposal, text: originalText });
-    setDrafts(withInitialFree(proposalToDrafts(fixedSlot ? forceSlot(proposal, fixedSlot) : proposal), free, !fixedSlot));
+    const initial = withInitialFree(proposalToDrafts(fixedSlot ? forceSlot(proposal, fixedSlot) : proposal), free, !fixedSlot);
+    // «Aggiungi pasto libero»: il primo pasto proposto parte libero, se nessun altro lo è già e la settimana lo consente.
+    const first = initial[0];
+    setDrafts(forceFree && first && !first.isFree && !initial.some((m) => m.isFree) && free.freeAllowedFor(first.slot) ? initial.map((m, i) => (i === 0 ? { ...m, isFree: true } : m)) : initial);
     setErrors({});
     setOpenKeys([]);
     setCorrection("");

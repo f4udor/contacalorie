@@ -111,3 +111,13 @@ export function defaultWeighInDate(dates: readonly DateKey[], today: DateKey): D
   const past = dates.filter((d) => d <= today);
   return past.length > 0 ? past[past.length - 1] : dates[0];
 }
+
+const SLOT_NAME: Record<MealSlot, string> = { colazione: "Colazione", pranzo: "Pranzo", cena: "Cena", spuntino: "Spuntino" };
+
+/** Il pasto come si legge nell'elenco del pannello Pasto libero: «Cena di martedì», con sotto «Pizza margherita, birra · 1.310 kcal». */
+export function weekMealTitle(m: Pick<WeekMeal, "date" | "slot">, weekdayLower: (date: DateKey) => string): string {
+  return `${SLOT_NAME[m.slot]} di ${weekdayLower(m.date)}`;
+}
+
+/** Il giorno proposto per una nuova uscita in bici o un nuovo pasto in una settimana: oggi se è nella settimana, altrimenti l'ultimo giorno della settimana già passato. */
+export const defaultDayInWeek = defaultWeighInDate;

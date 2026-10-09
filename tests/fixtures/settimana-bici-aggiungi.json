@@ -125,11 +125,8 @@
       }
     },
     {
-      "clickRole": {
-        "role": "button",
-        "name": "Aggiungi la bici a mano di Mercoledì 7 gennaio",
-        "exact": true
-      }
+      "click": "Aggiungi uscita in bici",
+      "exact": true
     }
   ]
 }

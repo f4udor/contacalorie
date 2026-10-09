@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { activeTab, canGoNextWeek, dayNav, shiftWeek, weekNav } from "./nav";
+import { activeTab, canGoNextWeek, dayNav, panelWeekReducer, shiftWeek, weekNav } from "./nav";
 
 const TODAY = "2026-10-08"; // giovedì; la settimana corrente parte da lunedì 2026-10-05
 
@@ -63,5 +63,32 @@ describe("voce attiva della barra", () => {
     expect(activeTab("/grafici")).toBe("grafici");
     expect(activeTab("/impostazioni")).toBeNull();
     expect(activeTab("/prova-stile")).toBeNull();
+  });
+});
+
+describe("settimana dentro un pannello (T6.3)", () => {
+  const screenMonday = "2026-10-05"; // la settimana della schermata sotto (anche la corrente)
+  it("le frecce spostano di una settimana alla volta e non toccano la settimana della schermata", () => {
+    const back = panelWeekReducer(screenMonday, "indietro", TODAY);
+    expect(back).toBe("2026-09-28");
+    expect(panelWeekReducer(back, "indietro", TODAY)).toBe("2026-09-21");
+    expect(panelWeekReducer(back, "avanti", TODAY)).toBe(screenMonday);
+    // La schermata tiene il suo lunedì: è un valore che il pannello non riceve per riferimento né modifica.
+    expect(screenMonday).toBe("2026-10-05");
+  });
+  it("niente settimana futura: dalla settimana corrente «avanti» resta dov'è", () => {
+    expect(panelWeekReducer("2026-10-05", "avanti", TODAY)).toBe("2026-10-05");
+    // Anche partendo da una settimana già futura non si avanza.
+    expect(panelWeekReducer("2026-10-19", "avanti", TODAY)).toBe("2026-10-19");
+  });
+  it("il ritorno al presente riporta alla settimana corrente da qualsiasi punto", () => {
+    expect(panelWeekReducer("2026-08-03", "oggi", TODAY)).toBe("2026-10-05");
+    expect(panelWeekReducer("2026-10-19", "oggi", TODAY)).toBe("2026-10-05");
+  });
+  it("chiudere e riaprire il pannello riparte dalla settimana della schermata", () => {
+    const afterMoves = ["indietro", "indietro", "avanti"].reduce((m, a) => panelWeekReducer(m, a as "indietro" | "avanti", TODAY), screenMonday);
+    expect(afterMoves).toBe("2026-09-28");
+    // Un pannello nuovo parte dal lunedì della schermata, che non è cambiato.
+    expect(screenMonday).toBe("2026-10-05");
   });
 });

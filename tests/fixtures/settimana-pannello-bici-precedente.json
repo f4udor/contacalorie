@@ -1,6 +1,6 @@
 {
-  "id": "settimana-bici-modifica",
-  "descrizione": "Pannello Bici: toccando la parte a mano di lunedì si apre il modulo con i campi precompilati.",
+  "id": "settimana-pannello-bici-precedente",
+  "descrizione": "Pannello Bici su una settimana senza uscite (la precedente): numero con trattino e griglia vuota, nessun elenco, «Aggiungi uscita in bici» in fondo.",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {
@@ -127,9 +127,12 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Modifica l'uscita a mano di Lunedì 5",
+        "name": "Settimana precedente",
         "exact": true
       }
+    },
+    {
+      "wait": 500
     }
   ]
 }

@@ -54,7 +54,7 @@ export function weightCard(weight: WeekWeight | null, formatKg: (kg: number) => 
   if (!weight) return { value: NO_WEIGHT_TEXT };
   return {
     value: `${formatKg(weight.lastKg)} kg`,
-    hint: weight.deltaKg === null ? undefined : `${formatDelta(weight.deltaKg)} kg ${weight.comparedWith === "pesata" ? "dalla pesata precedente" : "dal peso di partenza"}`,
+    hint: weight.deltaKg === null ? undefined : `${formatDelta(weight.deltaKg)} kg ${weight.comparedWith === "pesata" ? "dalla precedente" : "dal peso di partenza"}`,
     tone: weight.tone,
   };
 }

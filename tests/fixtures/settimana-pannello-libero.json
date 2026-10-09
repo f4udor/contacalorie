@@ -1,6 +1,6 @@
 {
   "id": "settimana-pannello-libero",
-  "descrizione": "Pasto libero presente: giorno, fascia, kcal e 'Togli pasto libero'.",
+  "descrizione": "Pasto libero presente: «Usato», il pasto («Cena di sabato») con i piatti e le kcal, e «Rimuovi pasto libero».",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {

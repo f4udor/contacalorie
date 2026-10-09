@@ -559,7 +559,7 @@ Vincoli di questa fase:
 - Testi di questa schermata da `docs/TESTI.md`.
 - Screenshot di tutti gli scenari di Oggi, solo scuri.
 
-### T6.3 Settimana · da fare
+### T6.3 Settimana · fatto
 - Schermata come in §10.5 e nella bozza. Il grafico usa una sola scala per barre, linea dell'obiettivo, linea della media e griglia.
 - Linea dell'obiettivo continua a gradini, anche nei giorni futuri (con l'anteprima di §3.3) e nelle settimane senza dati. Linea della media assente quando non c'è media. Le due etichette della legenda non si sovrappongono.
 - Mini grafici di passi e bici: sette giorni, barre sottili, scala sul massimo della settimana; settimana senza dati = griglia vuota e trattino al posto del numero.

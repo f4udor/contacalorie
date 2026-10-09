@@ -1,6 +1,6 @@
 {
-  "id": "settimana-bici-modifica",
-  "descrizione": "Pannello Bici: toccando la parte a mano di lunedì si apre il modulo con i campi precompilati.",
+  "id": "settimana-pannello-libero-aggiungi",
+  "descrizione": "«Aggiungi pasto libero» (settimana corrente): si apre Aggiungi sul giorno di oggi, con il giorno modificabile, su Manuale l'interruttore «Pasto libero» è già acceso.",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {
@@ -120,16 +120,22 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Bici",
+        "name": "Pasto libero",
         "exact": false
       }
     },
     {
+      "click": "Aggiungi pasto libero",
+      "exact": true
+    },
+    {
       "clickRole": {
-        "role": "button",
-        "name": "Modifica l'uscita a mano di Lunedì 5",
-        "exact": true
+        "role": "radio",
+        "name": "Manuale"
       }
+    },
+    {
+      "scrollTo": "Vale per l'intero pasto"
     }
   ]
 }

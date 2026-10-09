@@ -84,7 +84,7 @@ export function ChoiceField({ id, label, value, options, onChange, error }: { id
 }
 
 /** Campo data (selettore del telefono); il valore è AAAA-MM-GG, vuoto = nessuna data. */
-export function DateField({ id, label, value, onChange, error }: { id: string; label: string; value: string; onChange: (v: string) => void; error?: string }) {
+export function DateField({ id, label, value, onChange, error, min, max }: { id: string; label: string; value: string; onChange: (v: string) => void; error?: string; min?: string; max?: string }) {
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-sm font-semibold text-muted">
@@ -94,6 +94,8 @@ export function DateField({ id, label, value, onChange, error }: { id: string; l
         id={id}
         type="date"
         value={value}
+        min={min}
+        max={max}
         onChange={(e) => onChange(e.target.value)}
         aria-invalid={error ? true : undefined}
         className={`min-h-11 w-full min-w-0 appearance-none rounded-xl bg-bg px-3 text-[17px] outline-none focus:ring-2 focus:ring-accent ${error ? "ring-2 ring-bad" : ""}`}

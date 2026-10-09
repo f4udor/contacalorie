@@ -1,14 +1,14 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { addDays, weekDates, weekStart } from "@/engine";
+import { addDays, bikeKmTotal, weekStart } from "@/engine";
 import type { DateKey } from "@/engine";
 import { useState } from "react";
-import { Card } from "./components/ui/ui";
+import { Card, Num } from "./components/ui/ui";
 import { ActivityWeekPanel, FreeMealPanel, WeightPanel } from "./components/week-panels";
 import { useDataStore } from "./data-provider";
-import { WeekChart } from "./components/week-chart";
-import { formatDayMonthShort, formatNumber, formatSigned, formatWeightDelta } from "./lib/format";
+import { MiniBars, WeekChart } from "./components/week-chart";
+import { formatDayMonthShort, formatKg, formatNumber, formatSigned, formatWeightDelta } from "./lib/format";
 import { weekNav } from "./lib/nav";
 import type { SectionId } from "./lib/settings-sections";
 import { ScreenHeader } from "./components/screen-header";
@@ -17,44 +17,9 @@ import { useToday } from "./lib/use-today";
 import { useWeekData } from "./lib/use-week-data";
 import { buildWeekView } from "./lib/week-view";
 import { weekWeight, weightCard } from "./lib/week-weight";
+import { hasAnyValue } from "./lib/week-chart";
 
 const DATE_PARAM = /^\d{4}-\d{2}-\d{2}$/;
-
-interface StatProps {
-  label: string;
-  value: string;
-  hint?: string;
-  hintTone?: "ok" | "bad" | "neutral";
-  /** Se c'è, la scheda si tocca e apre un pannello. */
-  onOpen?: () => void;
-}
-
-function Stat({ label, value, hint, hintTone, wide, onOpen }: StatProps & { wide?: boolean }) {
-  const Title = onOpen ? "span" : "h3";
-  const Line = onOpen ? "span" : "p";
-  const body = (
-    <>
-      <span className="flex items-center justify-between gap-2">
-        <Title className="text-sm font-semibold text-muted">{label}</Title>
-        {onOpen && (
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 text-muted" aria-hidden="true">
-            <path d="M9 5l7 7-7 7" />
-          </svg>
-        )}
-      </span>
-      <Line className="mt-1 block text-[22px] font-bold leading-tight tabular-nums">{value}</Line>
-      {hint && <Line className={`mt-0.5 block text-xs ${hintTone === "ok" ? "font-semibold text-ok" : hintTone === "bad" ? "font-semibold text-bad" : "text-muted"}`}>{hint}</Line>}
-    </>
-  );
-  const cls = `rounded-2xl bg-card p-3.5 ${wide ? "col-span-2" : ""}`;
-  return onOpen ? (
-    <button type="button" onClick={onOpen} className={`${cls} block min-h-14 w-full text-left`}>
-      {body}
-    </button>
-  ) : (
-    <div className={cls}>{body}</div>
-  );
-}
 
 const dash = "–";
 
@@ -76,17 +41,10 @@ export function SettimanaScreen() {
   const view = data ? buildWeekView({ date: monday, days: data.days, settings: data.settings, today }) : null;
   const s = view?.summary;
   const weight = data ? weekWeight({ monday, sunday, weighIns: data.weighIns, profileWeightKg: data.userSettings.weightKg, targetWeightKg: data.userSettings.targetWeightKg }) : null;
-  const card = weightCard(weight, (kg) => formatNumber(kg, 1), formatWeightDelta);
-  const stats: StatProps[] = s
-    ? [
-        { label: "Saldo", value: s.balance === null ? dash : `${formatSigned(s.balance)} kcal`, hint: s.balance === null ? undefined : s.balance < 0 ? "da recuperare" : "di vantaggio" },
-        { label: "Media kcal", value: s.avgKcal === null ? dash : `${formatNumber(s.avgKcal)} kcal`, hint: "sui giorni conclusi" },
-        { label: "Bici", value: s.totalKm === null ? dash : `${formatNumber(s.totalKm, 1)} km`, onOpen: () => setPanel("bici") },
-        { label: "Passi medi", value: s.avgSteps === null ? dash : formatNumber(s.avgSteps), hint: "sui giorni con passi", onOpen: () => setPanel("passi") },
-        { label: "Peso", value: card.value, hint: card.hint, hintTone: card.tone, onOpen: () => setPanel("peso") },
-        { label: "Pasto libero", value: s.freeMealUsed ? "usato" : "non usato", onOpen: () => setPanel("libero") },
-      ]
-    : [];
+  const card = weightCard(weight, formatKg, formatWeightDelta);
+  const stepValues = data ? data.days.map((d) => d.activity.steps) : [];
+  const kmValues = data ? data.days.map((d) => bikeKmTotal(d.activity)) : [];
+  const sub = "mt-1 text-[13px] text-testo-secondario";
 
   return (
     <main>
@@ -103,26 +61,56 @@ export function SettimanaScreen() {
 
       {view && s && (
         <div className="flex flex-col gap-3">
-          <Card className="pb-2">
-            <WeekChart bars={view.bars} today={today} avg={s.avgKcal === null || view.avgRatio === null ? null : { kcal: s.avgKcal, ratio: view.avgRatio }} />
-            <p className="pt-1 text-center text-xs text-muted">Tocca una barra per aprire il giorno.</p>
-          </Card>
+          <WeekChart bars={view.bars} today={today} avg={s.avgKcal === null || view.avgRatio === null ? null : { kcal: s.avgKcal, ratio: view.avgRatio }} />
 
           {view.isEmpty && !weight && (
             <Card>
-              <p className="text-center text-[15px] text-muted">Nessun dato in questa settimana.</p>
+              <p className="text-center text-[15px] text-testo-secondario">Nessun dato in questa settimana.</p>
             </Card>
           )}
 
           <div className="grid grid-cols-2 gap-3">
-            {stats.map((st, i) => (
-              <Stat key={st.label} {...st} wide={i === stats.length - 1 && stats.length % 2 === 1} />
-            ))}
+            <Card title="Saldo">
+              <div className="mt-3">
+                {s.balance === null ? <Num value={dash} size="lg" tone="testo-secondario" /> : <Num value={formatSigned(s.balance)} unit="kcal" size="md" tone={s.balance > 0 ? "in-obiettivo" : "testo"} />}
+              </div>
+              {s.balance !== null && <p className={sub}>{s.balance < 0 ? "da recuperare" : "di margine"}</p>}
+            </Card>
+            <Card title="Media">
+              <div className="mt-3">{s.avgKcal === null ? <Num value={dash} size="md" tone="testo-secondario" /> : <Num value={formatNumber(s.avgKcal)} unit="kcal" size="md" />}</div>
+              <p className={sub}>sui giorni conclusi</p>
+            </Card>
+            <Card title="Passi" onOpen={() => setPanel("passi")} openLabel="Apri Passi">
+              <p className={sub}>Media</p>
+              <div className="mt-1">{s.avgSteps === null ? <Num value={dash} size="lg" tone="testo-secondario" /> : <Num value={formatNumber(s.avgSteps)} size="lg" tone="passi" />}</div>
+              <div className="mt-3">
+                <MiniBars values={stepValues} tone="passi" />
+              </div>
+            </Card>
+            <Card title="Bici" onOpen={() => setPanel("bici")} openLabel="Apri Bici">
+              <p className={sub}>Questa settimana</p>
+              <div className="mt-1">{s.totalKm === null ? <Num value={dash} size="lg" tone="testo-secondario" /> : <Num value={formatNumber(s.totalKm, 1)} unit="km" size="lg" tone="bici" />}</div>
+              <div className="mt-3">
+                <MiniBars values={kmValues} tone="bici" />
+              </div>
+              {!hasAnyValue(kmValues) && <span className="sr-only">Nessuna uscita</span>}
+            </Card>
+            <Card title="Peso" onOpen={() => setPanel("peso")} openLabel="Apri Peso">
+              <div className="mt-3">{weight ? <Num value={formatKg(weight.lastKg)} unit="kg" size="md" /> : <span className="text-[17px] text-testo-secondario">{card.value}</span>}</div>
+              {card.hint && weight && weight.deltaKg !== null && (
+                <p className={`mt-1 text-[13px] font-medium ${weight.tone === "ok" ? "text-in-obiettivo" : weight.tone === "bad" ? "text-fuori" : "text-testo-secondario"}`}>{card.hint}</p>
+              )}
+            </Card>
+            <Card title="Pasto libero" onOpen={() => setPanel("libero")} openLabel="Apri Pasto libero">
+              <div className="mt-3">
+                <span className="font-cifre text-[22px] font-medium leading-none">{s.freeMealUsed ? "Usato" : "Non usato"}</span>
+              </div>
+              <p className={sub}>1 a settimana</p>
+            </Card>
           </div>
 
-          <Card>
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">Medie dei nutrienti</h2>
-            <dl className="mt-2 divide-y divide-line">
+          <Card title="Medie dei nutrienti">
+            <dl className="mt-2 divide-y divide-separatore">
               {(
                 [
                   ["Proteine", "protein", 0],
@@ -134,16 +122,16 @@ export function SettimanaScreen() {
               ).map(([name, key, decimals]) => (
                 <div key={key} className="flex min-h-11 items-center justify-between">
                   <dt className="text-[17px]">{name}</dt>
-                  <dd className="text-[17px] font-semibold tabular-nums">{s.avgNutrients === null ? dash : `${formatNumber(s.avgNutrients[key], decimals)} g`}</dd>
+                  <dd className="font-cifre text-[17px] tabular-nums">{s.avgNutrients === null ? dash : `${formatNumber(s.avgNutrients[key], decimals)} g`}</dd>
                 </div>
               ))}
             </dl>
-            <p className="pt-1 text-xs text-muted">Al giorno, sui giorni con pasti.</p>
+            <p className="pt-1 text-[13px] text-testo-secondario">Al giorno, sui giorni con pasti.</p>
           </Card>
         </div>
       )}
       {data && store && panel && (() => {
-        const common = { store, data, dates: weekDates(monday), today, onChanged: reload, onClose: () => setPanel(null) };
+        const common = { store, initialMonday: monday, today, onChanged: reload, onClose: () => setPanel(null) };
         return panel === "peso" ? <WeightPanel {...common} /> : panel === "libero" ? <FreeMealPanel {...common} /> : <ActivityWeekPanel {...common} kind={panel} />;
       })()}
       {settings && <SettingsPanel section={settings.section} onSectionChange={(section) => setSettings({ section })} onClose={() => setSettings(null)} />}

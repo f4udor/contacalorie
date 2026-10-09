@@ -1,6 +1,6 @@
 {
   "id": "settimana-dopo-togli-libero",
-  "descrizione": "Dopo 'Togli pasto libero': la scheda dice 'non usato' e il pasto resta.",
+  "descrizione": "Dopo «Rimuovi pasto libero»: la scheda dice «Non usato» e il pasto resta.",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {
@@ -125,7 +125,7 @@
       }
     },
     {
-      "click": "Togli pasto libero"
+      "click": "Rimuovi pasto libero"
     },
     {
       "wait": 500

@@ -1,6 +1,6 @@
 {
   "id": "settimana-pannello-libero-scegli",
-  "descrizione": "Nessun pasto libero: elenco dei pasti della settimana con 'Segna come libero'.",
+  "descrizione": "Nessun pasto libero: «Non usato», l'elenco «Scegli il pasto» con «Segna» e il tasto pieno «Aggiungi pasto libero».",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {

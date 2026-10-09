@@ -66,3 +66,32 @@ export function formatDateFull(date: DateKey): string {
 export function formatDayMonthShort(date: DateKey): string {
   return new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short", timeZone: "UTC" }).format(utcDate(date)).replace(".", "");
 }
+
+/** "5 – 11 ottobre" (stesso mese) o "28 set – 4 ott" (mesi diversi): l'intervallo di una settimana (lunedì → domenica). */
+export function formatWeekRange(monday: DateKey): string {
+  const sunday = new Date(utcDate(monday).getTime() + 6 * 86400000);
+  const sundayKey = `${sunday.getUTCFullYear()}-${String(sunday.getUTCMonth() + 1).padStart(2, "0")}-${String(sunday.getUTCDate()).padStart(2, "0")}`;
+  const m1 = monday.slice(5, 7);
+  const m2 = sundayKey.slice(5, 7);
+  if (m1 === m2) {
+    const day = new Intl.DateTimeFormat("it-IT", { day: "numeric", timeZone: "UTC" }).format(utcDate(monday));
+    return `${day} – ${formatDayMonth(sundayKey)}`;
+  }
+  return `${formatDayMonthShort(monday)} – ${formatDayMonthShort(sundayKey)}`;
+}
+
+/** "Lunedì 5": il giorno della settimana e il numero, per le righe dei pannelli. */
+export function formatWeekdayDay(date: DateKey): string {
+  const day = new Intl.DateTimeFormat("it-IT", { day: "numeric", timeZone: "UTC" }).format(utcDate(date));
+  return `${formatWeekday(date)} ${day}`;
+}
+
+/** "martedì" (minuscolo, per «Cena di martedì»). */
+export function formatWeekdayLower(date: DateKey): string {
+  return formatWeekday(date).toLowerCase();
+}
+
+/** Peso in kg con sempre un decimale: «92,0», «98,6». */
+export function formatKg(kg: number): string {
+  return new Intl.NumberFormat("it-IT", { useGrouping: "always", minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(kg);
+}

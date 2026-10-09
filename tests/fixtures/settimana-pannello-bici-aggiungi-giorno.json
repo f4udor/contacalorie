@@ -1,6 +1,6 @@
 {
-  "id": "settimana-bici-modifica",
-  "descrizione": "Pannello Bici: toccando la parte a mano di lunedì si apre il modulo con i campi precompilati.",
+  "id": "settimana-pannello-bici-aggiungi-giorno",
+  "descrizione": "«Aggiungi uscita in bici»: si apre il modulo sul giorno proposto (oggi), con titolo «Uscita in bici».",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {
@@ -125,11 +125,8 @@
       }
     },
     {
-      "clickRole": {
-        "role": "button",
-        "name": "Modifica l'uscita a mano di Lunedì 5",
-        "exact": true
-      }
+      "click": "Aggiungi uscita in bici",
+      "exact": true
     }
   ]
 }

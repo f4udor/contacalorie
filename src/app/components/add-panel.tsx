@@ -20,6 +20,7 @@ import type { AiEstimateHandle } from "./ai-estimate";
 import { DishEditAi } from "./dish-edit-ai";
 import { FavoritesView } from "./favorites-view";
 import { MealForm } from "./meal-form";
+import { DateField } from "./settings-fields";
 import { Sheet } from "./sheet";
 
 interface PanelContext {
@@ -84,14 +85,15 @@ function ModeSwitch({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => voi
  * Pannello "Aggiungi", dal pulsante +. Si apre su "AI"; "Manuale" è il piatto a mano. Con `initialSlot` (da "+ Aggiungi piatto"
  * di un pasto) il titolo è la fascia, che è fissata, e sotto resta solo "Preferiti".
  */
-export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
-  const { store, date, days, settings, activity, weightKg, onChanged, onClose, initialSlot } = ctx;
+export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Aperto da «Aggiungi pasto libero»: l'interruttore parte acceso e il giorno si può cambiare tra quelli indicati. */ freeMeal?: { days: readonly DateKey[] } }) {
+  const { store, date: initialDate, days, settings, activity, weightKg, onChanged, onClose, initialSlot, freeMeal } = ctx;
+  const [date, setDate] = useState<DateKey>(initialDate);
   const [mode, setMode] = useState<Mode>("ai");
   const [view, setView] = useState<"main" | "bici" | "pesata" | "preferiti">("main");
   const freeAllowedFor = (slot: MealSlot) => !hasFreeMealInWeek(days, { date, slot });
   const dayDishes = days.find((d) => d.date === date)?.meals ?? [];
   const existingFree = (slot: MealSlot) => isMealFree(dayDishes, slot);
-  const form = useDishForm({ ...emptyMealForm(initialSlot), isFree: existingFree(initialSlot ?? emptyMealForm().slot) }, freeAllowedFor);
+  const form = useDishForm({ ...emptyMealForm(initialSlot), isFree: existingFree(initialSlot ?? emptyMealForm().slot) || (freeMeal !== undefined && freeAllowedFor(initialSlot ?? emptyMealForm().slot)) }, freeAllowedFor);
   const aiHandle = useRef<AiEstimateHandle | null>(null);
   const [aiCanSave, setAiCanSave] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -165,8 +167,13 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot }) {
     <Sheet open onClose={onClose} title={title} bar={bar} subHeader={view === "main" ? <ModeSwitch mode={mode} onChange={setMode} /> : undefined}>
       {/* La parte principale resta montata (nascosta) quando si apre una sotto-schermata: il testo scritto e la proposta non si perdono. */}
       <div className={view === "main" ? "" : "hidden"}>
+        {freeMeal && freeMeal.days.length > 0 && (
+          <div className="mb-3">
+            <DateField id="add-day" label="Giorno" value={date} min={freeMeal.days[0]} max={freeMeal.days[freeMeal.days.length - 1]} onChange={(d) => d && setDate(d)} />
+          </div>
+        )}
         <div className={mode === "ai" ? "" : "hidden"}>
-          <AiEstimate store={store} date={date} free={{ freeAllowedFor, mealIsFreeFor: existingFree }} freeMealCap={settings.freeMealCap} onChanged={onChanged} onClose={onClose} fixedSlot={initialSlot} handleRef={aiHandle} onCanSaveChange={setAiCanSave}>
+          <AiEstimate store={store} date={date} free={{ freeAllowedFor, mealIsFreeFor: existingFree }} freeMealCap={settings.freeMealCap} onChanged={onChanged} onClose={onClose} fixedSlot={initialSlot} forceFree={freeMeal !== undefined} handleRef={aiHandle} onCanSaveChange={setAiCanSave}>
             {menu}
           </AiEstimate>
         </div>

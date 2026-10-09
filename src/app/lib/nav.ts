@@ -41,3 +41,16 @@ export function activeTab(pathname: string): "oggi" | "settimana" | "grafici" | 
   if (pathname.startsWith("/grafici")) return "grafici";
   return null;
 }
+
+/** La settimana mostrata dentro un pannello: sta da sola, la schermata sotto non la conosce e non cambia. */
+export type PanelWeekAction = "indietro" | "avanti" | "oggi";
+
+/**
+ * Cambio di settimana nel pannello: indietro e avanti spostano di sette giorni (avanti non oltre la settimana corrente),
+ * «oggi» riporta alla settimana corrente. Restituisce il nuovo lunedì del pannello.
+ */
+export function panelWeekReducer(monday: DateKey, action: PanelWeekAction, today: DateKey): DateKey {
+  if (action === "indietro") return shiftWeek(monday, -1);
+  if (action === "avanti") return canGoNextWeek(monday, today) ? shiftWeek(monday, 1) : monday;
+  return weekStart(today);
+}

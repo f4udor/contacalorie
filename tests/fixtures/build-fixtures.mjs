@@ -569,6 +569,7 @@ add("oggi-debito-piccolo", "Lunedì 2.111 kcal (debito 11, sotto la soglia di 25
 sett("settimana-anteprima", "Settimana con debito di 250 kcal e oggi giovedì: le linee dell'obiettivo dei giorni futuri sono 2.000, 2.000, 2.050, 2.100.", "2026-01-08", debito250);
 
 // --- Schede della Settimana toccabili (T5.4). Settimana 5-11 gennaio, oggi giovedì 8.
+const sw = (text, dx = -140) => ({ swipe: { text, dx } });
 const settScheda = (id, descrizione, dati, passi, extra = {}) => scenarios.push({ id, descrizione, oggi: "2026-01-08", percorso: "/settimana", dati, scorre: true, fisso: true, passi, ...extra });
 const tocca = (name) => ({ clickRole: { role: "button", name, exact: false } });
 const settimanaPiena = data({
@@ -593,16 +594,16 @@ settScheda("settimana-pannello-peso", "Pannello Pesate: le pesate della settiman
 settScheda("settimana-pannello-peso-aggiungi", "Aggiungi pesata: scelta del giorno della settimana e campo del peso.", settimanaPiena, [tocca("Peso"), { click: "Aggiungi pesata" }]);
 settScheda("settimana-pannello-peso-vuoto", "Pannello Pesate senza pesate nella settimana.", senzaPesate, [tocca("Peso")]);
 settScheda("settimana-pannello-bici", "Pannello Bici: sette giorni con la parte di Salute (sola lettura) e la parte a mano (si tocca per modificarla, cestino); '+ A mano' sui giorni senza.", settimanaPiena, [tocca("Bici")]);
-settScheda("settimana-pannello-passi", "Pannello Passi in sola lettura: sette giorni con passi e fonte; il cestino solo su un vecchio valore a mano.", settimanaPiena, [tocca("Passi medi")]);
-settScheda("settimana-bici-modifica", "Pannello Bici: toccando la parte a mano di lunedì si apre il modulo con i campi precompilati.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Modifica la bici a mano di Lunedì 5 gennaio", exact: true } }]);
-settScheda("settimana-bici-aggiungi", "Pannello Bici: '+ A mano' su un giorno senza la parte a mano apre il modulo vuoto.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Aggiungi la bici a mano di Mercoledì 7 gennaio", exact: true } }]);
+settScheda("settimana-pannello-passi", "Pannello Passi in sola lettura: sette giorni con passi e fonte; il cestino solo su un vecchio valore a mano.", settimanaPiena, [tocca("Passi")]);
+settScheda("settimana-bici-modifica", "Pannello Bici: toccando la parte a mano di lunedì si apre il modulo con i campi precompilati.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Modifica l'uscita a mano di Lunedì 5", exact: true } }]);
+settScheda("settimana-bici-aggiungi", "Pannello Bici: '+ A mano' su un giorno senza la parte a mano apre il modulo vuoto.", settimanaPiena, [tocca("Bici"), { click: "Aggiungi uscita in bici", exact: true }]);
 settScheda("settimana-pannello-bici-vuoto", "Pannello Bici senza nessun valore nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Bici")]);
-settScheda("settimana-pannello-passi-vuoto", "Pannello Passi senza nessun valore nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Passi medi")]);
-settScheda("settimana-pannello-libero", "Pasto libero presente: giorno, fascia, kcal e 'Togli pasto libero'.", conLibero, [tocca("Pasto libero")]);
-settScheda("settimana-pannello-libero-scegli", "Nessun pasto libero: elenco dei pasti della settimana con 'Segna come libero'.", settimanaPiena, [tocca("Pasto libero")]);
+settScheda("settimana-pannello-passi-vuoto", "Pannello Passi senza nessun valore nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Passi")]);
+settScheda("settimana-pannello-libero", "Pasto libero presente: «Usato», il pasto («Cena di sabato») con i piatti e le kcal, e «Rimuovi pasto libero».", conLibero, [tocca("Pasto libero")]);
+settScheda("settimana-pannello-libero-scegli", "Nessun pasto libero: «Non usato», l'elenco «Scegli il pasto» con «Segna» e il tasto pieno «Aggiungi pasto libero».", settimanaPiena, [tocca("Pasto libero")]);
 settScheda("settimana-pannello-libero-vuoto", "Nessun pasto libero e nessun pasto nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Pasto libero")]);
-settScheda("settimana-dopo-elimina-bici", "Dopo aver eliminato la bici a mano di martedì e chiuso il pannello: il totale dei km (da 45,6 a 25,6) si è aggiornato.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Elimina la bici a mano di Martedì 6 gennaio", exact: true } }, { wait: 500 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }]);
-settScheda("settimana-dopo-togli-libero", "Dopo 'Togli pasto libero': la scheda dice 'non usato' e il pasto resta.", conLibero, [tocca("Pasto libero"), { click: "Togli pasto libero" }, { wait: 500 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }]);
+settScheda("settimana-dopo-elimina-bici", "Dopo aver eliminato la bici a mano di martedì e chiuso il pannello: il totale dei km (da 45,6 a 25,6) si è aggiornato.", settimanaPiena, [tocca("Bici"), sw("Martedì 6"), { clickRole: { role: "button", name: "Elimina l'uscita a mano di Martedì 6", exact: true } }, { wait: 500 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }]);
+settScheda("settimana-dopo-togli-libero", "Dopo «Rimuovi pasto libero»: la scheda dice «Non usato» e il pasto resta.", conLibero, [tocca("Pasto libero"), { click: "Rimuovi pasto libero" }, { wait: 500 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }]);
 
 scenarios.push({
   id: "oggi-dopo-modifica-settimana",
@@ -611,7 +612,7 @@ scenarios.push({
   percorso: "/settimana",
   dati: data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pranzo", 700, 30, 80, 20, 5, 2)], activity: [activity("2026-01-08", { steps: 9000, stepsSource: "manuale" })] }),
   scorre: true,
-  passi: [tocca("Passi medi"), { clickRole: { role: "button", name: "Elimina il valore di Giovedì 8 gennaio", exact: true } }, { wait: 400 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }, { clickRole: { role: "link", name: "Oggi", exact: true } }, { wait: 600 }],
+  passi: [tocca("Passi"), { clickRole: { role: "button", name: "Elimina il valore di Giovedì 8 gennaio", exact: true } }, { wait: 400 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }, { clickRole: { role: "link", name: "Oggi", exact: true } }, { wait: 600 }],
 });
 // --- Scorrimento a sinistra per le azioni (T5.5), con il tocco simulato del browser.
 const giornoConPiatti = data({
@@ -623,7 +624,6 @@ const giornoConPiatti = data({
     meal("2026-01-08", "cena", "Frittata con zucchine", 420, 25, 8, 30, 3, 1.2),
   ],
 });
-const sw = (text, dx = -140) => ({ swipe: { text, dx } });
 add("oggi-scorrimento-aperto", "Piatto scorso a sinistra: a destra compaiono «Salva nei preferiti» e il cestino.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro")] });
 add("oggi-scorrimento-due-righe", "Una sola riga aperta alla volta: scorrendo un secondo piatto il primo si richiude.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), sw("Frittata con zucchine")] });
 add("oggi-scorrimento-preferiti", "Dopo «Salva nei preferiti»: il piatto è salvato, la riga si richiude e compare la conferma.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), { click: "Salva nei preferiti", exact: true }, { wait: 500 }] });
@@ -633,9 +633,16 @@ add("oggi-scorrimento-rimosso", "Dopo «Rimuovi dai preferiti»: conferma «Rimo
 add("preferiti-modifica-etichetta-rimuovi", "Scheda del piatto già tra i preferiti: in fondo «Rimuovi dai preferiti» al posto di «Salva nei preferiti».", "2026-01-08", { ...giornoPasti(), ...preferitoPasta }, { fisso: true, passi: [{ click: "Pasta al pomodoro" }, { scrollTo: "Elimina piatto" }] });
 add("oggi-scorrimento-cestino", "Dopo il cestino: il piatto è eliminato subito, senza conferma, e i totali si ricalcolano.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), { clickRole: { role: "button", name: "Elimina Pasta al pomodoro", exact: true } }, { wait: 500 }] });
 add("oggi-scorrimento-a-destra", "Scorrimento verso destra: non succede nulla.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro", 140)] });
+settScheda("settimana-pannello-passi-precedente", "Pannello Passi: la freccia indietro carica la settimana prima (28 set – 4 ott) dentro il pannello, che ora ha la freccia avanti attiva e il ritorno a questa settimana attivo.", settimanaPiena, [tocca("Passi"), { clickRole: { role: "button", name: "Settimana precedente", exact: true } }, { wait: 500 }]);
+settScheda("settimana-pannello-cambio-non-tocca-schermata", "Dopo aver cambiato settimana nel pannello Passi e averlo chiuso, la schermata sotto è rimasta sulla sua settimana (5 – 11 gennaio).", settimanaPiena, [tocca("Passi"), { clickRole: { role: "button", name: "Settimana precedente", exact: true } }, { wait: 500 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }]);
+settScheda("settimana-pannello-bici-precedente", "Pannello Bici su una settimana senza uscite (la precedente): numero con trattino e griglia vuota, nessun elenco, «Aggiungi uscita in bici» in fondo.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Settimana precedente", exact: true } }, { wait: 500 }]);
+settScheda("settimana-pannello-libero-aggiungi", "«Aggiungi pasto libero» (settimana corrente): si apre Aggiungi sul giorno di oggi, con il giorno modificabile, su Manuale l'interruttore «Pasto libero» è già acceso.", settimanaPiena, [tocca("Pasto libero"), { click: "Aggiungi pasto libero", exact: true }, { clickRole: { role: "radio", name: "Manuale" } }, { scrollTo: "Vale per l'intero pasto" }]);
+scenarios.push({ id: "settimana-pannello-libero-aggiungi-passata", descrizione: "«Aggiungi pasto libero» da una settimana passata (5 – 11 gennaio, oggi è il 15): Aggiungi si apre sull'ultimo giorno di quella settimana (domenica 11), modificabile.", oggi: "2026-01-15", percorso: "/settimana?w=2026-01-05", dati: settimanaPiena, scorre: true, fisso: true, passi: [tocca("Pasto libero"), { click: "Aggiungi pasto libero", exact: true }, { clickRole: { role: "radio", name: "Manuale" } }] });
+scenarios.push({ id: "settimana-pannello-libero-passata", descrizione: "Pannello Pasto libero di una settimana passata: frecce, ritorno a questa settimana attivo, la freccia avanti c'è finché non si arriva alla settimana corrente.", oggi: "2026-01-15", percorso: "/settimana?w=2026-01-05", dati: settimanaPiena, scorre: true, fisso: true, passi: [tocca("Pasto libero")] });
+settScheda("settimana-pannello-bici-aggiungi-giorno", "«Aggiungi uscita in bici»: si apre il modulo sul giorno proposto (oggi), con titolo «Uscita in bici».", settimanaPiena, [tocca("Bici"), { click: "Aggiungi uscita in bici", exact: true }]);
 settScheda("settimana-pesate-scorrimento", "Pannello Pesate: scorrendo una pesata compare solo il cestino.", settimanaPiena, [tocca("Peso"), sw("Giovedì 8 gennaio")]);
-settScheda("settimana-bici-scorrimento", "Pannello Bici: scorrendo la parte a mano di martedì compare il cestino; la parte di Salute non si elimina.", settimanaPiena, [tocca("Bici"), sw("Martedì 6 gennaio")]);
-settScheda("settimana-bici-scorrimento-salute", "Pannello Bici: una riga con la sola parte di Salute non mostra nessuna azione.", settimanaPiena, [tocca("Bici"), sw("Mercoledì 7 gennaio")]);
+settScheda("settimana-bici-scorrimento", "Pannello Bici: scorrendo la parte a mano di martedì compare il cestino; la parte di Salute non si elimina.", settimanaPiena, [tocca("Bici"), sw("Martedì 6")]);
+settScheda("settimana-bici-scorrimento-salute", "Pannello Bici: una riga con la sola parte di Salute non mostra nessuna azione.", settimanaPiena, [tocca("Bici"), sw("Mercoledì 7")]);
 
 sett("settimana-colori-barre", "Settimana con i quattro colori delle barre: accento (lun), verde (mar), giallo (mer), rosso (gio).", "2026-01-11", data({
   settings: { weightKg: 100 },

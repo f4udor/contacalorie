@@ -43,7 +43,7 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Passi medi",
+        "name": "Passi",
         "exact": false
       }
     },

@@ -125,9 +125,15 @@
       }
     },
     {
+      "swipe": {
+        "text": "Martedì 6",
+        "dx": -140
+      }
+    },
+    {
       "clickRole": {
         "role": "button",
-        "name": "Elimina la bici a mano di Martedì 6 gennaio",
+        "name": "Elimina l'uscita a mano di Martedì 6",
         "exact": true
       }
     },

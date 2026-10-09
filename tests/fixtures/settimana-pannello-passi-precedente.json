@@ -1,6 +1,6 @@
 {
-  "id": "settimana-bici-modifica",
-  "descrizione": "Pannello Bici: toccando la parte a mano di lunedì si apre il modulo con i campi precompilati.",
+  "id": "settimana-pannello-passi-precedente",
+  "descrizione": "Pannello Passi: la freccia indietro carica la settimana prima (28 set – 4 ott) dentro il pannello, che ora ha la freccia avanti attiva e il ritorno a questa settimana attivo.",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {
@@ -120,16 +120,19 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Bici",
+        "name": "Passi",
         "exact": false
       }
     },
     {
       "clickRole": {
         "role": "button",
-        "name": "Modifica l'uscita a mano di Lunedì 5",
+        "name": "Settimana precedente",
         "exact": true
       }
+    },
+    {
+      "wait": 500
     }
   ]
 }
