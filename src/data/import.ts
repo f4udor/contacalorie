@@ -1,3 +1,4 @@
+import { normalizeActivity } from "./mapping";
 import type { DataStore } from "./store";
 import type { ActivityRecord, MealRecord, StoredData, UserSettings, WeighIn } from "./types";
 
@@ -59,6 +60,7 @@ const hasAny = (...v: unknown[]) => v.some((x) => x !== null && x !== undefined)
 export function mergeActivity(remote: ActivityRecord, local: ActivityRecord): ActivityRecord {
   const useRemoteSteps = hasAny(remote.steps);
   const useRemoteBike = hasAny(remote.bikeKm, remote.bikeKcalHealth);
+  const useRemoteBikeManual = hasAny(remote.bikeKmManual, remote.bikeKcalManual);
   return {
     date: remote.date,
     steps: useRemoteSteps ? remote.steps : local.steps,
@@ -66,6 +68,8 @@ export function mergeActivity(remote: ActivityRecord, local: ActivityRecord): Ac
     bikeKm: useRemoteBike ? remote.bikeKm : local.bikeKm,
     bikeKcalHealth: useRemoteBike ? remote.bikeKcalHealth : local.bikeKcalHealth,
     bikeSource: useRemoteBike ? remote.bikeSource : local.bikeSource,
+    bikeKmManual: useRemoteBikeManual ? remote.bikeKmManual : local.bikeKmManual,
+    bikeKcalManual: useRemoteBikeManual ? remote.bikeKcalManual : local.bikeKcalManual,
   };
 }
 
@@ -83,6 +87,7 @@ async function inChunks<T>(items: readonly T[], size: number, fn: (item: T) => P
  */
 export async function importLocalData(local: StoredData, remote: DataStore): Promise<ImportResult> {
   const existing = await remote.exportAll();
+  local = { ...local, activity: local.activity.map(normalizeActivity) };
   const result: ImportResult = { addedDishes: 0, addedWeighIns: 0, addedActivityDays: 0, addedFavorites: 0, alreadyThere: 0, normalizedFreeMeals: 0 };
 
   // piatti

@@ -2,23 +2,26 @@
 
 import { useState } from "react";
 import type { ReactNode } from "react";
-import type { DateKey, Meal, MealSlot } from "@/engine";
+import type { DateKey, MealSlot } from "@/engine";
 import type { DataStore } from "@/data";
 import type { MealProposal } from "@/modules/ai";
 import { useAuth } from "../auth-provider";
 import { requestEstimate } from "../lib/ai-client";
 import { newId } from "../lib/ids";
-import { SLOTS } from "../lib/meal-form";
-import { DISH_NUMBER_KEYS, draftsToProposal, forceSlot, hasDishes, proposalToDrafts, proposalToRecords } from "../lib/proposal-form";
-import type { DishDraft, DishNumberKey, DraftErrors, MealDraft } from "../lib/proposal-form";
-import { isMealFree, saveDish } from "../lib/save-dish";
+import { KCAL_CHECK_MESSAGE, SLOTS, textNeedsKcalCheck } from "../lib/meal-form";
+import { DISH_NUMBER_KEYS, draftsToProposal, forceSlot, freeSwitchBlock, hasDishes, proposalToDrafts, proposalToRecords, withInitialFree, withSlot } from "../lib/proposal-form";
+import type { DishDraft, DishNumberKey, DraftErrors, FreeRules, MealDraft } from "../lib/proposal-form";
+import { FreeMealSwitch } from "./free-meal-switch";
+import { saveDish } from "../lib/save-dish";
 import { useAiAvailable } from "../lib/use-ai";
 
 interface Props {
   store: DataStore;
   date: DateKey;
-  /** I piatti già presenti nel giorno (un pasto già libero resta libero con i piatti nuovi). */
-  dayDishes: readonly Pick<Meal, "id" | "slot" | "isFree">[];
+  /** Regole del pasto libero (stesse dell'inserimento a mano). */
+  free: FreeRules;
+  /** Tetto di kcal del pasto libero, dalle impostazioni (solo per la spiegazione: il tetto lo applica il motore). */
+  freeMealCap: number;
   onChanged: () => void;
   onClose: () => void;
   /** Se c'è, tutti i piatti proposti vanno in questa fascia (non si sceglie). */
@@ -29,11 +32,13 @@ interface Props {
 
 const NUMBER_LABELS: Record<DishNumberKey, string> = { kcal: "Kcal", protein: "Proteine (g)", carbs: "Carboidrati (g)", fat: "Grassi (g)", fiber: "Fibre (g)", salt: "Sale (g)" };
 const input = "min-h-11 w-full rounded-xl bg-bg px-3 text-[17px] outline-none placeholder:text-muted focus:ring-2 focus:ring-accent";
+const blockText = (block: "settimana" | "proposta" | null): string | null =>
+  block === "settimana" ? "Hai già usato il pasto libero in questa settimana: ce n'è uno solo." : block === "proposta" ? "Puoi segnare come libero un solo pasto della proposta." : null;
 const primary = "min-h-12 rounded-xl bg-accent px-4 text-[17px] font-semibold text-white disabled:opacity-50";
 const secondary = "min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-accent disabled:opacity-50";
 
 /** Campo "Cosa hai mangiato?" in cima al pannello Aggiungi, con la proposta da controllare e confermare. */
-export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSlot, children }: Props) {
+export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose, fixedSlot, children }: Props) {
   const { getAccessToken } = useAuth();
   const available = useAiAvailable();
   const [text, setText] = useState("");
@@ -49,7 +54,7 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
 
   const start = (proposal: MealProposal, originalText: string) => {
     setOriginal({ proposal, text: originalText });
-    setDrafts(proposalToDrafts(fixedSlot ? forceSlot(proposal, fixedSlot) : proposal));
+    setDrafts(withInitialFree(proposalToDrafts(fixedSlot ? forceSlot(proposal, fixedSlot) : proposal), free, !fixedSlot));
     setErrors({});
     setOpenKeys([]);
     setCorrection("");
@@ -98,8 +103,9 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
     setErrors({});
     setBusy(true);
     try {
-      const wasFree = new Map(r.proposal.meals.map((m) => [m.slot, isMealFree(dayDishes, m.slot)]));
-      for (const record of proposalToRecords(r.proposal, date, original.text, newId)) await saveDish(store, record, wasFree.get(record.slot) ?? false);
+      // Il segno "libero" vale per l'intero pasto (stessa fascia); il tetto di kcal lo applica solo il motore.
+      const isFree = new Map(r.proposal.meals.map((m) => [m.slot, m.freeMeal === true]));
+      for (const record of proposalToRecords(r.proposal, date, original.text, newId)) await saveDish(store, record, isFree.get(record.slot) ?? false);
       onChanged();
       onClose();
     } catch {
@@ -160,7 +166,7 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
             <select
               id={`slot-${meal.key}`}
               value={meal.slot}
-              onChange={(e) => setDrafts((ds) => ds && ds.map((m) => (m.key === meal.key ? { ...m, slot: e.target.value as MealDraft["slot"] } : m)))}
+              onChange={(e) => setDrafts((ds) => ds && withSlot(ds, meal.key, e.target.value as MealDraft["slot"], free))}
               className="min-h-11 rounded-xl bg-card px-3 text-[17px] font-semibold outline-none focus:ring-2 focus:ring-accent"
             >
               {SLOTS.map((s) => (
@@ -174,6 +180,8 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
           {meal.dishes.map((d) => {
             const isOpen = openKeys.includes(d.key);
             const hasError = errors[d.key] !== undefined;
+            // Il controllo vale per i numeri stimati dal modello e si ricalcola a ogni ritocco.
+            const check = textNeedsKcalCheck(d);
             return (
               <div key={d.key} className="overflow-hidden rounded-xl bg-card">
                 <button
@@ -186,9 +194,10 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
                   <span className="min-w-0">
                     <span className="block break-words text-[17px] font-semibold leading-snug">{d.name.trim() || "Piatto"}</span>
                     <span className="flex flex-wrap items-center gap-x-2 text-sm text-muted">
-                      {d.quantity.trim() !== "" && <span className="break-words">{d.quantity.trim()}</span>}
+                      {d.quantity.trim() !== "" && <span className="line-clamp-2 break-words">{d.quantity.trim()}</span>}
                       {d.quantityAssumed && <span className="font-semibold text-warn">ipotizzata</span>}
                       {hasError && <span className="font-semibold text-bad">da correggere</span>}
+                      {check && <span className="font-semibold text-warn"><span aria-hidden="true">⚠ </span>controlla</span>}
                     </span>
                   </span>
                   <span className="shrink-0 text-[17px] font-semibold tabular-nums">{d.kcal.trim() === "" ? "–" : d.kcal} <span className="text-sm font-medium text-muted">kcal</span></span>
@@ -205,8 +214,14 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
                       <label htmlFor={`qty-${d.key}`} className="text-sm font-semibold text-muted">
                         Quantità
                       </label>
-                      <input id={`qty-${d.key}`} type="text" autoComplete="off" value={d.quantity} onChange={(e) => setDish(meal.key, d.key, { quantity: e.target.value, quantityAssumed: false })} className={`${input} bg-bg`} />
+                      <textarea id={`qty-${d.key}`} autoComplete="off" rows={Math.min(8, Math.max(1, Math.ceil(d.quantity.length / 30)))} value={d.quantity} onChange={(e) => setDish(meal.key, d.key, { quantity: e.target.value.replace(/\n/g, " "), quantityAssumed: false })} className={`${input} field-sizing-content resize-none bg-bg py-2.5`} />
                       {d.note && <p className="text-sm text-muted">{d.note}</p>}
+                      {check && (
+                        <p role="status" className="text-sm font-semibold text-warn">
+                          <span aria-hidden="true">⚠ </span>
+                          {KCAL_CHECK_MESSAGE}
+                        </p>
+                      )}
                     </div>
                     <div className="grid grid-cols-2 gap-x-3 gap-y-3">
                       {DISH_NUMBER_KEYS.map((k) => {
@@ -239,6 +254,14 @@ export function AiEstimate({ store, date, dayDishes, onChanged, onClose, fixedSl
               </div>
             );
           })}
+          <FreeMealSwitch
+            idPrefix={`free-${meal.key}`}
+            checked={meal.isFree}
+            blockedText={blockText(freeSwitchBlock(drafts, meal.key, free))}
+            slotName={(SLOTS.find((x) => x.value === meal.slot)?.label ?? "").toLowerCase()}
+            freeMealCap={freeMealCap}
+            onChange={(v) => setDrafts((ds) => ds && ds.map((m) => (m.key === meal.key ? { ...m, isFree: v } : m)))}
+          />
         </section>
       ))}
 

@@ -1,5 +1,5 @@
 import type { DateKey, MealSlot } from "@/engine";
-import type { DishBody, FavoriteDish, FavoriteMeal, MealRecord } from "@/data";
+import type { DataStore, DishBody, FavoriteDish, FavoriteMeal, MealRecord } from "@/data";
 
 const MAX_NAME = 40;
 
@@ -61,4 +61,10 @@ export function filterByName<T extends { name: string }>(list: readonly T[], que
 
 export function mealTotalKcal(f: FavoriteMeal): number {
   return Math.round(f.dishes.reduce((sum, d) => sum + d.kcal, 0));
+}
+
+/** Elimina un preferito (piatto o pasto) subito, senza conferma: i preferiti si eliminano scorrendo la riga. */
+export async function deleteFavorite(store: DataStore, kind: "dish" | "meal", id: string): Promise<void> {
+  if (kind === "dish") await store.deleteFavoriteDish(id);
+  else await store.deleteFavoriteMeal(id);
 }

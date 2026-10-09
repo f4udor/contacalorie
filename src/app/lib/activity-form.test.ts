@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { ActivityRecord } from "@/data";
-import { activityToForm, buildActivityRecord, parseWhole, validateActivityForm, validateWeight } from "./activity-form";
+import { bikeToForm, hasManualBike, parseWhole, validateBikeForm, validateWeight, withManualBike, withoutManualBike } from "./activity-form";
 
 describe("parseWhole", () => {
   it("interi con o senza punti delle migliaia", () => {
@@ -17,44 +17,54 @@ describe("parseWhole", () => {
   });
 });
 
-describe("validateActivityForm", () => {
-  it("campi vuoti restano assenti, non zero", () => {
-    expect(validateActivityForm({ steps: "", km: "", kcal: "" })).toEqual({ ok: true, activity: { steps: null, bikeKm: null, bikeKcal: null } });
+const rec = (o: Partial<ActivityRecord> = {}): ActivityRecord => ({ date: "2026-01-05", steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: null, bikeKcalManual: null, ...o });
+
+describe("validateBikeForm", () => {
+  it("serve almeno uno tra km e kcal", () => {
+    expect(validateBikeForm({ km: "", kcal: "" })).toEqual({ ok: false, errors: { km: "Inserisci i km o le kcal" } });
   });
-  it("valori validi, km con la virgola", () => {
-    expect(validateActivityForm({ steps: "9.000", km: "30,5", kcal: "800" })).toEqual({ ok: true, activity: { steps: 9000, bikeKm: 30.5, bikeKcal: 800 } });
+  it("solo km, con la virgola", () => {
+    expect(validateBikeForm({ km: "8,5", kcal: "" })).toEqual({ ok: true, bike: { km: 8.5, kcal: null } });
+  });
+  it("km e kcal", () => {
+    expect(validateBikeForm({ km: "30", kcal: "800" })).toEqual({ ok: true, bike: { km: 30, kcal: 800 } });
+  });
+  it("solo kcal", () => {
+    expect(validateBikeForm({ km: "", kcal: "250" })).toEqual({ ok: true, bike: { km: null, kcal: 250 } });
   });
   it("errori per campo", () => {
-    const r = validateActivityForm({ steps: "tanti", km: "-2", kcal: "1,5" });
-    expect(r).toEqual({ ok: false, errors: { steps: "Inserisci un numero intero", km: "Non può essere negativo", kcal: "Inserisci un numero intero" } });
-  });
-  it("zero è un valore valido", () => {
-    expect(validateActivityForm({ steps: "0", km: "0", kcal: "" })).toEqual({ ok: true, activity: { steps: 0, bikeKm: 0, bikeKcal: null } });
+    expect(validateBikeForm({ km: "-2", kcal: "1,5" })).toEqual({ ok: false, errors: { km: "Non può essere negativo", kcal: "Inserisci un numero intero" } });
+    expect(validateBikeForm({ km: "0", kcal: "" })).toEqual({ ok: false, errors: { km: "Deve essere maggiore di zero" } });
   });
 });
 
-describe("activityToForm", () => {
+describe("bikeToForm", () => {
   it("senza attività: modulo vuoto", () => {
-    expect(activityToForm(null)).toEqual({ steps: "", km: "", kcal: "" });
+    expect(bikeToForm(null)).toEqual({ km: "", kcal: "" });
   });
-  it("riporta i valori come testo italiano", () => {
-    const a: ActivityRecord = { date: "2026-01-05", steps: 9000, stepsSource: "manuale", bikeKm: 30.5, bikeKcalHealth: 800, bikeSource: "manuale" };
-    expect(activityToForm(a)).toEqual({ steps: "9000", km: "30,5", kcal: "800" });
+  it("riporta la parte a mano come testo italiano, non quella di Salute", () => {
+    expect(bikeToForm(rec({ bikeKm: 12.4, bikeSource: "salute", bikeKmManual: 8.5, bikeKcalManual: 230 }))).toEqual({ km: "8,5", kcal: "230" });
   });
 });
 
-describe("buildActivityRecord", () => {
-  it("nuovi valori: fonte manuale; assenti: fonte null", () => {
-    expect(buildActivityRecord("2026-01-05", { steps: 9000, bikeKm: null, bikeKcal: null }, null)).toEqual({
-      date: "2026-01-05", steps: 9000, stepsSource: "manuale", bikeKm: null, bikeKcalHealth: null, bikeSource: null,
-    });
-    expect(buildActivityRecord("2026-01-05", { steps: null, bikeKm: 20, bikeKcal: 500 }, null)).toMatchObject({ bikeSource: "manuale", stepsSource: null });
+describe("parte a mano della bici nel giorno", () => {
+  it("aggiungere la parte a mano non tocca passi e parte di Salute", () => {
+    const existing = rec({ steps: 8000, stepsSource: "salute", bikeKm: 12.4, bikeSource: "salute" });
+    expect(withManualBike("2026-01-05", { km: 8, kcal: null }, existing)).toEqual({ ...existing, bikeKmManual: 8, bikeKcalManual: null });
   });
-  it("un valore lasciato com'era mantiene la sua fonte, uno cambiato diventa manuale", () => {
-    const existing: ActivityRecord = { date: "2026-01-05", steps: 8000, stepsSource: "salute", bikeKm: 20, bikeKcalHealth: 600, bikeSource: "salute" };
-    const r = buildActivityRecord("2026-01-05", { steps: 8000, bikeKm: 25, bikeKcal: 600 }, existing);
-    expect(r.stepsSource).toBe("salute");
-    expect(r.bikeSource).toBe("manuale");
+  it("senza giorno esistente nasce un giorno con solo la parte a mano", () => {
+    expect(withManualBike("2026-01-05", { km: 8, kcal: 200 }, null)).toEqual(rec({ bikeKmManual: 8, bikeKcalManual: 200 }));
+  });
+  it("modificare sostituisce la parte a mano", () => {
+    const existing = rec({ bikeKmManual: 8, bikeKcalManual: 200 });
+    expect(withManualBike("2026-01-05", { km: 10, kcal: null }, existing)).toMatchObject({ bikeKmManual: 10, bikeKcalManual: null });
+  });
+  it("eliminare lascia la parte di Salute; senza parte a mano restituisce null", () => {
+    const existing = rec({ bikeKm: 12.4, bikeSource: "salute", bikeKmManual: 8, bikeKcalManual: 200 });
+    expect(withoutManualBike(existing)).toEqual({ ...existing, bikeKmManual: null, bikeKcalManual: null });
+    expect(withoutManualBike(rec({ bikeKm: 12.4, bikeSource: "salute" }))).toBeNull();
+    expect(hasManualBike(existing)).toBe(true);
+    expect(hasManualBike(rec())).toBe(false);
   });
 });
 

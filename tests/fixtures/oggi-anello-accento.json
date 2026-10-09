@@ -1,0 +1,31 @@
+{
+  "id": "oggi-anello-accento",
+  "descrizione": "Anello nel colore d'accento: 1.700 kcal su 2.100 (oltre 150 sotto l'obiettivo, giornata in corso).",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m55",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1700,
+        "protein": 113,
+        "carbs": 189,
+        "fat": 57,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

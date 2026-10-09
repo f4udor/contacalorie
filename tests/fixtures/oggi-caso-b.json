@@ -87,7 +87,9 @@
         "stepsSource": "manuale",
         "bikeKm": null,
         "bikeKcalHealth": null,
-        "bikeSource": null
+        "bikeSource": null,
+        "bikeKmManual": null,
+        "bikeKcalManual": null
       }
     ],
     "weighIns": []

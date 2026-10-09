@@ -11,7 +11,7 @@ let n = 0;
 const meal = (date, slot, name, kcal, p, c, f, fib, salt, extra = {}) => ({
   id: `m${++n}`, date, slot, name, kcal, protein: p, carbs: c, fat: f, fiber: fib, salt, isFree: false, originalText: null, ...extra,
 });
-const activity = (date, a) => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, ...a });
+const activity = (date, a) => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: null, bikeKcalManual: null, ...a });
 const data = (parts = {}) => ({ version: 1, settings: {}, meals: [], activity: [], weighIns: [], ...parts });
 
 const scenarios = [];
@@ -59,7 +59,7 @@ add(
 
 add(
   "oggi-bici",
-  "Caso E del brief: 30 km in bici a mano: bonus 405, obiettivo 2.505, carboidrati 329 g.",
+  "Caso E del brief: 30 km in bici inseriti a mano (solo parte a mano): bonus 405, obiettivo 2.505, carboidrati 329 g.",
   "2026-01-05",
   data({
     settings: { weightKg: 100 },
@@ -67,7 +67,7 @@ add(
       meal("2026-01-05", "colazione", "Pane e marmellata", 380, 9, 70, 6, 3, 0.8),
       meal("2026-01-05", "pranzo", "Pasta al ragù", 800, 35, 100, 25, 6, 2.2),
     ],
-    activity: [activity("2026-01-05", { bikeKm: 30, bikeSource: "manuale" })],
+    activity: [activity("2026-01-05", { bikeKmManual: 30 })],
   }),
 );
 
@@ -130,24 +130,36 @@ add("pannello-modifica-libero", "Modifica del pasto libero: l'interruttore resta
   passi: [{ click: "Pizza al taglio" }, { scrollTo: "Pasto libero" }],
 });
 add("pannello-elimina", "Eliminazione: chiede conferma prima di cancellare.", "2026-01-08", giornoPasti(), { fisso: true, passi: [{ click: "Pasta al pomodoro" }, { click: "Elimina piatto" }] });
+// --- Colori dell'anello (T5b.1): obiettivo 2.100, nel giorno solo i kcal indicati.
+const giornoKcal = (kcal) => data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", kcal, Math.round(kcal / 15), Math.round(kcal / 9), Math.round(kcal / 30), 8, 2)] });
+add("oggi-anello-accento", "Anello nel colore d'accento: 1.700 kcal su 2.100 (oltre 150 sotto l'obiettivo, giornata in corso).", "2026-01-05", giornoKcal(1700));
+add("oggi-anello-verde", "Anello verde: 2.120 kcal su 2.100 (tra −150 e +50 dall'obiettivo).", "2026-01-05", giornoKcal(2120));
+add("oggi-anello-giallo", "Anello giallo: 2.250 kcal su 2.100 (da +50 a +200).", "2026-01-05", giornoKcal(2250));
+add("oggi-anello-rosso", "Anello rosso: 2.350 kcal su 2.100 (oltre +200).", "2026-01-05", giornoKcal(2350));
+add("oggi-anello-libero-verde", "Pasto libero da 1.500 kcal reali: il budget conta il tetto (800), l'anello resta verde.", "2026-01-05", data({
+  settings: { weightKg: 100 },
+  meals: [meal("2026-01-05", "colazione", "Colazione", 300, 10, 40, 8, 2, 0.4), meal("2026-01-05", "pranzo", "Pizza e dolce", 1500, 40, 190, 60, 6, 4, { isFree: true }), meal("2026-01-05", "cena", "Cena", 1000, 50, 100, 30, 8, 2)],
+}));
+
 // --- Attività e pesata (T2.4)
 const conAttivita = data({
   settings: { weightKg: 100 },
   meals: [meal("2026-01-05", "pranzo", "Pasta al ragù", 800, 35, 100, 25, 6, 2.2)],
-  activity: [activity("2026-01-05", { steps: 9000, stepsSource: "manuale", bikeKm: 30, bikeSource: "manuale" })],
+  activity: [activity("2026-01-05", { steps: 9000, stepsSource: "salute", bikeKm: 12.4, bikeSource: "salute", bikeKmManual: 8 })],
 });
-add("oggi-attivita", "Attività del giorno: passi e bici (km e kcal calcolate) con la fonte 'manuale'.", "2026-01-05", conAttivita);
-add("oggi-attivita-salute", "Attività con kcal della bici da Salute (800 kcal): fonte 'da Salute', bonus bici 400.", "2026-01-05", data({
+add("oggi-attivita", "Attività del giorno: passi da Salute (non toccabili) e bici con il totale (20,4 km) e il dettaglio '12,4 km da Salute + 8 km a mano'; si tocca solo la parte a mano.", "2026-01-05", conAttivita);
+add("oggi-attivita-salute", "Attività con kcal della bici da Salute (800 kcal): fonte 'da Salute', bonus bici 400, nessuna parte a mano: la riga della bici non si tocca.", "2026-01-05", data({
   settings: { weightKg: 100 },
   activity: [activity("2026-01-05", { steps: 8000, stepsSource: "salute", bikeKm: 31, bikeKcalHealth: 800, bikeSource: "salute" })],
 }));
-add("pannello-aggiungi-completo", "Pannello Aggiungi senza AI configurata: selettore AI | Manuale accanto al titolo, campo 'Cosa hai mangiato?' vuoto, avviso che invita a usare Manuale, e sotto Preferiti, Attività a mano, Pesata.", "2026-01-08", null, { fisso: true, passi: [apri] });
-add("pannello-attivita", "Attività a mano: modulo vuoto.", "2026-01-08", null, { fisso: true, passi: [apri, { click: "Attività a mano" }] });
-add("pannello-attivita-errori", "Attività a mano con valori non validi: errori accanto ai campi.", "2026-01-08", null, {
+add("pannello-aggiungi-completo", "Pannello Aggiungi senza AI configurata: selettore AI | Manuale accanto al titolo, campo 'Cosa hai mangiato?' vuoto, avviso che invita a usare Manuale, e sotto Preferiti, Bici a mano, Pesata.", "2026-01-08", null, { fisso: true, passi: [apri] });
+add("pannello-attivita", "Bici a mano: modulo vuoto (km e kcal facoltative, almeno uno).", "2026-01-08", null, { fisso: true, passi: [apri, { click: "Bici a mano" }] });
+add("pannello-attivita-errori", "Bici a mano con valori non validi: errori accanto ai campi.", "2026-01-08", null, {
   fisso: true,
-  passi: [apri, { click: "Attività a mano" }, { fill: ["Passi", "tanti"] }, { fill: ["Km in bici", "-2"] }, { fill: ["Kcal bici", "1,5"] }, { click: "Salva attività" }],
+  passi: [apri, { click: "Bici a mano" }, { fill: ["Km in bici", "-2"] }, { fill: ["Kcal", "1,5"] }, { click: "Salva bici" }],
 });
-add("pannello-attivita-modifica", "Modifica dell'attività già inserita (dalla scheda Attività).", "2026-01-05", conAttivita, { fisso: true, passi: [{ click: "Passi" }] });
+add("pannello-attivita-modifica", "Modifica della bici a mano già inserita (dalla scheda Attività): campi precompilati con la parte a mano, e 'Elimina la bici a mano'.", "2026-01-05", conAttivita, { fisso: true, passi: [{ clickRole: { role: "button", name: "Modifica la bici a mano", exact: false } }] });
+add("oggi-passi-sola-lettura", "Toccando la riga dei passi non si apre nessun pannello.", "2026-01-05", conAttivita, { passi: [{ click: "Passi", exact: true }, { wait: 400 }] });
 add("pannello-pesata", "Pesata: modulo vuoto.", "2026-01-08", null, { fisso: true, passi: [apri, { click: "Pesata", exact: true }] });
 add("pannello-pesata-errore", "Pesata con un valore non valido.", "2026-01-08", null, {
   fisso: true,
@@ -160,8 +172,8 @@ add("pannello-pesata-esistente", "Seconda pesata nello stesso giorno: precompila
 add("dopo-pesata", "Dopo aver salvato 90 kg da un profilo senza peso: la scheda proteine ha l'obiettivo 125 g (1,4 × 90).", "2026-01-08", null, {
   passi: [apri, { click: "Pesata", exact: true }, { fill: ["Peso (kg)", "90"] }, { click: "Salva pesata" }, { wait: 600 }],
 });
-add("dopo-attivita", "Dopo aver salvato 9.000 passi: obiettivo 2.175, composizione 'passi +75', scheda Attività.", "2026-01-08", null, {
-  passi: [apri, { click: "Attività a mano" }, { fill: ["Passi", "9000"] }, { click: "Salva attività" }, { wait: 600 }],
+add("dopo-attivita", "Dopo aver salvato 8 km di bici a mano: obiettivo 2.208, composizione 'bici +108', scheda Attività con 'a mano'.", "2026-01-08", null, {
+  passi: [apri, { click: "Bici a mano" }, { fill: ["Km in bici", "8"] }, { click: "Salva bici" }, { wait: 600 }],
 });
 
 // --- Settimana (T2.6)
@@ -186,7 +198,7 @@ const settimanaCompleta = data({
   ],
   activity: [
     activity("2026-01-05", { steps: 8000, stepsSource: "manuale" }),
-    activity("2026-01-06", { steps: 7200, stepsSource: "manuale", bikeKm: 20, bikeSource: "manuale" }),
+    activity("2026-01-06", { steps: 7200, stepsSource: "manuale", bikeKmManual: 20 }),
     activity("2026-01-07", { steps: 9000, stepsSource: "manuale" }),
     activity("2026-01-09", { steps: 6500, stepsSource: "manuale" }),
   ],
@@ -295,7 +307,7 @@ add("salvataggio-fallito", "Il browser non riesce più a scrivere (memoria piena
 // --- Inserimento con l'AI (T4.2): le risposte del server sono finte (`ai`), nessuna rete
 const dish = (name, quantity, assumed, kcal, p, c, f, fi, salt, note = "") => ({ name, quantity, quantityAssumed: assumed, kcal, protein: p, carbs: c, fat: f, fiber: fi, salt, note });
 const prop = (...meals) => ({ stato: 200, corpo: { proposal: { meals }, originalText: "testo" } });
-const cena = { slot: "cena", dishes: [dish("Anelli di totano", "150 g", true, 280, 22, 18, 14, 1, 1.4, "Ho ipotizzato 150 g di totano fritto."), dish("Insalata di pomodorini", "1 ciotola", true, 60, 2, 8, 2, 3, 0.1, "Una ciotola piccola con un filo d'olio.")] };
+const cena = { slot: "cena", dishes: [dish("Anelli di totano", "150 g totano, 20 g farina, 15 g olio di frittura", true, 280, 22, 18, 14, 1, 1.4, "Ho ipotizzato 150 g di totano fritto."), dish("Insalata di pomodorini", "200 g pomodorini, 5 g olio, basilico", true, 60, 2, 8, 2, 3, 0.1, "Una ciotola piccola con un filo d'olio.")] };
 const colPranzo = [{ slot: "colazione", dishes: [dish("Cappuccino", "1 tazza", true, 90, 5, 8, 4, 0, 0.1), dish("Cornetto", "1", true, 300, 6, 38, 14, 1, 0.5)] }, { slot: "pranzo", dishes: [dish("Panino con prosciutto", "1", true, 420, 20, 50, 14, 3, 2.2, "Panino da 100 g con 40 g di prosciutto.")] }];
 const scrivi = (t) => ({ fill: ["Cosa hai mangiato?", t] });
 const stima = btn("Stima");
@@ -321,12 +333,40 @@ add("ai-dopo-conferma", "Dopo Conferma: i due piatti sono nel pasto Cena di oggi
 
 // --- Pannello Aggiungi: AI | Manuale (T4b.1)
 const cenaTotano = { slot: "cena", dishes: [dish("Anelli di totano", "150 g", true, 280, 22, 18, 14, 1, 1.4, "Ho ipotizzato 150 g di totano fritto."), dish("Insalata di pomodorini", "1 ciotola", true, 60, 2, 8, 2, 3, 0.1)] };
-add("aggiungi-manuale", "Pannello Aggiungi su Manuale: modulo del piatto con 'Stima con AI' (AI attiva) e sotto Preferiti, Attività a mano, Pesata.", "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, ai: { risposte: [] }, passi: [apri, manuale] });
+add("aggiungi-manuale", "Pannello Aggiungi su Manuale: modulo del piatto con 'Stima con AI' (AI attiva) e sotto Preferiti, Bici a mano, Pesata.", "2026-01-08", giornoPasti({ meals: [] }), { fisso: true, ai: { risposte: [] }, passi: [apri, manuale] });
 add("ai-fascia-fissata", "'+ Aggiungi piatto' del Pranzo: titolo 'Pranzo', il modello ha indicato la Cena ma i piatti restano nel Pranzo (nessuna scelta della fascia).", "2026-01-05", pranzo2, { fisso: true, ai: { risposte: [prop(cenaTotano)] }, passi: [{ clickRole: { role: "button", name: "+ Aggiungi piatto", exact: false } }, { fill: ["Cosa hai mangiato?", "anelli di totano e un'insalata di pomodorini"] }, { clickRole: { role: "button", name: "Stima", exact: true } }, { wait: 600 }] });
 add("ai-fascia-fissata-conferma", "Dopo Conferma con la fascia fissata sul Pranzo: i due piatti sono nel Pranzo di oggi, non nella Cena.", "2026-01-05", pranzo2, { ai: { risposte: [prop(cenaTotano)] }, passi: [{ clickRole: { role: "button", name: "+ Aggiungi piatto", exact: false } }, { fill: ["Cosa hai mangiato?", "anelli di totano e un'insalata di pomodorini"] }, { clickRole: { role: "button", name: "Stima", exact: true } }, { wait: 600 }, { clickRole: { role: "button", name: "Conferma", exact: true } }, { wait: 700 }] });
 
+// --- Ricetta nella quantità (T5b.2)
+const polpette = "200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro, 20 g parmigiano, 1 uovo, 15 g olio";
+add("oggi-quantita-lunga", "Oggi con un piatto dalla quantità lunga (sei ingredienti): va a capo su due righe al massimo, con i puntini, senza coprire le kcal; toccandolo si legge per intero.", "2026-01-08", data({
+  settings: { weightKg: 100 },
+  meals: [meal("2026-01-08", "pranzo", "Polpette di maiale al sugo", 720, 48, 42, 38, 5, 2.4, { quantity: polpette }), meal("2026-01-08", "pranzo", "Pasta al pomodoro", 430, 14, 82, 6, 5, 1.2, { quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio" })],
+}));
+add("pannello-quantita-lunga", "Toccando il piatto con la quantità lunga si legge per intero nel campo Quantità.", "2026-01-08", data({
+  settings: { weightKg: 100 },
+  meals: [meal("2026-01-08", "pranzo", "Polpette di maiale al sugo", 720, 48, 42, 38, 5, 2.4, { quantity: polpette })],
+}), { fisso: true, passi: [{ click: "Polpette di maiale al sugo" }, { scrollTo: "Quantità" }] });
+aiScen("ai-proposta-ricetta", "Proposta con tre piatti dalla quantità lunga e la regola del crudo scritta nella quantità: la riga va a capo (al massimo due righe) senza coprire le kcal.", { risposte: [prop({ slot: "pranzo", dishes: [dish("Polpette di maiale al sugo", polpette, true, 720, 48, 42, 38, 5, 2.4, "Ho ipotizzato quattro polpette."), dish("Pasta al pomodoro", "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", false, 430, 14, 82, 6, 5, 1.2, "100 g di pasta intesi a crudo.")] })] }, [scrivi("polpette al sugo e pasta al pomodoro 100 g"), stima, { wait: 600 }]);
+
+// --- Pasto libero nella proposta (T5b.3)
+const pizzaBirra = (freeMeal, slot = "cena") => ({ slot, freeMeal, dishes: [dish("Pizza margherita", "1 pizza, 350 g", false, 850, 32, 110, 28, 5, 3.4), dish("Birra", "1 bottiglia, 330 ml", false, 140, 1, 12, 0, 0, 0)] });
+const scrivi2 = scrivi("pasto libero: pizza margherita e una birra");
+aiScen("ai-libero-acceso", "Il modello ha segnalato il pasto libero e la settimana lo consente: l'interruttore 'Pasto libero' è già acceso, modificabile.", { risposte: [prop(pizzaBirra(true))] }, [scrivi2, stima, { wait: 600 }, { scrollTo: "Pasto libero" }]);
+aiScen("ai-libero-spento", "Il modello non ha segnalato il pasto libero: l'interruttore è spento (si può accendere).", { risposte: [prop(pizzaBirra(false))] }, [scrivi("pizza margherita e una birra"), stima, { wait: 600 }, { scrollTo: "Pasto libero" }]);
+add("ai-libero-disattivato", "La settimana ha già un pasto libero (spuntino di oggi): anche se il modello lo segnala l'interruttore è spento e disattivato, con la spiegazione.", "2026-01-08", giornoPasti(), { fisso: true, ai: { risposte: [prop(pizzaBirra(true, "cena"))] }, passi: [apri, scrivi2, stima, { wait: 600 }, { scrollTo: "Pasto libero" }] });
+aiScen("ai-libero-due-pasti", "Due pasti proposti, entrambi segnalati: se ne accende uno solo (il primo); l'altro è disattivato con la spiegazione.", { risposte: [prop(pizzaBirra(true, "pranzo"), pizzaBirra(true, "cena"))] }, [scrivi("pasto libero a pranzo e pasto libero a cena"), stima, { wait: 600 }, { scrollTo: "Annulla" }]);
+aiScen("ai-libero-conferma", "Dopo Conferma con l'interruttore acceso: il pasto di oggi è etichettato 'libero' e conta al massimo il tetto.", { risposte: [prop(pizzaBirra(true))] }, [scrivi2, stima, { wait: 600 }, btn("Conferma"), { wait: 700 }]);
+
+// --- Controllo di coerenza kcal / nutrienti (T5b.4)
+const dolce = { slot: "spuntino", freeMeal: false, dishes: [dish("Torta di mele", "1 fetta, 120 g", false, 110, 13, 72, 6, 3, 0.3, "Fetta media di torta."), dish("Birra", "1 bottiglia, 330 ml", false, 215, 2, 18, 0, 0, 0)] };
+aiScen("ai-controllo-segnalato", "Proposta con un piatto che non supera il controllo di coerenza (110 kcal ma i nutrienti ne danno 394): sulla riga '⚠ controlla'; la birra (kcal più alte dei nutrienti) non è segnalata.", { risposte: [prop(dolce)] }, [scrivi("una fetta di torta di mele e una birra"), stima, { wait: 600 }]);
+aiScen("ai-controllo-aperto", "Aperto, il piatto segnalato mostra la frase 'Le kcal sembrano basse rispetto ai nutrienti: controlla i numeri.'; non blocca la conferma e non cambia i numeri.", { risposte: [prop(dolce)] }, [scrivi("una fetta di torta di mele e una birra"), stima, { wait: 600 }, { click: "Torta di mele" }, { wait: 300 }]);
+aiScen("ai-controllo-ritoccato", "Dopo aver ritoccato le kcal a 380 il segno scompare: il controllo si ricalcola.", { risposte: [prop(dolce)] }, [scrivi("una fetta di torta di mele e una birra"), stima, { wait: 600 }, { click: "Torta di mele" }, { fill: ["Kcal", "380"] }, { wait: 300 }]);
+aiScen("piatto-stima-segnalato", "Piatto a mano stimato con l'AI con kcal troppo basse rispetto ai nutrienti: sotto la nota compare l'avviso di controllo.", { risposte: [prop({ slot: "spuntino", dishes: [dish("Torta di mele", "1 fetta, 120 g", false, 110, 13, 72, 6, 3, 0.3, "Fetta media di torta.")] })] }, [manuale, { fill: ["Nome del piatto", "Torta di mele"] }, btn("Stima con AI"), { wait: 600 }]);
+
 // --- Piatto a mano con stima (T4.3)
-const pesto = prop({ slot: "pranzo", dishes: [dish("Spaghetti al pesto", "80 g di pasta", false, 480, 15, 70, 16, 4, 1.3, "Pasta con circa 20 g di pesto alla genovese.")] });
+const pesto = prop({ slot: "pranzo", dishes: [dish("Spaghetti al pesto", "80 g pasta a crudo, 20 g pesto alla genovese", false, 480, 15, 70, 16, 4, 1.3, "Pasta con circa 20 g di pesto alla genovese.")] });
 const aMano = [manuale, { fill: ["Nome del piatto", "Spaghetti al pesto"] }, { fill: ["Quantità (facoltativa)", "80 g di pasta"] }];
 aiScen("piatto-stima-vuoto", "Piatto a mano con l'AI attiva: nome e quantità scritti, kcal vuote; compare 'Stima con AI' e il campo Kcal non ha più l'asterisco.", { risposte: [pesto] }, aMano);
 aiScen("piatto-stima-fatto", "Dopo 'Stima con AI': kcal e macro riempiti, riga 'Stimato con l'AI: controlla i numeri' con la nota del modello.", { risposte: [pesto] }, [...aMano, btn("Stima con AI"), { wait: 600 }]);
@@ -347,13 +387,11 @@ const preferiti = { favoriteDishes: [pesto2, mela, caffe], favoriteMeals: [
 const apriPreferiti = [apri, { click: "Preferiti", exact: true }];
 const favScen = (id, descrizione, dati, passi, extra = {}) => add(id, descrizione, "2026-01-08", dati, { fisso: true, passi, ...extra });
 favScen("preferiti-vuoto", "Nessun preferito: spiega come salvarli.", giornoPasti({ meals: [] }), apriPreferiti);
-favScen("preferiti-lista", "Preferiti salvati: pasti (con numero di piatti e kcal totali) e piatti, ogni riga con un + a destra; campo di ricerca con il pulsante Modifica; scelta della fascia.", giornoPasti({ meals: [], ...preferiti }), apriPreferiti);
+favScen("preferiti-lista", "Preferiti salvati: pasti (con numero di piatti e kcal totali) e piatti, ogni riga con un + a destra; campo di ricerca (senza il pulsante Modifica); scelta della fascia.", giornoPasti({ meals: [], ...preferiti }), apriPreferiti);
 favScen("preferiti-ricerca", "Ricerca 'caff': trova il pasto e il piatto con quel nome (senza accenti né maiuscole).", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, { fill: ["Cerca", "caff"] }]);
-favScen("preferiti-modifica", "Modalità Modifica: niente +, ogni riga ha Elimina; il pulsante diventa Fine e la scelta della fascia sparisce.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, btn("Modifica")]);
 add("preferiti-fascia-fissata", "Preferiti aperti da '+ Aggiungi piatto' del Pranzo: la scelta della fascia non compare (i piatti vanno nel Pranzo).", "2026-01-05", { ...pranzo2, ...preferiti }, { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, { click: "Preferiti", exact: true }] });
 add("preferiti-fascia-fissata-aggiunto", "Dopo un tocco su 'Mela' dai Preferiti aperti dal Pranzo: la mela è nel Pranzo di quel giorno.", "2026-01-05", { ...pranzo2, ...preferiti }, { passi: [{ click: "+ Aggiungi piatto" }, { click: "Preferiti", exact: true }, { clickRole: { role: "button", name: "Aggiungi Mela" } }, { wait: 700 }] });
 favScen("preferiti-nessun-risultato", "Ricerca senza risultati: messaggio.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, { fill: ["Cerca", "zzz"] }]);
-favScen("preferiti-elimina", "In modifica, primo tocco su Elimina: il pulsante diventa 'Elimina davvero'.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, btn("Modifica"), { clickRole: { role: "button", name: "Elimina Mela dai preferiti" } }]);
 add("preferiti-dopo-aggiunta", "Dopo un tocco su 'Cena leggera' con la fascia Spuntino: i due piatti compaiono nello Spuntino di oggi.", "2026-01-08", giornoPasti({ meals: [], ...preferiti }), {
   passi: [...apriPreferiti, { clickRole: { role: "radio", name: "Spuntino" } }, { clickRole: { role: "button", name: "Aggiungi Cena leggera" } }, { wait: 700 }],
 });
@@ -386,13 +424,15 @@ scenarios.push({ id: "impostazioni-collegamenti-spenta", descrizione: "Impostazi
 
 // --- Peso nella Settimana (T4b.5)
 const conPeso = (settings, weighIns) => ({ ...settimanaCompleta, settings, weighIns });
-sett("settimana-peso-scende", "Peso: ultima pesata 91,4 kg, −0,6 kg dalla pesata precedente (92,0 del 2 gennaio), obiettivo 82 kg: differenza in verde.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-07", weightKg: 91.4 }]));
+sett("settimana-peso-scende", "Peso: ultima pesata 91,4 kg, «−0,6 kg» dalla pesata precedente (92,0 del 2 gennaio), obiettivo 82 kg: differenza in verde.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-07", weightKg: 91.4 }]));
 sett("settimana-peso-sale", "Peso: +0,8 kg con obiettivo sotto: differenza in rosso.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-09", weightKg: 92.8 }]));
 sett("settimana-peso-partenza", "Peso senza pesate precedenti: confronto con il peso di partenza del profilo (92,5 kg), −0,8 kg in verde.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-06", weightKg: 91.7 }]));
 sett("settimana-peso-senza-obiettivo", "Peso senza peso obiettivo: differenza in grigio.", "2026-01-11", conPeso({ weightKg: 92.5 }, [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-07", weightKg: 91.4 }]));
 sett("settimana-peso-salire", "Obiettivo sopra il peso (si vuole salire): +0,9 kg in verde.", "2026-01-11", conPeso({ weightKg: 60, targetWeightKg: 70 }, [{ date: "2026-01-02", weightKg: 60 }, { date: "2026-01-08", weightKg: 60.9 }]));
-sett("settimana-peso-invariato", "Peso uguale alla pesata precedente: 0 kg in grigio.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 91.4 }, { date: "2026-01-08", weightKg: 91.4 }]));
+sett("settimana-peso-invariato", "Peso uguale alla pesata precedente: «0,0 kg» in grigio.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 91.4 }, { date: "2026-01-08", weightKg: 91.4 }]));
 sett("settimana-peso-senza-pesate", "Settimana senza pesate (pesate solo in altre settimane): la scheda Peso non compare.", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 92 }, { date: "2026-01-13", weightKg: 91 }]));
+sett("settimana-peso-quasi-uguale", "Differenza di 40 grammi (91,36 su 91,4): arrotondata vale 0,0, quindi «0,0 kg» in grigio, mai «−0 kg».", "2026-01-11", conPeso({ weightKg: 92.5, targetWeightKg: 82 }, [{ date: "2026-01-02", weightKg: 91.4 }, { date: "2026-01-08", weightKg: 91.36 }]));
+sett("settimana-peso-salire-scende", "Obiettivo sopra il peso (si vuole salire) ma il peso scende di 0,4 kg: «−0,4 kg» in rosso.", "2026-01-11", conPeso({ weightKg: 60, targetWeightKg: 70 }, [{ date: "2026-01-02", weightKg: 60 }, { date: "2026-01-08", weightKg: 59.6 }]));
 sett("settimana-peso-solo", "Settimana senza pasti né attività ma con una pesata: compare la scheda Peso e non il messaggio 'Nessun dato'.", "2026-01-11", data({ settings: { weightKg: 92.5, targetWeightKg: 82 }, weighIns: [{ date: "2026-01-07", weightKg: 91.6 }] }));
 
 // --- Impostazioni (T2.7)
@@ -462,9 +502,9 @@ const settimanaPiena = data({
     meal("2026-01-07", "pranzo", "Tiramisù", 450, 8, 50, 22, 1, 0.4),
   ],
   activity: [
-    activity("2026-01-05", { steps: 8123, stepsSource: "salute", bikeKm: 12.4, bikeSource: "salute" }),
-    activity("2026-01-06", { steps: 5400, stepsSource: "manuale", bikeKm: 20, bikeSource: "manuale" }),
-    activity("2026-01-07", { steps: 9450, stepsSource: "salute" }),
+    activity("2026-01-05", { steps: 8123, stepsSource: "salute", bikeKm: 12.4, bikeSource: "salute", bikeKmManual: 8 }),
+    activity("2026-01-06", { steps: 5400, stepsSource: "manuale", bikeKmManual: 20 }),
+    activity("2026-01-07", { steps: 9450, stepsSource: "salute", bikeKm: 5.2, bikeSource: "salute" }),
   ],
 });
 const conLibero = { ...settimanaPiena, meals: settimanaPiena.meals.map((m) => (m.date === "2026-01-07" && m.slot === "pranzo" ? { ...m, isFree: true } : m)) };
@@ -473,14 +513,16 @@ scenarios.push({ id: "settimana-peso-nessuna-pesata", descrizione: "La scheda Pe
 settScheda("settimana-pannello-peso", "Pannello Pesate: le pesate della settimana dalla più recente, ognuna con il cestino, e 'Aggiungi pesata'.", settimanaPiena, [tocca("Peso")]);
 settScheda("settimana-pannello-peso-aggiungi", "Aggiungi pesata: scelta del giorno della settimana e campo del peso.", settimanaPiena, [tocca("Peso"), { click: "Aggiungi pesata" }]);
 settScheda("settimana-pannello-peso-vuoto", "Pannello Pesate senza pesate nella settimana.", senzaPesate, [tocca("Peso")]);
-settScheda("settimana-pannello-bici", "Pannello Bici: sette giorni con km e fonte; il cestino solo sul valore a mano.", settimanaPiena, [tocca("Bici")]);
-settScheda("settimana-pannello-passi", "Pannello Passi: sette giorni con passi e fonte; il cestino solo sul valore a mano.", settimanaPiena, [tocca("Passi medi")]);
+settScheda("settimana-pannello-bici", "Pannello Bici: sette giorni con la parte di Salute (sola lettura) e la parte a mano (si tocca per modificarla, cestino); '+ A mano' sui giorni senza.", settimanaPiena, [tocca("Bici")]);
+settScheda("settimana-pannello-passi", "Pannello Passi in sola lettura: sette giorni con passi e fonte; il cestino solo su un vecchio valore a mano.", settimanaPiena, [tocca("Passi medi")]);
+settScheda("settimana-bici-modifica", "Pannello Bici: toccando la parte a mano di lunedì si apre il modulo con i campi precompilati.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Modifica la bici a mano di Lunedì 5 gennaio", exact: true } }]);
+settScheda("settimana-bici-aggiungi", "Pannello Bici: '+ A mano' su un giorno senza la parte a mano apre il modulo vuoto.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Aggiungi la bici a mano di Mercoledì 7 gennaio", exact: true } }]);
 settScheda("settimana-pannello-bici-vuoto", "Pannello Bici senza nessun valore nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Bici")]);
 settScheda("settimana-pannello-passi-vuoto", "Pannello Passi senza nessun valore nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Passi medi")]);
 settScheda("settimana-pannello-libero", "Pasto libero presente: giorno, fascia, kcal e 'Togli pasto libero'.", conLibero, [tocca("Pasto libero")]);
 settScheda("settimana-pannello-libero-scegli", "Nessun pasto libero: elenco dei pasti della settimana con 'Segna come libero'.", settimanaPiena, [tocca("Pasto libero")]);
 settScheda("settimana-pannello-libero-vuoto", "Nessun pasto libero e nessun pasto nella settimana.", data({ settings: { weightKg: 92.5 } }), [tocca("Pasto libero")]);
-settScheda("settimana-dopo-elimina-bici", "Dopo aver eliminato i km a mano di martedì e chiuso il pannello: il totale dei km (da 32,4 a 12,4) si è aggiornato.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Elimina il valore di Martedì 6 gennaio", exact: true } }, { wait: 500 }, { click: "Chiudi", exact: true }]);
+settScheda("settimana-dopo-elimina-bici", "Dopo aver eliminato la bici a mano di martedì e chiuso il pannello: il totale dei km (da 45,6 a 25,6) si è aggiornato.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Elimina la bici a mano di Martedì 6 gennaio", exact: true } }, { wait: 500 }, { click: "Chiudi", exact: true }]);
 settScheda("settimana-dopo-togli-libero", "Dopo 'Togli pasto libero': la scheda dice 'non usato' e il pasto resta.", conLibero, [tocca("Pasto libero"), { click: "Togli pasto libero" }, { wait: 500 }, { click: "Chiudi", exact: true }]);
 
 scenarios.push({
@@ -509,10 +551,33 @@ add("oggi-scorrimento-preferiti", "Dopo «Preferiti»: il piatto è salvato, la 
 add("oggi-scorrimento-cestino", "Dopo il cestino: il piatto è eliminato subito, senza conferma, e i totali si ricalcolano.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro"), { clickRole: { role: "button", name: "Elimina Pasta al pomodoro", exact: true } }, { wait: 500 }] });
 add("oggi-scorrimento-a-destra", "Scorrimento verso destra: non succede nulla.", "2026-01-08", giornoConPiatti, { passi: [sw("Pasta al pomodoro", 140)] });
 settScheda("settimana-pesate-scorrimento", "Pannello Pesate: scorrendo una pesata compare solo il cestino.", settimanaPiena, [tocca("Peso"), sw("Giovedì 8 gennaio")]);
-settScheda("settimana-bici-scorrimento", "Pannello Bici: scorrendo il valore a mano di martedì compare il cestino; le righe da Salute non scorrono.", settimanaPiena, [tocca("Bici"), sw("Martedì 6 gennaio")]);
-settScheda("settimana-bici-scorrimento-salute", "Pannello Bici: una riga con fonte Salute non mostra nessuna azione.", settimanaPiena, [tocca("Bici"), sw("Lunedì 5 gennaio")]);
+settScheda("settimana-bici-scorrimento", "Pannello Bici: scorrendo la parte a mano di martedì compare il cestino; la parte di Salute non si elimina.", settimanaPiena, [tocca("Bici"), sw("Martedì 6 gennaio")]);
+settScheda("settimana-bici-scorrimento-salute", "Pannello Bici: una riga con la sola parte di Salute non mostra nessuna azione.", settimanaPiena, [tocca("Bici"), sw("Mercoledì 7 gennaio")]);
+
+sett("settimana-colori-barre", "Settimana con i quattro colori delle barre: accento (lun), verde (mar), giallo (mer), rosso (gio).", "2026-01-11", data({
+  settings: { weightKg: 100 },
+  meals: [
+    meal("2026-01-05", "pranzo", "Pranzo", 1700, 60, 190, 55, 20, 4),
+    meal("2026-01-06", "pranzo", "Pranzo", 2130, 90, 240, 70, 25, 4),
+    meal("2026-01-07", "pranzo", "Pranzo", 2250, 100, 250, 75, 25, 4),
+    meal("2026-01-08", "pranzo", "Pranzo", 2400, 100, 260, 80, 25, 4),
+  ],
+}));
+
+// --- Preferiti eliminabili scorrendo (T5b.5)
+favScen("preferiti-scorrimento-aperto", "Preferiti: la riga 'Mela' scorsa a sinistra mostra il cestino; il + e il tocco sulla riga restano come prima.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, sw("Mela")]);
+favScen("preferiti-scorrimento-pasto", "Preferiti: anche un pasto salvato ('Cena leggera') si scorre e mostra il cestino.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, sw("Cena leggera")]);
+favScen("preferiti-scorrimento-elimina", "Dopo il cestino su 'Mela': il preferito è eliminato subito, senza conferma; restano gli altri.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, sw("Mela"), { clickRole: { role: "button", name: "Elimina Mela dai preferiti", exact: true } }, { wait: 500 }]);
+
+// --- Media della settimana sul grafico (T5b.6): oggi domenica 11 (senza pasti), le barre sono i giorni conclusi.
+const giorniMedia = (kcal) => data({ settings: { weightKg: 100 }, meals: kcal.map((k, i) => meal(`2026-01-0${5 + i}`, "pranzo", "Pranzo", k, Math.round(k / 15), Math.round(k / 9), Math.round(k / 30), 8, 2)) });
+sett("settimana-media-sopra", "Media sopra l'obiettivo: 2.400 kcal di media sui giorni conclusi; linea tratteggiata sopra le linee degli obiettivi, etichetta «media 2.400» nella legenda sopra le barre.", "2026-01-11", giorniMedia([2400, 2500, 2300, 2400, 2400]));
+sett("settimana-media-sotto", "Media sotto l'obiettivo: 1.800 kcal di media; la linea tratteggiata sta sotto gli obiettivi.", "2026-01-11", giorniMedia([1800, 1700, 1900, 1800, 1800]));
+sett("settimana-media-vicina", "Media molto vicina all'obiettivo (2.110 su 2.100): la linea tratteggiata e le linee degli obiettivi quasi coincidono ma si distinguono; la legenda sopra le barre mostra «media 2.110» e «obiettivo» senza sovrapporsi.", "2026-01-11", giorniMedia([2110, 2120, 2100, 2110, 2110]));
+sett("settimana-media-assente", "Oggi è lunedì e i pasti sono solo di oggi: nessun giorno concluso, la scheda mostra il trattino e la linea non compare.", "2026-01-05", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", 800, 40, 90, 20, 5, 2)] }));
 
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");
 console.log(`${scenarios.length} scenari scritti in ${dir}`);
+

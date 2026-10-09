@@ -1,0 +1,87 @@
+{
+  "id": "settimana-media-vicina",
+  "descrizione": "Media molto vicina all'obiettivo (2.110 su 2.100): la linea tratteggiata e le linee degli obiettivi quasi coincidono ma si distinguono; la legenda sopra le barre mostra «media 2.110» e «obiettivo» senza sovrapporsi.",
+  "oggi": "2026-01-11",
+  "percorso": "/settimana",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m351",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2110,
+        "protein": 141,
+        "carbs": 234,
+        "fat": 70,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m352",
+        "date": "2026-01-06",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2120,
+        "protein": 141,
+        "carbs": 236,
+        "fat": 71,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m353",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2100,
+        "protein": 140,
+        "carbs": 233,
+        "fat": 70,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m354",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2110,
+        "protein": 141,
+        "carbs": 234,
+        "fat": 70,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m355",
+        "date": "2026-01-09",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2110,
+        "protein": 141,
+        "carbs": 234,
+        "fat": 70,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

@@ -407,7 +407,7 @@ Vincoli di questa fase:
 - Per le schermate valgono le regole delle fasi 2, 4b e 5. Si rigenerano solo gli screenshot degli scenari toccati dal task.
 - Nessuna funzione oltre a quelle elencate. In particolare: niente passi a mano, niente più uscite a mano nello stesso giorno, niente soglie dell'anello in Impostazioni, niente tabella di ingredienti (§9).
 
-### T5b.0 Passi in sola lettura, bici a mano che si somma · da fare
+### T5b.0 Passi in sola lettura, bici a mano che si somma · fatto
 - **Passi**: in Oggi la riga dei passi non è toccabile e non apre nessun pannello. Dal pannello Aggiungi sparisce l'inserimento dei passi: la voce diventa "Bici a mano". Nel pannello Passi della Settimana le righe sono in sola lettura; un vecchio valore con fonte `manuale` si può solo eliminare.
 - **Ingresso da Salute**: per i passi, l'invio sostituisce anche un valore con fonte `manuale` (la regola "il manuale non si tocca" non vale più per i passi). La risposta dell'ingresso non elenca più i passi tra le righe "lasciate perché inserite a mano".
 - **Bici**: `daily_activity` riceve, per aggiunta, le colonne della parte a mano (km e kcal facoltative). I km da Salute restano dove sono e non si modificano né si eliminano dall'app. La migrazione sposta nella parte a mano i valori di bici che oggi hanno fonte `manuale`, senza perdere nulla. Gli invii da Salute scrivono sempre la parte di Salute e non toccano mai quella a mano.
@@ -416,7 +416,7 @@ Vincoli di questa fase:
 - Lo sportello dei dati (browser e Supabase) e l'esportazione CSV riportano le due parti.
 - Test: passi da Salute che sostituiscono un valore a mano; bici solo Salute, solo a mano, entrambe; kcal a mano presenti e assenti; invio da Salute che non tocca la parte a mano; eliminazione della parte a mano che lascia quella di Salute; migrazione dei vecchi valori a mano (su PostgreSQL locale); E e F invariati.
 
-### T5b.1 Colori dell'anello delle kcal · da fare
+### T5b.1 Colori dell'anello delle kcal · fatto
 - Motore: la regola di §3.5 sostituisce quella attuale. `RingColor` guadagna il verde. Costanti `ringGreenBelow`, `ringGreenAbove`, `ringYellowAbove` in `src/engine/defaults.ts`, senza campo in Impostazioni e senza colonna nel database.
 - **Questo task cambia una regola di calcolo: i test dell'anello si aggiornano.** Nessun altro test del motore si tocca.
 - `recoveryMin` passa da 25 a 50, uguale a `ringGreenAbove`: default in `defaults.ts`, default della colonna e valore delle righe esistenti che hanno ancora 25 (istruzione in `supabase/aggiornamento-fase-5b.sql`). I casi M, N, O, Q e R di §3.6 restano identici; si aggiunge il caso Z di §3.8.
@@ -425,7 +425,7 @@ Vincoli di questa fase:
 - Il verde è quello dei semafori già in uso; contrasto sufficiente in chiaro e scuro.
 - Test: caso S di §3.8 con tutti e sei i valori di confine; giorno senza pasti; giorno con pasto libero che resta verde grazie al tetto. Scenari di screenshot per i quattro colori.
 
-### T5b.2 Proposta dell'AI: ricetta, regola del crudo, stima stabile · da fare
+### T5b.2 Proposta dell'AI: ricetta, regola del crudo, stima stabile · fatto
 - `SYSTEM_PROMPT` riscritto secondo §4: nome = solo il nome del piatto; quantità = ingredienti principali con i grammi; grammi di pasta, riso, cereali e legumi secchi intesi a crudo salvo indicazione contraria, con l'interpretazione scritta nella quantità; piatti distinti restano separati. Il prompt contiene due o tre esempi brevi di ingresso e uscita, tra cui "pasta al pomodoro 100 g" (circa 400-450 kcal, quantità "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio") e "100 g di pasta cotta al pomodoro" (circa 130-150 kcal).
 - Temperatura a 0. Lo schema di risposta resta strutturato.
 - Nessuna modifica al database: la quantità resta il campo di testo esistente. La riga compatta della proposta e la riga del piatto in Oggi devono reggere una quantità lunga: va a capo o si tronca con i puntini, senza scorrimento orizzontale e senza coprire le kcal; toccando il piatto si legge per intero.
@@ -433,7 +433,7 @@ Vincoli di questa fase:
 - Test: il prompt contiene le regole e gli esempi; la richiesta a Vertex ha temperatura 0; la validazione accetta quantità lunghe (limite ragionevole, scritto nel diario). Screenshot della proposta e di Oggi con una quantità di tre ingredienti.
 - Nel diario, sotto "Non verificato": la qualità delle stime con il modello vero.
 
-### T5b.3 Pasto libero nella proposta dell'AI · da fare
+### T5b.3 Pasto libero nella proposta dell'AI · fatto
 - Lo schema di risposta guadagna, sul pasto, un campo booleano che dice se l'utente lo ha indicato come libero. Il prompt spiega quando metterlo a vero ("pasto libero", "sgarro libero", "è il mio pasto libero") e che in ogni altro caso è falso.
 - Nella conferma ogni pasto proposto ha l'interruttore "Pasto libero", lo stesso componente e le stesse regole dell'inserimento a mano: disattivato, con la spiegazione, se la settimana ha già un pasto libero; acceso in partenza se il modello lo ha segnalato e la settimana lo consente; sempre modificabile prima di confermare.
 - Se la proposta contiene più pasti, se ne può segnare libero al massimo uno.
@@ -441,27 +441,27 @@ Vincoli di questa fase:
 - Il tetto di kcal lo applica solo il motore.
 - Test: campo vero e falso; settimana con pasto libero già usato; due pasti proposti; fascia fissata. Screenshot della conferma con interruttore acceso, spento e disattivato.
 
-### T5b.4 Controllo di coerenza tra kcal e nutrienti · da fare
+### T5b.4 Controllo di coerenza tra kcal e nutrienti · fatto
 - Motore: funzione pura che applica §3.7, con le costanti `kcalCheckShare` e `kcalCheckMin` in `defaults.ts`.
 - Si applica ai piatti restituiti dal modello (stima nuova, stima corretta, stima di un piatto a mano). Non si applica ai numeri scritti a mano dall'utente.
 - Nella proposta, il piatto segnalato mostra sulla riga un segno e, aperto, una frase breve ("Le kcal sembrano basse rispetto ai nutrienti: controlla i numeri."). Non blocca la conferma e non cambia i numeri. Ritoccando i numeri il controllo si ricalcola.
 - Test: casi T, U e V di §3.8; valori esattamente sulle due soglie; numeri a zero. Screenshot della proposta con un piatto segnalato.
 
-### T5b.5 Preferiti eliminabili scorrendo · da fare
+### T5b.5 Preferiti eliminabili scorrendo · fatto
 - Le righe dei preferiti (piatti e pasti) usano il componente di scorrimento di T5.5: verso sinistra compare il cestino, che elimina subito senza conferma.
 - La modalità "Modifica" dei preferiti sparisce: lo scorrimento è l'unico modo di eliminare. Il + e il tocco sulla riga continuano a fare quello che fanno oggi.
 - Test della logica di eliminazione per piatti e pasti e prova con il tocco simulato di Playwright. Screenshot con una riga aperta.
 
-### T5b.6 Media della settimana sul grafico · da fare
+### T5b.6 Media della settimana sul grafico · fatto
 - Motore: la media kcal della settimana segue §3.8. La funzione riceve qual è "oggi" come parametro (il motore non legge la data). **I test esistenti della media si aggiornano alla nuova regola**; nessun altro test del motore si tocca.
 - La scheda "Media kcal" usa il nuovo numero, con la dicitura "sui giorni conclusi".
 - Sul grafico a sette barre: linea tratteggiata orizzontale alla media, con etichetta "media 2.040" che non copre le barre né l'etichetta dell'obiettivo. Colore neutro, diverso dalla linea dell'obiettivo. Senza media la linea non compare.
 - Test: casi W, X e Y di §3.8. Screenshot in chiaro e scuro: media sopra l'obiettivo, sotto, molto vicina (le due etichette non si sovrappongono), assente.
 
-### T5b.7 Segno della variazione di peso · da fare
+### T5b.7 Segno della variazione di peso · fatto
 - Ovunque si mostri la variazione di peso: sempre segno e un decimale, con il meno tipografico ("−0,4 kg", "+0,3 kg"). Solo una differenza che arrotondata vale 0,0 si scrive "0,0 kg", in grigio.
 - Il colore resta quello già in uso (verde se ci si avvicina al peso obiettivo, rosso se ci si allontana, grigio senza peso obiettivo o a pari distanza): va solo controllato che valga anche per chi vuole aumentare di peso.
 - Test: −0,04 → "0,0 kg"; −0,4; −1,2; +0,3; obiettivo più alto del peso attuale con variazione positiva (verde) e negativa (rossa).
 
-### T5b.8 Report di fase · da fare
+### T5b.8 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-5b.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: l'istruzione SQL da eseguire su Supabase prima del merge e l'elenco dei controlli da fare sul telefono, uno per task.

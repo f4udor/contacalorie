@@ -4,9 +4,9 @@ import type { ActivityRecord, MealRecord } from "@/data";
 import { loadWeekData } from "./week-data";
 import { buildTodayView } from "./today-view";
 import { weekWeight, weightCard } from "./week-weight";
-import { activityRows, defaultWeighInDate, deleteActivityValue, freeMealOfWeek, markFreeMeal, removeFreeMeal, weekMeals, weighInsInWeek, withoutActivityValue } from "./week-actions";
+import { activityRows, defaultWeighInDate, deleteActivityValue, freeMealOfWeek, markFreeMeal, removeFreeMeal, saveManualBike, weekMeals, weighInsInWeek, withoutActivityValue } from "./week-actions";
 
-const rec = (date: string, o: Partial<ActivityRecord> = {}): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, ...o });
+const rec = (date: string, o: Partial<ActivityRecord> = {}): ActivityRecord => ({ date, steps: null, stepsSource: null, bikeKm: null, bikeKcalHealth: null, bikeSource: null, bikeKmManual: null, bikeKcalManual: null, ...o });
 const dish = (id: string, date: string, slot: MealRecord["slot"], kcal: number, isFree = false): MealRecord => ({
   id, date, slot, name: id, quantity: null, kcal, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0, isFree, originalText: null,
 });
@@ -31,36 +31,52 @@ describe("pesate della settimana", () => {
 });
 
 describe("righe di passi e bici", () => {
-  const list = [rec("2026-01-05", { steps: 8000, stepsSource: "salute", bikeKm: 10, bikeSource: "manuale" }), rec("2026-01-06", { steps: 5000, stepsSource: "manuale", bikeKcalHealth: 400, bikeSource: "salute" })];
-  it("passi: la fonte decide se si può eliminare", () => {
+  const list = [
+    rec("2026-01-05", { steps: 8000, stepsSource: "salute", bikeKm: 10, bikeSource: "salute", bikeKmManual: 8 }),
+    rec("2026-01-06", { steps: 5000, stepsSource: "manuale", bikeKcalHealth: 400, bikeSource: "salute" }),
+    rec("2026-01-07", { bikeKmManual: 5, bikeKcalManual: 150 }),
+  ];
+  it("passi: solo un vecchio valore a mano si può eliminare", () => {
     const rows = activityRows("passi", list, WEEK);
     expect(rows).toHaveLength(7);
     expect(rows[0]).toMatchObject({ steps: 8000, source: "salute", canDelete: false });
     expect(rows[1]).toMatchObject({ steps: 5000, source: "manuale", canDelete: true });
     expect(rows[2]).toMatchObject({ steps: null, source: null, canDelete: false });
   });
-  it("bici: km o kcal, con la fonte", () => {
+  it("bici: parte di Salute e parte a mano separate; si elimina solo la parte a mano", () => {
     const rows = activityRows("bici", list, WEEK);
-    expect(rows[0]).toMatchObject({ km: 10, source: "manuale", canDelete: true });
-    expect(rows[1]).toMatchObject({ km: null, kcal: 400, source: "salute", canDelete: false });
+    expect(rows[0]).toMatchObject({ km: 10, source: "salute", kmManual: 8, kcalManual: null, canDelete: true });
+    expect(rows[1]).toMatchObject({ km: null, kcal: 400, source: "salute", kmManual: null, canDelete: false });
+    expect(rows[2]).toMatchObject({ km: null, source: null, kmManual: 5, kcalManual: 150, canDelete: true });
+    expect(rows[3]).toMatchObject({ km: null, kmManual: null, canDelete: false });
   });
 });
 
 describe("eliminazione dei valori", () => {
-  it("si eliminano solo i valori a mano; l'altro valore del giorno resta", () => {
-    const r = rec("2026-01-05", { steps: 8000, stepsSource: "salute", bikeKm: 10, bikeKcalHealth: 300, bikeSource: "manuale" });
+  it("si eliminano solo i valori a mano; il resto del giorno resta", () => {
+    const r = rec("2026-01-05", { steps: 8000, stepsSource: "salute", bikeKm: 10, bikeKcalHealth: 300, bikeSource: "salute", bikeKmManual: 8, bikeKcalManual: 200 });
     expect(withoutActivityValue(r, "passi")).toBeNull();
-    expect(withoutActivityValue(r, "bici")).toEqual({ ...r, bikeKm: null, bikeKcalHealth: null, bikeSource: null });
+    expect(withoutActivityValue(r, "bici")).toEqual({ ...r, bikeKmManual: null, bikeKcalManual: null });
     expect(withoutActivityValue(rec("2026-01-05"), "bici")).toBeNull();
+    expect(withoutActivityValue(rec("2026-01-05", { bikeKm: 10, bikeSource: "salute" }), "bici")).toBeNull();
   });
-  it("sullo sportello: il valore a mano sparisce, quello da Salute resta, il giorno resta libero per un nuovo invio", async () => {
+  it("sullo sportello: la parte a mano sparisce, quella di Salute resta", async () => {
     const store = createMemoryDataStore();
-    await store.saveActivity(rec("2026-01-05", { steps: 8000, stepsSource: "salute", bikeKm: 10, bikeSource: "manuale" }));
+    await store.saveActivity(rec("2026-01-05", { steps: 8000, stepsSource: "salute", bikeKm: 10, bikeSource: "salute", bikeKmManual: 8 }));
     expect(await deleteActivityValue(store, "2026-01-05", "passi")).toBe(false);
     expect((await store.getActivity("2026-01-05"))?.steps).toBe(8000);
     expect(await deleteActivityValue(store, "2026-01-05", "bici")).toBe(true);
-    expect(await store.getActivity("2026-01-05")).toMatchObject({ steps: 8000, stepsSource: "salute", bikeKm: null, bikeSource: null });
+    expect(await store.getActivity("2026-01-05")).toMatchObject({ steps: 8000, stepsSource: "salute", bikeKm: 10, bikeSource: "salute", bikeKmManual: null, bikeKcalManual: null });
+    expect(await deleteActivityValue(store, "2026-01-05", "bici")).toBe(false);
     expect(await deleteActivityValue(store, "2026-01-06", "bici")).toBe(false);
+  });
+  it("salvare la parte a mano non tocca la parte di Salute né i passi", async () => {
+    const store = createMemoryDataStore();
+    await store.saveActivity(rec("2026-01-05", { steps: 8000, stepsSource: "salute", bikeKm: 10, bikeSource: "salute" }));
+    await saveManualBike(store, "2026-01-05", { km: 8, kcal: null });
+    expect(await store.getActivity("2026-01-05")).toMatchObject({ steps: 8000, bikeKm: 10, bikeSource: "salute", bikeKmManual: 8, bikeKcalManual: null });
+    await saveManualBike(store, "2026-01-05", { km: 9, kcal: 250 });
+    expect(await store.getActivity("2026-01-05")).toMatchObject({ bikeKm: 10, bikeKmManual: 9, bikeKcalManual: 250 });
   });
 });
 

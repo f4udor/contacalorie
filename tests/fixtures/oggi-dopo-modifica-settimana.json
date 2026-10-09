@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m267",
+        "id": "m317",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Pranzo",
@@ -31,7 +31,9 @@
         "stepsSource": "manuale",
         "bikeKm": null,
         "bikeKcalHealth": null,
-        "bikeSource": null
+        "bikeSource": null,
+        "bikeKmManual": null,
+        "bikeKcalManual": null
       }
     ],
     "weighIns": []

@@ -37,6 +37,8 @@ describe("VertexProvider (senza rete: fetch finto)", () => {
     expect(modelCall.init.headers.Authorization).toBe("Bearer tok-1");
     const sent = JSON.parse(modelCall.init.body);
     expect(sent.generationConfig.responseMimeType).toBe("application/json");
+    expect(sent.generationConfig.temperature).toBe(0);
+    expect(sent.generationConfig.responseSchema).toBeDefined();
     expect(sent.contents[0].parts[0].text).toContain("una mela");
     expect(JSON.stringify(sent)).not.toContain(credentials.client_email);
   });

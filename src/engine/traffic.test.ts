@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_SETTINGS } from "./defaults";
+import { DEFAULT_SETTINGS, ringGreenAbove } from "./defaults";
 import { lightCeiling, lightKcalRing, lightMinimum, lightRange } from "./traffic";
 
 const s = DEFAULT_SETTINGS;
@@ -51,17 +51,24 @@ describe("lightCeiling (sale)", () => {
   });
 });
 
-describe("lightKcalRing", () => {
-  it("fino a T accento (incluso T)", () => {
-    expect(lightKcalRing(0, 2000)).toBe("accento");
-    expect(lightKcalRing(2000, 2000)).toBe("accento");
+describe("lightKcalRing (caso S, obiettivo 2.100)", () => {
+  it("sei valori di confine: 1.949 / 1.950 / 2.150 / 2.151 / 2.300 / 2.301", () => {
+    expect([1949, 1950, 2150, 2151, 2300, 2301].map((k) => lightKcalRing(k, 2100))).toEqual(["accento", "verde", "verde", "giallo", "giallo", "rosso"]);
   });
-  it("da T a T × 1,05 giallo (incluso il confine)", () => {
-    expect(lightKcalRing(2001, 2000)).toBe("giallo");
-    expect(lightKcalRing(2100, 2000)).toBe("giallo");
+  it("sull'obiettivo e poco sotto: verde", () => {
+    expect(lightKcalRing(2100, 2100)).toBe("verde");
+    expect(lightKcalRing(2000, 2100)).toBe("verde");
   });
-  it("oltre T × 1,05 rosso", () => {
-    expect(lightKcalRing(2101, 2000)).toBe("rosso");
+  it("giorno senza pasti (0 kcal): accento", () => {
+    expect(lightKcalRing(0, 2100)).toBe("accento");
+  });
+  it("le soglie sono quelle di defaults.ts, uguali per ogni obiettivo", () => {
+    expect(lightKcalRing(1850, 2000)).toBe("verde");
+    expect(lightKcalRing(1849, 2000)).toBe("accento");
+    expect(lightKcalRing(2201, 2000)).toBe("rosso");
+  });
+  it("recoveryMin coincide con ringGreenAbove", () => {
+    expect(s.recoveryMin).toBe(ringGreenAbove);
   });
 });
 

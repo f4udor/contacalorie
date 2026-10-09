@@ -1,6 +1,6 @@
 {
   "id": "pannello-attivita",
-  "descrizione": "Attività a mano: modulo vuoto.",
+  "descrizione": "Bici a mano: modulo vuoto (km e kcal facoltative, almeno uno).",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": null,
@@ -15,7 +15,7 @@
       }
     },
     {
-      "click": "Attività a mano"
+      "click": "Bici a mano"
     }
   ]
 }

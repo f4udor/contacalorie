@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m77",
+        "id": "m84",
         "date": "2026-01-05",
         "slot": "cena",
         "name": "Antipasti misti",
@@ -25,7 +25,7 @@
         "quantity": "1 porzione"
       },
       {
-        "id": "m78",
+        "id": "m85",
         "date": "2026-01-05",
         "slot": "cena",
         "name": "Pizza",
@@ -39,7 +39,7 @@
         "originalText": null
       },
       {
-        "id": "m79",
+        "id": "m86",
         "date": "2026-01-05",
         "slot": "cena",
         "name": "Tiramisù",

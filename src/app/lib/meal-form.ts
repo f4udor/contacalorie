@@ -1,3 +1,4 @@
+import { needsKcalCheck } from "@/engine";
 import type { MealSlot } from "@/engine";
 
 /** Valori dei campi del modulo pasto, così come scritti dall'utente. */
@@ -68,6 +69,27 @@ export function parseDecimal(text: string): number | "empty" | "invalid" {
   if (!/^-?\d*\.?\d+$|^-?\d+\.$/.test(t)) return "invalid";
   const n = Number(t);
   return Number.isFinite(n) ? n : "invalid";
+}
+
+/** Frase mostrata accanto a una stima dell'AI che non supera il controllo di coerenza (BRIEF §3.7). */
+export const KCAL_CHECK_MESSAGE = "Le kcal sembrano basse rispetto ai nutrienti: controlla i numeri.";
+
+/**
+ * Il controllo di coerenza sui numeri scritti come testo (si ricalcola a ogni ritocco). Senza kcal valide non c'è nulla da controllare;
+ * proteine, carboidrati e grassi vuoti o non validi valgono 0. Vale solo per i piatti stimati dal modello, non per i numeri scritti a mano.
+ */
+export function textNeedsKcalCheck(v: { kcal: string; protein: string; carbs: string; fat: string }): boolean {
+  const num = (t: string): number | null => {
+    const r = parseDecimal(t);
+    return r === "empty" ? 0 : r === "invalid" || r < 0 ? null : r;
+  };
+  const kcal = parseDecimal(v.kcal);
+  if (kcal === "empty" || kcal === "invalid" || kcal < 0) return false;
+  const protein = num(v.protein);
+  const carbs = num(v.carbs);
+  const fat = num(v.fat);
+  if (protein === null || carbs === null || fat === null) return false;
+  return needsKcalCheck({ kcal, protein, carbs, fat });
 }
 
 /**

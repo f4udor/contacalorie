@@ -1,0 +1,31 @@
+{
+  "id": "oggi-anello-verde",
+  "descrizione": "Anello verde: 2.120 kcal su 2.100 (tra −150 e +50 dall'obiettivo).",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m56",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2120,
+        "protein": 141,
+        "carbs": 236,
+        "fat": 71,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

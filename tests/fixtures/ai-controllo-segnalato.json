@@ -1,0 +1,86 @@
+{
+  "id": "ai-controllo-segnalato",
+  "descrizione": "Proposta con un piatto che non supera il controllo di coerenza (110 kcal ma i nutrienti ne danno 394): sulla riga '⚠ controlla'; la birra (kcal più alte dei nutrienti) non è segnalata.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": [
+      {
+        "stato": 200,
+        "corpo": {
+          "proposal": {
+            "meals": [
+              {
+                "slot": "spuntino",
+                "freeMeal": false,
+                "dishes": [
+                  {
+                    "name": "Torta di mele",
+                    "quantity": "1 fetta, 120 g",
+                    "quantityAssumed": false,
+                    "kcal": 110,
+                    "protein": 13,
+                    "carbs": 72,
+                    "fat": 6,
+                    "fiber": 3,
+                    "salt": 0.3,
+                    "note": "Fetta media di torta."
+                  },
+                  {
+                    "name": "Birra",
+                    "quantity": "1 bottiglia, 330 ml",
+                    "quantityAssumed": false,
+                    "kcal": 215,
+                    "protein": 2,
+                    "carbs": 18,
+                    "fat": 0,
+                    "fiber": 0,
+                    "salt": 0,
+                    "note": ""
+                  }
+                ]
+              }
+            ]
+          },
+          "originalText": "testo"
+        }
+      }
+    ]
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Cosa hai mangiato?",
+        "una fetta di torta di mele e una birra"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Stima",
+        "exact": true
+      }
+    },
+    {
+      "wait": 600
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "id": "oggi-attivita",
-  "descrizione": "Attività del giorno: passi e bici (km e kcal calcolate) con la fonte 'manuale'.",
+  "descrizione": "Attività del giorno: passi da Salute (non toccabili) e bici con il totale (20,4 km) e il dettaglio '12,4 km da Salute + 8 km a mano'; si tocca solo la parte a mano.",
   "oggi": "2026-01-05",
   "percorso": "/",
   "dati": {
@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m55",
+        "id": "m62",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Pasta al ragù",
@@ -28,10 +28,12 @@
       {
         "date": "2026-01-05",
         "steps": 9000,
-        "stepsSource": "manuale",
-        "bikeKm": 30,
+        "stepsSource": "salute",
+        "bikeKm": 12.4,
         "bikeKcalHealth": null,
-        "bikeSource": "manuale"
+        "bikeSource": "salute",
+        "bikeKmManual": 8,
+        "bikeKcalManual": null
       }
     ],
     "weighIns": []

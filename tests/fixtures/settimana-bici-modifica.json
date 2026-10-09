@@ -1,0 +1,135 @@
+{
+  "id": "settimana-bici-modifica",
+  "descrizione": "Pannello Bici: toccando la parte a mano di lunedì si apre il modulo con i campi precompilati.",
+  "oggi": "2026-01-08",
+  "percorso": "/settimana",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 92.5,
+      "targetWeightKg": 82
+    },
+    "meals": [
+      {
+        "id": "m313",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 700,
+        "protein": 20,
+        "carbs": 100,
+        "fat": 12,
+        "fiber": 5,
+        "salt": 1.5,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m314",
+        "date": "2026-01-06",
+        "slot": "cena",
+        "name": "Pizza margherita",
+        "kcal": 1100,
+        "protein": 40,
+        "carbs": 140,
+        "fat": 35,
+        "fiber": 6,
+        "salt": 3,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m315",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Risotto ai funghi",
+        "kcal": 650,
+        "protein": 15,
+        "carbs": 95,
+        "fat": 18,
+        "fiber": 4,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m316",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Tiramisù",
+        "kcal": 450,
+        "protein": 8,
+        "carbs": 50,
+        "fat": 22,
+        "fiber": 1,
+        "salt": 0.4,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [
+      {
+        "date": "2026-01-05",
+        "steps": 8123,
+        "stepsSource": "salute",
+        "bikeKm": 12.4,
+        "bikeKcalHealth": null,
+        "bikeSource": "salute",
+        "bikeKmManual": 8,
+        "bikeKcalManual": null
+      },
+      {
+        "date": "2026-01-06",
+        "steps": 5400,
+        "stepsSource": "manuale",
+        "bikeKm": null,
+        "bikeKcalHealth": null,
+        "bikeSource": null,
+        "bikeKmManual": 20,
+        "bikeKcalManual": null
+      },
+      {
+        "date": "2026-01-07",
+        "steps": 9450,
+        "stepsSource": "salute",
+        "bikeKm": 5.2,
+        "bikeKcalHealth": null,
+        "bikeSource": "salute",
+        "bikeKmManual": null,
+        "bikeKcalManual": null
+      }
+    ],
+    "weighIns": [
+      {
+        "date": "2026-01-02",
+        "weightKg": 92
+      },
+      {
+        "date": "2026-01-06",
+        "weightKg": 91.8
+      },
+      {
+        "date": "2026-01-08",
+        "weightKg": 91.4
+      }
+    ]
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Bici",
+        "exact": false
+      }
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Modifica la bici a mano di Lunedì 5 gennaio",
+        "exact": true
+      }
+    }
+  ]
+}

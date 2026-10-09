@@ -33,7 +33,7 @@ try {
     await new Promise((r) => setTimeout(r, 300));
   }
   const browser = await chromium.launch({ executablePath: process.env.PW_CHROMIUM ?? (existsSync("/opt/pw-browsers/chromium") ? "/opt/pw-browsers/chromium" : undefined) });
-  const newPage = async () => {
+  const newPage = async (pageData = data) => {
     const context = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, locale: "it-IT", timezoneId: "Europe/Rome" });
     await context.addInitScript((fixed) => {
       const R = Date;
@@ -47,7 +47,7 @@ try {
         }
       };
     }, new Date("2026-01-08T09:00:00+01:00").getTime());
-    await context.addInitScript(([k, v]) => localStorage.setItem(k, v), ["personal-health:v1", JSON.stringify(data)]);
+    await context.addInitScript(([k, v]) => localStorage.setItem(k, v), ["personal-health:v1", JSON.stringify(pageData)]);
     const page = await context.newPage();
     await page.goto(BASE + "/", { waitUntil: "networkidle" });
     return page;
@@ -136,6 +136,50 @@ try {
   await page.waitForTimeout(500);
   check("«Preferiti» salva il piatto e lo dice", await page.getByText("Salvato nei preferiti.").isVisible());
   check("e la riga si richiude", (await open(page)) === 0);
+  await page.context().close();
+
+  // 10. Preferiti (T5b.5): stesso gesto e stesso cestino dei piatti; niente «Modifica»; il + e il tocco aggiungono ancora.
+  const favFixture = JSON.parse(readFileSync(path.join(root, "tests/fixtures/preferiti-lista.json"), "utf8"));
+  const favData = { ...favFixture.dati, settings: { ...favFixture.dati.settings, onboardingDone: true } };
+  const favPage = async () => {
+    const p = await newPage(favData);
+    await p.getByRole("button", { name: "Aggiungi", exact: true }).click();
+    await p.getByText("Preferiti", { exact: true }).filter({ visible: true }).first().click();
+    await p.waitForTimeout(400);
+    return p;
+  };
+  page = await favPage();
+  check("nei preferiti non c'è più il pulsante «Modifica»", (await page.getByRole("button", { name: "Modifica", exact: true }).count()) === 0);
+  await touch(page, "Mela", -140);
+  check("scorrendo un piatto preferito si apre la riga", await rowOpen(page, "Mela"));
+  await touch(page, "Cena leggera", -140);
+  check("una sola riga aperta alla volta (anche tra pasto e piatto)", (await open(page)) === 1 && (await rowOpen(page, "Cena leggera")));
+  await page.context().close();
+
+  page = await favPage();
+  await touch(page, "Mela", -140);
+  await page.getByRole("button", { name: "Elimina Mela dai preferiti", exact: true }).click();
+  await page.waitForTimeout(500);
+  check("il cestino elimina il piatto preferito subito, senza conferma", (await page.getByText("Mela", { exact: true }).count()) === 0 && (await page.getByText("Spaghetti al pesto", { exact: true }).count()) === 1);
+  await page.context().close();
+
+  page = await favPage();
+  await touch(page, "Cena leggera", -140);
+  await page.getByRole("button", { name: "Elimina Cena leggera dai preferiti", exact: true }).click();
+  await page.waitForTimeout(500);
+  check("il cestino elimina il pasto preferito subito; i piatti restano", (await page.getByText("Cena leggera", { exact: true }).count()) === 0 && (await page.getByText("Mela", { exact: true }).count()) === 1);
+  await page.context().close();
+
+  page = await favPage();
+  await page.getByRole("button", { name: "Aggiungi Mela", exact: true }).click();
+  await page.waitForTimeout(700);
+  check("il tocco sulla riga aggiunge ancora il piatto al giorno", !(await dialog(page)) && (await page.getByText("Mela", { exact: true }).count()) >= 1);
+  await page.context().close();
+
+  page = await favPage();
+  const before2 = await page.evaluate(() => window.scrollY);
+  await touch(page, "Mela", 10, -200);
+  check("lo scorrimento verticale nei preferiti non apre righe", (await open(page)) === 0, String(before2));
   await page.context().close();
 
   await browser.close();

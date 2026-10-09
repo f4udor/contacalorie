@@ -1,6 +1,6 @@
 {
   "id": "preferiti-lista",
-  "descrizione": "Preferiti salvati: pasti (con numero di piatti e kcal totali) e piatti, ogni riga con un + a destra; campo di ricerca con il pulsante Modifica; scelta della fascia.",
+  "descrizione": "Preferiti salvati: pasti (con numero di piatti e kcal totali) e piatti, ogni riga con un + a destra; campo di ricerca (senza il pulsante Modifica); scelta della fascia.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {

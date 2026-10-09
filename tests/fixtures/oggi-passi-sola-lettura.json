@@ -1,0 +1,51 @@
+{
+  "id": "oggi-passi-sola-lettura",
+  "descrizione": "Toccando la riga dei passi non si apre nessun pannello.",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m62",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pasta al ragù",
+        "kcal": 800,
+        "protein": 35,
+        "carbs": 100,
+        "fat": 25,
+        "fiber": 6,
+        "salt": 2.2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [
+      {
+        "date": "2026-01-05",
+        "steps": 9000,
+        "stepsSource": "salute",
+        "bikeKm": 12.4,
+        "bikeKcalHealth": null,
+        "bikeSource": "salute",
+        "bikeKmManual": 8,
+        "bikeKcalManual": null
+      }
+    ],
+    "weighIns": []
+  },
+  "scorre": true,
+  "passi": [
+    {
+      "click": "Passi",
+      "exact": true
+    },
+    {
+      "wait": 400
+    }
+  ]
+}

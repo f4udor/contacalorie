@@ -1,6 +1,6 @@
 {
   "id": "settimana-bici-scorrimento",
-  "descrizione": "Pannello Bici: scorrendo il valore a mano di martedì compare il cestino; le righe da Salute non scorrono.",
+  "descrizione": "Pannello Bici: scorrendo la parte a mano di martedì compare il cestino; la parte di Salute non si elimina.",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {
@@ -11,7 +11,7 @@
     },
     "meals": [
       {
-        "id": "m263",
+        "id": "m313",
         "date": "2026-01-05",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -25,7 +25,7 @@
         "originalText": null
       },
       {
-        "id": "m264",
+        "id": "m314",
         "date": "2026-01-06",
         "slot": "cena",
         "name": "Pizza margherita",
@@ -39,7 +39,7 @@
         "originalText": null
       },
       {
-        "id": "m265",
+        "id": "m315",
         "date": "2026-01-07",
         "slot": "pranzo",
         "name": "Risotto ai funghi",
@@ -53,7 +53,7 @@
         "originalText": null
       },
       {
-        "id": "m266",
+        "id": "m316",
         "date": "2026-01-07",
         "slot": "pranzo",
         "name": "Tiramisù",
@@ -74,23 +74,29 @@
         "stepsSource": "salute",
         "bikeKm": 12.4,
         "bikeKcalHealth": null,
-        "bikeSource": "salute"
+        "bikeSource": "salute",
+        "bikeKmManual": 8,
+        "bikeKcalManual": null
       },
       {
         "date": "2026-01-06",
         "steps": 5400,
         "stepsSource": "manuale",
-        "bikeKm": 20,
+        "bikeKm": null,
         "bikeKcalHealth": null,
-        "bikeSource": "manuale"
+        "bikeSource": null,
+        "bikeKmManual": 20,
+        "bikeKcalManual": null
       },
       {
         "date": "2026-01-07",
         "steps": 9450,
         "stepsSource": "salute",
-        "bikeKm": null,
+        "bikeKm": 5.2,
         "bikeKcalHealth": null,
-        "bikeSource": null
+        "bikeSource": "salute",
+        "bikeKmManual": null,
+        "bikeKcalManual": null
       }
     ],
     "weighIns": [

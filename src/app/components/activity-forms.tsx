@@ -1,32 +1,25 @@
 "use client";
 
 import { useState } from "react";
-import { activityToForm, validateActivityForm, validateWeight } from "../lib/activity-form";
-import type { ActivityFormErrors, ActivityFormValues, ParsedActivity } from "../lib/activity-form";
+import { bikeToForm, validateBikeForm, validateWeight } from "../lib/activity-form";
+import type { BikeFormErrors, BikeFormValues, ParsedBike } from "../lib/activity-form";
 import { formatNumber } from "../lib/format";
 import type { ActivityRecord } from "@/data";
 import { TextField } from "./field";
 
 const primary = "min-h-12 rounded-xl bg-accent px-4 text-[17px] font-semibold text-white disabled:opacity-50";
 
-/** Modulo "Attività a mano": passi, km in bici e kcal della bici (facoltative). */
-export function ActivityForm({ existing, kcalPerKm, onSubmit }: { existing: ActivityRecord | null; kcalPerKm: number; onSubmit: (a: ParsedActivity) => Promise<void> | void }) {
-  const [values, setValues] = useState<ActivityFormValues>(() => activityToForm(existing));
-  const [errors, setErrors] = useState<ActivityFormErrors>({});
+/** Modulo "Bici a mano": la parte inserita a mano, che si somma ai km di Salute. Km e kcal: almeno uno. */
+export function BikeForm({ existing, kcalPerKm, onSubmit, onDelete }: { existing: ActivityRecord | null; kcalPerKm: number; onSubmit: (bike: ParsedBike) => Promise<void> | void; onDelete?: () => Promise<void> | void }) {
+  const [values, setValues] = useState<BikeFormValues>(() => bikeToForm(existing));
+  const [errors, setErrors] = useState<BikeFormErrors>({});
   const [saving, setSaving] = useState(false);
-  const set = (key: keyof ActivityFormValues) => (v: string) => setValues((x) => ({ ...x, [key]: v }));
+  const set = (key: keyof BikeFormValues) => (v: string) => setValues((x) => ({ ...x, [key]: v }));
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const r = validateActivityForm(values);
-    if (!r.ok) {
-      setErrors(r.errors);
-      return;
-    }
-    setErrors({});
+  const guarded = async (fn: () => Promise<void> | void) => {
     setSaving(true);
     try {
-      await onSubmit(r.activity);
+      await fn();
     } catch {
       // Salvataggio non riuscito: l'avviso in cima lo spiega e il modulo resta com'è, per riprovare.
     } finally {
@@ -34,13 +27,23 @@ export function ActivityForm({ existing, kcalPerKm, onSubmit }: { existing: Acti
     }
   };
 
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const r = validateBikeForm(values);
+    if (!r.ok) {
+      setErrors(r.errors);
+      return;
+    }
+    setErrors({});
+    await guarded(() => onSubmit(r.bike));
+  };
+
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-4">
-      <TextField id="act-steps" label="Passi" value={values.steps} onChange={set("steps")} error={errors.steps} inputMode="numeric" />
-      <TextField id="act-km" label="Km in bici" value={values.km} onChange={set("km")} error={errors.km} />
+      <TextField id="bike-km" label="Km in bici" value={values.km} onChange={set("km")} error={errors.km} hint="Si sommano ai km arrivati da Salute." />
       <TextField
-        id="act-kcal"
-        label="Kcal bici (facoltative)"
+        id="bike-kcal"
+        label="Kcal (facoltative)"
         value={values.kcal}
         onChange={set("kcal")}
         error={errors.kcal}
@@ -48,8 +51,13 @@ export function ActivityForm({ existing, kcalPerKm, onSubmit }: { existing: Acti
         hint={`Se le lasci vuote si calcolano dai km (${formatNumber(kcalPerKm)} kcal per km).`}
       />
       <button type="submit" disabled={saving} className={primary}>
-        Salva attività
+        Salva bici
       </button>
+      {onDelete && (
+        <button type="button" disabled={saving} onClick={() => void guarded(onDelete)} className="min-h-12 rounded-xl bg-bg px-4 text-[17px] font-semibold text-bad disabled:opacity-50">
+          Elimina la bici a mano
+        </button>
+      )}
     </form>
   );
 }

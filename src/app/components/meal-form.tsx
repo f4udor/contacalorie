@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useAuth } from "../auth-provider";
 import { estimateDish } from "../lib/ai-client";
-import { formatNumber } from "../lib/format";
 import { useAiAvailable } from "../lib/use-ai";
+import { FreeMealSwitch } from "./free-meal-switch";
 import type { MealSlot } from "@/engine";
-import { SLOTS, validateMealForm } from "../lib/meal-form";
+import { KCAL_CHECK_MESSAGE, SLOTS, textNeedsKcalCheck, validateMealForm } from "../lib/meal-form";
 import type { MealFieldKey, MealFormErrors, MealFormValues, ParsedMeal } from "../lib/meal-form";
 
 interface MealFormProps {
@@ -119,7 +119,7 @@ export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = 
 
       <div className="flex flex-col gap-1.5">
         <label htmlFor="meal-quantity" className="text-sm font-semibold text-muted">Quantità (facoltativa)</label>
-        <input id="meal-quantity" type="text" autoComplete="off" value={values.quantity} onChange={(e) => set("quantity", e.target.value)} className={input} />
+        <textarea id="meal-quantity" autoComplete="off" rows={Math.min(8, Math.max(1, Math.ceil(values.quantity.length / 30)))} value={values.quantity} onChange={(e) => set("quantity", e.target.value.replace(/\n/g, " "))} className={`${input} field-sizing-content resize-none py-2.5`} />
       </div>
 
       {!lockedSlot && (
@@ -163,6 +163,12 @@ export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = 
           <span className="font-semibold">Stimato con l&apos;AI: controlla i numeri.</span> {aiNote}
         </p>
       )}
+      {aiNote !== null && textNeedsKcalCheck(values) && (
+        <p role="status" className="rounded-xl bg-bg px-3 py-2.5 text-[15px] font-semibold text-warn">
+          <span aria-hidden="true">⚠ </span>
+          {KCAL_CHECK_MESSAGE}
+        </p>
+      )}
 
       <div className="grid grid-cols-2 gap-x-3 gap-y-4">
         {NUMERIC.map(({ key, label, required }) => (
@@ -191,31 +197,14 @@ export function MealForm({ initial, freeAllowedFor, mealIsFreeFor, lockedSlot = 
         ))}
       </div>
 
-      <div className="rounded-xl bg-bg px-3 py-2">
-        <div className="flex min-h-11 items-center justify-between gap-3">
-          <span id="free-label" className="text-[17px] font-semibold">Pasto libero</span>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={values.isFree}
-            aria-labelledby="free-label"
-            aria-describedby="free-help"
-            disabled={switchDisabled}
-            onClick={() => set("isFree", !values.isFree)}
-            className="relative h-11 w-16 shrink-0 disabled:opacity-40"
-          >
-            <span className={`absolute inset-x-1 top-1.5 h-8 rounded-full transition-colors ${values.isFree ? "bg-accent" : "bg-track"}`}>
-              <span className={`absolute top-0.5 h-7 w-7 rounded-full bg-white shadow transition-all ${values.isFree ? "left-[1.625rem]" : "left-0.5"}`} />
-            </span>
-          </button>
-        </div>
-        <p id="free-help" className="pb-1 text-sm text-muted">
-          {switchDisabled
-            ? "Hai già usato il pasto libero in questa settimana: ce n'è uno solo."
-            : `Vale per l'intero pasto (${slotName}): in totale conta al massimo ${formatNumber(freeMealCap)} kcal nel budget del giorno. Uno a settimana.`}
-        </p>
-        {errors.isFree && <p className="pb-1 text-sm font-medium text-bad">{errors.isFree}</p>}
-      </div>
+      <FreeMealSwitch
+        checked={values.isFree}
+        blockedText={switchDisabled ? "Hai già usato il pasto libero in questa settimana: ce n'è uno solo." : null}
+        slotName={slotName}
+        freeMealCap={freeMealCap}
+        error={errors.isFree}
+        onChange={(v) => set("isFree", v)}
+      />
 
       <button type="submit" disabled={saving} className="min-h-12 rounded-xl bg-accent px-4 text-[17px] font-semibold text-white disabled:opacity-50">
         {submitLabel}

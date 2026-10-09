@@ -25,7 +25,17 @@ export interface DishDraft {
 export interface MealDraft {
   key: string;
   slot: MealSlot;
+  /** Pasto libero (l'interruttore della conferma). */
+  isFree: boolean;
   dishes: DishDraft[];
+}
+
+/** Ciò che serve per decidere sul pasto libero: sono le stesse regole dell'inserimento a mano. */
+export interface FreeRules {
+  /** Il pasto di quella fascia può essere libero (falso se la settimana ha già un altro pasto libero). */
+  freeAllowedFor: (slot: MealSlot) => boolean;
+  /** Il pasto di quella fascia, nel giorno, è già libero. */
+  mealIsFreeFor: (slot: MealSlot) => boolean;
 }
 
 const asText = (n: number) => String(n).replace(".", ",");
@@ -34,6 +44,7 @@ export function proposalToDrafts(p: MealProposal): MealDraft[] {
   return p.meals.map((m, i) => ({
     key: `m${i}`,
     slot: m.slot,
+    isFree: m.freeMeal === true,
     dishes: m.dishes.map((d, j) => ({
       key: `m${i}d${j}`,
       name: d.name,
@@ -48,6 +59,36 @@ export function proposalToDrafts(p: MealProposal): MealDraft[] {
       salt: asText(d.salt),
     })),
   }));
+}
+
+/**
+ * Stato iniziale dell'interruttore "Pasto libero" di ogni pasto proposto: acceso se il pasto di quella fascia è già libero,
+ * oppure se il modello lo ha segnalato (`useModelFlag`), la settimana lo consente e nella proposta non ce n'è già un altro acceso.
+ * Con la fascia fissata il segnale del modello non conta: l'interruttore segue lo stato del pasto esistente.
+ */
+export function withInitialFree(drafts: readonly MealDraft[], rules: FreeRules, useModelFlag: boolean): MealDraft[] {
+  let taken = false;
+  return drafts.map((m) => {
+    const existing = rules.mealIsFreeFor(m.slot);
+    const fromModel = useModelFlag && m.isFree && !taken && rules.freeAllowedFor(m.slot);
+    const isFree = existing || fromModel;
+    if (isFree) taken = true;
+    return { ...m, isFree };
+  });
+}
+
+/** Perché l'interruttore di un pasto è bloccato (null se si può usare). Un pasto già acceso si può sempre spegnere. */
+export function freeSwitchBlock(drafts: readonly MealDraft[], key: string, rules: FreeRules): "settimana" | "proposta" | null {
+  const meal = drafts.find((m) => m.key === key);
+  if (!meal || meal.isFree) return null;
+  if (!rules.freeAllowedFor(meal.slot)) return "settimana";
+  if (drafts.some((m) => m.key !== key && m.isFree)) return "proposta";
+  return null;
+}
+
+/** Se si cambia la fascia di un pasto proposto, l'interruttore ne segue lo stato (come nell'inserimento a mano). */
+export function withSlot(drafts: readonly MealDraft[], key: string, slot: MealSlot, rules: FreeRules): MealDraft[] {
+  return drafts.map((m) => (m.key === key ? { ...m, slot, isFree: rules.mealIsFreeFor(slot) } : m));
 }
 
 export type DraftErrors = Record<string, Partial<Record<DishNumberKey, string>>>;
@@ -74,7 +115,7 @@ export function draftsToProposal(drafts: readonly MealDraft[]): { ok: true; prop
       }
       dishes.push({ name: d.name.trim() || "Piatto", quantity: d.quantity.trim() || null, quantityAssumed: d.quantityAssumed && d.quantity.trim() !== "", note: d.note, ...nums });
     }
-    if (dishes.length > 0) meals.push({ slot: m.slot, dishes });
+    if (dishes.length > 0) meals.push({ slot: m.slot, freeMeal: m.isFree, dishes });
   }
   return Object.keys(errors).length > 0 ? { ok: false, errors } : { ok: true, proposal: { meals } };
 }
@@ -94,7 +135,7 @@ export function proposalToRecords(proposal: MealProposal, date: DateKey, origina
       fat: d.fat,
       fiber: d.fiber,
       salt: d.salt,
-      isFree: false,
+      isFree: m.freeMeal === true,
       originalText,
     })),
   );
@@ -117,5 +158,5 @@ export function sumProposal(proposal: MealProposal): Record<DishNumberKey, numbe
 /** Con la fascia fissata (si è partiti da "Aggiungi piatto" di un pasto) tutti i piatti proposti vanno in quella fascia, anche se il modello ne ha indicata un'altra. */
 export function forceSlot(proposal: MealProposal, slot: MealSlot): MealProposal {
   const dishes = proposal.meals.flatMap((m) => m.dishes);
-  return dishes.length === 0 ? proposal : { meals: [{ slot, dishes }] };
+  return dishes.length === 0 ? proposal : { meals: [{ slot, freeMeal: false, dishes }] };
 }

@@ -14,7 +14,7 @@ Questa guida serve a far arrivare **passi e km in bici** dall'app Salute dell'iP
 **Cosa succede ai dati.**
 - Ogni invio manda i passi e i km in bici di **oggi e di ieri**. L'app tiene solo quelle due date: le altre le scarta.
 - Ripetere l'invio non crea doppioni: l'ultimo valore sostituisce il precedente.
-- Un valore che hai scritto **a mano** nell'app non viene mai sovrascritto.
+- I **passi** arrivano solo da Salute e si possono sostituire a ogni invio. Per la **bici**, l'invio scrive solo la parte di Salute: i km che aggiungi a mano nell'app («Bici a mano») si sommano e non vengono mai toccati.
 - Un valore mancante o a zero non scrive e non cancella nulla.
 - Per la bici arrivano solo i **km**: le kcal le calcola l'app (km × kcal per km, in Impostazioni).
 
@@ -93,7 +93,7 @@ Il testo dei due campi può avere formati diversi senza problemi: l'app accetta 
 
 Come si legge:
 - **salvate**: le righe scritte nell'app, con data e valori;
-- **lasciate_manuali**: valori che hai inserito tu a mano nell'app e che l'invio non ha toccato (è voluto);
+- **lasciate_manuali**: oggi sempre vuota (resta per compatibilità): la parte di bici inserita a mano non viene toccata dall'invio, ma non serve elencarla;
 - **scartate**: righe che l'app non ha usato, ciascuna con il motivo (per esempio «data fuori da oggi e ieri» o «valore zero»).
 
 Se invece vedi:
@@ -141,7 +141,7 @@ Se **un'altra app** (per esempio Strava o l'app del ciclocomputer) scrive in Sal
 
 - **Niente arriva mai**: rifai la prova a mano (passo 4) e leggi la risposta. Se la risposta è corretta ma le automazioni non scrivono, controlla che siano attive e che il telefono sia sbloccato negli orari.
 - **I passi sono diversi da Salute**: Salute può mostrare la somma di più sorgenti (iPhone e Watch), l'app prende il valore del giorno che il comando le manda: controlla il tipo **Passi** e **Raggruppa per Giorno**.
-- **Un valore è sbagliato**: in **Oggi** tocca la scheda **Attività** e correggilo. Da quel momento il valore risulta «manuale» e gli invii da Salute non lo sovrascrivono più.
+- **Un valore è sbagliato**: passi e km da Salute non si correggono nell'app (si correggono in Salute e l'invio successivo li sostituisce). Per un'uscita in bici non registrata sul telefono usa **+** → **Bici a mano**: i km si sommano a quelli di Salute.
 
 ## Come tornare indietro
 

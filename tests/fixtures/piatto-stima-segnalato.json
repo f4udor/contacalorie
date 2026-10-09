@@ -1,0 +1,79 @@
+{
+  "id": "piatto-stima-segnalato",
+  "descrizione": "Piatto a mano stimato con l'AI con kcal troppo basse rispetto ai nutrienti: sotto la nota compare l'avviso di controllo.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": [
+      {
+        "stato": 200,
+        "corpo": {
+          "proposal": {
+            "meals": [
+              {
+                "slot": "spuntino",
+                "dishes": [
+                  {
+                    "name": "Torta di mele",
+                    "quantity": "1 fetta, 120 g",
+                    "quantityAssumed": false,
+                    "kcal": 110,
+                    "protein": 13,
+                    "carbs": 72,
+                    "fat": 6,
+                    "fiber": 3,
+                    "salt": 0.3,
+                    "note": "Fetta media di torta."
+                  }
+                ]
+              }
+            ]
+          },
+          "originalText": "testo"
+        }
+      }
+    ]
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "clickRole": {
+        "role": "radio",
+        "name": "Manuale"
+      }
+    },
+    {
+      "fill": [
+        "Nome del piatto",
+        "Torta di mele"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Stima con AI",
+        "exact": true
+      }
+    },
+    {
+      "wait": 600
+    }
+  ]
+}

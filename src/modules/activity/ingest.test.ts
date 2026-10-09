@@ -101,13 +101,20 @@ describe("righe da tenere o scartare", () => {
 });
 
 describe("scrittura", () => {
-  it("un valore inserito a mano non viene sovrascritto", async () => {
+  it("i passi da Salute sostituiscono anche un vecchio valore a mano, senza elencarlo tra le righe lasciate", async () => {
     const { call, gate } = setup();
     gate.activity.set(`u1|${TODAY}`, { steps: 5000, stepsSource: "manuale", km: null, kmSource: null });
     const out = await call("Bearer codice-uno", { passi: `${TODAY};9000`, bici_km: `${TODAY};10` });
-    expect(out.body.lasciate_manuali).toEqual([{ data: TODAY, campo: "passi", motivo: "Valore inserito a mano: non viene sovrascritto." }]);
-    expect(out.body.salvate).toEqual([{ data: TODAY, bici_km: 10 }]);
-    expect(gate.activity.get(`u1|${TODAY}`)).toMatchObject({ steps: 5000, stepsSource: "manuale", km: 10, kmSource: "salute" });
+    expect(out.body.lasciate_manuali).toEqual([]);
+    expect(out.body.salvate).toEqual([{ data: TODAY, passi: 9000, bici_km: 10 }]);
+    expect(gate.activity.get(`u1|${TODAY}`)).toMatchObject({ steps: 9000, stepsSource: "salute", km: 10, kmSource: "salute" });
+  });
+  it("la parte a mano della bici non viene mai toccata dall'invio", async () => {
+    const { call, gate } = setup();
+    gate.activity.set(`u1|${TODAY}`, { steps: null, stepsSource: null, km: 4, kmSource: "salute", kmManual: 8 });
+    const out = await call("Bearer codice-uno", { bici_km: `${TODAY};12.4` });
+    expect(out.body.salvate).toEqual([{ data: TODAY, bici_km: 12.4 }]);
+    expect(gate.activity.get(`u1|${TODAY}`)).toMatchObject({ km: 12.4, kmSource: "salute", kmManual: 8 });
   });
   it("invio ripetuto senza doppioni; il secondo invio aggiorna il valore", async () => {
     const { call, gate } = setup();

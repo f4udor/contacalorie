@@ -1,0 +1,31 @@
+{
+  "id": "oggi-anello-rosso",
+  "descrizione": "Anello rosso: 2.350 kcal su 2.100 (oltre +200).",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m58",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2350,
+        "protein": 157,
+        "carbs": 261,
+        "fat": 78,
+        "fiber": 8,
+        "salt": 2,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

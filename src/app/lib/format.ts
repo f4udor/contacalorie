@@ -25,6 +25,14 @@ export function formatSigned(n: number, decimals = 0): string {
   return n < 0 ? `−${text}` : `+${text}`;
 }
 
+/** Variazione di peso in kg: sempre il segno e un decimale, col meno tipografico ("−0,4", "+0,3"). Una differenza che arrotondata vale 0,0 si scrive "0,0". */
+export function formatWeightDelta(kg: number): string {
+  // Sempre un decimale (anche "12,0"), con il punto delle migliaia.
+  const text = new Intl.NumberFormat("it-IT", { useGrouping: "always", minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(Math.abs(kg));
+  if (Number(text.replace(/\./g, "").replace(",", ".")) === 0) return "0,0";
+  return kg < 0 ? `−${text}` : `+${text}`;
+}
+
 function utcDate(date: DateKey): Date {
   const [y, m, d] = date.split("-").map(Number);
   return new Date(Date.UTC(y, m - 1, d));

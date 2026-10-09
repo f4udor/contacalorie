@@ -1,0 +1,96 @@
+{
+  "id": "ai-libero-conferma",
+  "descrizione": "Dopo Conferma con l'interruttore acceso: il pasto di oggi è etichettato 'libero' e conta al massimo il tetto.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": [
+      {
+        "stato": 200,
+        "corpo": {
+          "proposal": {
+            "meals": [
+              {
+                "slot": "cena",
+                "freeMeal": true,
+                "dishes": [
+                  {
+                    "name": "Pizza margherita",
+                    "quantity": "1 pizza, 350 g",
+                    "quantityAssumed": false,
+                    "kcal": 850,
+                    "protein": 32,
+                    "carbs": 110,
+                    "fat": 28,
+                    "fiber": 5,
+                    "salt": 3.4,
+                    "note": ""
+                  },
+                  {
+                    "name": "Birra",
+                    "quantity": "1 bottiglia, 330 ml",
+                    "quantityAssumed": false,
+                    "kcal": 140,
+                    "protein": 1,
+                    "carbs": 12,
+                    "fat": 0,
+                    "fiber": 0,
+                    "salt": 0,
+                    "note": ""
+                  }
+                ]
+              }
+            ]
+          },
+          "originalText": "testo"
+        }
+      }
+    ]
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "fill": [
+        "Cosa hai mangiato?",
+        "pasto libero: pizza margherita e una birra"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Stima",
+        "exact": true
+      }
+    },
+    {
+      "wait": 600
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Conferma",
+        "exact": true
+      }
+    },
+    {
+      "wait": 700
+    }
+  ]
+}
