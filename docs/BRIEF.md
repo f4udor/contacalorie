@@ -262,7 +262,8 @@ Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate,
 | 5b | Ritocchi dopo la prova sul telefono: attività in sola lettura e bici a mano, colori dell'anello, pasto libero e ricetta nella proposta AI, regola del crudo, controllo di coerenza, preferiti eliminabili scorrendo, media nella Settimana, segno della variazione di peso |
 | 5c | Scheda del piatto unica per aggiunta e modifica, preferiti senza doppioni, colore della linea della media, obiettivi calcolati dal profilo, Impostazioni a sezioni |
 | 6 | Testi e grafica: tema solo scuro, stile di §10, nuova navigazione |
-| 6b | Grafici |
+| 6b | Ritocchi dopo la prova sul telefono: pannelli ad altezza stabile, comandi che non si spostano, difetti grafici della fase 6, screenshot mancanti |
+| da decidere | Grafici |
 | 7 | Promemoria (opzionale) |
 
 ## 9. Fuori dalla prima versione
@@ -315,6 +316,10 @@ Pochi componenti condivisi, usati ovunque:
 - **Intestazione dei pannelli**: X in un cerchio a sinistra, titolo al centro, azione principale a destra (per esempio "Salva", piena). Sempre visibile.
 - **Selettore a segmenti** (AI | Manuale): capsula con la voce attiva più chiara.
 - **Numero con unità**: il componente unico per tutti i numeri in evidenza.
+- **Comandi fermi**: un comando non cambia posto quando cambia il contenuto. Vale per frecce, ritorno al presente, X, selettori e tasti pieni, passando da un giorno o da una settimana all'altra e tra stato pieno e vuoto.
+  - Un pannello con le frecce delle settimane ha altezza fissa, uguale per ogni settimana: la stessa con sette giorni di dati e con nessuno. Se l'elenco non ci sta, scorre dentro il pannello; intestazione e frecce restano ferme.
+  - Numero grande e grafico occupano sempre lo stesso spazio: senza dati, trattino al posto del numero e griglia vuota al posto delle barre, alte quanto quelle piene.
+  - Nelle schede di Oggi e Settimana uno stato vuoto è alto quanto quello pieno.
 
 ### 10.4 Navigazione
 - **Barra in basso**: capsula sospesa in vetro, tre voci con icona e nome (Oggi, Settimana, Grafici). La voce attiva sta in una pillola più scura, nel colore Comando.
