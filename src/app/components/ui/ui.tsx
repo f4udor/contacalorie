@@ -233,3 +233,121 @@ export function Num({ value, unit, size = "md", tone = "testo", className = "" }
     </span>
   );
 }
+
+/** Nota breve sotto un elenco o un campo: piccola, nel colore secondario. */
+export function Caption({ children, id, tone = "testo-secondario" }: { children: ReactNode; id?: string; tone?: Extract<Role, "testo-secondario" | "fuori" | "attenzione"> }) {
+  return (
+    <p id={id} className={`px-4 text-[13px] ${ROLE_TEXT[tone]}`}>
+      {children}
+    </p>
+  );
+}
+
+const ROW_INPUT = "min-h-11 min-w-0 flex-1 bg-transparent text-right text-[17px] outline-none placeholder:text-testo-secondario";
+
+/**
+ * Riga di un campo dentro un elenco raggruppato: il nome a sinistra, il valore a destra (con l'unità accanto). Un errore sta sotto la riga.
+ * `children` è il campo (`RowInput`, `RowTextarea`, `DateInput`…).
+ */
+export function FieldRow({ label, htmlFor, unit, error, children }: { label: string; htmlFor: string; unit?: string; error?: string; children: ReactNode }) {
+  return (
+    <li className="px-4 py-1.5">
+      <div className="flex min-h-11 items-center gap-3">
+        <label htmlFor={htmlFor} className="shrink-0 text-[17px]">
+          {label}
+        </label>
+        {children}
+        {unit && <span className="shrink-0 text-[17px] text-testo-secondario">{unit}</span>}
+      </div>
+      {error && (
+        <p id={`${htmlFor}-err`} role="alert" className="pb-1 text-right text-[13px] font-medium text-fuori">
+          {error}
+        </p>
+      )}
+    </li>
+  );
+}
+
+interface RowInputProps {
+  id: string;
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  inputMode?: "decimal" | "numeric" | "text";
+  invalid?: boolean;
+}
+
+/** Campo di testo a destra, in una riga (`FieldRow`). */
+export function RowInput({ id, value, onChange, placeholder, inputMode = "text", invalid }: RowInputProps) {
+  return (
+    <input
+      id={id}
+      type="text"
+      inputMode={inputMode}
+      autoComplete="off"
+      value={value}
+      placeholder={placeholder}
+      onChange={(e) => onChange(e.target.value)}
+      aria-invalid={invalid ? true : undefined}
+      aria-describedby={invalid ? `${id}-err` : undefined}
+      className={ROW_INPUT}
+    />
+  );
+}
+
+/** Testo su più righe a destra, in una riga: una quantità lunga va a capo senza coprire il nome del campo. */
+export function RowTextarea({ id, value, onChange, placeholder }: { id: string; value: string; onChange: (value: string) => void; placeholder?: string }) {
+  return (
+    <textarea
+      id={id}
+      autoComplete="off"
+      rows={1}
+      value={value}
+      placeholder={placeholder}
+      onChange={(e) => onChange(e.target.value.replace(/\n/g, " "))}
+      className={`${ROW_INPUT} field-sizing-content max-h-40 resize-none py-[11px] leading-snug`}
+    />
+  );
+}
+
+/** Campo data (calendario di sistema dell'iPhone), a destra, in una riga. Il valore è AAAA-MM-GG. */
+export function DateInput({ id, value, onChange, min, max }: { id: string; value: string; onChange: (value: string) => void; min?: string; max?: string }) {
+  return <input id={id} type="date" value={value} min={min} max={max} onChange={(e) => onChange(e.target.value)} className="min-h-11 min-w-0 flex-1 appearance-none bg-transparent text-right text-[17px] text-testo-secondario outline-none" />;
+}
+
+/** Scelta tra poche voci (il pasto): il valore sta a destra con la freccia, il menu è quello di sistema. */
+export function SelectInput<T extends string>({ id, value, options, onChange }: { id: string; value: T; options: readonly { value: T; label: string }[]; onChange: (v: T) => void }) {
+  return (
+    <span className="relative flex min-h-11 min-w-0 flex-1 items-center justify-end gap-1.5 text-testo-secondario">
+      <select id={id} value={value} onChange={(e) => onChange(e.target.value as T)} className="absolute inset-0 w-full cursor-pointer opacity-0">
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+      <span className="text-[17px]">{options.find((o) => o.value === value)?.label}</span>
+      <IconChevronRight size={16} strokeWidth={2.4} />
+    </span>
+  );
+}
+
+/** Interruttore: acceso nel colore Comando. */
+export function Switch({ checked, onChange, disabled, labelledBy, describedBy }: { checked: boolean; onChange: (v: boolean) => void; disabled?: boolean; labelledBy: string; describedBy?: string }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      aria-labelledby={labelledBy}
+      aria-describedby={describedBy}
+      disabled={disabled}
+      onClick={() => onChange(!checked)}
+      className="relative h-11 w-[58px] shrink-0 disabled:opacity-40"
+    >
+      <span className={`absolute inset-x-0 top-[7px] h-[30px] rounded-full transition-colors ${checked ? "bg-comando" : "bg-cerchio-freccia"}`}>
+        <span className={`absolute top-[3px] size-6 rounded-full bg-testo transition-all ${checked ? "left-[31px]" : "left-[3px]"}`} />
+      </span>
+    </button>
+  );
+}

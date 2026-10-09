@@ -44,10 +44,10 @@
       }
     },
     {
-      "clickRole": {
-        "role": "radio",
-        "name": "Cena"
-      }
+      "select": [
+        "Pasto",
+        "cena"
+      ]
     },
     {
       "scrollTo": "Pasto libero"

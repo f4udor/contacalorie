@@ -6,17 +6,14 @@ import type { DateKey } from "@/engine";
 import type { DataStore } from "@/data";
 import type { WeekData } from "../lib/week-data";
 import { formatKg, formatNumber, formatWeekdayDay, formatWeekdayLower, formatWeekRange, formatWeightDelta } from "../lib/format";
-import { hasManualBike, validateWeight } from "../lib/activity-form";
 import { canGoNextWeek, panelWeekReducer } from "../lib/nav";
 import type { PanelWeekAction } from "../lib/nav";
-import { activityRows, defaultDayInWeek, deleteActivityValue, freeMealOfWeek, markFreeMeal, removeFreeMeal, saveManualBike, weekMeals, weekMealTitle } from "../lib/week-actions";
+import { activityRows, defaultDayInWeek, deleteActivityValue, freeMealOfWeek, markFreeMeal, removeFreeMeal, weekMeals, weekMealTitle } from "../lib/week-actions";
 import type { ActivityKind, ActivityRow, WeekMeal } from "../lib/week-actions";
 import { useWeekData } from "../lib/use-week-data";
 import { weekWeight } from "../lib/week-weight";
-import { BikeForm } from "./activity-forms";
+import { BikeEntry, WeightForm } from "./activity-forms";
 import { AddPanel } from "./add-panel";
-import { TextField } from "./field";
-import { DateField } from "./settings-fields";
 import { Sheet } from "./sheet";
 import { SwipeRow, trashIcon, useOpenRow } from "./swipe-row";
 import { MiniBars } from "./week-chart";
@@ -149,36 +146,33 @@ export function WeightPanel({ store, initialMonday, today, onChanged, onClose }:
   const rows = useOpenRow();
   const [adding, setAdding] = useState(false);
   const [date, setDate] = useState<DateKey>(today);
-  const [value, setValue] = useState("");
-  const [errors, setErrors] = useState<{ date?: string; value?: string }>({});
+  const [errors, setErrors] = useState<{ date?: string }>({});
 
   const all = data ? [...data.weighIns].sort((a, b) => (a.date < b.date ? 1 : -1)) : [];
   const latest = all[0] ?? null;
   const info = data && latest ? weekWeight({ monday: weekStart(latest.date), sunday: addDays(weekStart(latest.date), 6), weighIns: data.weighIns, profileWeightKg: data.userSettings.weightKg, targetWeightKg: data.userSettings.targetWeightKg }) : null;
   const existing = all.find((w) => w.date === date);
 
-  const save = (e: React.FormEvent) => {
-    e.preventDefault();
-    const r = validateWeight(value);
-    const next: { date?: string; value?: string } = {};
-    if (date === "" || date > today) next.date = "Scegli un giorno fino a oggi";
-    if (!r.ok) next.value = r.error;
-    setErrors(next);
-    if (!r.ok || next.date) return;
-    void run(async () => {
-      await store.saveWeighIn({ date, weightKg: r.weightKg });
-      setAdding(false);
-      setValue("");
-    });
-  };
-
   if (adding) {
     return (
       <Sheet open onClose={onClose} title="Pesata" back={() => setAdding(false)} bar={{ formId: "weigh-form" }}>
-        <form id="weigh-form" onSubmit={save} noValidate className="flex flex-col gap-4">
-          <DateField id="weigh-date" label="Giorno" value={date} max={today} onChange={setDate} error={errors.date} />
-          <TextField id="weigh-kg" label="Peso" value={value} onChange={setValue} error={errors.value} hint={existing ? "Sostituisce la pesata di questo giorno." : "Una pesata al giorno."} />
-        </form>
+        <WeightForm
+          key={date}
+          formId="weigh-form"
+          existingKg={existing?.weightKg ?? null}
+          day={{ value: date, onChange: setDate, max: today, error: errors.date }}
+          onSubmit={async (kg) => {
+            if (date === "" || date > today) {
+              setErrors({ date: "Scegli un giorno fino a oggi" });
+              return;
+            }
+            setErrors({});
+            await run(async () => {
+              await store.saveWeighIn({ date, weightKg: kg });
+              setAdding(false);
+            });
+          }}
+        />
       </Sheet>
     );
   }
@@ -236,26 +230,19 @@ export function ActivityWeekPanel({ kind, store, initialMonday, today, onChanged
   const data: WeekData | null = w.data;
 
   if (kind === "bici" && editing && data) {
-    const existing = data.activity.find((a) => a.date === editing) ?? null;
-    const done = () => {
-      setEditing(null);
-      w.changed();
-    };
     return (
       <Sheet open onClose={onClose} title="Uscita in bici" back={() => setEditing(null)} bar={{ formId: "bike-form" }}>
-        <div className="flex flex-col gap-3">
-          <p className="text-[15px] font-semibold">{formatWeekdayDay(editing)}</p>
-          <BikeForm
-            formId="bike-form"
-            existing={existing}
-            kcalPerKm={data.settings.kcalPerKm}
-            onSubmit={async (bike) => {
-              await saveManualBike(store, editing, bike);
-              done();
-            }}
-            onDelete={hasManualBike(existing) ? async () => { await deleteActivityValue(store, editing, "bici"); done(); } : undefined}
-          />
-        </div>
+        <BikeEntry
+          store={store}
+          initialDay={editing}
+          today={today}
+          kcalPerKm={data.settings.kcalPerKm}
+          formId="bike-form"
+          onDone={() => {
+            setEditing(null);
+            w.changed();
+          }}
+        />
       </Sheet>
     );
   }

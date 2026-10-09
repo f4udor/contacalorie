@@ -570,7 +570,7 @@ Vincoli di questa fase:
 - Test: cambio di settimana nel pannello senza effetto sulla schermata; nessuna settimana futura; pasto libero aggiunto dal pannello in settimana corrente e passata.
 - Testi da `docs/TESTI.md`. Screenshot di tutti gli scenari della Settimana, solo scuri.
 
-### T6.4 Pannelli di inserimento · da fare
+### T6.4 Pannelli di inserimento · fatto
 - Scheda del piatto (aggiunta e modifica, AI e Manuale), proposta dell'AI con interruttore del pasto libero, preferiti, pesata, uscita in bici: come in §10.5 e nelle bozze `bozza-1-principali.png` (scheda del piatto) e `bozza-3-dal-tasto-piu.png`.
 - I campi restano comodi da toccare e da leggere con la tastiera aperta; una quantità lunga va a capo senza coprire il valore accanto.
 - **Aggiunta: giorno dell'Uscita in bici.** La riga "Giorno" apre il calendario di sistema dell'iPhone (campo data nativo, lo stesso componente della "Data obiettivo" del profilo): nessun elenco di giorni e nessun calendario disegnato a mano. Si apre sul giorno da cui si arriva (il giorno di Oggi o la riga toccata nel pannello Bici). Nessun giorno futuro. Se il giorno scelto ha già un'uscita a mano, la scheda ne carica i valori e "Salva" la sostituisce: resta una sola uscita a mano per giorno (§5). Test: cambio di giorno, giorno futuro rifiutato, giorno con uscita esistente.

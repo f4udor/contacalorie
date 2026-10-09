@@ -15,7 +15,8 @@
       }
     },
     {
-      "click": "Bici a mano"
+      "click": "Uscita in bici",
+      "exact": true
     }
   ]
 }

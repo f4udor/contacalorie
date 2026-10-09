@@ -171,7 +171,8 @@ try {
         for (const step of sc.passi ?? []) {
           if (step.click) await page.getByText(step.click, { exact: step.exact ?? true }).filter({ visible: true }).first().click();
           else if (step.clickRole) await page.getByRole(step.clickRole.role, { name: step.clickRole.name, exact: step.clickRole.exact }).first().click();
-          else if (step.fill) await page.getByLabel(step.fill[0]).filter({ visible: true }).fill(step.fill[1]);
+          else if (step.fill) await page.getByLabel(step.fill[0], { exact: step.fill[2] ?? false }).and(page.locator("input, textarea, select")).filter({ visible: true }).fill(step.fill[1]);
+          else if (step.select) await page.getByLabel(step.select[0], { exact: true }).filter({ visible: true }).first().selectOption(step.select[1]);
           else if (step.swipe) await touchSwipe(page, page.getByText(step.swipe.text, { exact: true }).first(), step.swipe.dx ?? -140, step.swipe.dy ?? 0);
           else if (step.press) await page.keyboard.press(step.press);
           else if (step.scrollBottom) await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));

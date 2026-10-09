@@ -9,6 +9,8 @@ export interface SwipeAction {
   label: string;
   /** Solo icona (cestino): più stretto. */
   icon?: ReactNode;
+  /** Testo mostrato nel pulsante quando `label` è solo per la lettura vocale (es. «Elimina»). */
+  visibleLabel?: string;
   tone: "accent" | "danger";
   /** Larghezza del pulsante in px, se l'etichetta è più lunga del solito. */
   width?: number;
@@ -102,7 +104,7 @@ export function SwipeRow({ id, openId, setOpen, actions, children, className = "
           <button
             key={a.key}
             type="button"
-            aria-label={a.icon ? a.label : undefined}
+            aria-label={a.icon || a.visibleLabel ? a.label : undefined}
             onClick={() => {
               setOpen(id, false);
               a.onClick();
@@ -110,7 +112,7 @@ export function SwipeRow({ id, openId, setOpen, actions, children, className = "
             className={`flex min-h-11 items-center justify-center px-1 text-center text-[15px] font-semibold leading-tight ${a.tone === "danger" ? "bg-fuori text-testo" : "bg-comando text-testo-su-comando"}`}
             style={{ width: actionWidth(a) }}
           >
-            {a.icon ?? a.label}
+            {a.icon ?? a.visibleLabel ?? a.label}
           </button>
         ))}
       </div>

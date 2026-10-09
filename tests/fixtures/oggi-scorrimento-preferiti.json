@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m417",
+        "id": "m432",
         "date": "2026-01-08",
         "slot": "colazione",
         "name": "Cappuccino e brioche",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m418",
+        "id": "m433",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -38,7 +38,7 @@
         "originalText": null
       },
       {
-        "id": "m419",
+        "id": "m434",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Insalata di pomodorini",
@@ -52,7 +52,7 @@
         "originalText": null
       },
       {
-        "id": "m420",
+        "id": "m435",
         "date": "2026-01-08",
         "slot": "cena",
         "name": "Frittata con zucchine",

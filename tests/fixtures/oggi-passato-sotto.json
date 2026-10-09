@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m405",
+        "id": "m420",
         "date": "2026-01-07",
         "slot": "colazione",
         "name": "Cappuccino e brioche",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m406",
+        "id": "m421",
         "date": "2026-01-07",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -38,7 +38,7 @@
         "originalText": null
       },
       {
-        "id": "m407",
+        "id": "m422",
         "date": "2026-01-07",
         "slot": "cena",
         "name": "Petto di pollo e verdure",

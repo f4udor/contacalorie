@@ -1,6 +1,7 @@
 "use client";
 
 import { FreeMealSwitch } from "./free-meal-switch";
+import { Caption, FieldRow, GroupedList, PillButton, RowInput, RowTextarea, SelectInput } from "./ui/ui";
 import type { MealSlot } from "@/engine";
 import { KCAL_CHECK_MESSAGE, SLOTS, textNeedsKcalCheck } from "../lib/meal-form";
 import type { MealFieldKey, MealFormErrors, MealFormValues } from "../lib/meal-form";
@@ -26,115 +27,85 @@ interface MealFormProps {
   onEstimate: () => void;
 }
 
-const NUMERIC: { key: Exclude<MealFieldKey, "isFree">; label: string; required?: boolean }[] = [
-  { key: "kcal", label: "Kcal", required: true },
-  { key: "protein", label: "Proteine (g)" },
-  { key: "carbs", label: "Carboidrati (g)" },
-  { key: "fat", label: "Grassi (g)" },
-  { key: "fiber", label: "Fibre (g)" },
-  { key: "salt", label: "Sale (g)" },
+const NUMERIC: { key: Exclude<MealFieldKey, "isFree">; label: string; unit: string }[] = [
+  { key: "kcal", label: "Calorie", unit: "kcal" },
+  { key: "protein", label: "Proteine", unit: "g" },
+  { key: "carbs", label: "Carboidrati", unit: "g" },
+  { key: "fat", label: "Grassi", unit: "g" },
+  { key: "fiber", label: "Fibre", unit: "g" },
+  { key: "salt", label: "Sale", unit: "g" },
 ];
 
-const input = "min-h-11 w-full rounded-xl bg-bg px-3 text-[17px] outline-none placeholder:text-muted focus:ring-2 focus:ring-accent";
-
-/** Campi del piatto a mano, controllati da chi li usa (la scheda del piatto): nome, quantità, fascia, numeri e pasto libero. */
+/**
+ * Campi del piatto a mano (BRIEF §10.5, bozza «scheda del piatto»), controllati da chi li usa: nome e quantità, «Stima con l'AI» (sopra le
+ * calorie), i numeri, il pasto e l'interruttore «Pasto libero». Il nome del campo sta a sinistra, il valore a destra con l'unità accanto.
+ */
 export function MealForm({ values, onChange, errors, freeAllowedFor, mealIsFreeFor, lockedSlot = false, freeMealCap, aiAvailable, aiBusy, aiError, aiNote, onEstimate }: MealFormProps) {
   const set = <K extends keyof MealFormValues>(key: K, value: MealFormValues[K]) => onChange({ [key]: value });
-  // Se il pasto è già libero resta modificabile anche quando la settimana "ne ha" uno: è proprio quello.
+  // Se il pasto è già libero resta modificabile anche quando la settimana «ne ha» uno: è proprio quello.
   const freeAllowed = freeAllowedFor(values.slot);
   const switchDisabled = !freeAllowed && !values.isFree;
-  const slotName = (SLOTS.find((x) => x.value === values.slot)?.label ?? "").toLowerCase();
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="meal-name" className="text-sm font-semibold text-muted">Nome del piatto</label>
-        <input id="meal-name" type="text" autoComplete="off" value={values.name} onChange={(e) => set("name", e.target.value)} className={input} />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <label htmlFor="meal-quantity" className="text-sm font-semibold text-muted">Quantità (facoltativa)</label>
-        <textarea id="meal-quantity" autoComplete="off" rows={Math.min(8, Math.max(1, Math.ceil(values.quantity.length / 30)))} value={values.quantity} onChange={(e) => set("quantity", e.target.value.replace(/\n/g, " "))} className={`${input} field-sizing-content resize-none py-2.5`} />
-      </div>
-
-      {!lockedSlot && (
-      <div className="flex flex-col gap-1.5">
-        <span id="slot-label" className="text-sm font-semibold text-muted">Fascia</span>
-        <div role="radiogroup" aria-labelledby="slot-label" className="grid grid-cols-4 gap-1 rounded-xl bg-bg p-1">
-          {SLOTS.map((s) => (
-            <button
-              key={s.value}
-              type="button"
-              role="radio"
-              aria-checked={values.slot === s.value}
-              onClick={() => {
-                set("slot", s.value);
-                if (mealIsFreeFor) set("isFree", mealIsFreeFor(s.value));
-              }}
-              className={`min-h-11 rounded-lg px-1 text-[15px] font-semibold ${values.slot === s.value ? "bg-accent text-white" : "text-fg"}`}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
-      </div>
-      )}
+    <div className="flex flex-col gap-3">
+      <GroupedList>
+        <FieldRow label="Nome" htmlFor="meal-name">
+          <RowInput id="meal-name" value={values.name} onChange={(v) => set("name", v)} />
+        </FieldRow>
+        <FieldRow label="Quantità" htmlFor="meal-quantity">
+          <RowTextarea id="meal-quantity" value={values.quantity} onChange={(v) => set("quantity", v)} />
+        </FieldRow>
+      </GroupedList>
 
       {aiAvailable && (
-        <div className="flex flex-col gap-2 rounded-xl bg-bg p-3">
-          <button type="button" onClick={onEstimate} disabled={aiBusy} className="min-h-12 rounded-xl bg-card px-4 text-[17px] font-semibold text-accent disabled:opacity-50">
-            {aiBusy ? "Sto stimando…" : "Stima con l'AI"}
-          </button>
-          {aiError && (
-            <p role="alert" className="text-[15px] font-medium text-bad">
-              {aiError}
-            </p>
-          )}
-        </div>
+        <>
+          <PillButton onClick={onEstimate} disabled={aiBusy}>
+            {aiBusy ? "Stima in corso…" : "Stima con l'AI"}
+          </PillButton>
+          {aiError && <Caption tone="fuori">{aiError}</Caption>}
+        </>
       )}
       {aiNote !== null && values.kcal.trim() !== "" && (
-        <p role="status" className="rounded-xl bg-bg px-3 py-2.5 text-[15px]">
-          <span className="font-semibold">Stimato con l&apos;AI: controlla i numeri.</span> {aiNote}
+        <p role="status" className="px-4 text-[13px] text-testo-secondario">
+          <span className="font-semibold text-testo">Stimato con l&apos;AI: controlla i numeri.</span> {aiNote}
         </p>
       )}
       {aiNote !== null && textNeedsKcalCheck(values) && (
-        <p role="status" className="rounded-xl bg-bg px-3 py-2.5 text-[15px] font-semibold text-warn">
-          <span aria-hidden="true">⚠ </span>
-          {KCAL_CHECK_MESSAGE}
-        </p>
+        <Caption tone="attenzione">
+          <span role="status">
+            <span aria-hidden="true">⚠ </span>
+            {KCAL_CHECK_MESSAGE}
+          </span>
+        </Caption>
       )}
 
-      <div className="grid grid-cols-2 gap-x-3 gap-y-4">
-        {NUMERIC.map(({ key, label, required }) => (
-          <div key={key} className={`flex flex-col gap-1.5 ${key === "kcal" ? "col-span-2" : ""}`}>
-            <label htmlFor={`meal-${key}`} className="text-sm font-semibold text-muted">
-              {label}
-              {required && !aiAvailable && <span className="text-bad"> *</span>}
-            </label>
-            <input
-              id={`meal-${key}`}
-              type="text"
-              inputMode="decimal"
-              autoComplete="off"
-              value={values[key]}
-              onChange={(e) => set(key, e.target.value)}
-              aria-invalid={errors[key] ? true : undefined}
-              aria-describedby={errors[key] ? `meal-${key}-err` : undefined}
-              className={`${input} ${errors[key] ? "ring-2 ring-bad" : ""}`}
-            />
-            {errors[key] && (
-              <p id={`meal-${key}-err`} className="text-sm font-medium text-bad">
-                {errors[key]}
-              </p>
-            )}
-          </div>
+      <GroupedList>
+        {NUMERIC.map(({ key, label, unit }) => (
+          <FieldRow key={key} label={label} htmlFor={`meal-${key}`} unit={unit} error={errors[key]}>
+            <RowInput id={`meal-${key}`} value={values[key]} onChange={(v) => set(key, v)} inputMode="decimal" invalid={Boolean(errors[key])} />
+          </FieldRow>
         ))}
-      </div>
+      </GroupedList>
+
+      {!lockedSlot && (
+        <GroupedList>
+          <FieldRow label="Pasto" htmlFor="meal-slot">
+            <SelectInput
+              id="meal-slot"
+              value={values.slot}
+              options={SLOTS}
+              onChange={(slot) => {
+                set("slot", slot);
+                if (mealIsFreeFor) set("isFree", mealIsFreeFor(slot));
+              }}
+            />
+          </FieldRow>
+        </GroupedList>
+      )}
 
       <FreeMealSwitch
         checked={values.isFree}
-        blockedText={switchDisabled ? "Hai già usato il pasto libero in questa settimana: ce n'è uno solo." : null}
-        slotName={slotName}
+        blockedText={switchDisabled ? "Già usato questa settimana." : null}
         freeMealCap={freeMealCap}
         error={errors.isFree}
         onChange={(v) => set("isFree", v)}
