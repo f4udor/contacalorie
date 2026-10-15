@@ -5,6 +5,8 @@ export const SWIPE_OPEN_FRACTION = 0.4;
 /** Larghezza (px) di un pulsante con testo e di uno con la sola icona: almeno 44 px. */
 export const SWIPE_ACTION_WIDTH = 84;
 export const SWIPE_ICON_ACTION_WIDTH = 64;
+/** Spazio (px) tra la riga e la tessera di un'azione, e tra due azioni. */
+export const SWIPE_TILE_GAP = 8;
 
 export type SwipeDirection = "pending" | "horizontal" | "vertical";
 

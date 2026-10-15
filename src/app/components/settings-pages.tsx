@@ -101,7 +101,7 @@ export function GoalsPage({ store, settings, weighIns, today, onChanged, onNavig
     const tag = goalLabel(manual, kind);
     return [
       <FieldRow key={key} label={label} htmlFor={`set-${key}`} unit={unit} error={f.errors[key]} note={<span data-goal-label className={isManual ? "text-comando" : "text-testo-secondario"}>{tag}</span>}>
-        <RowInput id={`set-${key}`} muted={!isManual} value={isManual ? manual : calculated === null ? "" : String(calculated)} placeholder={calculated === null ? "–" : undefined} onChange={f.set(key)} inputMode="decimal" invalid={Boolean(f.errors[key])} />
+        <RowInput id={`set-${key}`} muted={!isManual} shown={!isManual && calculated !== null && key === "baseKcal" ? formatNumber(calculated) : undefined} value={isManual ? manual : calculated === null ? "" : String(calculated)} placeholder={calculated === null ? "–" : undefined} onChange={f.set(key)} inputMode="decimal" invalid={Boolean(f.errors[key])} />
       </FieldRow>,
       isManual ? <ActionRow key={`${key}-reset`} label="Usa il valore calcolato" onClick={() => f.set(key)("")} /> : null,
     ];

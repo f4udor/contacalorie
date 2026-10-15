@@ -628,7 +628,7 @@ Stessa regola, cercata dove non è stata segnalata. Si controlla, non si ridiseg
 - Tutto ciò che si trova e non rientra in questa regola (allineamenti, spaziature, testi) **non si corregge**: va elencato nel report, con lo screenshot, perché lo decida l'utente.
 - Screenshot solo degli scenari corretti.
 
-### T6b.2 Tre difetti grafici della fase 6 · da fare
+### T6b.2 Tre difetti grafici della fase 6 · fatto
 - **Collegamenti**: i valori "Attiva" e "Attivo" della riga "Stato" (Salute e Stime dei pasti) sono nel colore In obiettivo, come in `docs/design/bozza-4-collegamenti.png`. Gli stati non attivi restano grigi.
 - **Preferiti**: scorrendo una riga a sinistra, "Elimina" è una tessera separata su fondo Fuori (raggio da tessera, staccata dalla riga da uno spazio), come dice §10.5, e non un blocco attaccato alla riga. Stesso aspetto dello scorrimento sui piatti in Oggi: se i due sono diversi, si allinea Preferiti a Oggi.
 - **Punto delle migliaia**: "2140 kcal" in Obiettivi diventa "2.140 kcal". Tutti i numeri di kcal e di passi mostrati a schermo passano dallo stesso formato, con il punto da 1.000 in su. I campi in cui si scrive un numero restano senza punto. Test del formato su 999, 1000, 2140, 12345 e ricerca nelle schermate di numeri mostrati senza passare dal formato.

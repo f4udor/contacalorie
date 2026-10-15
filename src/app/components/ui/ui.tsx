@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import { ROLE_TEXT } from "../../lib/roles";
 import type { Role } from "../../lib/roles";
@@ -89,7 +90,7 @@ function RowShell({ href, onClick, className, children }: RowAction & { classNam
  * Riga bianca con il valore grigio a destra. Con `href` o `onClick` apre una pagina o un pannello e mostra la freccia;
  * senza è solo un'informazione.
  */
-export function ValueRow({ title, sub, value, href, onClick }: RowAction & { title: ReactNode; sub?: ReactNode; value?: ReactNode }) {
+export function ValueRow({ title, sub, value, valueTone = "testo-secondario", href, onClick }: RowAction & { title: ReactNode; sub?: ReactNode; value?: ReactNode; valueTone?: Extract<Role, "testo-secondario" | "in-obiettivo"> }) {
   const opens = Boolean(href || onClick);
   return (
     <li>
@@ -99,7 +100,7 @@ export function ValueRow({ title, sub, value, href, onClick }: RowAction & { tit
           {sub && <span className="block text-[13px] text-testo-secondario">{sub}</span>}
         </span>
         <span className="flex min-w-0 shrink-0 items-center gap-1.5 text-testo-secondario">
-          {value !== undefined && <span className="min-w-0 truncate text-right text-[16px]">{value}</span>}
+          {value !== undefined && <span className={`min-w-0 truncate text-right text-[16px] ${ROLE_TEXT[valueTone]}`}>{value}</span>}
           {opens && <IconChevronRight size={16} strokeWidth={2.4} />}
         </span>
       </RowShell>
@@ -275,6 +276,8 @@ interface RowInputProps {
   id: string;
   /** Valore mostrato in grigio (un numero calcolato che non è stato scritto a mano). */
   muted?: boolean;
+  /** Testo da mostrare (per esempio «2.140» con il punto delle migliaia) finché il campo non ha il fuoco; scrivendo, il campo mostra `value`. */
+  shown?: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -285,7 +288,8 @@ interface RowInputProps {
 }
 
 /** Campo di testo a destra, in una riga (`FieldRow`). */
-export function RowInput({ id, value, onChange, placeholder, inputMode = "text", invalid, muted, kind }: RowInputProps) {
+export function RowInput({ id, value, onChange, placeholder, inputMode = "text", invalid, muted, shown, kind }: RowInputProps) {
+  const [focused, setFocused] = useState(false);
   return (
     <input
       id={id}
@@ -294,9 +298,11 @@ export function RowInput({ id, value, onChange, placeholder, inputMode = "text",
       autoComplete={kind === "email" ? "email" : kind === "codice" ? "one-time-code" : "off"}
       autoCapitalize={kind ? "none" : undefined}
       autoCorrect={kind === "email" ? "off" : undefined}
-      value={value}
+      value={!focused && shown !== undefined ? shown : value}
       placeholder={placeholder}
       onChange={(e) => onChange(e.target.value)}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
       aria-invalid={invalid ? true : undefined}
       aria-describedby={invalid ? `${id}-err` : undefined}
       className={`${ROW_INPUT} ${muted ? "text-testo-secondario" : ""}`}
