@@ -679,7 +679,7 @@ Vincoli di questa fase:
 - Il provider finto restituisce pesi realistici.
 - Test: risposta con e senza peso, peso non valido scartato, salvataggio e aggiornamento del preferito con il peso, esportazione. Screenshot della scheda del piatto in Manuale con il peso.
 
-### T7.1 Quantità ricalcolata senza AI · da fare
+### T7.1 Quantità ricalcolata senza AI · fatto
 - Motore: funzione pura che applica il ricalcolo di §4.1 (rapporto, arrotondamenti). Test: casi AT e AU, rapporto 1, valori a zero.
 - Scheda del piatto, in Manuale, aggiunta e modifica: riga "Peso (g)" se il piatto ha un peso, altrimenti "Porzioni" con le scelte ×0,5, ×1, ×1,5, ×2 e un numero a mano. Cambiandola si aggiornano subito kcal e nutrienti, partendo dai valori di quando la scheda è stata aperta (cambiare 200 → 250 → 200 riporta i numeri di partenza). Scrivere a mano un numero nutrizionale dopo il ricalcolo lo tiene così com'è.
 - Nessuna chiamata al modello. Il controllo di coerenza non si applica ai numeri ricalcolati.

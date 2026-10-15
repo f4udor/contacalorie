@@ -1,10 +1,11 @@
 "use client";
 
 import { FreeMealSwitch } from "./free-meal-switch";
-import { Caption, FieldRow, GroupedList, PillButton, RowInput, RowTextarea, SelectInput } from "./ui/ui";
+import { Caption, FieldRow, GroupedList, PillButton, RowInput, RowTextarea, Segmented, SelectInput } from "./ui/ui";
 import type { MealSlot } from "@/engine";
 import { KCAL_CHECK_MESSAGE, SLOTS, textNeedsKcalCheck } from "../lib/meal-form";
 import type { MealFieldKey, MealFormErrors, MealFormValues } from "../lib/meal-form";
+import { SERVING_CHOICES, servingsText } from "../lib/portion-scale";
 
 interface MealFormProps {
   values: MealFormValues;
@@ -25,6 +26,11 @@ interface MealFormProps {
   /** Nota del modello dopo una stima (e, con essa, il controllo di coerenza). */
   aiNote: string | null;
   onEstimate: () => void;
+  /**
+   * Quantità senza AI (BRIEF §4.1): con `mode: "peso"` il campo «Peso (g)» ricalcola kcal e nutrienti; con `"porzioni"` (piatto senza peso)
+   * compare la riga «Porzioni» con ×0,5, ×1, ×1,5, ×2 e un numero a mano.
+   */
+  portion?: { mode: "peso" | "porzioni"; servings: string; onServings: (text: string) => void };
 }
 
 const NUMERIC: { key: Exclude<MealFieldKey, "isFree" | "weightG">; label: string; unit: string }[] = [
@@ -40,7 +46,7 @@ const NUMERIC: { key: Exclude<MealFieldKey, "isFree" | "weightG">; label: string
  * Campi del piatto a mano (BRIEF §10.5, bozza «scheda del piatto»), controllati da chi li usa: nome e quantità, «Stima con l'AI» (sopra le
  * calorie), i numeri, il pasto e l'interruttore «Pasto libero». Il nome del campo sta a sinistra, il valore a destra con l'unità accanto.
  */
-export function MealForm({ values, onChange, errors, freeAllowedFor, mealIsFreeFor, lockedSlot = false, freeMealCap, aiAvailable, aiBusy, aiError, aiNote, onEstimate }: MealFormProps) {
+export function MealForm({ values, onChange, errors, freeAllowedFor, mealIsFreeFor, lockedSlot = false, freeMealCap, aiAvailable, aiBusy, aiError, aiNote, onEstimate, portion }: MealFormProps) {
   const set = <K extends keyof MealFormValues>(key: K, value: MealFormValues[K]) => onChange({ [key]: value });
   // Se il pasto è già libero resta modificabile anche quando la settimana «ne ha» uno: è proprio quello.
   const freeAllowed = freeAllowedFor(values.slot);
@@ -80,6 +86,22 @@ export function MealForm({ values, onChange, errors, freeAllowedFor, mealIsFreeF
             {KCAL_CHECK_MESSAGE}
           </span>
         </Caption>
+      )}
+
+      {portion?.mode === "porzioni" && (
+        <GroupedList label="Porzioni">
+          <FieldRow label="Porzioni" htmlFor="meal-servings">
+            <RowInput id="meal-servings" value={portion.servings} onChange={portion.onServings} inputMode="decimal" />
+          </FieldRow>
+          <li className="px-4 py-2.5">
+            <Segmented
+              label="Porzioni"
+              options={SERVING_CHOICES.map((n) => ({ value: servingsText(n), label: `×${servingsText(n)}` }))}
+              value={SERVING_CHOICES.map(servingsText).includes(portion.servings.trim()) ? portion.servings.trim() : ""}
+              onChange={portion.onServings}
+            />
+          </li>
+        </GroupedList>
       )}
 
       <GroupedList>

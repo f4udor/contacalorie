@@ -149,6 +149,7 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Apert
             aiError={form.aiError}
             aiNote={form.aiNote}
             onEstimate={form.estimate}
+            portion={form.portion}
           />
           {menu}
         </div>
@@ -271,6 +272,7 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
             aiError={form.aiError}
             aiNote={form.aiNote}
             onEstimate={form.estimate}
+            portion={form.portion}
           />
         </div>
         {mode === "ai" && <DishEditAi values={form.values} busy={form.busy} error={form.aiError} note={form.aiNote} onCorrect={form.correct} />}

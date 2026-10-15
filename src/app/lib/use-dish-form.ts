@@ -1,12 +1,16 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import type { MealSlot } from "@/engine";
 import { useAuth } from "../auth-provider";
 import { estimateDish, requestEstimate } from "./ai-client";
 import { applyCorrection, applyNumbers, estimateSourceText, valuesToProposal } from "./dish-sheet";
 import { validateMealForm } from "./meal-form";
 import type { MealFormErrors, MealFormValues, ParsedMeal } from "./meal-form";
+import { NO_SCALE, markManual, parseWeightG, rescaleByServings, rescaleByWeight } from "./portion-scale";
+import type { ScaleState } from "./portion-scale";
+import { DISH_NUMBER_KEYS } from "./proposal-form";
+import type { DishNumberKey } from "./proposal-form";
 import { useAiAvailable } from "./use-ai";
 
 /**
@@ -22,9 +26,39 @@ export function useDishForm(initial: MealFormValues, freeAllowedFor: (slot: Meal
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiNote, setAiNote] = useState<string | null>(null);
 
-  const patch = useCallback((p: Partial<MealFormValues>) => {
-    setValues((v) => ({ ...v, ...p }));
-  }, []);
+  // Quantità senza AI (BRIEF §4.1): «Peso (g)» se il piatto ha un peso all'apertura, altrimenti «Porzioni». I numeri si ricalcolano sempre dai valori di partenza.
+  const [portionMode, setPortionMode] = useState<"peso" | "porzioni">(parseWeightG(initial.weightG) !== null ? "peso" : "porzioni");
+  const [scale, setScale] = useState<ScaleState>(NO_SCALE);
+  const [servings, setServings] = useState("1");
+
+  const patch = (p: Partial<MealFormValues>) => {
+    const { weightG, ...rest } = p;
+    let next: MealFormValues = { ...values, ...rest };
+    let state = scale;
+    if (weightG !== undefined) {
+      if (portionMode === "peso") {
+        const r = rescaleByWeight(next, state, weightG);
+        // Con il ricalcolo i numeri non vengono dal modello: la nota e il controllo di coerenza non valgono più.
+        if (DISH_NUMBER_KEYS.some((k) => r.values[k] !== next[k])) setAiNote(null);
+        next = r.values;
+        state = r.state;
+      } else {
+        next = { ...next, weightG };
+      }
+    }
+    const typed = (Object.keys(rest) as (keyof MealFormValues)[]).filter((k): k is DishNumberKey => (DISH_NUMBER_KEYS as readonly string[]).includes(k));
+    setScale(markManual(state, typed));
+    setValues(next);
+  };
+
+  /** Porzioni (piatto senza peso): sceglie o scrive il numero e ricalcola kcal e nutrienti dai valori di partenza. */
+  const changeServings = (text: string) => {
+    setServings(text);
+    const r = rescaleByServings(values, scale, text);
+    if (DISH_NUMBER_KEYS.some((k) => r.values[k] !== values[k])) setAiNote(null);
+    setValues(r.values);
+    setScale(r.state);
+  };
 
   /** "Stima con l'AI": nome e quantità → numeri nuovi, che sostituiscono quelli già scritti (restano modificabili). */
   const estimate = async () => {
@@ -41,6 +75,9 @@ export function useDishForm(initial: MealFormValues, freeAllowedFor: (slot: Meal
       return;
     }
     setValues((v) => ({ ...applyNumbers(v, r.numbers), weightG: r.weightG ? String(r.weightG) : v.weightG }));
+    setScale(NO_SCALE);
+    setServings("1");
+    if (r.weightG) setPortionMode("peso");
     setErrors({});
     setAiNote(r.note);
   };
@@ -59,6 +96,9 @@ export function useDishForm(initial: MealFormValues, freeAllowedFor: (slot: Meal
     }
     const applied = applyCorrection(values, r.proposal);
     setValues(applied.values);
+    setScale(NO_SCALE);
+    setServings("1");
+    if (parseWeightG(applied.values.weightG) !== null) setPortionMode("peso");
     setErrors({});
     setAiNote(applied.note);
     return true;
@@ -75,5 +115,5 @@ export function useDishForm(initial: MealFormValues, freeAllowedFor: (slot: Meal
     return r.meal;
   };
 
-  return { values, patch, errors, busy, aiAvailable, aiError, aiNote, estimate, correct, validate };
+  return { values, patch, portion: { mode: portionMode, servings, onServings: changeServings }, errors, busy, aiAvailable, aiError, aiNote, estimate, correct, validate };
 }

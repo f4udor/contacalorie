@@ -701,6 +701,14 @@ add("pannello-piatto-peso", "Scheda del piatto in Manuale con il campo «Peso (g
 add("pannello-piatto-peso-vuoto", "Aggiunta a mano: il campo «Peso (g)» è facoltativo e mostra «facoltativo».", "2026-01-08", data({ settings: { weightKg: 100 } }), { fisso: true, passi: [apri, manuale] });
 add("pannello-piatto-peso-errore", "Peso non valido (12,5): «Salva» mostra l'errore accanto al campo.", "2026-01-08", data({ settings: { weightKg: 100 } }), { fisso: true, passi: [apri, manuale, { fill: ["Nome", "Pasta"] }, { fill: ["Calorie", "400"] }, { fill: ["Peso (g)", "12,5"] }, salvaScheda] });
 
+// --- Quantità ricalcolata senza AI (T7.1)
+const pastaPesata = data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pasta al pomodoro", 300, 12, 40, 8, 4, 1, { quantity: "200 g pasta cotta", weightG: 200 })] });
+add("pannello-piatto-peso-ricalcolato", "Piatto di 200 g (300 kcal, carboidrati 40): scritto 250 nel campo «Peso (g)», kcal e nutrienti si ricalcolano subito (375 kcal, carboidrati 50), senza AI.", "2026-01-08", pastaPesata, { fisso: true, passi: [{ click: "Pasta al pomodoro" }, { fill: ["Peso (g)", "250"] }] });
+const dolceSenzaPeso = data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "cena", "Torta", 420, 10, 30, 13.3, 2, 1, { quantity: "1 fetta" })] });
+add("pannello-piatto-porzioni", "Piatto senza peso: la riga «Porzioni» con ×0,5, ×1, ×1,5, ×2 e un numero a mano, all'apertura su ×1.", "2026-01-08", dolceSenzaPeso, { fisso: true, passi: [{ click: "Torta" }] });
+add("pannello-piatto-porzioni-ricalcolato", "Porzioni ×1,5: 630 kcal e grassi 20,0, senza AI.", "2026-01-08", dolceSenzaPeso, { fisso: true, passi: [{ click: "Torta" }, { clickRole: { role: "radio", name: "×1,5" } }] });
+add("pannello-piatto-porzioni-aggiunta", "Aggiunta a mano: la riga «Porzioni» c'è anche in un piatto nuovo.", "2026-01-08", data({ settings: { weightKg: 100 } }), { fisso: true, passi: [apri, manuale] });
+
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");
