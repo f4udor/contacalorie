@@ -82,6 +82,8 @@ try {
         return route.fulfill({ status: r.stato ?? 200, json: r.corpo ?? {} });
       });
     }
+    // Registrato per ultimo: Playwright applica prima l'ultimo percorso registrato, che registra la richiesta e poi passa il turno alla risposta finta.
+    if (opts.sent) await context.route("**/api/estimate", async (route) => (route.request().method() === "POST" && opts.sent.push(JSON.parse(route.request().postData() ?? "{}")), route.fallback()));
     const page = await context.newPage();
     await page.goto(BASE + url, { waitUntil: "networkidle" });
     return page;
@@ -339,6 +341,43 @@ try {
     await p2.waitForTimeout(300);
     check("cambiando settimana l'etichetta sparisce", (await p2.locator("[data-bar-label]").count()) === 0);
     await p2.context().close();
+  }
+
+  // T7.2: etichette dei preferiti nel campo «Cosa hai mangiato?»: un solo tasto indietro cancella l'etichetta, più etichette, testo prima e dopo;
+  // al modello vanno solo il testo con nome e riferimento (nessun numero del preferito).
+  {
+    const hummus = { id: "h1", name: "Hummus fatto in casa", quantity: "150 g", weightG: 150, kcal: 150, protein: 7.5, carbs: 10, fat: 9, fiber: 4, salt: 0.5 };
+    const caffe = { id: "h2", name: "Caffè con zucchero", quantity: null, weightG: null, kcal: 20, protein: 0, carbs: 5, fat: 0, fiber: 0, salt: 0 };
+    const mealOnly = { meals: [{ slot: "pranzo", freeMeal: false, dishes: [], favorites: [{ ref: 1, quantitySaid: true, grams: 100, servings: null }] }] };
+    const sent = [];
+    const page = await newPage("/?d=2026-01-11", { ...baseData(), favoriteDishes: [hummus, caffe], favoriteMeals: [] }, 844, { sent, ai: [{ corpo: { proposal: mealOnly, originalText: "x" } }] });
+    await byLabel(page, "Aggiungi").click();
+    await settle(page);
+    const field = dlg(page).getByRole("textbox", { name: "Cosa hai mangiato?" });
+    const chips = () => field.locator("[data-favorite-id]");
+    const pick = async (name) => {
+      await dlg(page).getByRole("button", { name: "Metti un preferito nella frase", exact: true }).click();
+      await dlg(page).getByRole("button", { name: `Metti ${name} nella frase`, exact: true }).click();
+      await page.waitForTimeout(250);
+    };
+    await field.click();
+    await page.keyboard.type("a pranzo ");
+    await pick("Hummus fatto in casa");
+    check("preferito scelto: compare un'etichetta nel campo", (await chips().count()) === 1 && (await chips().first().textContent()) === "Hummus fatto in casa");
+    await page.keyboard.press("Backspace");
+    check("un solo tasto indietro cancella l'etichetta; il testo scritto prima resta", (await chips().count()) === 0 && ((await field.textContent()) ?? "").includes("a pranzo"));
+    await pick("Hummus fatto in casa");
+    await page.keyboard.type("100 g e ");
+    await pick("Caffè con zucchero");
+    await page.keyboard.type("x2 poi un caffè");
+    check("due etichette nella stessa frase, con il testo scritto o dettato prima e dopo", (await chips().count()) === 2 && ((await field.textContent()) ?? "").includes("poi un caffè"));
+    await dlg(page).getByRole("button", { name: "Stima", exact: true }).click();
+    await page.waitForTimeout(700);
+    const text = sent[0]?.text ?? "";
+    check(`al modello vanno nome e riferimento delle etichette (${text})`, /\[preferito 1: Hummus fatto in casa\] 100 g e \[preferito 2: Caffè con zucchero\] x2 poi un caffè$/.test(text));
+    check("al modello non va nessun numero dei preferiti", !/7[.,]5|150 kcal|proteine|kcal/i.test(JSON.stringify(sent[0])));
+    check("la proposta mostra il piatto «dai tuoi preferiti» con la quantità detta (100 g → 100 kcal)", (await dlg(page).getByText("dai tuoi preferiti").count()) === 1 && (await dlg(page).getByText("100", { exact: true }).count()) >= 1);
+    await page.context().close();
   }
 
   await browser.close();

@@ -16,6 +16,7 @@ import { BikeEntry, WeightForm } from "./activity-forms";
 import { AiEstimate } from "./ai-estimate";
 import type { AiEstimateHandle } from "./ai-estimate";
 import { DishEditAi } from "./dish-edit-ai";
+import { FavoritePicker } from "./favorite-picker";
 import { FavoritesView } from "./favorites-view";
 import { MealForm } from "./meal-form";
 import { DateInput, FieldRow, GroupedList, PillButton, RowInput, Segmented, ActionRow, ValueRow } from "./ui/ui";
@@ -36,7 +37,7 @@ interface PanelContext {
 }
 
 const SLOT_NAME: Record<MealSlot, string> = { colazione: "Colazione", pranzo: "Pranzo", cena: "Cena", spuntino: "Spuntino" };
-const SUB_TITLES = { bici: "Uscita in bici", pesata: "Pesata", preferiti: "Preferiti" } as const;
+const SUB_TITLES = { bici: "Uscita in bici", pesata: "Pesata", preferiti: "Preferiti", scegli: "Preferiti" } as const;
 
 type Mode = "ai" | "manuale";
 
@@ -53,7 +54,7 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Apert
   const { store, date: initialDate, days, settings, weightKg, onChanged, onClose, initialSlot, freeMeal } = ctx;
   const [date, setDate] = useState<DateKey>(initialDate);
   const [mode, setMode] = useState<Mode>("ai");
-  const [view, setView] = useState<"main" | "bici" | "pesata" | "preferiti">("main");
+  const [view, setView] = useState<"main" | "bici" | "pesata" | "preferiti" | "scegli">("main");
   const freeAllowedFor = (slot: MealSlot) => !hasFreeMealInWeek(days, { date, slot });
   const dayDishes = days.find((d) => d.date === date)?.meals ?? [];
   const existingFree = (slot: MealSlot) => isMealFree(dayDishes, slot);
@@ -131,7 +132,7 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Apert
           </div>
         )}
         <div className={mode === "ai" ? "" : "hidden"}>
-          <AiEstimate store={store} date={date} free={{ freeAllowedFor, mealIsFreeFor: existingFree }} freeMealCap={settings.freeMealCap} onChanged={onChanged} onClose={onClose} fixedSlot={initialSlot} forceFree={freeMeal !== undefined} handleRef={aiHandle} onCanSaveChange={setAiCanSave}>
+          <AiEstimate store={store} date={date} free={{ freeAllowedFor, mealIsFreeFor: existingFree }} freeMealCap={settings.freeMealCap} onChanged={onChanged} onClose={onClose} fixedSlot={initialSlot} forceFree={freeMeal !== undefined} handleRef={aiHandle} onCanSaveChange={setAiCanSave} onPickFavorites={() => setView("scegli")}>
             {menu}
           </AiEstimate>
         </div>
@@ -156,6 +157,16 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Apert
       </div>
       {view !== "main" && (
         <div className="flex flex-col gap-3">
+          {view === "scegli" && (
+            <FavoritePicker
+              store={store}
+              onPick={(f) => {
+                setView("main");
+                // Il campo torna visibile dopo il prossimo disegno: l'etichetta si mette allora, al punto in cui era il cursore.
+                setTimeout(() => aiHandle.current?.insertFavorite(f), 60);
+              }}
+            />
+          )}
           {view === "preferiti" && <FavoritesView store={store} date={date} initialSlot={initialSlot} dayDishes={dayDishes} onChanged={onChanged} onClose={onClose} />}
           {view === "bici" && <BikeEntry store={store} initialDay={date} today={todayKey()} kcalPerKm={settings.kcalPerKm} formId="bike-form" onDone={() => { onChanged(); onClose(); }} />}
           {view === "pesata" && <WeightForm formId="weight-form" existingKg={weightKg} onSubmit={saveWeight} />}

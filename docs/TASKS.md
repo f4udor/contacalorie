@@ -685,7 +685,7 @@ Vincoli di questa fase:
 - Nessuna chiamata al modello. Il controllo di coerenza non si applica ai numeri ricalcolati.
 - Test della logica della scheda. Screenshot: piatto con peso, piatto a porzioni.
 
-### T7.2 Etichette dei preferiti nella stima · da fare
+### T7.2 Etichette dei preferiti nella stima · fatto
 - Campo "Cosa hai mangiato?": tasto "Preferiti" accanto al campo (icona più etichetta, nel colore Comando) che apre l'elenco dei piatti preferiti con la ricerca, nello stesso stile del pannello Preferiti. Scegliendo un piatto, nel testo compare un'etichetta (tessera piccola con il nome) al punto del cursore; si cancella con un solo tasto indietro. Più etichette nella stessa frase. Funziona anche con il testo dettato prima o dopo l'etichetta.
 - Al modello il testo arriva con ogni etichetta scritta come nome più riferimento (per esempio `[preferito 1: Hummus fatto in casa]`). Il prompt spiega che quei piatti non vanno stimati: per ognuno il modello restituisce il riferimento, il pasto in cui va, la quantità detta in grammi o in porzioni e se è stata detta. Lo schema di risposta guadagna questi campi.
 - L'app costruisce il piatto dal preferito con il calcolo di §4.1 (funzione pura nel motore, casi AN-AS) e lo mette nella proposta con la scritta "dai tuoi preferiti". Il piatto non passa dal controllo di coerenza. Si corregge, si sposta di pasto e si elimina come gli altri.

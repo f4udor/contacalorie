@@ -1,7 +1,7 @@
 import { MEAL_SLOTS } from "@/engine";
 import type { MealSlot } from "@/engine";
 import { AiError } from "./types";
-import type { EstimatedDish, EstimatedMeal, MealProposal } from "./types";
+import type { EstimatedDish, EstimatedMeal, FavoriteMention, MealProposal } from "./types";
 
 const MAX_KCAL = 5000;
 const MAX_GRAMS = 1000;
@@ -46,6 +46,23 @@ function dish(raw: unknown): EstimatedDish | null {
   return { name, quantity, quantityAssumed: raw.quantityAssumed, weightG: weightOf(raw.weightG), kcal, protein, carbs, fat, fiber, salt, note: (raw.note ?? "").trim().slice(0, 400) };
 }
 
+const MAX_REF = 99;
+const MAX_SAID_GRAMS = 20000;
+const MAX_SAID_SERVINGS = 100;
+
+const positive = (v: unknown, max: number): number | null => (typeof v === "number" && Number.isFinite(v) && v > 0 && v <= max ? Math.round(v * 100) / 100 : null);
+
+/** Un preferito messo nel pasto: riferimento intero da 1; grammi e porzioni positivi o null. Un valore non valido vale «quantità non detta». */
+function mention(raw: unknown): FavoriteMention | null {
+  if (!isObject(raw)) return null;
+  const ref = raw.ref;
+  if (typeof ref !== "number" || !Number.isInteger(ref) || ref < 1 || ref > MAX_REF) return null;
+  const grams = positive(raw.grams, MAX_SAID_GRAMS);
+  const servings = positive(raw.servings, MAX_SAID_SERVINGS);
+  const said = raw.quantitySaid === true && (grams !== null || servings !== null);
+  return { ref, quantitySaid: said, grams: said ? grams : null, servings: said && grams === null ? servings : null };
+}
+
 /** Controlla la proposta (risposta del modello o stima precedente ricevuta dal browser). Restituisce null se non è valida. */
 export function parseProposal(raw: unknown): MealProposal | null {
   if (!isObject(raw) || !Array.isArray(raw.meals) || raw.meals.length === 0) return null;
@@ -54,14 +71,23 @@ export function parseProposal(raw: unknown): MealProposal | null {
     if (!isObject(m) || typeof m.slot !== "string" || !(MEAL_SLOTS as readonly string[]).includes(m.slot)) return null;
     // `freeMeal` può mancare (stime precedenti più vecchie): vale falso. Se c'è, deve essere un booleano.
     if (m.freeMeal !== undefined && typeof m.freeMeal !== "boolean") return null;
-    if (!Array.isArray(m.dishes) || m.dishes.length === 0) return null;
+    if (!Array.isArray(m.dishes)) return null;
+    // `favorites` può mancare (stime più vecchie e risposte senza etichette): vale nessuno. Se c'è, deve essere un elenco di preferiti validi.
+    if (m.favorites !== undefined && m.favorites !== null && !Array.isArray(m.favorites)) return null;
+    const favorites: FavoriteMention[] = [];
+    for (const f of (m.favorites as unknown[] | undefined | null) ?? []) {
+      const ok = mention(f);
+      if (!ok) return null;
+      favorites.push(ok);
+    }
+    if (m.dishes.length === 0 && favorites.length === 0) return null;
     const dishes: EstimatedDish[] = [];
     for (const d of m.dishes) {
       const ok = dish(d);
       if (!ok) return null;
       dishes.push(ok);
     }
-    meals.push({ slot: m.slot as MealSlot, freeMeal: m.freeMeal === true, dishes });
+    meals.push({ slot: m.slot as MealSlot, freeMeal: m.freeMeal === true, dishes, ...(favorites.length > 0 ? { favorites } : {}) });
   }
   return { meals };
 }

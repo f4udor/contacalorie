@@ -1,4 +1,4 @@
-import { createFakeProvider } from "./fake";
+import { createFakeProvider, demoEstimate } from "./fake";
 import { VertexProvider } from "./vertex";
 import type { ServiceAccount } from "./vertex";
 import type { AiProvider } from "./types";
@@ -9,7 +9,7 @@ export const DEFAULT_DAILY_LIMIT = 60;
 
 /** Il provider scelto dalle variabili d'ambiente (solo lato server); null se l'AI non è configurata. */
 export function createProviderFromEnv(env: Env): AiProvider | null {
-  if (env.AI_PROVIDER === "fake") return createFakeProvider(demoResponse);
+  if (env.AI_PROVIDER === "fake") return createFakeProvider(demoEstimate);
   const project = env.VERTEX_PROJECT?.trim();
   const region = env.VERTEX_REGION?.trim();
   const model = env.VERTEX_MODEL?.trim();
@@ -32,11 +32,3 @@ export function dailyLimitFromEnv(env: Env): number {
   return Number.isInteger(n) && n > 0 ? n : DEFAULT_DAILY_LIMIT;
 }
 
-/** Risposta fissa del provider finto di sviluppo: un solo piatto, con la fascia dedotta dall'ora. */
-function demoResponse(request: { text: string; localTime: string }) {
-  const hour = Number(request.localTime.slice(0, 2));
-  const slot = hour < 10 ? "colazione" : hour < 16 ? "pranzo" : hour < 18 ? "spuntino" : "cena";
-  return {
-    meals: [{ slot, dishes: [{ name: request.text.slice(0, 60), quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", quantityAssumed: true, weightG: 185, kcal: 400, protein: 20, carbs: 45, fat: 15, fiber: 5, salt: 1.5, note: "Stima di prova (provider finto)." }] }],
-  };
-}

@@ -150,8 +150,11 @@
       "click": "+ Aggiungi piatto"
     },
     {
-      "click": "Preferiti",
-      "exact": true
+      "clickRole": {
+        "role": "button",
+        "name": "Preferiti",
+        "exact": true
+      }
     },
     {
       "clickRole": {
