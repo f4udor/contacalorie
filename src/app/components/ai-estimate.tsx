@@ -3,17 +3,18 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode, RefObject } from "react";
 import type { DateKey, MealSlot } from "@/engine";
-import type { DataStore, FavoriteDish } from "@/data";
+import type { DataStore, FavoriteDish, FavoriteMeal } from "@/data";
 import type { MealProposal } from "@/modules/ai";
 import { useAuth } from "../auth-provider";
-import { requestEstimate } from "../lib/ai-client";
-import { buildDisplayText, buildModelText, hasContent } from "../lib/favorite-text";
-import type { Segment } from "../lib/favorite-text";
+import { localDateTime, requestEstimate } from "../lib/ai-client";
+import { buildDisplayText, hasContent } from "../lib/favorite-text";
+import type { PickedFavorite, Segment } from "../lib/favorite-text";
+import { labelOnlyPlan, routeEstimate } from "../lib/label-only";
 import { newId } from "../lib/ids";
 import { formatNumber } from "../lib/format";
 import { KCAL_CHECK_MESSAGE, SLOTS, parseDecimal, textNeedsKcalCheck } from "../lib/meal-form";
-import { DISH_NUMBER_KEYS, countUnknownMentions, draftsToPrevious, draftsToProposal, forceSlot, freeSwitchBlock, hasDishes, proposalToDrafts, proposalToRecords, withInitialFree, withSlot } from "../lib/proposal-form";
-import type { DishDraft, DishNumberKey, DraftErrors, FavoriteRefs, FreeRules, MealDraft } from "../lib/proposal-form";
+import { DISH_NUMBER_KEYS, answerWeightAsk, countUnknownMentions, draftsToPrevious, draftsToProposal, favoritesToUpdate, forceSlot, freeSwitchBlock, hasDishes, proposalToDrafts, proposalToRecords, skipWeightAsk, withInitialFree, withSlot } from "../lib/proposal-form";
+import type { DishDraft, DishNumberKey, DraftErrors, FavoriteMealRefs, FavoriteRefs, FreeRules, MealDraft } from "../lib/proposal-form";
 import { FavoriteTextField } from "./favorite-text-field";
 import type { FavoriteTextFieldHandle } from "./favorite-text-field";
 import { IconPlus } from "./ui/icons";
@@ -48,8 +49,8 @@ interface Props {
 export interface AiEstimateHandle {
   /** Conferma la proposta: salva i piatti. Se ci sono errori nei numeri li mostra e non salva. */
   confirm: () => Promise<void>;
-  /** Mette un preferito nella frase come etichetta, al punto del cursore (BRIEF §4.1). */
-  insertFavorite: (favorite: FavoriteDish) => void;
+  /** Mette un preferito (piatto o pasto) nella frase come etichetta, al punto del cursore (BRIEF §4.1). */
+  insertFavorite: (picked: PickedFavorite) => void;
 }
 
 /** Le kcal di un piatto proposto col punto delle migliaia; il testo non ancora valido (o vuoto) resta com'è. */
@@ -68,9 +69,11 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
   // Il campo: pezzi di testo ed etichette dei preferiti; i preferiti messi nella frase si ricordano per id (la loro foto di quando sono stati scelti).
   const [segments, setSegments] = useState<Segment[]>([]);
   const [known, setKnown] = useState<Map<string, FavoriteDish>>(new Map());
+  const [knownMeals, setKnownMeals] = useState<Map<string, FavoriteMeal>>(new Map());
   const fieldRef = useRef<FavoriteTextFieldHandle | null>(null);
   // I preferiti della richiesta fatta (per riferimento) e il testo letto da una persona, da salvare come testo originale.
   const [requestRefs, setRequestRefs] = useState<FavoriteRefs>(new Map());
+  const [requestMealRefs, setRequestMealRefs] = useState<FavoriteMealRefs>(new Map());
   const [displayText, setDisplayText] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -83,13 +86,13 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
   // I piatti aperti per la modifica (gli altri sono una riga sola).
   const [openKeys, setOpenKeys] = useState<string[]>([]);
 
-  const start = (proposal: MealProposal, originalText: string, refs: FavoriteRefs) => {
+  const start = (proposal: MealProposal, originalText: string, refs: FavoriteRefs, mealRefs: FavoriteMealRefs) => {
     setOriginal({ proposal, text: originalText });
     const forced = fixedSlot ? forceSlot(proposal, fixedSlot) : proposal;
     // Un'etichetta che non corrisponde a nessun preferito conosciuto (eliminato nel frattempo, risposta sbagliata) si scarta, con un avviso breve.
-    const unknown = countUnknownMentions(forced, refs);
+    const unknown = countUnknownMentions(forced, refs, mealRefs);
     setNotice(unknown === 0 ? null : unknown === 1 ? "Un piatto dei preferiti non è stato riconosciuto e non è stato aggiunto." : `${unknown} piatti dei preferiti non sono stati riconosciuti e non sono stati aggiunti.`);
-    const initial = withInitialFree(proposalToDrafts(forced, refs), free, !fixedSlot);
+    const initial = withInitialFree(proposalToDrafts(forced, refs, mealRefs), free, !fixedSlot);
     // «Aggiungi pasto libero»: il primo pasto proposto parte libero, se nessun altro lo è già e la settimana lo consente.
     const first = initial[0];
     setDrafts(forceFree && first && !first.isFree && !initial.some((m) => m.isFree) && free.freeAllowedFor(first.slot) ? initial.map((m, i) => (i === 0 ? { ...m, isFree: true } : m)) : initial);
@@ -101,16 +104,27 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
   const estimate = async () => {
     if (!hasContent(segments) || busy) return;
     // Al modello vanno il testo e, per ogni preferito, solo nome e riferimento: i numeri restano nell'app.
-    const { text, refs } = buildModelText(segments, known);
-    if (text === "") return;
-    setBusy(true);
+    // Con solo etichette e quantità semplici la proposta la compone l'app, senza chiamare il modello e senza consumare il limite giornaliero (BRIEF §4.1).
+    const route = routeEstimate(segments, known, knownMeals, { fixedSlot, localTime: localDateTime(new Date()).localTime });
+    if (route.model.text === "") return;
+    const { refs, mealRefs } = route.model;
     setError(null);
-    const r = await requestEstimate({ text }, getAccessToken);
+    if (route.via === "app") {
+      const shown = buildDisplayText(segments, known, knownMeals);
+      setRequestRefs(refs);
+      setRequestMealRefs(mealRefs);
+      setDisplayText(shown);
+      start(route.proposal, shown, refs, mealRefs);
+      return;
+    }
+    setBusy(true);
+    const r = await requestEstimate({ text: route.model.text }, getAccessToken);
     setBusy(false);
     if (r.ok) {
       setRequestRefs(refs);
-      setDisplayText(buildDisplayText(segments, known));
-      start(r.proposal, r.originalText, refs);
+      setRequestMealRefs(mealRefs);
+      setDisplayText(buildDisplayText(segments, known, knownMeals));
+      start(r.proposal, r.originalText, refs, mealRefs);
     } else setError(r.message);
   };
 
@@ -124,7 +138,7 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
     setError(null);
     const r = await requestEstimate({ text: original.text, previous: edited && edited.meals.length > 0 ? edited : original.proposal, correction: c }, getAccessToken);
     setBusy(false);
-    if (r.ok) start(r.proposal, original.text, requestRefs);
+    if (r.ok) start(r.proposal, original.text, requestRefs, requestMealRefs);
     else setError(r.message);
   };
 
@@ -143,6 +157,8 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
       // Il segno "libero" vale per l'intero pasto (stessa fascia); il tetto di kcal lo applica solo il motore.
       const isFree = new Map(r.proposal.meals.map((m) => [m.slot, m.freeMeal === true]));
       for (const record of proposalToRecords(r.proposal, date, displayText || original.text, newId)) await saveDish(store, record, isFree.get(record.slot) ?? false);
+      // Il peso risposto alla domanda «Quanto pesava la porzione salvata?» passa al preferito solo adesso, alla conferma.
+      for (const fav of favoritesToUpdate(drafts, requestRefs)) await store.saveFavoriteDish(fav);
       onChanged();
       onClose();
     } catch {
@@ -156,9 +172,10 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
   useEffect(() => {
     handleRef.current = {
       confirm,
-      insertFavorite: (favorite) => {
-        setKnown((m) => new Map(m).set(favorite.id, favorite));
-        fieldRef.current?.insertFavorite(favorite);
+      insertFavorite: (picked) => {
+        if (picked.kind === "meal") setKnownMeals((m) => new Map(m).set(picked.favorite.id, picked.favorite));
+        else setKnown((m) => new Map(m).set(picked.favorite.id, picked.favorite));
+        fieldRef.current?.insertFavorite(picked);
       },
     };
   });
@@ -189,7 +206,7 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
           </p>
         )}
         {error && <Caption tone="fuori">{error}</Caption>}
-        <PillButton filled onClick={estimate} disabled={busy || !hasContent(segments) || available === false}>
+        <PillButton filled onClick={estimate} disabled={busy || !hasContent(segments) || (available === false && labelOnlyPlan(segments) === null)}>
           {busy ? "Stima in corso…" : "Stima"}
         </PillButton>
         {children}
@@ -245,13 +262,31 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
                   </span>
                   <span className="shrink-0 font-cifre text-[17px] tabular-nums">{kcalText(d.kcal)}</span>
                 </button>
+                {d.weightAsk !== null && !d.weightAsk.skipped && (
+                  <div className="flex items-center gap-3 border-t border-separatore px-4 py-2.5">
+                    <label htmlFor={`ask-${d.key}`} className="min-w-0 flex-1 text-[15px] leading-snug">
+                      Quanto pesava la porzione salvata?
+                    </label>
+                    <input
+                      id={`ask-${d.key}`}
+                      value={d.weightAsk.input}
+                      inputMode="numeric"
+                      placeholder="grammi"
+                      onChange={(e) => setDish(meal.key, d.key, answerWeightAsk(d, requestRefs.get(d.favorite?.ref ?? -1) as FavoriteDish, e.target.value))}
+                      className="min-h-11 w-24 shrink-0 rounded-full bg-sfondo px-3 text-right text-[17px] tabular-nums outline-none placeholder:text-testo-secondario"
+                    />
+                    <button type="button" onClick={() => setDish(meal.key, d.key, skipWeightAsk(d, requestRefs.get(d.favorite?.ref ?? -1) as FavoriteDish))} className="min-h-11 shrink-0 px-1 text-[16px] font-semibold text-comando">
+                      Salta
+                    </button>
+                  </div>
+                )}
                 {isOpen && (
                   <div id={`dish-${d.key}`} className="border-t border-separatore">
                     <ul className="divide-y divide-separatore">
                       <FieldRow label="Nome" htmlFor={`name-${d.key}`}>
                         <RowInput id={`name-${d.key}`} value={d.name} onChange={(v) => setDish(meal.key, d.key, { name: v })} />
                       </FieldRow>
-                      <FieldRow label="Quantità" htmlFor={`qty-${d.key}`}>
+                      <FieldRow label="Ingredienti" htmlFor={`qty-${d.key}`}>
                         <RowTextarea id={`qty-${d.key}`} value={d.quantity} onChange={(v) => setDish(meal.key, d.key, { quantity: v, quantityAssumed: false })} />
                       </FieldRow>
                       {DISH_NUMBER_KEYS.map((k) => {

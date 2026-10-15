@@ -713,39 +713,39 @@ Vincoli di questa fase:
 - Stile di §10, screenshot solo scuri a 390 px degli scenari toccati. Comandi fermi (§10.3): le prove `npm run prova-comandi` e `npm run prova-scorrimento` devono passare, aggiornate dove i pannelli cambiano.
 - Settimana, Grafici e la barra non si toccano: cambiano nella fase 9.
 
-### T8.0 Scheda del piatto: nome, peso, ingredienti · da fare
+### T8.0 Scheda del piatto: nome, peso, ingredienti · fatto
 - Scheda del piatto in Manuale come in §4.2: ordine Nome, Peso (g), Ingredienti; "Quantità" diventa "Ingredienti" ovunque (scheda, proposta aperta, intestazione del CSV); riga "Porzioni" tolta; interruttore "Pasto libero" tolto dalla scheda del piatto (aggiunta e modifica); riga "Pasto" assente quando la fascia è fissata.
 - Ricalcolo con il peso: invariato per i piatti che hanno un peso all'apertura (caso AT). Su un piatto senza peso, scrivere il peso lo registra senza ricalcolo.
 - "Stima con l'AI": il testo mandato al modello è composto da nome, peso e ingredienti; il prompt chiede di stimare per il peso scritto, se c'è, e di restituire quel peso. Riga sotto il tasto come in §4.2. Il provider finto rispetta il peso scritto.
 - Test: testo mandato al modello con e senza peso e ingredienti; nessuna riga Porzioni né Pasto libero nello stato della scheda; riga Pasto presente solo senza fascia fissata; caso AT. Screenshot: aggiunta con fascia fissata prima e dopo la stima, modifica di un piatto con peso.
 
-### T8.1 Peso dei preferiti chiesto quando manca · da fare
+### T8.1 Peso dei preferiti chiesto quando manca · fatto
 - Proposta: preferito senza peso con grammi detti → domanda "Quanto pesava la porzione salvata?" nel piatto, con campo in grammi e "Salta" (§4.1). Rispondendo, numeri e peso del piatto si ricalcolano subito; alla conferma della proposta il preferito prende il peso. Nessun avviso giallo. Casi AS e AV.
 - Salvataggio di un piatto senza peso nei preferiti (scorrimento in Oggi e scheda del piatto): pannello piccolo "Salva nei preferiti" con nome e campo Peso facoltativo; "Salva" anche con il campo vuoto. Piatto con peso: si salva subito come ora. Regola dei doppioni invariata.
 - Test: casi AS e AV, preferito aggiornato solo alla conferma (non chiudendo la proposta), "Salta", salvataggio con e senza peso. Screenshot: domanda nella proposta vuota e compilata, pannello di salvataggio.
 
-### T8.2 Modificare un preferito · da fare
+### T8.2 Modificare un preferito · fatto
 - Nell'elenco dei preferiti lo scorrimento a sinistra mostra "Modifica" (solo piatti) ed "Elimina" come tessere separate (§4.1, §10.5); `SwipeRow` già supporta più azioni.
 - "Modifica" apre la scheda del piatto di §4.2 con titolo "Modifica preferito", senza riga Pasto, senza "Salva nei preferiti" ed "Elimina piatto". "Salva" aggiorna il preferito tramite lo sportello dei dati (browser e Supabase); i piatti già registrati non cambiano.
 - Test: aggiornamento di nome, ingredienti, peso e numeri; i piatti nei giorni passati invariati; i pasti preferiti hanno solo "Elimina". `prova-scorrimento` con la nuova tessera. Screenshot: riga scorsa con le due tessere, scheda "Modifica preferito".
 
-### T8.3 Difetto: "ipotizzata" con la quantità detta · da fare
+### T8.3 Difetto: "ipotizzata" con la quantità detta · fatto
 - Mauro vede "ipotizzata" anche su piatti di cui ha detto la quantità. Cerca la causa in tutto il percorso: prompt, validazione, `proposal-form.ts` (anche la correzione a parole e i piatti dai preferiti), riga della proposta.
 - Se la causa è nell'app, correggila. Se dipende dal modello, rinforza il prompt con un esempio esplicito ("200 g di petto di pollo" → quantità detta) e scrivilo nel diario sotto "Non verificato" (il modello vero non si prova qui).
 - Test fissi: frase con grammi detti → non ipotizzata; senza quantità → ipotizzata; piatto da preferito con grammi → non ipotizzata; correzione che aggiunge la quantità → non ipotizzata.
 
-### T8.4 Saldo e scheda Calorie · da fare
+### T8.4 Saldo e scheda Calorie · fatto
 - Scheda Saldo della Settimana: testo sotto il numero "di margine", "da recuperare" o "in pari"; con il trattino nessuna riga ma lo stesso spazio; trattino con misura e altezza uguali a quello della scheda Media (§3.3).
 - Oggi: riga di composizione dell'obiettivo sempre presente, "Base 2.100" nei giorni senza altro (§2); la scheda Calorie ha la stessa altezza in ogni giorno. Aggiorna `hasCompositionDetail` e il suo test di conseguenza.
 - Test della logica dei testi. Misure nella prova dei comandi: altezza della scheda Calorie con e senza bici, allineamento dei due trattini. Screenshot: Saldo positivo, negativo, trattino; Oggi senza bici.
 
-### T8.5 Un solo tasto Preferiti · da fare
+### T8.5 Un solo tasto Preferiti · fatto
 - Pannello Aggiungi (dal + e da "Aggiungi piatto"): tolta la riga "Preferiti" e il suo pannello con il + per riga. Resta solo il tasto "Preferiti" nel campo, che elenca **pasti e piatti** in due gruppi con la ricerca; un tocco sulla riga mette l'etichetta (§4.1).
 - Etichetta di un pasto preferito: bordo nel colore Comando; nella proposta si espande nei piatti del pasto con i numeri salvati; quantità dopo un pasto ignorata. Al modello va solo nome e riferimento (schema di risposta esteso per distinguere pasti e piatti).
 - **Solo etichette, niente AI**: funzione pura che riconosce un testo fatto solo di etichette e quantità semplici (forme in §4.1) e la fascia dall'ora; in quel caso "Stima" compone la proposta senza chiamare il modello né consumare il limite giornaliero.
 - Test: casi AW, AX, AY; tutte le forme di quantità semplice; confini delle fasce orarie (10:59/11:00, 14:59/15:00, 18:29/18:30, 04:59/05:00); fascia fissata che prevale sull'ora; nessuna chiamata al provider con sole etichette; pasto con etichetta in una frase che va al modello. Aggiorna `prova-comandi` e `prova-scorrimento` per l'elenco nuovo. Screenshot: elenco con pasti e piatti, campo con un'etichetta di pasto e una di piatto, proposta composta senza AI.
 
-### T8.6 Report di fase · da fare
+### T8.6 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-8.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: nessun SQL da eseguire; un controllo da fare sul telefono per ogni task, partendo da "Aggiungi piatto" a pranzo in Manuale con nome e peso.
 
 ## Fase 9: Trend

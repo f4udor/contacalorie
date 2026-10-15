@@ -170,11 +170,15 @@ describe("proteine sul peso obiettivo", () => {
   });
 });
 
-describe("hasCompositionDetail (riga di composizione sotto l'anello)", () => {
+describe("hasCompositionDetail (riga di composizione sotto l'anello, sempre presente dalla fase 8)", () => {
   const view = (days: Day[], date: string) => buildTodayView({ date, days, settings: s, weightKg: 100 });
-  it("solo la base: la riga non compare", () => {
+  it("solo la base: la riga c'è e dice «Base 2.100» (stessa altezza della scheda in ogni giorno)", () => {
     const v = view(week(day("2026-01-05", [meal("a", 1500)])), "2026-01-05");
-    expect(hasCompositionDetail(v.composition)).toBe(false);
+    expect(hasCompositionDetail(v.composition)).toBe(true);
+    expect(v.composition).toEqual([{ label: "Base", amount: 2100, signed: false }]);
+  });
+  it("giorno senza pasti né attività: la riga c'è lo stesso", () => {
+    expect(hasCompositionDetail(view(week(day("2026-01-05")), "2026-01-05").composition)).toBe(true);
   });
   it("con bici, con passi o con recupero: compare", () => {
     expect(hasCompositionDetail(view(week(day("2026-01-05", [], { bikeKm: 30 })), "2026-01-05").composition)).toBe(true);

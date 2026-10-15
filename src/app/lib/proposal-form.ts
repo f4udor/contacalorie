@@ -1,6 +1,7 @@
 import { favoriteDishFromQuantity } from "@/engine";
+import type { FavoriteDishResult } from "@/engine";
 import type { DateKey, MealSlot, SaidQuantity } from "@/engine";
-import type { FavoriteDish, MealRecord } from "@/data";
+import type { FavoriteDish, FavoriteMeal, MealRecord } from "@/data";
 import type { FavoriteMention, MealProposal } from "@/modules/ai";
 import { parseDecimal } from "./meal-form";
 
@@ -24,9 +25,14 @@ export interface DishDraft {
   fiber: string;
   salt: string;
   /** Se il piatto viene da un preferito messo nel testo con un'etichetta: il suo riferimento e la quantità detta (BRIEF §4.1). */
-  favorite: { ref: number; said: SaidQuantity } | null;
-  /** Avviso breve su questo piatto (per esempio «Peso del preferito sconosciuto»); null se non c'è. */
+  favorite: { ref: number; said: SaidQuantity; /** Il piatto viene da un pasto preferito (etichetta di pasto): numeri salvati, nessuna quantità. */ meal?: true } | null;
+  /** Avviso breve su questo piatto; null se non c'è. */
   warning: string | null;
+  /**
+   * La domanda «Quanto pesava la porzione salvata?» (BRIEF §4.1, casi AS e AV): c'è per un preferito senza peso di cui sono stati detti i grammi.
+   * `grams` sono i grammi detti, `input` la risposta scritta finora, `skipped` se l'utente ha toccato «Salta».
+   */
+  weightAsk: { grams: number; input: string; skipped: boolean } | null;
 }
 
 export interface MealDraft {
@@ -50,6 +56,9 @@ const asText = (n: number) => String(n).replace(".", ",");
 /** I preferiti messi nel testo, per riferimento: l'app costruisce da questi i piatti delle etichette. */
 export type FavoriteRefs = ReadonlyMap<number, FavoriteDish>;
 
+/** I pasti preferiti messi nel testo, per riferimento. */
+export type FavoriteMealRefs = ReadonlyMap<number, FavoriteMeal>;
+
 /** Quantità detta dal modello per un preferito: grammi, altrimenti porzioni; null se non detta. */
 export function saidFromMention(m: FavoriteMention): SaidQuantity {
   if (!m.quantitySaid) return null;
@@ -59,15 +68,15 @@ export function saidFromMention(m: FavoriteMention): SaidQuantity {
 }
 
 /** Quante etichette della proposta non corrispondono a nessun preferito conosciuto (eliminato nel frattempo, riferimento sbagliato). */
-export function countUnknownMentions(p: MealProposal, refs: FavoriteRefs = new Map()): number {
-  return p.meals.reduce((sum, m) => sum + (m.favorites ?? []).filter((f) => !refs.has(f.ref)).length, 0);
+export function countUnknownMentions(p: MealProposal, refs: FavoriteRefs = new Map(), mealRefs: FavoriteMealRefs = new Map()): number {
+  return p.meals.reduce((sum, m) => sum + (m.favorites ?? []).filter((f) => !(f.kind === "pasto" ? mealRefs : refs).has(f.ref)).length, 0);
 }
 
 /**
  * La proposta come bozza da controllare. I piatti da etichetta si costruiscono qui dal preferito (BRIEF §4.1), mai dal modello; un'etichetta
  * sconosciuta si scarta (vedi `countUnknownMentions`) e un pasto rimasto senza piatti sparisce.
  */
-export function proposalToDrafts(p: MealProposal, refs: FavoriteRefs = new Map()): MealDraft[] {
+export function proposalToDrafts(p: MealProposal, refs: FavoriteRefs = new Map(), mealRefs: FavoriteMealRefs = new Map()): MealDraft[] {
   const drafts: MealDraft[] = [];
   p.meals.forEach((m, i) => {
     const dishes: DishDraft[] = m.dishes.map((d, j) => ({
@@ -85,8 +94,32 @@ export function proposalToDrafts(p: MealProposal, refs: FavoriteRefs = new Map()
       salt: asText(d.salt),
       favorite: null,
       warning: null,
+      weightAsk: null,
     }));
     (m.favorites ?? []).forEach((f, j) => {
+      if (f.kind === "pasto") {
+        // Un pasto preferito diventa tutti i suoi piatti, con i numeri salvati; una quantità detta dopo di lui si ignora.
+        mealRefs.get(f.ref)?.dishes.forEach((d, k) =>
+          dishes.push({
+            key: `m${i}f${j}p${k}`,
+            name: d.name,
+            quantity: d.quantity ?? "",
+            quantityAssumed: false,
+            weightG: d.weightG ?? null,
+            note: "",
+            kcal: asText(d.kcal),
+            protein: asText(d.protein),
+            carbs: asText(d.carbs),
+            fat: asText(d.fat),
+            fiber: asText(d.fiber),
+            salt: asText(d.salt),
+            favorite: { ref: f.ref, said: null, meal: true },
+            warning: null,
+            weightAsk: null,
+          }),
+        );
+        return;
+      }
       const fav = refs.get(f.ref);
       if (!fav) return;
       const said = saidFromMention(f);
@@ -106,11 +139,69 @@ export function proposalToDrafts(p: MealProposal, refs: FavoriteRefs = new Map()
         salt: asText(r.numbers.salt),
         favorite: { ref: f.ref, said },
         warning: r.warning,
+        weightAsk: r.needsWeight && said?.unit === "g" ? { grams: said.amount, input: "", skipped: false } : null,
       });
     });
     if (dishes.length > 0) drafts.push({ key: `m${i}`, slot: m.slot, isFree: m.freeMeal === true, dishes });
   });
   return drafts;
+}
+
+const WEIGHT_ASK_MAX_G = 5000;
+
+/** Il peso risposto alla domanda sul preferito: un intero positivo (fino a 5.000 g); altrimenti null. */
+export function answeredWeight(ask: DishDraft["weightAsk"]): number | null {
+  if (ask === null || ask.skipped) return null;
+  const r = parseDecimal(ask.input);
+  return r === "empty" || r === "invalid" || !Number.isInteger(r) || r <= 0 || r > WEIGHT_ASK_MAX_G ? null : r;
+}
+
+function withResult(d: DishDraft, r: FavoriteDishResult): DishDraft {
+  return {
+    ...d,
+    quantity: r.quantityText,
+    quantityAssumed: r.assumed,
+    weightG: r.weightG,
+    kcal: asText(r.numbers.kcal),
+    protein: asText(r.numbers.protein),
+    carbs: asText(r.numbers.carbs),
+    fat: asText(r.numbers.fat),
+    fiber: asText(r.numbers.fiber),
+    salt: asText(r.numbers.salt),
+    warning: r.warning,
+  };
+}
+
+/**
+ * Risposta (o correzione) alla domanda sul peso: se `input` è un peso valido numeri, quantità e peso del piatto si ricalcolano subito
+ * (`r = grammi detti / peso risposto`); se è vuoto o non valido tornano quelli di una porzione.
+ */
+export function answerWeightAsk(d: DishDraft, fav: FavoriteDish, input: string): DishDraft {
+  if (d.weightAsk === null || d.favorite === null) return d;
+  const ask = { ...d.weightAsk, input, skipped: false };
+  const w = answeredWeight(ask);
+  const r = favoriteDishFromQuantity({ ...fav, weightG: w }, d.favorite.said);
+  return { ...withResult(d, r), weightAsk: ask };
+}
+
+/** «Salta»: la domanda sparisce e il piatto resta com'era senza risposta (`r = 1`, «1 porzione»). */
+export function skipWeightAsk(d: DishDraft, fav: FavoriteDish): DishDraft {
+  if (d.weightAsk === null || d.favorite === null) return d;
+  const r = favoriteDishFromQuantity({ ...fav, weightG: null }, d.favorite.said);
+  return { ...withResult(d, r), weightAsk: { ...d.weightAsk, input: "", skipped: true } };
+}
+
+/** I preferiti che prendono il peso risposto: solo alla conferma della proposta, per i piatti rimasti e con una risposta valida. */
+export function favoritesToUpdate(drafts: readonly MealDraft[], refs: FavoriteRefs): FavoriteDish[] {
+  const updates = new Map<string, FavoriteDish>();
+  for (const m of drafts) {
+    for (const d of m.dishes) {
+      const w = answeredWeight(d.weightAsk);
+      const fav = d.favorite ? refs.get(d.favorite.ref) : undefined;
+      if (w !== null && fav) updates.set(fav.id, { ...fav, weightG: w });
+    }
+  }
+  return [...updates.values()];
 }
 
 /**
@@ -181,8 +272,15 @@ export function draftsToPrevious(drafts: readonly MealDraft[]): MealProposal | n
   for (const m of drafts) {
     const own = draftsToProposal([{ ...m, dishes: m.dishes.filter((d) => d.favorite === null) }]);
     if (!own.ok) return null;
+    const seenMeals = new Set<number>();
     const favorites: FavoriteMention[] = m.dishes.flatMap((d) => {
       if (d.favorite === null) return [];
+      if (d.favorite.meal) {
+        // Un pasto preferito va al modello una volta sola, come riferimento: i suoi piatti non sono stime.
+        if (seenMeals.has(d.favorite.ref)) return [];
+        seenMeals.add(d.favorite.ref);
+        return [{ ref: d.favorite.ref, kind: "pasto" as const, quantitySaid: false, grams: null, servings: null }];
+      }
       const said = d.favorite.said;
       return [{ ref: d.favorite.ref, quantitySaid: said !== null, grams: said?.unit === "g" ? said.amount : null, servings: said?.unit === "porzioni" ? said.amount : null }];
     });

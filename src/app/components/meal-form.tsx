@@ -1,24 +1,21 @@
 "use client";
 
-import { FreeMealSwitch } from "./free-meal-switch";
-import { Caption, FieldRow, GroupedList, PillButton, RowInput, RowTextarea, Segmented, SelectInput } from "./ui/ui";
+import { Caption, FieldRow, GroupedList, PillButton, RowInput, RowTextarea, SelectInput } from "./ui/ui";
 import type { MealSlot } from "@/engine";
 import { KCAL_CHECK_MESSAGE, SLOTS, textNeedsKcalCheck } from "../lib/meal-form";
 import type { MealFieldKey, MealFormErrors, MealFormValues } from "../lib/meal-form";
-import { SERVING_CHOICES, servingsText } from "../lib/portion-scale";
+import { aiEstimateHeadline, dishSheetFields } from "../lib/dish-sheet";
 
 interface MealFormProps {
   values: MealFormValues;
   onChange: (patch: Partial<MealFormValues>) => void;
   errors: MealFormErrors;
-  /** Dice se il pasto di quella fascia può essere libero (false se la settimana ha già un altro pasto libero). */
-  freeAllowedFor: (slot: MealSlot) => boolean;
-  /** Dice se il pasto di quella fascia è già libero: scegliendo una fascia l'interruttore ne segue lo stato. */
+  /** Dice se il pasto di quella fascia è già libero: scegliendo una fascia lo stato libero del pasto segue quello della fascia. */
   mealIsFreeFor?: (slot: MealSlot) => boolean;
+  /** Prefisso degli id dei campi: serve se due schede del piatto sono aperte insieme (es. «Modifica preferito» sopra Aggiungi), perché le etichette puntino ai campi giusti. */
+  idPrefix?: string;
   /** La fascia è già stabilita (si aggiunge un piatto a un pasto) e non si sceglie. */
   lockedSlot?: boolean;
-  /** Tetto di kcal del pasto libero, dalle impostazioni. */
-  freeMealCap: number;
   /** La stima automatica è attiva: compare "Stima con l'AI". */
   aiAvailable: boolean;
   aiBusy: boolean;
@@ -26,11 +23,8 @@ interface MealFormProps {
   /** Nota del modello dopo una stima (e, con essa, il controllo di coerenza). */
   aiNote: string | null;
   onEstimate: () => void;
-  /**
-   * Quantità senza AI (BRIEF §4.1): con `mode: "peso"` il campo «Peso (g)» ricalcola kcal e nutrienti; con `"porzioni"` (piatto senza peso)
-   * compare la riga «Porzioni» con ×0,5, ×1, ×1,5, ×2 e un numero a mano.
-   */
-  portion?: { mode: "peso" | "porzioni"; servings: string; onServings: (text: string) => void };
+  /** Il peso per cui sono state fatte le ultime stime con l'AI (null se la stima era senza peso). */
+  aiForWeightG: number | null;
 }
 
 const NUMERIC: { key: Exclude<MealFieldKey, "isFree" | "weightG">; label: string; unit: string }[] = [
@@ -43,26 +37,22 @@ const NUMERIC: { key: Exclude<MealFieldKey, "isFree" | "weightG">; label: string
 ];
 
 /**
- * Campi del piatto a mano (BRIEF §10.5, bozza «scheda del piatto»), controllati da chi li usa: nome e quantità, «Stima con l'AI» (sopra le
- * calorie), i numeri, il pasto e l'interruttore «Pasto libero». Il nome del campo sta a sinistra, il valore a destra con l'unità accanto.
+ * Campi del piatto a mano (BRIEF §4.2), controllati da chi li usa: Nome, Peso (g), Ingredienti, «Stima con l'AI» (sopra le calorie), i numeri
+ * e il pasto (solo se la fascia non è fissata). Il nome del campo sta a sinistra, il valore a destra con l'unità accanto.
  */
-export function MealForm({ values, onChange, errors, freeAllowedFor, mealIsFreeFor, lockedSlot = false, freeMealCap, aiAvailable, aiBusy, aiError, aiNote, onEstimate, portion }: MealFormProps) {
+export function MealForm({ values, onChange, errors, mealIsFreeFor, lockedSlot = false, idPrefix = "meal", aiAvailable, aiBusy, aiError, aiNote, aiForWeightG, onEstimate }: MealFormProps) {
   const set = <K extends keyof MealFormValues>(key: K, value: MealFormValues[K]) => onChange({ [key]: value });
-  // Se il pasto è già libero resta modificabile anche quando la settimana «ne ha» uno: è proprio quello.
-  const freeAllowed = freeAllowedFor(values.slot);
-  const switchDisabled = !freeAllowed && !values.isFree;
-
   return (
     <div className="flex flex-col gap-3">
       <GroupedList>
-        <FieldRow label="Nome" htmlFor="meal-name">
-          <RowInput id="meal-name" value={values.name} onChange={(v) => set("name", v)} />
+        <FieldRow label="Nome" htmlFor={`${idPrefix}-name`}>
+          <RowInput id={`${idPrefix}-name`} value={values.name} onChange={(v) => set("name", v)} />
         </FieldRow>
-        <FieldRow label="Quantità" htmlFor="meal-quantity">
-          <RowTextarea id="meal-quantity" value={values.quantity} onChange={(v) => set("quantity", v)} />
+        <FieldRow label="Peso (g)" htmlFor={`${idPrefix}-weightG`} error={errors.weightG}>
+          <RowInput id={`${idPrefix}-weightG`} value={values.weightG} onChange={(v) => set("weightG", v)} inputMode="numeric" placeholder="facoltativo" invalid={Boolean(errors.weightG)} />
         </FieldRow>
-        <FieldRow label="Peso (g)" htmlFor="meal-weightG" error={errors.weightG}>
-          <RowInput id="meal-weightG" value={values.weightG} onChange={(v) => set("weightG", v)} inputMode="numeric" placeholder="facoltativo" invalid={Boolean(errors.weightG)} />
+        <FieldRow label="Ingredienti" htmlFor={`${idPrefix}-quantity`}>
+          <RowTextarea id={`${idPrefix}-quantity`} value={values.quantity} onChange={(v) => set("quantity", v)} />
         </FieldRow>
       </GroupedList>
 
@@ -76,7 +66,7 @@ export function MealForm({ values, onChange, errors, freeAllowedFor, mealIsFreeF
       )}
       {aiNote !== null && values.kcal.trim() !== "" && (
         <p role="status" className="px-4 text-[13px] text-testo-secondario">
-          <span className="font-semibold text-testo">Stimato con l&apos;AI: controlla i numeri.</span> {aiNote}
+          <span className="font-semibold text-testo">{aiEstimateHeadline(aiForWeightG)}</span> {aiNote}
         </p>
       )}
       {aiNote !== null && textNeedsKcalCheck(values) && (
@@ -88,35 +78,19 @@ export function MealForm({ values, onChange, errors, freeAllowedFor, mealIsFreeF
         </Caption>
       )}
 
-      {portion?.mode === "porzioni" && (
-        <GroupedList label="Porzioni">
-          <FieldRow label="Porzioni" htmlFor="meal-servings">
-            <RowInput id="meal-servings" value={portion.servings} onChange={portion.onServings} inputMode="decimal" />
-          </FieldRow>
-          <li className="px-4 py-2.5">
-            <Segmented
-              label="Porzioni"
-              options={SERVING_CHOICES.map((n) => ({ value: servingsText(n), label: `×${servingsText(n)}` }))}
-              value={SERVING_CHOICES.map(servingsText).includes(portion.servings.trim()) ? portion.servings.trim() : ""}
-              onChange={portion.onServings}
-            />
-          </li>
-        </GroupedList>
-      )}
-
       <GroupedList>
         {NUMERIC.map(({ key, label, unit }) => (
-          <FieldRow key={key} label={label} htmlFor={`meal-${key}`} unit={unit} error={errors[key]}>
-            <RowInput id={`meal-${key}`} value={values[key]} onChange={(v) => set(key, v)} inputMode="decimal" invalid={Boolean(errors[key])} />
+          <FieldRow key={key} label={label} htmlFor={`${idPrefix}-${key}`} unit={unit} error={errors[key]}>
+            <RowInput id={`${idPrefix}-${key}`} value={values[key]} onChange={(v) => set(key, v)} inputMode="decimal" invalid={Boolean(errors[key])} />
           </FieldRow>
         ))}
       </GroupedList>
 
-      {!lockedSlot && (
+      {dishSheetFields(lockedSlot).includes("pasto") && (
         <GroupedList>
-          <FieldRow label="Pasto" htmlFor="meal-slot">
+          <FieldRow label="Pasto" htmlFor={`${idPrefix}-slot`}>
             <SelectInput
-              id="meal-slot"
+              id={`${idPrefix}-slot`}
               value={values.slot}
               options={SLOTS}
               onChange={(slot) => {
@@ -128,13 +102,6 @@ export function MealForm({ values, onChange, errors, freeAllowedFor, mealIsFreeF
         </GroupedList>
       )}
 
-      <FreeMealSwitch
-        checked={values.isFree}
-        blockedText={switchDisabled ? "Già usato questa settimana." : null}
-        freeMealCap={freeMealCap}
-        error={errors.isFree}
-        onChange={(v) => set("isFree", v)}
-      />
     </div>
   );
 }

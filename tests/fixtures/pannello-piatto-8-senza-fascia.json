@@ -1,0 +1,35 @@
+{
+  "id": "pannello-piatto-8-senza-fascia",
+  "descrizione": "Dal + generale la fascia non è fissata: la riga Pasto resta, in fondo ai numeri.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "clickRole": {
+        "role": "radio",
+        "name": "Manuale"
+      }
+    },
+    {
+      "scrollTo": "Pasto"
+    }
+  ]
+}

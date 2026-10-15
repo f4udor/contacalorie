@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { handleEstimate } from "./estimate";
 import type { AccessGate } from "./estimate";
-import { createFakeProvider } from "./fake";
+import { createFakeProvider, demoEstimate } from "./fake";
 import { RESPONSE_SCHEMA, SYSTEM_PROMPT, buildUserMessage } from "./prompt";
 
 interface Fixture {
@@ -188,5 +188,36 @@ describe("accesso e configurazione", () => {
     const out = await handleEstimate({ provider, gate: gateFor(undefined), dailyLimit: 60 }, "Bearer t", b);
     expect(out.status).toBe(400);
     expect(provider.calls).toHaveLength(0);
+  });
+});
+
+describe("piatto scritto a mano: Piatto / Peso / Ingredienti (T8.0)", () => {
+  it("il prompt chiede di stimare per il peso scritto e di restituirlo", () => {
+    expect(SYSTEM_PROMPT).toContain("Peso: 150 g");
+    expect(SYSTEM_PROMPT).toContain("per quel peso totale");
+    expect(SYSTEM_PROMPT).toContain("weightG uguale al peso scritto");
+  });
+  it("il provider finto rispetta il peso scritto, e senza peso usa il suo", () => {
+    const withWeight = demoEstimate({ text: "Piatto: Hummus\nPeso: 150 g\nIngredienti: ceci, tahina", localTime: "13:00" });
+    expect(withWeight.meals[0].dishes[0]).toMatchObject({ name: "Hummus", weightG: 150, quantity: "ceci, tahina", quantityAssumed: false });
+    const without = demoEstimate({ text: "Piatto: Hummus", localTime: "13:00" });
+    expect(without.meals[0].dishes[0]).toMatchObject({ name: "Hummus", weightG: 185, quantityAssumed: true });
+  });
+});
+
+describe("pasti preferiti nelle risposte (T8.5)", () => {
+  const meal = (favorites: unknown[]) => ({ meals: [{ slot: "colazione", freeMeal: false, dishes: [], favorites }] });
+  it("la risposta con un riferimento «pasto» è valida e conserva il tipo; senza tipo vale piatto", async () => {
+    const { parseProposal } = await import("./validate");
+    const p = parseProposal(meal([{ ref: 1, kind: "pasto", quantitySaid: true, grams: 200, servings: null }, { ref: 2, quantitySaid: false, grams: null, servings: null }]));
+    expect(p?.meals[0].favorites?.[0]).toMatchObject({ ref: 1, kind: "pasto" });
+    expect(p?.meals[0].favorites?.[1]).not.toHaveProperty("kind");
+  });
+  it("lo schema distingue pasti e piatti, e il prompt dice che del pasto si conosce solo nome e riferimento", () => {
+    const item = RESPONSE_SCHEMA.properties.meals.items.properties.favorites.items;
+    expect(item.properties.kind.enum).toEqual(["piatto", "pasto"]);
+    expect(item.required).toContain("kind");
+    expect(SYSTEM_PROMPT).toContain("[pasto preferito 2: Colazione solita]");
+    expect(SYSTEM_PROMPT).toContain("Del pasto preferito conosci solo nome e riferimento");
   });
 });

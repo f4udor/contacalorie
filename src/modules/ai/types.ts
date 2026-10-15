@@ -26,6 +26,8 @@ export interface EstimatedDish {
 export interface FavoriteMention {
   /** Il numero di riferimento scritto nell'etichetta (da 1). */
   ref: number;
+  /** «pasto» se l'etichetta è un pasto preferito («[pasto preferito 2: Colazione solita]»); assente = piatto. Il modello dice solo in che pasto va. */
+  kind?: "pasto";
   /** Vero se l'utente ha detto la quantità (in grammi o in porzioni). */
   quantitySaid: boolean;
   /** Grammi detti; null se non detti in grammi. */

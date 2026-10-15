@@ -41,7 +41,7 @@ describe("dishesCsv", () => {
     expect(content.endsWith("\r\n")).toBe(true);
     const l = lines(content);
     expect(rows).toBe(4);
-    expect(l[0]).toBe("Data;Pasto;Piatto;Quantità;Peso (g);Kcal;Proteine (g);Carboidrati (g);Grassi (g);Fibre (g);Sale (g);Libero");
+    expect(l[0]).toBe("Data;Pasto;Piatto;Ingredienti;Peso (g);Kcal;Proteine (g);Carboidrati (g);Grassi (g);Fibre (g);Sale (g);Libero");
     expect(l.slice(1).map((x) => x.split(";")[2])).toEqual(["colazione1", "pranzo1", "pranzo0", "cena2"]); // stesso pasto: ordine di inserimento
     expect(l[2]).toBe("2026-01-05;Pranzo;pranzo1;100 g;;100;1,5;10;2;3;1,25;no");
     expect(l[4]).toBe("2026-01-06;Cena;cena2;;;900;1,5;10;2;3;0,4;sì");

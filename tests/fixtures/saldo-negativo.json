@@ -1,0 +1,46 @@
+{
+  "id": "saldo-negativo",
+  "descrizione": "Settimana: lunedì 2.500 kcal, oggi martedì → Saldo −400 kcal con «da recuperare» sotto il numero.",
+  "oggi": "2026-01-06",
+  "percorso": "/settimana",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m487",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 2500,
+        "protein": 40,
+        "carbs": 200,
+        "fat": 40,
+        "fiber": 10,
+        "salt": 3,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m488",
+        "date": "2026-01-06",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 600,
+        "protein": 20,
+        "carbs": 70,
+        "fat": 20,
+        "fiber": 5,
+        "salt": 1.5,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true
+}

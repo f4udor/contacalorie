@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import type { FavoriteDish, FavoriteMeal, MealRecord } from "@/data";
 import { createMemoryDataStore } from "@/data";
-import { defaultMealName, deleteFavorite, favoriteForDish, favoriteForMeal, filterByName, isFavoriteDish, mealTotalKcal, normalizeText, recordsFromFavoriteDish, recordsFromFavoriteMeal, sameDish, toggleFavoriteDish } from "./favorites";
+import { validateMealForm } from "./meal-form";
+import { defaultMealName, favoriteFromForm, favoriteRowActions, favoriteToForm, deleteFavorite, favoriteForDish, favoriteForMeal, filterByName, isFavoriteDish, mealTotalKcal, needsWeightPrompt, parseFavoriteWeight, saveFavoriteDishAs, normalizeText, recordsFromFavoriteDish, recordsFromFavoriteMeal, sameDish, toggleFavoriteDish } from "./favorites";
 
 const dish = (name: string, quantity: string | null = null, kcal = 100): MealRecord => ({ id: `d-${name}`, date: "2026-01-07", slot: "cena", name, quantity, kcal, protein: 10, carbs: 20, fat: 5, fiber: 2, salt: 0.5, isFree: true, originalText: "testo" });
 const ids = () => {
@@ -172,5 +173,67 @@ describe("il peso nei preferiti (T7.0)", () => {
     expect(recordsFromFavoriteDish(f, "2026-01-07", "cena", ids())[0].weightG).toBe(150);
     const m: FavoriteMeal = { id: "p1", name: "Cena", slot: "cena", dishes: [f] };
     expect(recordsFromFavoriteMeal(m, "2026-01-07", "cena", ids())[0].weightG).toBe(150);
+  });
+});
+
+describe("salvataggio nei preferiti con il peso (T8.1)", () => {
+  it("il peso si chiede solo per un piatto senza peso che non è già tra i preferiti", () => {
+    expect(needsWeightPrompt([], dish("Torta"))).toBe(true);
+    expect(needsWeightPrompt([], { ...dish("Torta"), weightG: 120 })).toBe(false);
+    expect(needsWeightPrompt([{ name: "torta", quantity: null }], dish("Torta"))).toBe(false);
+  });
+  it("peso vuoto = nessun peso; intero positivo fino a 5.000; il resto non vale", () => {
+    expect(parseFavoriteWeight("")).toEqual({ ok: true, weightG: null });
+    expect(parseFavoriteWeight(" 150 ")).toEqual({ ok: true, weightG: 150 });
+    for (const bad of ["12,5", "0", "-3", "abc", "5001"]) expect(parseFavoriteWeight(bad)).toEqual({ ok: false });
+  });
+  it("«Salva» con il peso: il preferito ha nome e peso scritti; con il campo vuoto si salva senza peso", async () => {
+    const store = createMemoryDataStore();
+    const id = ids();
+    await saveFavoriteDishAs(store, dish("Torta"), " Torta della nonna ", 120, id);
+    await saveFavoriteDishAs(store, dish("Pane"), "Pane", null, id);
+    const list = await store.listFavoriteDishes();
+    expect(list.map((f) => [f.name, f.weightG ?? null])).toEqual([["Torta della nonna", 120], ["Pane", null]]);
+  });
+  it("lo stesso nome e la stessa quantità sostituiscono il preferito, mai un doppione", async () => {
+    const store = createMemoryDataStore();
+    await saveFavoriteDishAs(store, dish("Torta"), "Torta", null, ids());
+    await saveFavoriteDishAs(store, dish("Torta"), "Torta", 120, ids());
+    const list = await store.listFavoriteDishes();
+    expect(list).toHaveLength(1);
+    expect(list[0].weightG).toBe(120);
+  });
+});
+
+describe("modifica di un preferito (T8.2)", () => {
+  const torta: FavoriteDish = { id: "f1", name: "Torta", quantity: "1 fetta", weightG: 120, kcal: 300, protein: 6, carbs: 40, fat: 12, fiber: 1, salt: 0.3 };
+  it("la scheda si apre con i valori del preferito e «Salva» aggiorna nome, ingredienti, peso e numeri (stesso id)", async () => {
+    const store = createMemoryDataStore();
+    await store.saveFavoriteDish(torta);
+    const form = { ...favoriteToForm(torta), name: "Torta della nonna", quantity: "farina, uova", weightG: "150", kcal: "380", protein: "7,5" };
+    expect(favoriteToForm(torta)).toMatchObject({ name: "Torta", quantity: "1 fetta", weightG: "120", kcal: "300", protein: "6" });
+    const parsed = validateMealForm(form, true);
+    if (!parsed.ok) throw new Error("scheda non valida");
+    await store.saveFavoriteDish(favoriteFromForm(torta.id, parsed.meal));
+    const list = await store.listFavoriteDishes();
+    expect(list).toEqual([{ id: "f1", name: "Torta della nonna", quantity: "farina, uova", weightG: 150, kcal: 380, protein: 7.5, carbs: 40, fat: 12, fiber: 1, salt: 0.3 }]);
+  });
+  it("i piatti già registrati nei giorni passati non cambiano", async () => {
+    const store = createMemoryDataStore();
+    const registrato = dish("Torta", "1 fetta", 300);
+    await store.saveMeal(registrato);
+    await store.saveFavoriteDish(torta);
+    const parsed = validateMealForm({ ...favoriteToForm(torta), name: "Torta nuova", kcal: "999" }, true);
+    if (!parsed.ok) throw new Error("scheda non valida");
+    await store.saveFavoriteDish(favoriteFromForm(torta.id, parsed.meal));
+    expect(await store.listMeals("2026-01-07")).toEqual([registrato]);
+  });
+  it("un preferito senza peso si completa con «Modifica»", () => {
+    const parsed = validateMealForm({ ...favoriteToForm({ ...torta, weightG: null }), weightG: "80" }, true);
+    expect(parsed.ok && favoriteFromForm("f1", parsed.meal).weightG).toBe(80);
+  });
+  it("«Modifica» c'è solo sui piatti; i pasti hanno solo «Elimina»", () => {
+    expect(favoriteRowActions("dish")).toEqual(["modifica", "elimina"]);
+    expect(favoriteRowActions("meal")).toEqual(["elimina"]);
   });
 });

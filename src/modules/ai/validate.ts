@@ -60,7 +60,8 @@ function mention(raw: unknown): FavoriteMention | null {
   const grams = positive(raw.grams, MAX_SAID_GRAMS);
   const servings = positive(raw.servings, MAX_SAID_SERVINGS);
   const said = raw.quantitySaid === true && (grams !== null || servings !== null);
-  return { ref, quantitySaid: said, grams: said ? grams : null, servings: said && grams === null ? servings : null };
+  const pasto = raw.kind === "pasto";
+  return { ref, ...(pasto ? { kind: "pasto" as const } : {}), quantitySaid: said, grams: said ? grams : null, servings: said && grams === null ? servings : null };
 }
 
 /** Controlla la proposta (risposta del modello o stima precedente ricevuta dal browser). Restituisce null se non è valida. */

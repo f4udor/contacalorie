@@ -16,7 +16,8 @@ import { NutrientCard } from "./components/nutrient-card";
 import { formatDateLong, formatDayMonth, formatNumber, formatSigned, formatWeekday } from "./lib/format";
 import { dayNav } from "./lib/nav";
 import type { SectionId } from "./lib/settings-sections";
-import { isFavoriteDish, toggleFavoriteDish } from "./lib/favorites";
+import { isFavoriteDish, needsWeightPrompt, toggleFavoriteDish } from "./lib/favorites";
+import { SaveFavoritePanel } from "./components/save-favorite-panel";
 import { newId } from "./lib/ids";
 import { currentWeight, buildTodayView, hasCompositionDetail } from "./lib/today-view";
 import { useToday } from "./lib/use-today";
@@ -38,6 +39,7 @@ export function OggiScreen() {
   const [settings, setSettings] = useState<{ section: SectionId | null } | null>(null);
   const [favoriteNote, setFavoriteNote] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<FavoriteDish[]>([]);
+  const [saveFavorite, setSaveFavorite] = useState<MealRecord | null>(null);
   const panelOpen = panel !== null;
   const loadFavorites = useCallback(() => {
     if (!store) return Promise.resolve();
@@ -62,8 +64,17 @@ export function OggiScreen() {
 
   if (!today || !date) return <main aria-busy="true" />;
 
+  const noteFavorite = (text: string) => {
+    setFavoriteNote(text);
+    setTimeout(() => setFavoriteNote(null), 3000);
+  };
   const favoriteDish = async (dish: MealRecord) => {
     if (!store) return;
+    // Un piatto senza peso, non ancora tra i preferiti: prima si chiede il peso (facoltativo).
+    if (needsWeightPrompt(favorites, dish)) {
+      setSaveFavorite(dish);
+      return;
+    }
     try {
       const done = await toggleFavoriteDish(store, dish, newId);
       await loadFavorites();
@@ -148,6 +159,18 @@ export function OggiScreen() {
       {panelContext && panel?.kind === "add" && <AddPanel {...panelContext} initialSlot={panel.slot} />}
       {panelContext && panel?.kind === "bike" && <EditBikePanel {...panelContext} />}
       {panelContext && panel?.kind === "saveMeal" && <SaveMealPanel {...panelContext} slot={panel.slot} />}
+      {store && saveFavorite && (
+        <SaveFavoritePanel
+          store={store}
+          dish={saveFavorite}
+          onClose={() => setSaveFavorite(null)}
+          onSaved={() => {
+            setSaveFavorite(null);
+            void loadFavorites();
+            noteFavorite("Salvato nei preferiti.");
+          }}
+        />
+      )}
       {panelContext && panel?.kind === "edit" && <EditMealPanel {...panelContext} meal={panel.meal} />}
     </main>
   );

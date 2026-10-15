@@ -1,6 +1,6 @@
 {
   "id": "oggi-scorrimento-preferiti",
-  "descrizione": "Dopo «Salva nei preferiti»: il piatto è salvato, la riga si richiude e compare la conferma.",
+  "descrizione": "«Salva nei preferiti» su un piatto senza peso: sale il pannello piccolo con il nome e il campo Peso facoltativo.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m432",
+        "id": "m407",
         "date": "2026-01-08",
         "slot": "colazione",
         "name": "Cappuccino e brioche",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m433",
+        "id": "m408",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -38,7 +38,7 @@
         "originalText": null
       },
       {
-        "id": "m434",
+        "id": "m409",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Insalata di pomodorini",
@@ -52,7 +52,7 @@
         "originalText": null
       },
       {
-        "id": "m435",
+        "id": "m410",
         "date": "2026-01-08",
         "slot": "cena",
         "name": "Frittata con zucchine",
@@ -70,6 +70,7 @@
     "weighIns": []
   },
   "scorre": true,
+  "fisso": true,
   "passi": [
     {
       "swipe": {
@@ -82,7 +83,7 @@
       "exact": true
     },
     {
-      "wait": 500
+      "wait": 400
     }
   ]
 }

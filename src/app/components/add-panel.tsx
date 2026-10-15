@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { hasFreeMealInWeek } from "@/engine";
 import type { DateKey, Day, MealSlot, Settings } from "@/engine";
-import type { ActivityRecord, DataStore, MealRecord } from "@/data";
-import { defaultMealName, favoriteForMeal, isFavoriteDish, toggleFavoriteDish } from "../lib/favorites";
+import type { ActivityRecord, DataStore, FavoriteDish, MealRecord } from "@/data";
+import { defaultMealName, favoriteForMeal, isFavoriteDish, needsWeightPrompt, toggleFavoriteDish } from "../lib/favorites";
 import { newId } from "../lib/ids";
 import { isMealFree, saveDish } from "../lib/save-dish";
 import { todayKey } from "../lib/today";
@@ -17,8 +17,8 @@ import { AiEstimate } from "./ai-estimate";
 import type { AiEstimateHandle } from "./ai-estimate";
 import { DishEditAi } from "./dish-edit-ai";
 import { FavoritePicker } from "./favorite-picker";
-import { FavoritesView } from "./favorites-view";
 import { MealForm } from "./meal-form";
+import { SaveFavoritePanel } from "./save-favorite-panel";
 import { DateInput, FieldRow, GroupedList, PillButton, RowInput, Segmented, ActionRow, ValueRow } from "./ui/ui";
 import { Sheet } from "./sheet";
 
@@ -37,7 +37,7 @@ interface PanelContext {
 }
 
 const SLOT_NAME: Record<MealSlot, string> = { colazione: "Colazione", pranzo: "Pranzo", cena: "Cena", spuntino: "Spuntino" };
-const SUB_TITLES = { bici: "Uscita in bici", pesata: "Pesata", preferiti: "Preferiti", scegli: "Preferiti" } as const;
+const SUB_TITLES = { bici: "Uscita in bici", pesata: "Pesata", scegli: "Preferiti" } as const;
 
 type Mode = "ai" | "manuale";
 
@@ -54,7 +54,7 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Apert
   const { store, date: initialDate, days, settings, weightKg, onChanged, onClose, initialSlot, freeMeal } = ctx;
   const [date, setDate] = useState<DateKey>(initialDate);
   const [mode, setMode] = useState<Mode>("ai");
-  const [view, setView] = useState<"main" | "bici" | "pesata" | "preferiti" | "scegli">("main");
+  const [view, setView] = useState<"main" | "bici" | "pesata" | "scegli">("main");
   const freeAllowedFor = (slot: MealSlot) => !hasFreeMealInWeek(days, { date, slot });
   const dayDishes = days.find((d) => d.date === date)?.meals ?? [];
   const existingFree = (slot: MealSlot) => isMealFree(dayDishes, slot);
@@ -95,17 +95,13 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Apert
   };
 
   const title = view === "main" ? (initialSlot ? `Aggiungi a ${SLOT_NAME[initialSlot].toLowerCase()}` : "Aggiungi") : SUB_TITLES[view];
-  const menu = (
+  // Sotto il campo: solo «Pesata» e «Uscita in bici». I preferiti si scelgono dal tasto «Preferiti» nel campo (BRIEF §2, §4.1).
+  const menu = !initialSlot && (
     <div className="flex flex-col gap-3">
       <GroupedList>
-        <ValueRow title="Preferiti" onClick={() => setView("preferiti")} />
+        <ValueRow title="Pesata" onClick={() => setView("pesata")} />
+        <ValueRow title="Uscita in bici" onClick={() => setView("bici")} />
       </GroupedList>
-      {!initialSlot && (
-        <GroupedList>
-          <ValueRow title="Pesata" onClick={() => setView("pesata")} />
-          <ValueRow title="Uscita in bici" onClick={() => setView("bici")} />
-        </GroupedList>
-      )}
     </div>
   );
   const bar =
@@ -141,16 +137,14 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Apert
             values={form.values}
             onChange={form.patch}
             errors={form.errors}
-            freeAllowedFor={freeAllowedFor}
             mealIsFreeFor={existingFree}
             lockedSlot={initialSlot !== undefined}
-            freeMealCap={settings.freeMealCap}
             aiAvailable={form.aiAvailable}
             aiBusy={form.busy}
             aiError={form.aiError}
             aiNote={form.aiNote}
             onEstimate={form.estimate}
-            portion={form.portion}
+            aiForWeightG={form.aiForWeightG}
           />
           {menu}
         </div>
@@ -160,14 +154,13 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Apert
           {view === "scegli" && (
             <FavoritePicker
               store={store}
-              onPick={(f) => {
+              onPick={(picked) => {
                 setView("main");
                 // Il campo torna visibile dopo il prossimo disegno: l'etichetta si mette allora, al punto in cui era il cursore.
-                setTimeout(() => aiHandle.current?.insertFavorite(f), 60);
+                setTimeout(() => aiHandle.current?.insertFavorite(picked), 60);
               }}
             />
           )}
-          {view === "preferiti" && <FavoritesView store={store} date={date} initialSlot={initialSlot} dayDishes={dayDishes} onChanged={onChanged} onClose={onClose} />}
           {view === "bici" && <BikeEntry store={store} initialDay={date} today={todayKey()} kcalPerKm={settings.kcalPerKm} formId="bike-form" onDone={() => { onChanged(); onClose(); }} />}
           {view === "pesata" && <WeightForm formId="weight-form" existingKg={weightKg} onSubmit={saveWeight} />}
         </div>
@@ -178,10 +171,12 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Apert
 
 /** Scheda di modifica di un piatto: la stessa dell'aggiunta, aperta su Manuale. In fondo, separati, "Elimina" e l'azione sui preferiti. */
 export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecord }) {
-  const { store, days, settings, onChanged, onClose } = ctx;
+  const { store, days, onChanged, onClose } = ctx;
   const [mode, setMode] = useState<Mode>("manuale");
   const [favoriteStatus, setFavoriteStatus] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteList, setFavoriteList] = useState<FavoriteDish[]>([]);
+  const [savingFavorite, setSavingFavorite] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [saving, setSaving] = useState(false);
   const freeAllowedFor = (slot: MealSlot) => !hasFreeMealInWeek(days, { date: meal.date, slot });
@@ -191,7 +186,11 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
   useEffect(() => {
     let alive = true;
     store.listFavoriteDishes().then(
-      (list) => alive && setIsFavorite(isFavoriteDish(list, meal)),
+      (list) => {
+        if (!alive) return;
+        setFavoriteList(list);
+        setIsFavorite(isFavoriteDish(list, meal));
+      },
       () => {
         // L'avviso in cima lo spiega.
       },
@@ -203,6 +202,11 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
 
   /** Salva il piatto com'è già salvato (non le modifiche non ancora salvate nella scheda) nei preferiti, o lo toglie se c'è già. */
   const toggleFavorite = async () => {
+    // Un piatto senza peso, non ancora tra i preferiti: prima si chiede il peso (facoltativo).
+    if (needsWeightPrompt(favoriteList, meal)) {
+      setSavingFavorite(true);
+      return;
+    }
     try {
       const done = await toggleFavoriteDish(store, meal, newId);
       setIsFavorite(done === "salvato");
@@ -244,6 +248,21 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
     }
   };
 
+  if (savingFavorite) {
+    return (
+      <SaveFavoritePanel
+        store={store}
+        dish={meal}
+        onClose={() => setSavingFavorite(false)}
+        onSaved={() => {
+          setSavingFavorite(false);
+          setIsFavorite(true);
+          setFavoriteStatus("Salvato nei preferiti.");
+        }}
+      />
+    );
+  }
+
   if (confirming) {
     return (
       <Sheet open onClose={() => setConfirming(false)} title="Elimina piatto" bar={{}}>
@@ -275,15 +294,13 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
             values={form.values}
             onChange={form.patch}
             errors={form.errors}
-            freeAllowedFor={freeAllowedFor}
             mealIsFreeFor={(slot) => isMealFree(days.find((d) => d.date === meal.date)?.meals ?? [], slot, meal.id)}
-            freeMealCap={settings.freeMealCap}
             aiAvailable={form.aiAvailable}
             aiBusy={form.busy}
             aiError={form.aiError}
             aiNote={form.aiNote}
             onEstimate={form.estimate}
-            portion={form.portion}
+            aiForWeightG={form.aiForWeightG}
           />
         </div>
         {mode === "ai" && <DishEditAi values={form.values} busy={form.busy} error={form.aiError} note={form.aiNote} onCorrect={form.correct} />}

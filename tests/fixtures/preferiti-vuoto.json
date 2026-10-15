@@ -25,9 +25,12 @@
     {
       "clickRole": {
         "role": "button",
-        "name": "Preferiti",
+        "name": "Metti un preferito nella frase",
         "exact": true
       }
+    },
+    {
+      "wait": 400
     }
   ]
 }

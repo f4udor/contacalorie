@@ -1,6 +1,6 @@
 {
   "id": "pannello-quantita-lunga",
-  "descrizione": "Toccando il piatto con la quantità lunga si legge per intero nel campo Quantità.",
+  "descrizione": "Toccando il piatto con la quantità lunga si legge per intero nel campo Ingredienti.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m216",
+        "id": "m201",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Polpette di maiale al sugo",
@@ -35,7 +35,7 @@
       "click": "Polpette di maiale al sugo"
     },
     {
-      "scrollTo": "Quantità"
+      "scrollTo": "Ingredienti"
     }
   ]
 }

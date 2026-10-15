@@ -1,0 +1,109 @@
+{
+  "id": "pannello-piatto-8-prima",
+  "descrizione": "Aggiungi piatto a pranzo in Manuale (fascia fissata): ordine Nome, Peso, Ingredienti, tasto «Stima con l'AI»; nessuna riga Pasto, Porzioni o Pasto libero.",
+  "oggi": "2026-01-05",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m115",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 650,
+        "protein": 22,
+        "carbs": 110,
+        "fat": 12,
+        "fiber": 6,
+        "salt": 1.8,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "100 g"
+      },
+      {
+        "id": "m116",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pane",
+        "kcal": 150,
+        "protein": 5,
+        "carbs": 30,
+        "fat": 1,
+        "fiber": 2,
+        "salt": 0.8,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "50 g"
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": [
+      {
+        "stato": 200,
+        "corpo": {
+          "proposal": {
+            "meals": [
+              {
+                "slot": "pranzo",
+                "dishes": [
+                  {
+                    "name": "Hummus",
+                    "quantity": "ceci, tahina, olio, limone",
+                    "quantityAssumed": false,
+                    "kcal": 250,
+                    "protein": 9,
+                    "carbs": 18,
+                    "fat": 15,
+                    "fiber": 6,
+                    "salt": 0.8,
+                    "note": "Hummus casalingo.",
+                    "weightG": 150
+                  }
+                ]
+              }
+            ]
+          },
+          "originalText": "testo"
+        }
+      }
+    ]
+  },
+  "passi": [
+    {
+      "click": "+ Aggiungi piatto"
+    },
+    {
+      "clickRole": {
+        "role": "radio",
+        "name": "Manuale"
+      }
+    },
+    {
+      "fill": [
+        "Nome",
+        "Hummus"
+      ]
+    },
+    {
+      "fill": [
+        "Peso (g)",
+        "150"
+      ]
+    },
+    {
+      "fill": [
+        "Ingredienti",
+        "ceci, tahina, olio, limone"
+      ]
+    }
+  ]
+}

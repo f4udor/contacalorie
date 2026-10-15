@@ -1,6 +1,6 @@
 {
   "id": "ai-preferiti-peso-sconosciuto",
-  "descrizione": "Preferito senza peso con i grammi detti (Caffè «100 g»): contata una porzione, con l'avviso «Peso del preferito sconosciuto».",
+  "descrizione": "Preferito senza peso con i grammi detti (Caffè «100 g»): una porzione e, nel piatto, la domanda «Quanto pesava la porzione salvata?» con il campo e «Salta»; nessun avviso giallo.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {

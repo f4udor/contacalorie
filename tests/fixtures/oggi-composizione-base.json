@@ -1,0 +1,32 @@
+{
+  "id": "oggi-composizione-base",
+  "descrizione": "Oggi senza bici, passi sotto soglia o recupero: la riga sotto l'anello dice solo «Base 2.100» e la scheda Calorie ha la stessa altezza degli altri giorni.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m491",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 650,
+        "protein": 22,
+        "carbs": 110,
+        "fat": 12,
+        "fiber": 6,
+        "salt": 1.8,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true
+}

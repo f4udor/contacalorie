@@ -138,27 +138,47 @@ try {
   page = await newPage();
   await touch(page, "Pasta al pomodoro", -140);
   await page.getByRole("button", { name: "Salva nei preferiti", exact: true }).filter({ visible: true }).click();
+  await page.waitForTimeout(400);
+  // Piatto senza peso: sale il pannello piccolo con nome e Peso facoltativo (T8.1); «Salva» funziona anche con il peso vuoto.
+  check("un piatto senza peso apre il pannello «Salva nei preferiti» con il campo Peso", (await page.getByLabel("Peso (g)").isVisible()) && (await page.getByLabel("Nome").isVisible()));
+  await page.getByRole("button", { name: "Salva", exact: true }).click();
   await page.waitForTimeout(500);
   check("«Salva nei preferiti» salva il piatto e lo dice", await page.getByText("Salvato nei preferiti.").isVisible());
   check("e la riga si richiude", (await open(page)) === 0);
   await page.context().close();
 
-  // 10. Preferiti (T5b.5): stesso gesto e stesso cestino dei piatti; niente «Modifica»; il + e il tocco aggiungono ancora.
+  // 10. Preferiti (T5b.5): stesso gesto dei piatti; dalla fase 8 «Modifica» (solo piatti) ed «Elimina» come tessere separate (T8.2); il + e il tocco aggiungono ancora.
   const favFixture = JSON.parse(readFileSync(path.join(root, "tests/fixtures/preferiti-lista.json"), "utf8"));
   const favData = { ...favFixture.dati, settings: { ...favFixture.dati.settings, onboardingDone: true } };
   const favPage = async () => {
     const p = await newPage(favData);
     await p.getByRole("button", { name: "Aggiungi", exact: true }).click();
-    await p.getByRole("button", { name: "Preferiti", exact: true }).first().click();
+    await p.getByRole("button", { name: "Metti un preferito nella frase", exact: true }).click();
     await p.waitForTimeout(400);
     return p;
   };
   page = await favPage();
-  check("nei preferiti non c'è più il pulsante «Modifica»", (await page.getByRole("button", { name: "Modifica", exact: true }).count()) === 0);
-  await touch(page, "Mela", -140);
+  await touch(page, "Mela", -220);
   check("scorrendo un piatto preferito si apre la riga", await rowOpen(page, "Mela"));
+  check("un piatto preferito mostra «Modifica» ed «Elimina» come tessere separate", (await page.getByRole("button", { name: "Modifica Mela", exact: true }).count()) === 1 && (await page.getByRole("button", { name: "Elimina Mela dai preferiti", exact: true }).count()) === 1);
   await touch(page, "Cena leggera", -140);
   check("una sola riga aperta alla volta (anche tra pasto e piatto)", (await open(page)) === 1 && (await rowOpen(page, "Cena leggera")));
+  check("un pasto preferito ha solo «Elimina»", (await page.getByRole("button", { name: "Modifica Cena leggera", exact: true }).count()) === 0 && (await page.getByRole("button", { name: "Elimina Cena leggera dai preferiti", exact: true }).count()) === 1);
+  await page.context().close();
+
+  // 10b. «Modifica» apre la scheda del piatto con titolo «Modifica preferito», senza riga Pasto né «Salva nei preferiti» / «Elimina piatto»; «Salva» aggiorna.
+  page = await favPage();
+  await touch(page, "Mela", -220);
+  await page.getByRole("button", { name: "Modifica Mela", exact: true }).click();
+  await page.getByText("Modifica preferito", { exact: true }).waitFor();
+  await page.waitForTimeout(400);
+  const scheda = page.getByRole("dialog", { name: "Modifica preferito" });
+  check("«Modifica» apre «Modifica preferito» con i valori del preferito", (await scheda.getByText("Modifica preferito", { exact: true }).isVisible()) && (await scheda.getByLabel("Nome").inputValue()) === "Mela");
+  check("la scheda non ha la riga Pasto, «Salva nei preferiti» né «Elimina piatto»", (await scheda.getByText("Pasto", { exact: true }).count()) === 0 && (await scheda.getByText("Salva nei preferiti", { exact: true }).count()) === 0 && (await scheda.getByText("Elimina piatto", { exact: true }).count()) === 0);
+  await scheda.getByLabel("Nome").fill("Mela verde");
+  await scheda.getByRole("button", { name: "Salva", exact: true }).click();
+  await page.waitForTimeout(500);
+  check("«Salva» aggiorna il preferito nell'elenco", (await page.getByText("Mela verde", { exact: true }).count()) === 1 && (await page.getByText("Mela", { exact: true }).count()) === 0);
   await page.context().close();
 
   page = await favPage();
@@ -176,9 +196,13 @@ try {
   await page.context().close();
 
   page = await favPage();
-  await page.getByRole("button", { name: "Aggiungi Mela", exact: true }).click();
+  await page.getByRole("button", { name: "Metti Mela nella frase", exact: true }).click();
   await page.waitForTimeout(700);
-  check("il tocco sulla riga aggiunge ancora il piatto al giorno", !(await dialog(page)) && (await page.getByText("Mela", { exact: true }).count()) >= 1);
+  check("il tocco sulla riga mette l'etichetta nel campo e torna alla frase (T8.5)", (await page.getByRole("textbox", { name: "Cosa hai mangiato?" }).getByText("Mela", { exact: true }).count()) === 1);
+  await page.context().close();
+
+  page = await favPage();
+  check("l'elenco ha due gruppi, Pasti e Piatti, e nessun + per riga", (await page.getByRole("region", { name: "Pasti salvati" }).count()) === 1 && (await page.getByRole("region", { name: "Piatti salvati" }).count()) === 1 && (await page.getByRole("button", { name: /^Aggiungi (Mela|Cena leggera)$/ }).count()) === 0);
   await page.context().close();
 
   page = await favPage();

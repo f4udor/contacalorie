@@ -29,9 +29,12 @@ export interface CompositionEntry {
   signed: boolean;
 }
 
-/** La riga di composizione dell'obiettivo ha senso solo se oltre alla base c'è bici, passi o recupero. */
+/**
+ * La riga di composizione dell'obiettivo c'è sempre (BRIEF §2, dalla fase 8): nei giorni senza bici, passi oltre soglia o recupero dice solo «Base 2.100»,
+ * così la scheda Calorie ha la stessa altezza in ogni giorno.
+ */
 export function hasCompositionDetail(composition: readonly CompositionEntry[]): boolean {
-  return composition.length > 1;
+  return composition.length > 0;
 }
 
 export interface TodayView {

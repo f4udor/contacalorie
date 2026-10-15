@@ -2,12 +2,11 @@
 
 import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
-import type { FavoriteDish } from "@/data";
-import type { Segment } from "../lib/favorite-text";
+import type { PickedFavorite, Segment } from "../lib/favorite-text";
 
 export interface FavoriteTextFieldHandle {
   /** Mette l'etichetta del preferito al punto del cursore (o in fondo, se il cursore non c'è) e porta il cursore dopo di essa. */
-  insertFavorite: (favorite: FavoriteDish) => void;
+  insertFavorite: (picked: PickedFavorite) => void;
   focus: () => void;
 }
 
@@ -20,15 +19,18 @@ interface Props {
 }
 
 const CHIP_CLASS = "mx-0.5 inline-block max-w-full select-none truncate rounded-full bg-cerchio px-2.5 py-0.5 align-baseline text-[15px] font-medium text-testo";
+/** L'etichetta di un pasto preferito ha in più un bordo nel colore Comando, per distinguerla da quella di un piatto (BRIEF §4.1). */
+const MEAL_CHIP_CLASS = `${CHIP_CLASS} border border-comando`;
 
 /** Spazio dopo un'etichetta: lascia un punto dove mettere il cursore. Nel testo letto vale uno spazio normale. */
 const NBSP = "\u00a0";
 
-function makeChip(favorite: FavoriteDish): HTMLSpanElement {
+function makeChip({ kind, favorite }: PickedFavorite): HTMLSpanElement {
   const chip = document.createElement("span");
   chip.contentEditable = "false";
   chip.dataset.favoriteId = favorite.id;
-  chip.className = CHIP_CLASS;
+  if (kind === "meal") chip.dataset.favoriteKind = "meal";
+  chip.className = kind === "meal" ? MEAL_CHIP_CLASS : CHIP_CLASS;
   chip.textContent = favorite.name;
   return chip;
 }
@@ -45,7 +47,7 @@ export function readSegments(root: HTMLElement): Segment[] {
     node.childNodes.forEach((n) => {
       if (n.nodeType === Node.TEXT_NODE) pushText((n.nodeValue ?? "").split(NBSP).join(" "));
       else if (n instanceof HTMLElement) {
-        if (n.dataset.favoriteId) out.push({ kind: "favorite", favoriteId: n.dataset.favoriteId });
+        if (n.dataset.favoriteId) out.push({ kind: "favorite", favoriteId: n.dataset.favoriteId, ...(n.dataset.favoriteKind === "meal" ? { favoriteKind: "meal" as const } : {}) });
         else if (n.tagName === "BR") pushText("\n");
         else {
           // Un a capo scritto con Invio: il browser racchiude la riga in un blocco.
@@ -90,7 +92,7 @@ export function FavoriteTextField({ id, placeholder, disabled = false, onChange,
   useEffect(() => {
     handleRef.current = {
       focus: () => ref.current?.focus(),
-      insertFavorite: (favorite) => {
+      insertFavorite: (picked) => {
         const el = ref.current;
         if (!el) return;
         let range = saved.current;
@@ -100,7 +102,7 @@ export function FavoriteTextField({ id, placeholder, disabled = false, onChange,
           range.collapse(false);
         }
         range.deleteContents();
-        const chip = makeChip(favorite);
+        const chip = makeChip(picked);
         range.insertNode(chip);
         const space = document.createTextNode(NBSP);
         chip.after(space);

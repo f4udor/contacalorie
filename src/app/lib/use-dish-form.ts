@@ -7,7 +7,7 @@ import { estimateDish, requestEstimate } from "./ai-client";
 import { applyCorrection, applyNumbers, estimateSourceText, valuesToProposal } from "./dish-sheet";
 import { validateMealForm } from "./meal-form";
 import type { MealFormErrors, MealFormValues, ParsedMeal } from "./meal-form";
-import { NO_SCALE, markManual, parseWeightG, rescaleByServings, rescaleByWeight } from "./portion-scale";
+import { NO_SCALE, markManual, parseWeightG, rescaleByWeight } from "./portion-scale";
 import type { ScaleState } from "./portion-scale";
 import { DISH_NUMBER_KEYS } from "./proposal-form";
 import type { DishNumberKey } from "./proposal-form";
@@ -26,17 +26,19 @@ export function useDishForm(initial: MealFormValues, freeAllowedFor: (slot: Meal
   const [aiError, setAiError] = useState<string | null>(null);
   const [aiNote, setAiNote] = useState<string | null>(null);
 
-  // Quantità senza AI (BRIEF §4.1): «Peso (g)» se il piatto ha un peso all'apertura, altrimenti «Porzioni». I numeri si ricalcolano sempre dai valori di partenza.
-  const [portionMode, setPortionMode] = useState<"peso" | "porzioni">(parseWeightG(initial.weightG) !== null ? "peso" : "porzioni");
+  // Quantità senza AI (BRIEF §4.1): se il piatto ha un peso all'apertura, cambiare il peso ricalcola kcal e nutrienti dai valori di partenza;
+  // su un piatto senza peso, scrivere il peso lo registra e basta.
+  const [rescalesOnWeight, setRescalesOnWeight] = useState(parseWeightG(initial.weightG) !== null);
   const [scale, setScale] = useState<ScaleState>(NO_SCALE);
-  const [servings, setServings] = useState("1");
+  // Il peso per cui è stata fatta l'ultima stima con l'AI (null: stima senza peso).
+  const [aiForWeightG, setAiForWeightG] = useState<number | null>(null);
 
   const patch = (p: Partial<MealFormValues>) => {
     const { weightG, ...rest } = p;
     let next: MealFormValues = { ...values, ...rest };
     let state = scale;
     if (weightG !== undefined) {
-      if (portionMode === "peso") {
+      if (rescalesOnWeight) {
         const r = rescaleByWeight(next, state, weightG);
         // Con il ricalcolo i numeri non vengono dal modello: la nota e il controllo di coerenza non valgono più.
         if (DISH_NUMBER_KEYS.some((k) => r.values[k] !== next[k])) setAiNote(null);
@@ -51,16 +53,7 @@ export function useDishForm(initial: MealFormValues, freeAllowedFor: (slot: Meal
     setValues(next);
   };
 
-  /** Porzioni (piatto senza peso): sceglie o scrive il numero e ricalcola kcal e nutrienti dai valori di partenza. */
-  const changeServings = (text: string) => {
-    setServings(text);
-    const r = rescaleByServings(values, scale, text);
-    if (DISH_NUMBER_KEYS.some((k) => r.values[k] !== values[k])) setAiNote(null);
-    setValues(r.values);
-    setScale(r.state);
-  };
-
-  /** "Stima con l'AI": nome e quantità → numeri nuovi, che sostituiscono quelli già scritti (restano modificabili). */
+  /** "Stima con l'AI": nome, peso e ingredienti → numeri nuovi, che sostituiscono quelli già scritti (restano modificabili). */
   const estimate = async () => {
     if (values.name.trim() === "") {
       setAiError("Scrivi il nome del piatto, poi tocca «Stima con l'AI».");
@@ -68,7 +61,8 @@ export function useDishForm(initial: MealFormValues, freeAllowedFor: (slot: Meal
     }
     setBusy(true);
     setAiError(null);
-    const r = await estimateDish(values.name, values.quantity, getAccessToken);
+    const written = parseWeightG(values.weightG);
+    const r = await estimateDish({ name: values.name, weightG: written, ingredients: values.quantity }, getAccessToken);
     setBusy(false);
     if (!r.ok) {
       setAiError(r.message);
@@ -76,8 +70,8 @@ export function useDishForm(initial: MealFormValues, freeAllowedFor: (slot: Meal
     }
     setValues((v) => ({ ...applyNumbers(v, r.numbers), weightG: r.weightG ? String(r.weightG) : v.weightG }));
     setScale(NO_SCALE);
-    setServings("1");
-    if (r.weightG) setPortionMode("peso");
+    if (r.weightG) setRescalesOnWeight(true);
+    setAiForWeightG(written);
     setErrors({});
     setAiNote(r.note);
   };
@@ -97,8 +91,8 @@ export function useDishForm(initial: MealFormValues, freeAllowedFor: (slot: Meal
     const applied = applyCorrection(values, r.proposal);
     setValues(applied.values);
     setScale(NO_SCALE);
-    setServings("1");
-    if (parseWeightG(applied.values.weightG) !== null) setPortionMode("peso");
+    if (parseWeightG(applied.values.weightG) !== null) setRescalesOnWeight(true);
+    setAiForWeightG(null);
     setErrors({});
     setAiNote(applied.note);
     return true;
@@ -115,5 +109,5 @@ export function useDishForm(initial: MealFormValues, freeAllowedFor: (slot: Meal
     return r.meal;
   };
 
-  return { values, patch, portion: { mode: portionMode, servings, onServings: changeServings }, errors, busy, aiAvailable, aiError, aiNote, estimate, correct, validate };
+  return { values, patch, errors, busy, aiAvailable, aiError, aiNote, aiForWeightG, estimate, correct, validate };
 }

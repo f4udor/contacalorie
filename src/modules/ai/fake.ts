@@ -13,7 +13,7 @@ export function createFakeProvider(respond: (request: EstimateRequest) => unknow
   };
 }
 
-const LABEL = /\[preferito (\d+):[^\]]*\]/g;
+const LABEL = /\[(pasto )?preferito (\d+):[^\]]*\]/g;
 const SLOT_BY_HOUR = (localTime: string) => {
   const hour = Number(localTime.slice(0, 2));
   return hour < 10 ? "colazione" : hour < 16 ? "pranzo" : hour < 18 ? "spuntino" : "cena";
@@ -43,12 +43,23 @@ export function demoEstimate(request: { text: string; localTime: string; previou
   const slot = said ? said[1].toLowerCase() : SLOT_BY_HOUR(request.localTime);
   if (request.previous && request.correction) {
     const quantity = saidIn(request.correction);
+    const hasQuantity = quantity.grams !== null || quantity.servings !== null || /\d/.test(request.correction);
     const meals = request.previous.meals.map((m) => ({
       ...m,
       freeMeal: false,
+      // Una correzione che dà la quantità (grammi, porzioni, un numero) la rende detta: il piatto non è più «ipotizzato».
+      dishes: hasQuantity && !(m.favorites ?? []).length ? m.dishes.map((d) => ({ ...(d as object), quantityAssumed: false })) : m.dishes,
       favorites: (m.favorites ?? []).map((f, i) => (i === 0 && (quantity.grams !== null || quantity.servings !== null) ? { ref: f.ref, quantitySaid: true, grams: quantity.grams, servings: quantity.servings } : f)),
     }));
     return { meals };
+  }
+  // «Stima con l'AI» della scheda del piatto: «Piatto: …», «Peso: N g», «Ingredienti: …». Il peso scritto è quello restituito.
+  const written = /^Piatto: (.+)$/m.exec(request.text);
+  if (written) {
+    const weight = /^Peso: (\d+) g$/m.exec(request.text);
+    const ingredients = /^Ingredienti: (.+)$/m.exec(request.text);
+    const dish = { name: written[1].slice(0, 60), quantity: ingredients ? ingredients[1] : "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", quantityAssumed: !ingredients, weightG: weight ? Number(weight[1]) : 185, kcal: 400, protein: 20, carbs: 45, fat: 15, fiber: 5, salt: 1.5, note: "Stima di prova (provider finto)." };
+    return { meals: [{ slot, freeMeal: false, dishes: [dish], favorites: [] }] };
   }
   const matches = [...request.text.matchAll(LABEL)];
   const favorites = matches.map((m, i) => {
@@ -56,15 +67,19 @@ export function demoEstimate(request: { text: string; localTime: string; previou
     const after = request.text.slice((m.index as number) + m[0].length, end).split(/[,;.\n]/)[0];
     const said = saidIn(after);
     const any = said.grams !== null || said.servings !== null;
-    return { ref: Number(m[1]), quantitySaid: any, grams: said.grams, servings: said.servings, matched: said.matched };
+    // Un pasto preferito non ha quantità: eventuali grammi o porzioni dopo l'etichetta si ignorano.
+    const pasto = m[1] !== undefined;
+    return { ref: Number(m[2]), ...(pasto ? { kind: "pasto" as const } : {}), quantitySaid: pasto ? false : any, grams: pasto ? null : said.grams, servings: pasto ? null : said.servings, matched: said.matched };
   });
   let rest = request.text.replace(LABEL, " ").replace(/\ba (colazione|pranzo|cena)\b/gi, " ");
   for (const f of favorites) if (f.matched) rest = rest.replace(f.matched, " ");
   rest = rest.replace(/[\s,;.]+/g, " ").trim();
   // Restano solo congiunzioni («e», «con»): nessun piatto da stimare.
   const CONNECTIVES = /(?<![\p{L}])(?:e|ed|con|più)(?![\p{L}])/giu;
+  // La quantità è detta se nel testo c'è un numero (grammi, pezzi, porzioni): altrimenti il piatto è ipotizzato.
+  const quantityGiven = /\d/.test(rest) || /(?<![\p{L}])(?:un|uno|una|due|tre|quattro|cinque|mezzo|mezza)(?![\p{L}])/iu.test(rest);
   const dishes = /\p{L}/u.test(rest.replace(CONNECTIVES, " "))
-    ? [{ name: rest.replace(/^(?:(?:e|ed|con|più)\s+)+/iu, "").slice(0, 60), quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", quantityAssumed: true, weightG: 185, kcal: 400, protein: 20, carbs: 45, fat: 15, fiber: 5, salt: 1.5, note: "Stima di prova (provider finto)." }]
+    ? [{ name: rest.replace(/^(?:(?:e|ed|con|più)\s+)+/iu, "").slice(0, 60), quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", quantityAssumed: !quantityGiven, weightG: 185, kcal: 400, protein: 20, carbs: 45, fat: 15, fiber: 5, salt: 1.5, note: "Stima di prova (provider finto)." }]
     : [];
-  return { meals: [{ slot, freeMeal: false, dishes, favorites: favorites.map(({ ref, quantitySaid, grams, servings }) => ({ ref, quantitySaid, grams, servings })) }] };
+  return { meals: [{ slot, freeMeal: false, dishes, favorites: favorites.map(({ ref, kind, quantitySaid, grams, servings }) => ({ ref, ...(kind ? { kind } : {}), quantitySaid, grams, servings })) }] };
 }
