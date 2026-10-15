@@ -601,7 +601,7 @@ Obiettivo: togliere i difetti visti provando la fase 6 sull'iPhone. Nessuna funz
 I task si eseguono in quest'ordine.
 
 Vincoli di questa fase:
-- **Fase piccola: il credito è quasi finito.** Si tocca solo ciò che i task nominano. Niente riscritture, niente riordino del codice, niente miglioramenti non richiesti: ciò che si nota in più si scrive nel report, non si corregge.
+- **Fase di ritocchi.** Si tocca solo ciò che i task nominano. Niente riscritture, niente riordino del codice, niente miglioramenti non richiesti: ciò che si nota in più si scrive nel report, non si corregge.
 - Nessuna modifica al comportamento, ai testi o ai calcoli, salvo il saldo mostrato in Settimana (T6b.4), unico task che tocca `src/engine`. `src/data`, `src/modules`, le route del server e il database non si toccano. Niente SQL.
 - Colori, raggi e caratteri solo dalle variabili di §10.2 e dai componenti di §10.3.
 - Screenshot solo scuri a 390 px, e solo degli scenari toccati dal task più quelli elencati in T6b.3. Non si rigenera l'intera raccolta.
@@ -645,5 +645,14 @@ Difetto visto sul telefono: con un solo giorno concluso (2.080 su 2.200, margine
 - Scheda Saldo: sotto il numero la dicitura "sui giorni conclusi", come nella scheda Media. Senza saldo, trattino e nessun colore.
 - Test: casi AJ, AK, AL e AM. Screenshot della scheda con saldo e con trattino.
 
-### T6b.5 Report di fase · da fare
+### T6b.5 Kcal del giorno toccando una barra della Settimana · da fare
+Aggiunta chiesta da un utente: nel grafico Calorie della Settimana, toccando una barra compare piccolo il numero di kcal di quel giorno.
+- Tocco su una barra (area toccabile di tutta la colonna del giorno, almeno 44 px): sopra la barra compare un'etichetta piccola con le kcal mangiate, nel formato con il punto delle migliaia ("2.080"), colore Testo secondario. Un altro tocco sulla stessa barra, un tocco su un'altra barra o fuori dal grafico la sposta o la toglie. Una sola etichetta alla volta.
+- Giorni senza pasti: nessuna etichetta. Giorni futuri: nessuna etichetta.
+- L'etichetta non sposta né ridimensiona nulla (§10.3 "Comandi fermi"), non copre la legenda e resta dentro la scheda anche sulla barra più alta e su quelle ai bordi.
+- Il tocco sulla scheda fuori dal grafico continua a fare quello che fa oggi. Cambiando settimana l'etichetta sparisce.
+- Nessun dato nuovo: il numero è quello già usato per l'altezza della barra. `src/engine` non si tocca.
+- Test della logica di selezione (tocco, secondo tocco, altro giorno, giorno vuoto, cambio settimana). Screenshot con l'etichetta su una barra centrale e su quella della domenica.
+
+### T6b.6 Report di fase · da fare
 Scrivi `docs/REPORT-FASE-6b.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: un controllo da fare sul telefono per ogni task e, a parte, l'elenco delle incongruenze trovate in T6b.1 e non corrette.
