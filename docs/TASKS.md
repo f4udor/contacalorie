@@ -654,5 +654,5 @@ Aggiunta chiesta da un utente: nel grafico Calorie della Settimana, toccando una
 - Nessun dato nuovo: il numero è quello già usato per l'altezza della barra. `src/engine` non si tocca.
 - Test della logica di selezione (tocco, secondo tocco, altro giorno, giorno vuoto, cambio settimana). Screenshot con l'etichetta su una barra centrale e su quella della domenica.
 
-### T6b.6 Report di fase · da fare
+### T6b.6 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-6b.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: un controllo da fare sul telefono per ogni task e, a parte, l'elenco delle incongruenze trovate in T6b.1 e non corrette.
