@@ -61,7 +61,7 @@ export function SettimanaScreen() {
 
       {view && s && (
         <div className="flex flex-col gap-3">
-          <WeekChart bars={view.bars} today={today} avg={s.avgKcal === null || view.avgRatio === null ? null : { kcal: s.avgKcal, ratio: view.avgRatio }} />
+          <WeekChart key={monday} bars={view.bars} today={today} avg={s.avgKcal === null || view.avgRatio === null ? null : { kcal: s.avgKcal, ratio: view.avgRatio }} />
 
           {view.isEmpty && !weight && (
             <Card>
@@ -74,7 +74,7 @@ export function SettimanaScreen() {
               <div className="mt-3">
                 {s.balance === null ? <Num value={dash} size="lg" tone="testo-secondario" /> : <Num value={formatSigned(s.balance)} unit="kcal" size="md" tone={s.balance > 0 ? "in-obiettivo" : "testo"} />}
               </div>
-              {s.balance !== null && <p className={sub}>{s.balance < 0 ? "da recuperare" : "di margine"}</p>}
+              <p className={sub}>sui giorni conclusi</p>
             </Card>
             <Card title="Media">
               <div className="mt-3">{s.avgKcal === null ? <Num value={dash} size="md" tone="testo-secondario" /> : <Num value={formatNumber(s.avgKcal)} unit="kcal" size="md" />}</div>

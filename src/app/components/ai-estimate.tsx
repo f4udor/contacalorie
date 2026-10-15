@@ -8,7 +8,8 @@ import type { MealProposal } from "@/modules/ai";
 import { useAuth } from "../auth-provider";
 import { requestEstimate } from "../lib/ai-client";
 import { newId } from "../lib/ids";
-import { KCAL_CHECK_MESSAGE, SLOTS, textNeedsKcalCheck } from "../lib/meal-form";
+import { formatNumber } from "../lib/format";
+import { KCAL_CHECK_MESSAGE, SLOTS, parseDecimal, textNeedsKcalCheck } from "../lib/meal-form";
 import { DISH_NUMBER_KEYS, draftsToProposal, forceSlot, freeSwitchBlock, hasDishes, proposalToDrafts, proposalToRecords, withInitialFree, withSlot } from "../lib/proposal-form";
 import type { DishDraft, DishNumberKey, DraftErrors, FreeRules, MealDraft } from "../lib/proposal-form";
 import { FreeMealNote, FreeMealRow } from "./free-meal-switch";
@@ -41,6 +42,12 @@ export interface AiEstimateHandle {
   /** Conferma la proposta: salva i piatti. Se ci sono errori nei numeri li mostra e non salva. */
   confirm: () => Promise<void>;
 }
+
+/** Le kcal di un piatto proposto col punto delle migliaia; il testo non ancora valido (o vuoto) resta com'è. */
+const kcalText = (text: string): string => {
+  const n = parseDecimal(text);
+  return n === "empty" ? "–" : n === "invalid" ? text : formatNumber(n, Number.isInteger(n) ? 0 : 1);
+};
 
 const NUMBER_LABELS: Record<DishNumberKey, string> = { kcal: "Calorie", protein: "Proteine", carbs: "Carboidrati", fat: "Grassi", fiber: "Fibre", salt: "Sale" };
 const blockText = (block: "settimana" | "proposta" | null): string | null => (block === "settimana" ? "Già usato questa settimana." : block === "proposta" ? "Un solo pasto libero alla volta." : null);
@@ -206,7 +213,7 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
                       )}
                     </span>
                   </span>
-                  <span className="shrink-0 font-cifre text-[17px] tabular-nums">{d.kcal.trim() === "" ? "–" : d.kcal}</span>
+                  <span className="shrink-0 font-cifre text-[17px] tabular-nums">{kcalText(d.kcal)}</span>
                 </button>
                 {isOpen && (
                   <div id={`dish-${d.key}`} className="border-t border-separatore">

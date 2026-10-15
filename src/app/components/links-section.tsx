@@ -16,7 +16,7 @@ export function LinksSection() {
         <h2 className="px-4 text-[13px] font-medium uppercase tracking-wide text-testo-secondario">Stime dei pasti</h2>
         <GroupedList>
           {info?.available && info.model && <ValueRow title="Modello" value={info.model} />}
-          <ValueRow title="Stato" value={state} />
+          <ValueRow title="Stato" value={state} valueTone={info?.available ? "in-obiettivo" : "testo-secondario"} />
           {showUsed && <ValueRow title="Stime di oggi" value={info.limit !== null ? `${info.usedToday} di ${info.limit}` : String(info.usedToday)} />}
         </GroupedList>
         {info !== null && !info.available && <Caption>Senza stime inserisci i piatti a mano.</Caption>}

@@ -37,7 +37,7 @@ export function buildWeekView(input: { date: DateKey; days: readonly Day[]; sett
     barRatio: d.kcalEaten / top,
     targetRatio: d.target / top,
   }));
-  const isEmpty =
-    summary.balance === null && summary.totalKm === null && summary.avgSteps === null;
+  // Senza pasti (anche quelli di oggi: il saldo non li conta), km e passi. Il saldo non basta: con i soli pasti di oggi è assente.
+  const isEmpty = !summary.days.some((d) => d.hasMeals) && summary.totalKm === null && summary.avgSteps === null;
   return { summary, bars, avgRatio: summary.avgKcal === null ? null : summary.avgKcal / top, isEmpty };
 }

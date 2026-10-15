@@ -1,0 +1,196 @@
+{
+  "id": "settimana-pannello-passi-sette",
+  "descrizione": "Pannello Passi con sette giorni di dati: l'elenco scorre dentro il pannello, che ha la stessa altezza delle altre settimane.",
+  "oggi": "2026-01-11",
+  "percorso": "/settimana",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 92.5
+    },
+    "meals": [
+      {
+        "id": "m476",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo 1",
+        "kcal": 1800,
+        "protein": 60,
+        "carbs": 200,
+        "fat": 55,
+        "fiber": 20,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m477",
+        "date": "2026-01-06",
+        "slot": "pranzo",
+        "name": "Pranzo 2",
+        "kcal": 1840,
+        "protein": 60,
+        "carbs": 200,
+        "fat": 55,
+        "fiber": 20,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m478",
+        "date": "2026-01-07",
+        "slot": "pranzo",
+        "name": "Pranzo 3",
+        "kcal": 1880,
+        "protein": 60,
+        "carbs": 200,
+        "fat": 55,
+        "fiber": 20,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m479",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Pranzo 4",
+        "kcal": 1920,
+        "protein": 60,
+        "carbs": 200,
+        "fat": 55,
+        "fiber": 20,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m480",
+        "date": "2026-01-09",
+        "slot": "pranzo",
+        "name": "Pranzo 5",
+        "kcal": 1960,
+        "protein": 60,
+        "carbs": 200,
+        "fat": 55,
+        "fiber": 20,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m481",
+        "date": "2026-01-10",
+        "slot": "pranzo",
+        "name": "Pranzo 6",
+        "kcal": 2000,
+        "protein": 60,
+        "carbs": 200,
+        "fat": 55,
+        "fiber": 20,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m482",
+        "date": "2026-01-11",
+        "slot": "pranzo",
+        "name": "Pranzo 7",
+        "kcal": 2040,
+        "protein": 60,
+        "carbs": 200,
+        "fat": 55,
+        "fiber": 20,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [
+      {
+        "date": "2026-01-05",
+        "steps": 6000,
+        "stepsSource": "salute",
+        "bikeKm": 10,
+        "bikeKcalHealth": null,
+        "bikeSource": "salute",
+        "bikeKmManual": null,
+        "bikeKcalManual": null
+      },
+      {
+        "date": "2026-01-06",
+        "steps": 6700,
+        "stepsSource": "salute",
+        "bikeKm": 11,
+        "bikeKcalHealth": null,
+        "bikeSource": "salute",
+        "bikeKmManual": null,
+        "bikeKcalManual": null
+      },
+      {
+        "date": "2026-01-07",
+        "steps": 7400,
+        "stepsSource": "salute",
+        "bikeKm": 12,
+        "bikeKcalHealth": null,
+        "bikeSource": "salute",
+        "bikeKmManual": null,
+        "bikeKcalManual": null
+      },
+      {
+        "date": "2026-01-08",
+        "steps": 8100,
+        "stepsSource": "salute",
+        "bikeKm": 13,
+        "bikeKcalHealth": null,
+        "bikeSource": "salute",
+        "bikeKmManual": null,
+        "bikeKcalManual": null
+      },
+      {
+        "date": "2026-01-09",
+        "steps": 8800,
+        "stepsSource": "salute",
+        "bikeKm": 14,
+        "bikeKcalHealth": null,
+        "bikeSource": "salute",
+        "bikeKmManual": null,
+        "bikeKcalManual": null
+      },
+      {
+        "date": "2026-01-10",
+        "steps": 9500,
+        "stepsSource": "salute",
+        "bikeKm": 15,
+        "bikeKcalHealth": null,
+        "bikeSource": "salute",
+        "bikeKmManual": null,
+        "bikeKcalManual": null
+      },
+      {
+        "date": "2026-01-11",
+        "steps": 10200,
+        "stepsSource": "salute",
+        "bikeKm": 16,
+        "bikeKcalHealth": null,
+        "bikeSource": "salute",
+        "bikeKmManual": null,
+        "bikeKcalManual": null
+      }
+    ],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Passi",
+        "exact": false
+      }
+    }
+  ]
+}

@@ -1,9 +1,11 @@
-import Link from "next/link";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import type { DateKey } from "@/engine";
 import { formatDateLong, formatNumber, formatWeekday } from "../lib/format";
 import { ringRole, ROLE_BG, roleVar } from "../lib/roles";
 import type { Role } from "../lib/roles";
-import { GRID_Y, miniBarRatios, ratioToY, stepPath } from "../lib/week-chart";
+import { GRID_Y, miniBarRatios, nextLabeledBar, ratioToY, stepPath, visibleLabeledBar } from "../lib/week-chart";
 import type { WeekBar } from "../lib/week-view";
 import { Card } from "./ui/ui";
 
@@ -23,9 +25,22 @@ function Grid() {
 /**
  * Scheda «Calorie» della Settimana (BRIEF §10.5): sette barre (angoli arrotondati, colore secondo lo stato del giorno), griglia puntinata,
  * linea dell'obiettivo continua e a gradini (anche nei giorni futuri), linea tratteggiata della media (assente senza media), legenda in alto a destra.
- * Barre, linee e griglia hanno una sola scala. Toccare una barra apre quel giorno.
+ * Barre, linee e griglia hanno una sola scala. Toccare la colonna di un giorno con pasti mostra sopra la barra le kcal mangiate (una sola etichetta alla volta;
+ * un altro tocco, su un'altra barra o fuori dal grafico, la sposta o la toglie). L'etichetta non occupa spazio: non sposta né ridimensiona nulla.
  */
 export function WeekChart({ bars, today, avg }: { bars: WeekBar[]; today: DateKey; avg: { kcal: number; ratio: number } | null }) {
+  const [selected, setSelected] = useState<DateKey | null>(null);
+  const listRef = useRef<HTMLUListElement>(null);
+  const labeled = visibleLabeledBar(selected, bars, today);
+  // Un tocco fuori dal grafico toglie l'etichetta (il tocco sulla scheda fa poi quello che faceva).
+  useEffect(() => {
+    if (labeled === null) return;
+    const onDown = (e: PointerEvent) => {
+      if (listRef.current && e.target instanceof Node && !listRef.current.contains(e.target)) setSelected(null);
+    };
+    document.addEventListener("pointerdown", onDown, true);
+    return () => document.removeEventListener("pointerdown", onDown, true);
+  }, [labeled]);
   const legend = (
     <p className="flex flex-wrap items-center justify-end gap-x-3 gap-y-0.5 text-[12px] text-testo-secondario" aria-label="Legenda del grafico">
       <span className="flex items-center gap-1.5 whitespace-nowrap">
@@ -48,19 +63,24 @@ export function WeekChart({ bars, today, avg }: { bars: WeekBar[]; today: DateKe
           <path d={stepPath(bars.map((b) => b.targetRatio))} fill="none" stroke="var(--linea-obiettivo)" strokeWidth="2" strokeLinejoin="round" vectorEffect="non-scaling-stroke" data-target-line />
           {avg && <line x1="0" x2="100" y1={ratioToY(avg.ratio)} y2={ratioToY(avg.ratio)} stroke="var(--linea-media)" strokeWidth="2" strokeDasharray="5 4" vectorEffect="non-scaling-stroke" data-avg-line />}
         </svg>
-        <ul className="flex" aria-label="Calorie mangiate per giorno">
+        <ul ref={listRef} className="flex" aria-label="Calorie mangiate per giorno">
           {bars.map((b) => {
             const label = `${formatDateLong(b.date)}: ${b.hasMeals ? `${formatNumber(b.eaten)} kcal mangiate` : "nessun pasto"}, obiettivo ${formatNumber(b.target)} kcal`;
             const isToday = b.date === today;
             const role = ringRole(b.color, b.date, today);
             return (
               <li key={b.date} className="min-w-0 flex-1">
-                <Link href={isToday ? "/" : `/?d=${b.date}`} aria-label={label} className="flex min-h-11 flex-col items-center gap-1.5">
+                <button type="button" aria-label={label} aria-pressed={labeled === b.date} onClick={() => setSelected(nextLabeledBar(labeled, b.date, bars, today))} className="flex min-h-11 w-full flex-col items-center gap-1.5">
                   <span className="relative block w-full" style={{ height: CHART_HEIGHT }}>
                     {b.hasMeals && <span className="absolute inset-x-2 bottom-0 block rounded-t-[10px] rounded-b-[4px]" style={{ height: `${Math.max(b.barRatio * 100, 2)}%`, background: roleVar(role) }} />}
+                    {labeled === b.date && (
+                      <span data-bar-label className="pointer-events-none absolute inset-x-0 z-20 text-center text-[12px] font-medium leading-none tabular-nums text-testo-secondario" style={{ bottom: `calc(${Math.max(b.barRatio * 100, 2)}% + 4px)` }}>
+                        {formatNumber(b.eaten)}
+                      </span>
+                    )}
                   </span>
                   <span className={`text-[13px] font-semibold ${isToday ? "text-comando" : "text-testo-secondario"}`}>{formatWeekday(b.date).charAt(0)}</span>
-                </Link>
+                </button>
               </li>
             );
           })}

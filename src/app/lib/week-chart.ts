@@ -1,4 +1,5 @@
 /** Geometria dei grafici della Settimana (BRIEF §10.5), in coordinate 0-100 (x da sinistra, y dall'alto). */
+import type { DateKey } from "@/engine";
 
 /** L'altezza di una barra o di una linea come y: 0 = in basso → y 100; 1 = in alto → y 0. */
 export const ratioToY = (ratio: number): number => Math.round((100 - Math.min(Math.max(ratio, 0), 1) * 100) * 100) / 100;
@@ -37,3 +38,28 @@ export function miniBarRatios(values: readonly (number | null)[]): number[] {
 
 /** La settimana ha almeno un valore da mostrare nel mini grafico. */
 export const hasAnyValue = (values: readonly (number | null)[]): boolean => values.some((v) => v !== null && v > 0);
+
+/** Un giorno del grafico Calorie, per la scelta della barra toccata. */
+export interface TappableBar {
+  date: DateKey;
+  hasMeals: boolean;
+}
+
+/** Una barra può avere l'etichetta delle kcal solo se il giorno ha pasti e non è futuro. */
+export const canLabelBar = (bar: TappableBar, today: DateKey): boolean => bar.hasMeals && bar.date <= today;
+
+/**
+ * La barra con l'etichetta dopo un tocco su `tapped`: una sola alla volta. Un secondo tocco sulla stessa barra la toglie, un tocco su
+ * un'altra la sposta; su un giorno senza pasti o futuro non c'è etichetta e quella che c'era si toglie.
+ */
+export function nextLabeledBar(current: DateKey | null, tapped: DateKey, bars: readonly TappableBar[], today: DateKey): DateKey | null {
+  const bar = bars.find((b) => b.date === tapped);
+  if (!bar || !canLabelBar(bar, today) || current === tapped) return null;
+  return tapped;
+}
+
+/** La barra con l'etichetta da mostrare: solo se è ancora una barra di questa settimana con pasti (cambiando settimana sparisce). */
+export function visibleLabeledBar(selected: DateKey | null, bars: readonly TappableBar[], today: DateKey): DateKey | null {
+  const bar = selected === null ? undefined : bars.find((b) => b.date === selected);
+  return bar && canLabelBar(bar, today) ? bar.date : null;
+}

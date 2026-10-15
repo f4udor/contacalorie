@@ -83,4 +83,10 @@ describe("linea della media kcal (T5b.6)", () => {
     const v = buildWeekView({ date: "2026-01-05", days, settings: s, today: "2026-01-20" });
     expect(v.avgRatio as number).toBeLessThanOrEqual(1);
   });
+
+  it("solo i pasti di oggi: il saldo è assente (trattino) ma la settimana non è vuota", () => {
+    const v = buildWeekView({ date: "2026-01-05", days: [day("2026-01-05", [meal("a", 600)])], settings: s, today: "2026-01-05" });
+    expect(v.summary.balance).toBeNull();
+    expect(v.isEmpty).toBe(false);
+  });
 });

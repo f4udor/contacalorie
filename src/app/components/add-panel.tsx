@@ -118,7 +118,7 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Apert
 
   return (
     // Dalle sotto-schermate la X torna alla schermata principale; dalla principale chiude il pannello.
-    <Sheet open onClose={view === "main" ? onClose : () => setView("main")} title={title} bar={bar} subHeader={view === "main" ? <Segmented label="Modo di inserimento" options={MODES} value={mode} onChange={setMode} /> : undefined}>
+    <Sheet open onClose={view === "main" ? onClose : () => setView("main")} title={title} bar={bar} tall subHeader={view === "main" ? <Segmented label="Modo di inserimento" options={MODES} value={mode} onChange={setMode} /> : undefined}>
       {/* La parte principale resta montata (nascosta) quando si apre una sotto-schermata: il testo scritto e la proposta non si perdono. */}
       <div className={view === "main" ? "" : "hidden"}>
         {freeMeal && freeMeal.days.length > 0 && (
@@ -253,6 +253,7 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
       open
       onClose={onClose}
       title="Modifica piatto"
+      tall
       bar={{ onSave: () => void save(), saveDisabled: saving || form.busy || !canSaveDish(form.values, initial) }}
       subHeader={<Segmented label="Modo di inserimento" options={MODES} value={mode} onChange={setMode} />}
     >

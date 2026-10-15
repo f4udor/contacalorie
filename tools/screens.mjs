@@ -78,6 +78,7 @@ const stop = () => server?.kill("SIGTERM");
 process.on("exit", stop);
 
 let problems = 0;
+const failedScenarios = [];
 try {
   await waitForServer(BASE);
   const browser = await chromium.launch({ executablePath: findChromium() });
@@ -93,7 +94,10 @@ try {
     if (onlyIds && !onlyIds.has(sc.id)) continue;
     for (const width of sc.larghezze ?? widths) {
       for (const [scheme, label] of [["dark", "scuro"]]) {
-        const context = await browser.newContext({
+        // Uno scenario rotto non ferma gli altri: l'errore si segnala in fondo, con l'elenco di quelli falliti.
+        let context;
+        try {
+        context = await browser.newContext({
           viewport: { width, height: HEIGHT },
           colorScheme: scheme,
           locale: "it-IT",
@@ -205,7 +209,14 @@ try {
         if (report.small.length) notes.push(`aree toccabili < 44 px: ${report.small.join("; ")}`);
         console.log(`${notes.length ? "!!" : "ok"} ${name}${notes.length ? "  " + notes.join(" | ") : ""}`);
         if (notes.length) problems++;
-        await context.close();
+        } catch (error) {
+          const name = `${sc.id}-${label}${width === 390 ? "" : `-${width}`}`;
+          const reason = String(error?.message ?? error).split("\n")[0];
+          console.log(`XX ${name}  SCENARIO FALLITO: ${reason}`);
+          failedScenarios.push(`${name}: ${reason}`);
+        } finally {
+          await context?.close();
+        }
       }
     }
   }
@@ -214,3 +225,7 @@ try {
   stop();
 }
 if (problems) console.log(`\n${problems} screenshot con segnalazioni (vedi sopra).`);
+if (failedScenarios.length) {
+  console.log(`\n${failedScenarios.length} scenari falliti:\n${failedScenarios.map((f) => `  - ${f}`).join("\n")}`);
+  process.exitCode = 1;
+}

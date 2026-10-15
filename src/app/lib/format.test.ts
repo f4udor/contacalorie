@@ -3,6 +3,9 @@ import { formatDateLong, formatDayMonth, formatNumber, formatSigned, formatWeekd
 
 describe("formatNumber", () => {
   it("separatore delle migliaia anche a 4 cifre e virgola decimale", () => {
+    expect(formatNumber(999)).toBe("999");
+    expect(formatNumber(1000)).toBe("1.000");
+    expect(formatNumber(2140)).toBe("2.140");
     expect(formatNumber(1994)).toBe("1.994");
     expect(formatNumber(2100)).toBe("2.100");
     expect(formatNumber(12345)).toBe("12.345");

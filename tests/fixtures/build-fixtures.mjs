@@ -619,7 +619,7 @@ scenarios.push({
   percorso: "/settimana",
   dati: data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pranzo", 700, 30, 80, 20, 5, 2)], activity: [activity("2026-01-08", { steps: 9000, stepsSource: "manuale" })] }),
   scorre: true,
-  passi: [tocca("Passi"), { clickRole: { role: "button", name: "Elimina il valore di Giovedì 8 gennaio", exact: true } }, { wait: 400 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }, { clickRole: { role: "link", name: "Oggi", exact: true } }, { wait: 600 }],
+  passi: [tocca("Passi"), sw("Giovedì 8"), { clickRole: { role: "button", name: "Elimina il valore di Giovedì 8", exact: true } }, { wait: 400 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }, { clickRole: { role: "link", name: "Oggi", exact: true } }, { wait: 600 }],
 });
 // --- Scorrimento a sinistra per le azioni (T5.5), con il tocco simulato del browser.
 const giornoConPiatti = data({
@@ -672,6 +672,28 @@ sett("settimana-media-sopra", "Media sopra l'obiettivo: 2.400 kcal di media sui 
 sett("settimana-media-sotto", "Media sotto l'obiettivo: 1.800 kcal di media; la linea tratteggiata sta sotto gli obiettivi.", "2026-01-11", giorniMedia([1800, 1700, 1900, 1800, 1800]));
 sett("settimana-media-vicina", "Media molto vicina all'obiettivo (2.110 su 2.100): la linea tratteggiata e le linee degli obiettivi quasi coincidono ma si distinguono; la legenda sopra le barre mostra «media 2.110» e «obiettivo» senza sovrapporsi.", "2026-01-11", giorniMedia([2110, 2120, 2100, 2110, 2110]));
 sett("settimana-media-assente", "Oggi è lunedì e i pasti sono solo di oggi: nessun giorno concluso, la scheda mostra il trattino e la linea non compare.", "2026-01-05", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", 800, 40, 90, 20, 5, 2)] }));
+
+// --- Pannelli della Settimana ad altezza stabile (T6b.0): una settimana con sette giorni di dati, l'elenco scorre dentro il pannello.
+const sette = data({
+  settings: { weightKg: 92.5 },
+  meals: [5, 6, 7, 8, 9, 10, 11].map((d, i) => meal(`2026-01-${String(d).padStart(2, "0")}`, "pranzo", `Pranzo ${i + 1}`, 1800 + i * 40, 60, 200, 55, 20, 4)),
+  activity: [5, 6, 7, 8, 9, 10, 11].map((d, i) => activity(`2026-01-${String(d).padStart(2, "0")}`, { steps: 6000 + i * 700, stepsSource: "salute", bikeKm: 10 + i, bikeSource: "salute" })),
+});
+settScheda("settimana-pannello-passi-sette", "Pannello Passi con sette giorni di dati: l'elenco scorre dentro il pannello, che ha la stessa altezza delle altre settimane.", sette, [tocca("Passi")], { oggi: "2026-01-11" });
+settScheda("settimana-pannello-bici-sette", "Pannello Bici con sette giorni di dati: elenco che scorre, «Aggiungi uscita in bici» fermo in fondo.", sette, [tocca("Bici")], { oggi: "2026-01-11" });
+
+// --- Saldo della Settimana sui giorni conclusi (T6b.4)
+sett("settimana-saldo-conclusi", "Lunedì 1.980 kcal (margine +120), oggi martedì con 600 kcal finora: il saldo mostra +120 «sui giorni conclusi» e non conta oggi.", "2026-01-06", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", 1980, 80, 220, 60, 20, 4), meal("2026-01-06", "colazione", "Colazione", 600, 20, 80, 15, 4, 1)] }));
+sett("settimana-saldo-trattino", "Oggi lunedì con 600 kcal finora: nessun giorno concluso, la scheda Saldo mostra il trattino (senza colore) e «sui giorni conclusi».", "2026-01-05", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "colazione", "Colazione", 600, 20, 80, 15, 4, 1)] }));
+
+// --- Kcal del giorno toccando una barra della Settimana (T6b.5): oggi domenica 11, sette giorni con pasti, la domenica è la barra più alta.
+const barre = data({
+  settings: { weightKg: 100 },
+  meals: [2080, 1900, 2250, 1750, 2140, 2400, 3050].map((k, i) => meal(`2026-01-${String(5 + i).padStart(2, "0")}`, "pranzo", "Pranzo", k, 80, 220, 60, 20, 4)),
+});
+sett("settimana-barra-etichetta", "Toccando la barra del mercoledì compare sopra la barra «2.250» (Testo secondario), senza spostare nulla; la legenda resta libera.", "2026-01-11", barre, { fisso: true, passi: [{ clickRole: { role: "button", name: "Mercoledì 7 gennaio", exact: false } }] });
+sett("settimana-barra-etichetta-domenica", "Toccando la barra della domenica (la più alta, sul bordo) l'etichetta «3.050» resta dentro la scheda e non copre la legenda.", "2026-01-11", barre, { fisso: true, passi: [{ clickRole: { role: "button", name: "Domenica 11 gennaio", exact: false } }] });
+sett("settimana-barra-etichetta-sposta", "Dopo il tocco sul mercoledì, un tocco sul lunedì sposta l'etichetta: una sola alla volta («2.080»).", "2026-01-11", barre, { fisso: true, passi: [{ clickRole: { role: "button", name: "Mercoledì 7 gennaio", exact: false } }, { clickRole: { role: "button", name: "Lunedì 5 gennaio", exact: false } }] });
 
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));

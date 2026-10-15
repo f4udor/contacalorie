@@ -1,0 +1,45 @@
+{
+  "id": "settimana-saldo-conclusi",
+  "descrizione": "Lunedì 1.980 kcal (margine +120), oggi martedì con 600 kcal finora: il saldo mostra +120 «sui giorni conclusi» e non conta oggi.",
+  "oggi": "2026-01-06",
+  "percorso": "/settimana",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m483",
+        "date": "2026-01-05",
+        "slot": "pranzo",
+        "name": "Pranzo",
+        "kcal": 1980,
+        "protein": 80,
+        "carbs": 220,
+        "fat": 60,
+        "fiber": 20,
+        "salt": 4,
+        "isFree": false,
+        "originalText": null
+      },
+      {
+        "id": "m484",
+        "date": "2026-01-06",
+        "slot": "colazione",
+        "name": "Colazione",
+        "kcal": 600,
+        "protein": 20,
+        "carbs": 80,
+        "fat": 15,
+        "fiber": 4,
+        "salt": 1,
+        "isFree": false,
+        "originalText": null
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true
+}

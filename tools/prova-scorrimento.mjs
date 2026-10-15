@@ -115,7 +115,12 @@ try {
   // 7. Il tocco sulla riga aperta la richiude senza aprire il pannello.
   page = await newPage();
   await touch(page, "Pasta al pomodoro", -140);
-  await page.getByText("Pasta al pomodoro", { exact: true }).first().click({ force: true });
+  // Si tocca la parte della riga ancora visibile (a sinistra le azioni, a destra le kcal): il nome è già scorso fuori dallo schermo.
+  const slider = await page.evaluate(() => {
+    const r = [...document.querySelectorAll('[data-swipe-row][data-open="true"]')][0].children[1].getBoundingClientRect();
+    return { x: r.x + r.width - 24, y: r.y + r.height / 2 };
+  });
+  await page.mouse.click(slider.x, slider.y);
   await page.waitForTimeout(400);
   check("toccare la riga aperta la richiude", (await open(page)) === 0);
   check("senza aprire il pannello", !(await dialog(page)));

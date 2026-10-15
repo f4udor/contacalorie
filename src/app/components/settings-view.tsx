@@ -71,7 +71,7 @@ export const settingsTitle = (section: SectionId | null): string => (section ===
 /** Pannello delle Impostazioni, aperto dall'ingranaggio di Oggi e Settimana: X nell'elenco, freccia ‹ nelle pagine. */
 export function SettingsPanel({ section, onSectionChange, onClose }: { section: SectionId | null; onSectionChange: (s: SectionId | null) => void; onClose: () => void }) {
   return (
-    <Sheet open onClose={onClose} title={settingsTitle(section)} back={section === null ? undefined : () => onSectionChange(null)}>
+    <Sheet open onClose={onClose} title={settingsTitle(section)} tall back={section === null ? undefined : () => onSectionChange(null)}>
       <SettingsView section={section} onNavigate={onSectionChange} />
     </Sheet>
   );

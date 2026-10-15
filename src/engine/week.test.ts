@@ -117,3 +117,32 @@ describe("media kcal sui giorni conclusi (§3.8, casi W, X, Y)", () => {
     expect(weekSummary(GIO, days, s, GIO).avgNutrients?.protein).toBe(60);
   });
 });
+
+describe("saldo mostrato in Settimana sui giorni conclusi (§3.3, casi AJ, AK, AL, AM)", () => {
+  it("caso AJ: lunedì 1.900; oggi è martedì, mangiate finora 600 → +200 (non 300)", () => {
+    const days = [day(LUN, [meal("a", 1900)]), day(MAR, [meal("b", 600)])];
+    expect(weekSummary(MAR, days, s, MAR).balance).toBe(200);
+  });
+  it("caso AK: oggi è lunedì, mangiate finora 600 → nessun saldo (trattino)", () => {
+    expect(weekSummary(LUN, [day(LUN, [meal("a", 600)])], s, LUN).balance).toBeNull();
+  });
+  it("caso AL: lunedì 2.500; oggi è martedì senza pasti → −400", () => {
+    expect(weekSummary(MAR, [day(LUN, [meal("a", 2500)])], s, MAR).balance).toBe(-400);
+  });
+  it("caso AM: settimana passata, lunedì 1.900 e domenica 2.000, altri giorni vuoti → +300 (tetto)", () => {
+    const days = [day(LUN, [meal("a", 1900)]), day("2026-01-11", [meal("d", 2000)])];
+    expect(weekSummary(LUN, days, s, "2026-01-20").balance).toBe(300);
+  });
+  it("oggi con pasti non entra nel saldo, anche se è l'unico giorno mangiato prima di un debito", () => {
+    // lunedì 2.500 (−400) e oggi 100: il saldo resta −400, oggi non lo riporta a +1.600 né a +300
+    const days = [day(LUN, [meal("a", 2500)]), day(MAR, [meal("b", 100)])];
+    expect(weekSummary(MAR, days, s, MAR).balance).toBe(-400);
+  });
+  it("senza `today` nessun giorno è escluso", () => {
+    expect(weekSummary(MAR, [day(LUN, [meal("a", 1900)]), day(MAR, [meal("b", 600)])], s).balance).toBe(300);
+  });
+  it("la funzione del saldo dell'obiettivo non cambia: l'obiettivo di martedì usa ancora i giorni precedenti", () => {
+    const days = [day(LUN, [meal("a", 2500)]), day(MAR, [meal("b", 600)])];
+    expect(weekSummary(MAR, days, s, MAR).days[1].target).toBe(2000);
+  });
+});

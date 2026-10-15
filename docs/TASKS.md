@@ -607,7 +607,7 @@ Vincoli di questa fase:
 - Screenshot solo scuri a 390 px, e solo degli scenari toccati dal task più quelli elencati in T6b.3. Non si rigenera l'intera raccolta.
 - Nessuna nuova dipendenza.
 
-### T6b.0 Pannelli della Settimana ad altezza stabile · da fare
+### T6b.0 Pannelli della Settimana ad altezza stabile · fatto
 Difetto visto sul telefono: nel pannello Passi, passando con la freccia da una settimana con dati (5-11 ottobre) a una senza (28 settembre-4 ottobre), il pannello si accorcia e la riga con le frecce scende di circa un terzo dello schermo. Il dito non ritrova più i tasti. Lo stesso difetto è stato visto sul telefono anche nei pannelli Bici e Pasto libero.
 - I pannelli Passi, Bici e Pasto libero seguono §10.3 "Comandi fermi": altezza fissa uguale per ogni settimana, scelta in modo che una settimana piena (sette righe) si veda senza tagli strani; l'elenco scorre dentro il pannello se non ci sta. Il pannello Peso usa la stessa altezza, per coerenza.
 - Intestazione (X, titolo), riga delle frecce, numero grande e grafico restano alla stessa distanza dal bordo alto dello schermo in ogni settimana. Senza dati: trattino alto quanto il numero, griglia vuota alta quanto il grafico.
@@ -616,7 +616,7 @@ Difetto visto sul telefono: nel pannello Passi, passando con la freccia da una s
 - Prova automatica con Playwright: per ciascuno dei tre pannelli con le frecce, la posizione verticale di frecce, ritorno al presente e X è identica (differenza zero) tra una settimana con sette giorni di dati, una con due e una vuota.
 - Screenshot: i tre pannelli nella settimana piena e in quella vuota, più il pannello Peso.
 
-### T6b.1 Ricerca degli altri comandi che si spostano · da fare
+### T6b.1 Ricerca degli altri comandi che si spostano · fatto
 Stessa regola, cercata dove non è stata segnalata. Si controlla, non si ridisegna.
 - Con la stessa prova automatica di T6b.0 si misura la posizione dei comandi in questi passaggi:
   - Oggi: giorno con pasti → giorno senza pasti → giorno futuro (frecce, ritorno al presente, ingranaggio, tasto +);
@@ -628,24 +628,24 @@ Stessa regola, cercata dove non è stata segnalata. Si controlla, non si ridiseg
 - Tutto ciò che si trova e non rientra in questa regola (allineamenti, spaziature, testi) **non si corregge**: va elencato nel report, con lo screenshot, perché lo decida l'utente.
 - Screenshot solo degli scenari corretti.
 
-### T6b.2 Tre difetti grafici della fase 6 · da fare
+### T6b.2 Tre difetti grafici della fase 6 · fatto
 - **Collegamenti**: i valori "Attiva" e "Attivo" della riga "Stato" (Salute e Stime dei pasti) sono nel colore In obiettivo, come in `docs/design/bozza-4-collegamenti.png`. Gli stati non attivi restano grigi.
 - **Preferiti**: scorrendo una riga a sinistra, "Elimina" è una tessera separata su fondo Fuori (raggio da tessera, staccata dalla riga da uno spazio), come dice §10.5, e non un blocco attaccato alla riga. Stesso aspetto dello scorrimento sui piatti in Oggi: se i due sono diversi, si allinea Preferiti a Oggi.
 - **Punto delle migliaia**: "2140 kcal" in Obiettivi diventa "2.140 kcal". Tutti i numeri di kcal e di passi mostrati a schermo passano dallo stesso formato, con il punto da 1.000 in su. I campi in cui si scrive un numero restano senza punto. Test del formato su 999, 1000, 2140, 12345 e ricerca nelle schermate di numeri mostrati senza passare dal formato.
 - Screenshot degli scenari toccati.
 
-### T6b.3 Screenshot mancanti · da fare
+### T6b.3 Screenshot mancanti · fatto
 - Lo scenario `oggi-dopo-modifica-settimana` fa fermare `tools/screens.mjs`: si ripara lo scenario (o lo script, se la causa è lì), senza cambiare l'app per farlo passare. Se rivela un difetto vero dell'app, il difetto va nel report e lo scenario resta segnato come rotto.
 - Lo script non si ferma più al primo scenario rotto: prosegue ed elenca alla fine quelli falliti, uscendo con errore.
 - Si rigenerano i 13 scenari `nav-*` e `pasti-*` rimasti alla versione precedente alla fase 6. Nel report: l'elenco dei file rigenerati.
 
-### T6b.4 Saldo della Settimana sui giorni conclusi · da fare
+### T6b.4 Saldo della Settimana sui giorni conclusi · fatto
 Difetto visto sul telefono: con un solo giorno concluso (2.080 su 2.200, margine 120) la scheda Saldo mostrava 300, perché contava anche oggi, ancora in corso.
 - Motore: il saldo del riepilogo della settimana segue `docs/BRIEF.md` §3.3 "Saldo mostrato in Settimana": esclude oggi, che arriva già come parametro. **I test esistenti di questo saldo si aggiornano alla nuova regola.** La funzione del saldo usata per l'obiettivo del giorno, il recupero e l'anteprima non si tocca, e nessun altro test del motore cambia: i casi da A a Z e da AA ad AH restano identici.
 - Scheda Saldo: sotto il numero la dicitura "sui giorni conclusi", come nella scheda Media. Senza saldo, trattino e nessun colore.
 - Test: casi AJ, AK, AL e AM. Screenshot della scheda con saldo e con trattino.
 
-### T6b.5 Kcal del giorno toccando una barra della Settimana · da fare
+### T6b.5 Kcal del giorno toccando una barra della Settimana · fatto
 Aggiunta chiesta da un utente: nel grafico Calorie della Settimana, toccando una barra compare piccolo il numero di kcal di quel giorno.
 - Tocco su una barra (area toccabile di tutta la colonna del giorno, almeno 44 px): sopra la barra compare un'etichetta piccola con le kcal mangiate, nel formato con il punto delle migliaia ("2.080"), colore Testo secondario. Un altro tocco sulla stessa barra, un tocco su un'altra barra o fuori dal grafico la sposta o la toglie. Una sola etichetta alla volta.
 - Giorni senza pasti: nessuna etichetta. Giorni futuri: nessuna etichetta.
@@ -654,5 +654,5 @@ Aggiunta chiesta da un utente: nel grafico Calorie della Settimana, toccando una
 - Nessun dato nuovo: il numero è quello già usato per l'altezza della barra. `src/engine` non si tocca.
 - Test della logica di selezione (tocco, secondo tocco, altro giorno, giorno vuoto, cambio settimana). Screenshot con l'etichetta su una barra centrale e su quella della domenica.
 
-### T6b.6 Report di fase · da fare
+### T6b.6 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-6b.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: un controllo da fare sul telefono per ogni task e, a parte, l'elenco delle incongruenze trovate in T6b.1 e non corrette.

@@ -77,7 +77,7 @@ export function HealthSection() {
     <section className="flex flex-col gap-1.5" aria-label="Salute">
       <h2 className="px-4 text-[13px] font-medium uppercase tracking-wide text-testo-secondario">Salute</h2>
       <GroupedList>
-        <ValueRow title="Stato" value={link === null ? "Controllo…" : link.active ? "Attiva" : "Non attiva"} />
+        <ValueRow title="Stato" value={link === null ? "Controllo…" : link.active ? "Attiva" : "Non attiva"} valueTone={link?.active ? "in-obiettivo" : "testo-secondario"} />
         {link?.supported && code === null && link.active && (
           <>
             <ValueRow title="Ultimo invio" value={link.lastSuccessAt ? formatDateTime(link.lastSuccessAt) : "Nessuno"} />

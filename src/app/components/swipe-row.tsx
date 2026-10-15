@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { PointerEvent, ReactNode } from "react";
-import { SWIPE_ACTION_WIDTH, SWIPE_ICON_ACTION_WIDTH, nextOpenRow, shouldStayOpen, swipeDirection, swipeOffset } from "./swipe-logic";
+import { SWIPE_ACTION_WIDTH, SWIPE_ICON_ACTION_WIDTH, SWIPE_TILE_GAP, nextOpenRow, shouldStayOpen, swipeDirection, swipeOffset } from "./swipe-logic";
 
 export interface SwipeAction {
   key: string;
@@ -40,7 +40,8 @@ interface SwipeRowProps {
  */
 export function SwipeRow({ id, openId, setOpen, actions, children, className = "", surfaceClassName = "bg-tessera" }: SwipeRowProps) {
   const actionWidth = (a: SwipeAction) => a.width ?? (a.icon ? SWIPE_ICON_ACTION_WIDTH : SWIPE_ACTION_WIDTH);
-  const width = actions.reduce((sum, a) => sum + actionWidth(a), 0);
+  // Ogni azione è una tessera separata (raggio da tessera), staccata dalla riga e dalle altre da uno spazio (BRIEF §10.5).
+  const width = actions.reduce((sum, a) => sum + actionWidth(a) + SWIPE_TILE_GAP, 0);
   const isOpen = openId === id;
   const rootRef = useRef<HTMLDivElement>(null);
   const [dragOffset, setDragOffset] = useState<number | null>(null);
@@ -109,8 +110,8 @@ export function SwipeRow({ id, openId, setOpen, actions, children, className = "
               setOpen(id, false);
               a.onClick();
             }}
-            className={`flex min-h-11 items-center justify-center px-1 text-center text-[15px] font-semibold leading-tight ${a.tone === "danger" ? "bg-fuori text-testo" : "bg-comando text-testo-su-comando"}`}
-            style={{ width: actionWidth(a) }}
+            className={`flex min-h-11 items-center justify-center rounded-tessera px-1 text-center text-[15px] font-semibold leading-tight ${a.tone === "danger" ? "bg-fuori text-testo" : "bg-comando text-testo-su-comando"}`}
+            style={{ width: actionWidth(a), marginLeft: SWIPE_TILE_GAP }}
           >
             {a.icon ?? a.visibleLabel ?? a.label}
           </button>
@@ -127,7 +128,7 @@ export function SwipeRow({ id, openId, setOpen, actions, children, className = "
             e.preventDefault();
           }
         }}
-        className={`relative ${surfaceClassName}`}
+        className={`relative rounded-tessera ${surfaceClassName}`}
         style={{ transform: `translateX(${shown}px)`, touchAction: "pan-y", transition: dragOffset === null ? "transform 200ms ease-out" : "none" }}
       >
         {children}
