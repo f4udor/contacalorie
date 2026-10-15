@@ -686,6 +686,15 @@ settScheda("settimana-pannello-bici-sette", "Pannello Bici con sette giorni di d
 sett("settimana-saldo-conclusi", "Lunedì 1.980 kcal (margine +120), oggi martedì con 600 kcal finora: il saldo mostra +120 «sui giorni conclusi» e non conta oggi.", "2026-01-06", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", 1980, 80, 220, 60, 20, 4), meal("2026-01-06", "colazione", "Colazione", 600, 20, 80, 15, 4, 1)] }));
 sett("settimana-saldo-trattino", "Oggi lunedì con 600 kcal finora: nessun giorno concluso, la scheda Saldo mostra il trattino (senza colore) e «sui giorni conclusi».", "2026-01-05", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "colazione", "Colazione", 600, 20, 80, 15, 4, 1)] }));
 
+// --- Kcal del giorno toccando una barra della Settimana (T6b.5): oggi domenica 11, sette giorni con pasti, la domenica è la barra più alta.
+const barre = data({
+  settings: { weightKg: 100 },
+  meals: [2080, 1900, 2250, 1750, 2140, 2400, 3050].map((k, i) => meal(`2026-01-${String(5 + i).padStart(2, "0")}`, "pranzo", "Pranzo", k, 80, 220, 60, 20, 4)),
+});
+sett("settimana-barra-etichetta", "Toccando la barra del mercoledì compare sopra la barra «2.250» (Testo secondario), senza spostare nulla; la legenda resta libera.", "2026-01-11", barre, { fisso: true, passi: [{ clickRole: { role: "button", name: "Mercoledì 7 gennaio", exact: false } }] });
+sett("settimana-barra-etichetta-domenica", "Toccando la barra della domenica (la più alta, sul bordo) l'etichetta «3.050» resta dentro la scheda e non copre la legenda.", "2026-01-11", barre, { fisso: true, passi: [{ clickRole: { role: "button", name: "Domenica 11 gennaio", exact: false } }] });
+sett("settimana-barra-etichetta-sposta", "Dopo il tocco sul mercoledì, un tocco sul lunedì sposta l'etichetta: una sola alla volta («2.080»).", "2026-01-11", barre, { fisso: true, passi: [{ clickRole: { role: "button", name: "Mercoledì 7 gennaio", exact: false } }, { clickRole: { role: "button", name: "Lunedì 5 gennaio", exact: false } }] });
+
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");

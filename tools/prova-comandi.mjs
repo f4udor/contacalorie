@@ -303,6 +303,44 @@ try {
     same("Impostazioni", rows);
   }
 
+  // T6b.5: l'etichetta delle kcal su una barra non sposta né ridimensiona nulla, resta dentro la scheda, una sola alla volta, e la tocca tutta la colonna (≥ 44 px).
+  {
+    const kcal = [2080, 1900, 2250, 1750, 2140, 2400, 3050];
+    const data = baseData({ meals: kcal.map((k, i) => meal(day(5 + i), "pranzo", "Pranzo", k)), activity: [], weighIns: [] });
+    const page = await newPage("/settimana?w=2026-01-05", data);
+    const card = page.locator("section", { has: page.getByRole("heading", { name: "Calorie", exact: true }) }).first();
+    const col = (name) => page.getByRole("button", { name: new RegExp(`^${name} gennaio`) }).first();
+    const snap = async () => ({ card: await card.boundingBox(), saldo: await topOf(page.getByRole("heading", { name: "Saldo", exact: true })), media: await topOf(page.getByRole("heading", { name: "Media", exact: true })) });
+    const before = await snap();
+    const labels = () => page.locator("[data-bar-label]");
+    for (const [name, text] of [["Mercoledì 7", "2.250"], ["Domenica 11", "3.050"], ["Lunedì 5", "2.080"]]) {
+      await col(name).click();
+      await page.waitForTimeout(150);
+      const after = await snap();
+      check(`barra ${name}: compare «${text}», una sola etichetta`, (await labels().count()) === 1 && (await labels().first().textContent()) === text);
+      check(`barra ${name}: nulla si sposta né cambia altezza`, JSON.stringify(after) === JSON.stringify(before), JSON.stringify([before, after]));
+      const l = await labels().first().boundingBox();
+      check(`barra ${name}: l'etichetta sta dentro la scheda e sotto la legenda`, l.x >= before.card.x && l.x + l.width <= before.card.x + before.card.width && l.y >= (await card.locator("h2").boundingBox()).y + 20, JSON.stringify([l, before.card]));
+      const c = await col(name).boundingBox();
+      check(`barra ${name}: la colonna toccabile è almeno 44 px (${Math.round(c.width)}×${Math.round(c.height)})`, c.width >= 44 && c.height >= 44);
+    }
+    await col("Lunedì 5").click();
+    check("secondo tocco sulla stessa barra: l'etichetta si toglie", (await labels().count()) === 0);
+    await col("Giovedì 8").click();
+    await page.mouse.click(200, 600);
+    await page.waitForTimeout(150);
+    check("tocco fuori dal grafico: l'etichetta si toglie", (await labels().count()) === 0);
+    await page.context().close();
+    const p2 = await newPage("/settimana?w=2026-01-05", baseData({ meals: [meal(day(5), "pranzo", "Pranzo", 2000)], activity: [], weighIns: [] }));
+    await p2.getByRole("button", { name: /^Martedì 6 gennaio/ }).click();
+    check("giorno senza pasti: nessuna etichetta", (await p2.locator("[data-bar-label]").count()) === 0);
+    await p2.getByRole("button", { name: /^Lunedì 5 gennaio/ }).click();
+    await byLabel(p2, "Settimana successiva").click();
+    await p2.waitForTimeout(300);
+    check("cambiando settimana l'etichetta sparisce", (await p2.locator("[data-bar-label]").count()) === 0);
+    await p2.context().close();
+  }
+
   await browser.close();
 } finally {
   stop();

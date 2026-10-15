@@ -61,7 +61,7 @@ export function SettimanaScreen() {
 
       {view && s && (
         <div className="flex flex-col gap-3">
-          <WeekChart bars={view.bars} today={today} avg={s.avgKcal === null || view.avgRatio === null ? null : { kcal: s.avgKcal, ratio: view.avgRatio }} />
+          <WeekChart key={monday} bars={view.bars} today={today} avg={s.avgKcal === null || view.avgRatio === null ? null : { kcal: s.avgKcal, ratio: view.avgRatio }} />
 
           {view.isEmpty && !weight && (
             <Card>

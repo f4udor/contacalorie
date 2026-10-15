@@ -645,7 +645,7 @@ Difetto visto sul telefono: con un solo giorno concluso (2.080 su 2.200, margine
 - Scheda Saldo: sotto il numero la dicitura "sui giorni conclusi", come nella scheda Media. Senza saldo, trattino e nessun colore.
 - Test: casi AJ, AK, AL e AM. Screenshot della scheda con saldo e con trattino.
 
-### T6b.5 Kcal del giorno toccando una barra della Settimana · da fare
+### T6b.5 Kcal del giorno toccando una barra della Settimana · fatto
 Aggiunta chiesta da un utente: nel grafico Calorie della Settimana, toccando una barra compare piccolo il numero di kcal di quel giorno.
 - Tocco su una barra (area toccabile di tutta la colonna del giorno, almeno 44 px): sopra la barra compare un'etichetta piccola con le kcal mangiate, nel formato con il punto delle migliaia ("2.080"), colore Testo secondario. Un altro tocco sulla stessa barra, un tocco su un'altra barra o fuori dal grafico la sposta o la toglie. Una sola etichetta alla volta.
 - Giorni senza pasti: nessuna etichetta. Giorni futuri: nessuna etichetta.
