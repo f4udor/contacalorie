@@ -673,6 +673,15 @@ sett("settimana-media-sotto", "Media sotto l'obiettivo: 1.800 kcal di media; la 
 sett("settimana-media-vicina", "Media molto vicina all'obiettivo (2.110 su 2.100): la linea tratteggiata e le linee degli obiettivi quasi coincidono ma si distinguono; la legenda sopra le barre mostra «media 2.110» e «obiettivo» senza sovrapporsi.", "2026-01-11", giorniMedia([2110, 2120, 2100, 2110, 2110]));
 sett("settimana-media-assente", "Oggi è lunedì e i pasti sono solo di oggi: nessun giorno concluso, la scheda mostra il trattino e la linea non compare.", "2026-01-05", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", 800, 40, 90, 20, 5, 2)] }));
 
+// --- Pannelli della Settimana ad altezza stabile (T6b.0): una settimana con sette giorni di dati, l'elenco scorre dentro il pannello.
+const sette = data({
+  settings: { weightKg: 92.5 },
+  meals: [5, 6, 7, 8, 9, 10, 11].map((d, i) => meal(`2026-01-${String(d).padStart(2, "0")}`, "pranzo", `Pranzo ${i + 1}`, 1800 + i * 40, 60, 200, 55, 20, 4)),
+  activity: [5, 6, 7, 8, 9, 10, 11].map((d, i) => activity(`2026-01-${String(d).padStart(2, "0")}`, { steps: 6000 + i * 700, stepsSource: "salute", bikeKm: 10 + i, bikeSource: "salute" })),
+});
+settScheda("settimana-pannello-passi-sette", "Pannello Passi con sette giorni di dati: l'elenco scorre dentro il pannello, che ha la stessa altezza delle altre settimane.", sette, [tocca("Passi")], { oggi: "2026-01-11" });
+settScheda("settimana-pannello-bici-sette", "Pannello Bici con sette giorni di dati: elenco che scorre, «Aggiungi uscita in bici» fermo in fondo.", sette, [tocca("Bici")], { oggi: "2026-01-11" });
+
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");

@@ -99,6 +99,9 @@ function WeekSwitcher({ monday, today, onPrev, onNext, onNow }: Switcher) {
 }
 
 const sub = "text-[13px] text-testo-secondario";
+/** Corpo dei pannelli ad altezza fissa (§10.3 «Comandi fermi»): le parti in alto non si muovono, l'elenco scorre dentro `SCROLL`, i tasti pieni stanno nel `footer`. */
+const STACK = "flex min-h-0 flex-1 flex-col gap-4";
+const SCROLL = "min-h-0 flex-1 overflow-y-auto";
 
 /** Riga di un giorno in un elenco dei pannelli: titolo e sotto la fonte, valore a destra; scorrendo a sinistra si elimina un valore a mano. */
 function DayRow({ id, title, subtitle, value, deletable, deleteLabel, onDelete, openId, setOpen, onTap, tapLabel }: {
@@ -178,17 +181,26 @@ export function WeightPanel({ store, initialMonday, today, onChanged, onClose }:
   }
 
   return (
-    <Sheet open onClose={onClose} title="Peso">
-      <div className="flex flex-col gap-4">
-        <div>
+    <Sheet
+      open
+      onClose={onClose}
+      title="Peso"
+      tall
+      footer={
+        <PillButton filled disabled={busy} onClick={() => setAdding(true)}>
+          Aggiungi pesata
+        </PillButton>
+      }
+    >
+      <div className={STACK}>
+        <div className="shrink-0">
           <p className={sub}>Ultima pesata</p>
           <div className="mt-1">{latest ? <Num value={formatKg(latest.weightKg)} unit="kg" size="lg" /> : <Num value="–" size="lg" tone="testo-secondario" />}</div>
-          {info && info.deltaKg !== null && (
-            <p className={`mt-1.5 text-[14px] font-medium ${info.tone === "ok" ? "text-in-obiettivo" : info.tone === "bad" ? "text-fuori" : "text-testo-secondario"}`}>
-              {formatWeightDelta(info.deltaKg)} kg {info.comparedWith === "pesata" ? "dalla precedente" : "dal peso di partenza"}
-            </p>
-          )}
+          <p className={`mt-1.5 min-h-[21px] text-[14px] font-medium ${info?.tone === "ok" ? "text-in-obiettivo" : info?.tone === "bad" ? "text-fuori" : "text-testo-secondario"}`}>
+            {info && info.deltaKg !== null ? `${formatWeightDelta(info.deltaKg)} kg ${info.comparedWith === "pesata" ? "dalla precedente" : "dal peso di partenza"}` : ""}
+          </p>
         </div>
+        <div className={SCROLL}>
         {all.length === 0 ? (
           <p className="text-[15px] text-testo-secondario">Nessuna pesata.</p>
         ) : (
@@ -208,9 +220,7 @@ export function WeightPanel({ store, initialMonday, today, onChanged, onClose }:
             ))}
           </GroupedList>
         )}
-        <PillButton filled disabled={busy} onClick={() => setAdding(true)}>
-          Aggiungi pesata
-        </PillButton>
+        </div>
       </div>
     </Sheet>
   );
@@ -253,10 +263,24 @@ export function ActivityWeekPanel({ kind, store, initialMonday, today, onChanged
   const anyManual = rows.some((r) => r.kmManual !== null || r.kcalManual !== null);
 
   return (
-    <Sheet open onClose={onClose} title={kind === "passi" ? "Passi" : "Bici"}>
-      <div className="flex flex-col gap-4">
-        <WeekSwitcher {...w.switcher} />
-        <div>
+    <Sheet
+      open
+      onClose={onClose}
+      title={kind === "passi" ? "Passi" : "Bici"}
+      tall
+      footer={
+        kind === "bici" ? (
+          <PillButton filled disabled={busy || !data} onClick={() => setEditing(defaultDayInWeek(w.dates, today))}>
+            Aggiungi uscita in bici
+          </PillButton>
+        ) : undefined
+      }
+    >
+      <div className={STACK}>
+        <div className="shrink-0">
+          <WeekSwitcher {...w.switcher} />
+        </div>
+        <div className="shrink-0">
           <p className={sub}>{kind === "passi" ? "Media al giorno" : "Questa settimana"}</p>
           <div className="mt-1">
             {kind === "passi" ? (
@@ -268,7 +292,10 @@ export function ActivityWeekPanel({ kind, store, initialMonday, today, onChanged
             )}
           </div>
         </div>
-        <MiniBars values={values} tone={kind === "passi" ? "passi" : "bici"} height={120} dates={w.dates} />
+        <div className="shrink-0">
+          <MiniBars values={values} tone={kind === "passi" ? "passi" : "bici"} height={120} dates={w.dates} />
+        </div>
+        <div className={`${SCROLL} flex flex-col gap-4`}>
         {rows.length > 0 && (
           <GroupedList label={kind === "passi" ? "Passi per giorno" : "Uscite per giorno"}>
             {rows.map((r) =>
@@ -293,11 +320,7 @@ export function ActivityWeekPanel({ kind, store, initialMonday, today, onChanged
         )}
         {kind === "passi" && <p className={sub}>I passi arrivano da Salute.</p>}
         {kind === "bici" && anyManual && <p className={sub}>Tocca un&apos;uscita a mano per modificarla.</p>}
-        {kind === "bici" && (
-          <PillButton filled disabled={busy || !data} onClick={() => setEditing(defaultDayInWeek(w.dates, today))}>
-            Aggiungi uscita in bici
-          </PillButton>
-        )}
+        </div>
       </div>
     </Sheet>
   );
@@ -384,22 +407,38 @@ export function FreeMealPanel({ store, initialMonday, today, onChanged, onClose 
   }
 
   return (
-    <Sheet open onClose={onClose} title="Pasto libero">
-      <div className="flex flex-col gap-4">
-        <WeekSwitcher {...w.switcher} />
-        <div>
+    <Sheet
+      open
+      onClose={onClose}
+      title="Pasto libero"
+      tall
+      footer={
+        free ? (
+          <PillButton disabled={busy} onClick={() => void run(() => removeFreeMeal(store, free))}>
+            Rimuovi pasto libero
+          </PillButton>
+        ) : (
+          <PillButton filled disabled={busy || !data} onClick={() => setAdding(true)}>
+            Aggiungi pasto libero
+          </PillButton>
+        )
+      }
+    >
+      <div className={STACK}>
+        <div className="shrink-0">
+          <WeekSwitcher {...w.switcher} />
+        </div>
+        <div className="shrink-0">
           <p className={sub}>Questa settimana</p>
           <p className="mt-1 font-cifre text-[34px] font-medium leading-none">{free ? "Usato" : "Non usato"}</p>
         </div>
+        <div className={`${SCROLL} flex flex-col gap-4`}>
         {free ? (
           <>
             <GroupedList label="Pasto libero">
               <MealRow m={free} />
             </GroupedList>
             <p className={sub}>Il pasto resta e conta per intero.</p>
-            <PillButton disabled={busy} onClick={() => void run(() => removeFreeMeal(store, free))}>
-              Rimuovi pasto libero
-            </PillButton>
           </>
         ) : (
           <>
@@ -415,11 +454,9 @@ export function FreeMealPanel({ store, initialMonday, today, onChanged, onClose 
                 </GroupedList>
               </div>
             )}
-            <PillButton filled disabled={busy || !data} onClick={() => setAdding(true)}>
-              Aggiungi pasto libero
-            </PillButton>
           </>
         )}
+        </div>
       </div>
     </Sheet>
   );

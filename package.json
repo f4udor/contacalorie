@@ -11,7 +11,8 @@
     "screens": "node tools/screens.mjs",
     "fixtures": "node tests/fixtures/build-fixtures.mjs",
     "setup-sql": "node tools/build-setup-sql.mjs",
-    "prova-scorrimento": "node tools/prova-scorrimento.mjs"
+    "prova-scorrimento": "node tools/prova-scorrimento.mjs",
+    "prova-comandi": "node tools/prova-comandi.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",
