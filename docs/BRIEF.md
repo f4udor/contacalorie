@@ -2,15 +2,15 @@
 
 ## 1. Scopo
 
-App personale per tracciare dieta ipocalorica e attività fisica. Un solo utente, su iPhone (web app installata sulla Home) e computer, con gli stessi dati. Deve essere semplice, solida e ampliabile per moduli.
+App personale per tracciare dieta ipocalorica e attività fisica. Pochi utenti (Mauro e chi aggiunge lui), ciascuno con i propri dati, su iPhone (web app installata sulla Home) e computer, con gli stessi dati. Deve essere semplice, solida e ampliabile per moduli.
 
 ## 2. Schermate
 
-Navigazione in basso: **Oggi, Settimana, Grafici, Impostazioni**.
+Navigazione in basso: **Oggi, Trend** (dalla fase 9; prima Oggi, Settimana, Grafici). Impostazioni dietro l'ingranaggio (§10.4).
 
 ### Oggi
 1. Data con frecce per cambiare giorno e tasto "Oggi".
-2. Anello delle kcal: rimaste al centro; sotto, la riga di composizione dell'obiettivo ("Base 2.100 · bici +400 · passi +75 · recupero −100"), solo se c'è qualcosa oltre alla base.
+2. Anello delle kcal: rimaste al centro; sotto, la riga di composizione dell'obiettivo ("Base 2.100 · bici +400 · passi +75 · recupero −100"). Dalla fase 8 la riga c'è sempre: nei giorni senza bici, passi oltre soglia o recupero dice solo "Base 2.100". Così la scheda ha sempre la stessa altezza.
 3. Griglia di schede dei nutrienti: proteine, carboidrati, grassi, fibre, sale. Ogni scheda: nome, "assunto su obiettivo", barretta colorata a semaforo.
 4. Pasti del giorno: Colazione, Pranzo, Cena, Spuntino. Ogni pasto è composto da uno o più piatti e mostra il totale di kcal e macro, con i piatti elencati sotto ed etichetta "libero" se lo è. Ogni piatto si modifica o elimina; ogni pasto ha il suo "Aggiungi piatto". Scorrendo un piatto verso sinistra compaiono "Preferiti" e il cestino; il cestino elimina subito, senza conferma. Se il piatto è già tra i preferiti (stesso nome e stessa quantità, senza badare a maiuscole e spazi), al posto di "Preferiti" c'è "Rimuovi dai preferiti": un piatto non finisce mai due volte tra i preferiti.
 5. Attività: passi e bici (km, kcal), con la fonte ("da Salute" o "manuale"). I passi sono in sola lettura: toccarli non apre nulla. Della bici si tocca solo la parte inserita a mano (§5).
@@ -20,22 +20,39 @@ Navigazione in basso: **Oggi, Settimana, Grafici, Impostazioni**.
 ### Pannello Aggiungi (dal +)
 - In cima: un campo di testo "Cosa hai mangiato?". L'utente scrive o detta con il microfono della tastiera dell'iPhone, il modello AI restituisce uno o più pasti con i loro piatti stimati, l'utente conferma, corregge i numeri a mano oppure invia una correzione a voce o testo ("il totano era di più") che aggiorna la stima.
 - **Una sola scheda per aggiungere e per modificare un piatto**, con gli stessi comandi nello stesso posto. In alto: "Chiudi" a sinistra, il titolo, "Salva" a destra, sempre visibili anche con la tastiera aperta e con il contenuto che scorre; nessun pulsante di salvataggio in fondo.
-- Sotto il titolo lo stesso selettore **AI | Manuale**: in aggiunta si apre su AI, in modifica su Manuale. In modifica, AI mostra il campo per correggere a parole la stima del piatto ("era di più"). In Manuale c'è sempre il pulsante "Stima con l'AI", che riempie kcal e nutrienti da nome e quantità anche quando i campi hanno già dei numeri; l'utente vede i nuovi numeri e salva.
-- Accanto al titolo un selettore **AI | Manuale**; in aggiunta si apre sempre su AI. "Manuale" mostra il piatto a mano con nome e quantità: i numeri sono facoltativi e, se restano vuoti, li stima il modello AI e l'utente conferma.
-- La proposta dell'AI mostra ogni piatto su una riga (nome, quantità, kcal); toccandola si aprono i numeri da correggere. Ogni pasto proposto ha il suo interruttore "Pasto libero", con le stesse regole dell'inserimento a mano; se l'utente lo ha detto nella frase arriva già acceso e si può spegnere. Un piatto la cui stima non supera il controllo di coerenza (§3.7) mostra un avviso breve.
+- Sotto il titolo lo stesso selettore **AI | Manuale**: in aggiunta si apre su AI, in modifica su Manuale. In modifica, AI mostra il campo per correggere a parole la stima del piatto ("era di più"). In Manuale c'è sempre il pulsante "Stima con l'AI", che riempie kcal e nutrienti anche quando i campi hanno già dei numeri; l'utente vede i nuovi numeri e salva. Come è fatta la scheda in Manuale: §4.2.
+- La proposta dell'AI mostra ogni piatto su una riga (nome, quantità, kcal); toccandola si aprono i numeri da correggere. Ogni pasto proposto ha il suo interruttore "Pasto libero", disattivato se la settimana ne ha già uno; se l'utente lo ha detto nella frase arriva già acceso e si può spegnere. Un piatto la cui stima non supera il controllo di coerenza (§3.7) mostra un avviso breve.
 - "Aggiungi piatto" sotto un pasto apre lo stesso pannello, su AI, con la fascia già fissata.
-- Preferiti (piatti e pasti salvati): ogni riga ha un + per aggiungerla e si elimina scorrendola verso sinistra, con lo stesso gesto e lo stesso cestino dei piatti in Oggi (subito, senza conferma).
-- Interruttore "Pasto libero" sul pasto intero, disattivato se già usato nella settimana.
-- Voci separate: "Pesata" e "Bici a mano". I passi non si inseriscono a mano.
+- **Pasto libero, dove si segna** (dalla fase 8): solo nella proposta dell'AI (interruttore sul pasto) e nel pannello Pasto libero della Settimana / Trend ("Segna"). La scheda del piatto non ha più l'interruttore, né in aggiunta né in modifica.
+- **Preferiti** (dalla fase 8): un solo tasto "Preferiti", quello nel campo "Cosa hai mangiato?" (§4.1). La riga "Preferiti" sotto il campo non c'è più. Nell'elenco si scorre una riga verso sinistra per "Modifica" (solo piatti) ed "Elimina" (§4.1).
+- Sotto il campo: "Pesata" e "Uscita in bici". I passi non si inseriscono a mano.
 
-### Settimana (lunedì-domenica)
+### Settimana (lunedì-domenica; dalla fase 9 è la vista "Settimana" di Trend)
 - Sette barre delle kcal mangiate con la linea dell'obiettivo di ogni giorno e una linea tratteggiata orizzontale alla media kcal della settimana, con etichetta ("media 2.040"), distinta a colpo d'occhio dalla linea dell'obiettivo.
 - Saldo della settimana, media kcal (§3.8, lo stesso numero della linea), medie dei nutrienti, km in bici, passi medi, pasto libero usato o no.
 - Peso: ultima pesata della settimana e differenza in kg con la pesata precedente (o con il peso di partenza del profilo), sempre con il segno e un decimale ("−0,4 kg", "+0,3 kg", mai "0 kg" per una variazione di qualche etto), verde se ci si avvicina al peso obiettivo e rosso se ci si allontana. La scheda c'è sempre: senza pesate nella settimana dice "Nessuna pesata". Il peso del profilo è il peso di partenza e le pesate non lo sovrascrivono; consigliata una pesata a settimana, stesso giorno, al mattino.
 - Le schede Peso, Bici, Passi e Pasto libero si toccano e aprono un pannello: pesate da eliminare o aggiungere; giorni di bici, dove si aggiunge, modifica o elimina solo la parte inserita a mano; giorni di passi, in sola lettura salvo i vecchi valori a mano, che si possono solo eliminare; pasto libero da togliere (il pasto resta, torna normale) o da scegliere tra i pasti della settimana.
 
-### Grafici
-- Peso, kcal e deficit, macro medi, attività. Periodo: 4 settimane, 3 mesi, tutto.
+### Trend (dalla fase 9)
+Sostituisce Settimana e Grafici: la schermata Grafici e la sua voce nella barra spariscono.
+- **Selettore Settimana | Mese | Anno** sotto l'intestazione, a segmenti come AI | Manuale. Si apre sempre su Settimana. Settimana = lunedì-domenica; Mese e Anno = di calendario. Intervalli personalizzati: no (idee future).
+- **Intestazione**: titolo "Settimana", il nome del mese ("Ottobre") o l'anno ("2026"); sopra in piccolo l'intervallo ("5 gen – 11 gen", "ottobre 2026", "2026"). Frecce e ritorno al presente si spostano dell'unità scelta; il presente è il periodo che contiene oggi. Cambiando unità si resta nel periodo che contiene il giorno di riferimento attuale (dalla settimana del 14 ottobre a Mese si va a ottobre).
+- **Calorie**: in Settimana com'è ora. In Mese una barra per giorno con gli stessi colori, la linea dell'obiettivo a gradini e la linea della media; sotto, le etichette 1, 8, 15, 22, 29. In Anno una barra per mese (§3.10), etichette G F M A M G L A S O N D. La legenda resta "obiettivo" e "media …".
+- **Tocco su una barra**: il primo tocco mostra il numero con una freccia ("2.080 ›"); tocco sul numero: in Settimana e Mese apre quel giorno in Oggi, in Anno passa a Mese su quel mese. Tocco altrove: il numero sparisce. Giorni o mesi senza pasti, e giorni futuri: niente.
+- **Schede**, nello stesso ordine e posto in ogni vista:
+
+| Scheda | Settimana | Mese e Anno |
+|---|---|---|
+| Saldo / Giorni nel budget | Saldo come ora (§3.3) | "Giorni nel budget", "18 su 24" e sotto "6 oltre" (§3.10) |
+| Media | media kcal (§3.8) | media kcal sul periodo (§3.10) |
+| Passi | media al giorno, mini grafico dei 7 giorni | media al giorno; mini grafico per giorno (Mese) o per mese (Anno) |
+| Bici | km della settimana | km del periodo; mini grafico per giorno o per mese |
+| Peso | ultima pesata e variazione | ultima pesata del periodo e variazione (§3.10), con una piccola linea delle pesate del periodo |
+| Pasto libero | usato o no | "N usati" |
+| Medie dei nutrienti | come ora | sui giorni con pasti del periodo |
+
+- In Mese e Anno le schede Passi, Bici e Pasto libero non si toccano (niente freccia: i loro pannelli sono settimanali). Peso si tocca e apre lo stesso pannello di sempre.
+- Le altezze delle schede e del grafico sono le stesse nelle tre viste e con o senza dati (§10.3).
 
 ### Impostazioni
 La schermata è un elenco di sezioni, come le Impostazioni dell'iPhone: ogni riga apre la sua pagina, con "Indietro". Ordine: Profilo, Obiettivi, Attività, Pasto libero, Dati e, staccata in fondo, Collegamenti. Niente campi nella prima pagina: così non si toccano per sbaglio le cose delicate. Ogni campo ha un nome chiaro e al massimo una riga di spiegazione breve; niente paragrafi.
@@ -105,6 +122,8 @@ La soglia minima vale per la base: il bonus attività si somma sopra. Ogni luned
 **Anteprima dei giorni futuri.** Quando si mostra l'obiettivo di un giorno successivo a oggi, i giorni tra oggi e quel giorno che non hanno pasti contano come se si mangiasse esattamente il loro obiettivo; oggi conta con le kcal reali se sono sopra l'obiettivo, altrimenti come se si raggiungesse l'obiettivo. Così un debito di 250 kcal appare come −100, −100, −50 e non viene mostrato più volte.
 
 **Saldo mostrato in Settimana.** È lo stesso saldo della regola (con il tetto al margine), calcolato sui soli **giorni conclusi**: i giorni con pasti precedenti a oggi. Oggi è in corso e non conta, come per la media (§3.8): i pasti ancora da fare sembrerebbero margine. Per una settimana passata contano tutti i giorni con pasti. Senza giorni conclusi con pasti il saldo non c'è e la scheda mostra un trattino. La regola dell'obiettivo qui sopra non cambia: usava già solo i giorni precedenti.
+
+Testo sotto il numero (dalla fase 8): "di margine" se il saldo è positivo, "da recuperare" se è negativo, "in pari" se è zero; con il trattino nessuna riga, ma lo spazio resta. Il trattino ha la stessa misura e la stessa altezza di quello della scheda Media.
 
 Casi di verifica (base 2.100, nessuna attività, `creditCap` 300):
 
@@ -213,9 +232,36 @@ Casi di verifica (oggi = 1 gennaio):
 | AG | Come AB, con kcal base scritta a mano 2.100 | Kcal base 2.100, minimo 2.000 |
 | AH | Profilo senza sesso | Kcal base 2.100, minimo 1.800 |
 
+### 3.10 Numeri di Trend: mese e anno (dalla fase 9)
+Funzioni pure nel motore. Valgono le regole già scritte, applicate a un periodo più lungo; nessuna regola nuova sugli obiettivi.
+
+- **Giorni conclusi**: i giorni con almeno un pasto precedenti a oggi (per un periodo passato, tutti i giorni con pasti). Oggi non conta mai, come per la media (§3.8).
+- **Obiettivo di ogni giorno**: quello di §3.3, calcolato dentro la propria settimana (lunedì-domenica), anche quando la settimana è a cavallo di due mesi.
+- **Giorni nel budget** (Mese e Anno): giorni conclusi con `d ≤ ringGreenAbove`, dove `d` = kcal contate nel budget (§3.1) − obiettivo del giorno. Sono i giorni in blu o in grigio: nessun recupero scatta dopo di loro. Gli altri giorni conclusi sono "oltre". La scheda mostra "N su M" (M = giorni conclusi) e sotto "K oltre". Senza giorni conclusi: trattino.
+- **Media kcal** del periodo: media delle kcal mangiate (reali) nei giorni conclusi. In Anno è la media su tutti i giorni dell'anno, non la media delle medie mensili.
+- **Barre di Anno**: una per mese. Altezza = media delle kcal mangiate nei giorni conclusi del mese; linea dell'obiettivo = media degli obiettivi degli stessi giorni. Colore con la tabella dell'anello (§3.5) applicata a `d` = media delle kcal contate − media degli obiettivi; "accento" diventa Comando per il mese che contiene oggi e Sotto per gli altri (§10.2). Mese senza giorni conclusi: nessuna barra.
+- **Passi**: media dei valori maggiori di zero del periodo. **Bici**: somma dei km del periodo (Salute + a mano). Mini grafici: in Mese un valore per giorno; in Anno la media dei passi e i km totali di ogni mese.
+- **Peso**: ultima pesata del periodo e differenza con l'ultima pesata precedente all'inizio del periodo, o con il peso di partenza del profilo se non ce n'è; formato e colori come in Settimana (§2). Senza pesate nel periodo: "Nessuna pesata".
+- **Pasto libero**: numero di pasti liberi con data nel periodo.
+- **Nutrienti medi**: come in Settimana (giorni con pasti del periodo).
+
+Casi di verifica (base 2.100, nessuna attività, nessun recupero salvo dove detto; oggi = giovedì 15 ottobre 2026):
+
+| Caso | Situazione | Risultato atteso |
+|---|---|---|
+| TA | Ottobre: 1 ott 2.000, 2 ott 2.140, 3 ott 2.200; oggi 600 | Media 2.113; giorni nel budget 2 su 3, 1 oltre |
+| TB | Un giorno concluso a 2.150, un altro a 2.151 (obiettivo 2.100, nessun recupero) | Il primo nel budget, il secondo oltre |
+| TC | Giorno concluso con pranzo libero da 2.250 e altri piatti per 1.000 | Nel budget (contate 1.800); la media usa 3.250 |
+| TD | Anno 2026: a gennaio due giorni in settimane diverse, 2.000 e 2.200; febbraio senza pasti | Barra di gennaio 2.100, linea 2.100, colore In obiettivo; nessuna barra a febbraio |
+| TE | Anno 2026: gennaio un giorno a 2.000; marzo tre giorni a 2.400 | Media dell'anno 2.300 (non 2.200) |
+| TF | Pesate 31 agosto 95,0 kg, 10 settembre 94,6, 28 settembre 94,1; vista Mese di settembre | 94,1 kg, "−0,9 kg" |
+| TG | Pasti liberi il 3 e il 17 ottobre | Ottobre: "2 usati" |
+| TH | Ottobre: passi 8.000, 0, 10.000 in tre giorni; bici 20,4 km e 5,2 km | Passi media 9.000; bici 25,6 km |
+| TI | Mese senza pasti | Giorni nel budget e media col trattino, grafico vuoto alto quanto quello pieno |
+
 ## 4. Pasti e modello AI
 
-- **Cosa riceve il modello**: solo il testo scritto o dettato dall'utente, la data e l'ora locali (per dedurre la fascia) ed eventualmente la stima precedente con la correzione. Se nel testo ci sono preferiti inseriti come etichetta (§4.1), il testo contiene il loro nome e un riferimento; i loro numeri non vengono mandati. Nessun altro dato dell'utente: niente peso, obiettivi, email.
+- **Cosa riceve il modello**: solo il testo scritto o dettato dall'utente, la data e l'ora locali (per dedurre la fascia) ed eventualmente la stima precedente con la correzione. Per "Stima con l'AI" nella scheda del piatto il testo è composto da nome, peso e ingredienti scritti dall'utente (§4.2). Se nel testo ci sono preferiti inseriti come etichetta (§4.1), il testo contiene il loro nome e un riferimento; i loro numeri non vengono mandati. Nessun altro dato dell'utente: niente peso, obiettivi, email.
 - **Cosa restituisce**: uno o più pasti; per ogni pasto la fascia (colazione, pranzo, cena, spuntino), se l'utente lo ha indicato come pasto libero, e i piatti. Per ogni piatto: nome, quantità, se la quantità è stata ipotizzata, kcal, proteine, carboidrati, grassi, fibre, sale, e una nota breve.
 - **Fascia**: quella detta dall'utente ("a pranzo"); se non la dice, si deduce dall'ora. Si può cambiare prima di confermare.
 - **Nome e quantità**: il nome è solo il nome del piatto ("Polpette di maiale al sugo"). La quantità è l'elenco degli ingredienti principali con i grammi, come testo libero ("200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro"); per un alimento semplice basta la sua quantità ("1 mela, 180 g"). Nessuna tabella di ingredienti nel database: resta il campo di testo che c'è già.
@@ -235,17 +281,21 @@ Scopo: un piatto che l'utente conosce meglio del modello (per esempio un hummus 
 
 - **Peso del piatto.** Ogni piatto ha un **peso in grammi** facoltativo (numero intero). Il modello lo restituisce per ogni piatto che stima: la somma dei grammi scritti nella quantità (per pasta, riso, cereali e legumi secchi, i grammi a crudo). Nel piatto a mano è un campo "Peso (g)" facoltativo. I piatti già salvati non hanno peso.
 - **Preferito con peso.** Salvando un piatto nei preferiti si salva anche il suo peso. Kcal e nutrienti restano quelli del piatto salvato: le proporzioni si ricavano dal rapporto con il peso. Un preferito senza peso funziona a porzioni, come oggi.
-- **Etichetta nel campo dell'AI.** Accanto al campo "Cosa hai mangiato?" un tasto "Preferiti" apre l'elenco dei piatti preferiti (con ricerca). Scegliendone uno, nel testo compare un'**etichetta** con il nome del piatto, che si cancella come una parola. Dopo l'etichetta l'utente scrive la quantità ("150 g", "2 porzioni", "mezza porzione") e il resto della frase come sempre. Si possono inserire più etichette.
+- **Etichetta nel campo dell'AI.** Accanto al campo "Cosa hai mangiato?" un tasto "Preferiti" apre l'elenco dei preferiti (con ricerca): dalla fase 8 pasti e piatti, in due gruppi. È l'unico modo di riaggiungere un preferito (la riga "Preferiti" sotto il campo non c'è più). Scegliendone uno, nel testo compare un'**etichetta** con il nome del piatto, che si cancella come una parola. Dopo l'etichetta l'utente scrive la quantità ("150 g", "2 porzioni", "mezza porzione") e il resto della frase come sempre. Si possono inserire più etichette.
 - **Cosa fa il modello con un'etichetta.** Non stima il piatto: lo mette nel pasto giusto e restituisce solo la quantità detta (grammi oppure porzioni) e se è stata detta o no. Nome, numeri e quantità del piatto li scrive l'app dal preferito.
 - **Calcolo** (lo fa l'app, mai il modello). Con `r` = rapporto:
   - preferito con peso e grammi detti: `r = grammi detti / peso del preferito`;
   - porzioni dette: `r = porzioni`; il peso del piatto diventa `peso del preferito × porzioni`, se c'è;
   - nessuna quantità detta: `r = 1` e la quantità è segnata come ipotizzata;
-  - preferito senza peso ma grammi detti: `r = 1`, con l'avviso "Peso del preferito sconosciuto: contata una porzione".
+  - preferito senza peso ma grammi detti: dalla fase 8 nel piatto compare la domanda "Quanto pesava la porzione salvata?" con un campo in grammi e "Salta". Finché non risponde, `r = 1` e la quantità è "1 porzione", senza avviso giallo. Se scrive `w` grammi: `r = grammi detti / w`, numeri e peso del piatto si ricalcolano subito e, confermando la proposta, il preferito prende il peso `w`. "Salta" toglie la domanda e lascia `r = 1`.
   - kcal e nutrienti = valori del preferito × `r`; kcal arrotondate all'intero, nutrienti a un decimale. La quantità scritta nel piatto diventa "150 g" oppure "2 porzioni".
 - **Nella proposta** il piatto da un'etichetta mostra "dai tuoi preferiti" e non passa dal controllo di coerenza (§3.7). Si corregge come gli altri piatti.
-- **Cambiare quantità senza AI.** Nella scheda del piatto (aggiunta e modifica, Manuale) c'è la riga "Peso (g)" se il piatto ha un peso, altrimenti "Porzioni" (×0,5, ×1, ×1,5, ×2 o un numero). Cambiandola, kcal e nutrienti si ricalcolano in proporzione partendo dai valori di quando la scheda è stata aperta; nessuna chiamata al modello.
-- **Preferiti senza peso.** Si possono completare: nella scheda di un piatto in Oggi si scrive il peso e lo si salva di nuovo nei preferiti; il preferito con lo stesso nome e la stessa quantità viene aggiornato, non duplicato.
+- **Cambiare quantità senza AI.** Nella scheda del piatto, se il piatto aveva un peso quando la scheda è stata aperta, cambiare il peso ricalcola kcal e nutrienti in proporzione partendo dai valori dell'apertura; nessuna chiamata al modello. Dalla fase 8 la riga "Porzioni" non c'è più (§4.2): su un piatto senza peso, scrivere il peso lo registra e basta.
+- **Solo etichette, niente AI** (dalla fase 8). Se il testo contiene solo etichette e quantità semplici ("150 g", "150g", "2 porzioni", "×2", "x2", "mezza porzione", "una porzione"), "Stima" non chiama il modello: l'app compone la proposta da sola con il calcolo qui sopra. La fascia è quella fissata, se c'è; altrimenti dall'ora locale: 05:00-10:59 colazione, 11:00-14:59 pranzo, 15:00-18:29 spuntino, 18:30-04:59 cena. Si cambia nella proposta come sempre. Basta una parola in più ("a pranzo", "e una mela") perché la frase vada al modello come oggi.
+- **Pasto preferito come etichetta** (dalla fase 8). Scegliendo un pasto, nel testo compare un'etichetta con il nome del pasto, con un bordo nel colore Comando per distinguerla da quella di un piatto. Nella proposta l'etichetta diventa tutti i piatti del pasto, con i numeri salvati; una quantità detta dopo un pasto si ignora. Al modello va solo nome e riferimento, come per i piatti; il modello dice solo in che pasto va.
+- **Peso chiesto al salvataggio** (dalla fase 8). Salvando un piatto senza peso nei preferiti (dallo scorrimento in Oggi o dalla scheda del piatto) sale un pannello piccolo "Salva nei preferiti" con il nome del piatto e il campo "Peso" in grammi, facoltativo; "Salva" funziona anche con il campo vuoto. Se il piatto ha già un peso, si salva subito come prima. Vale solo per i piatti, non per i pasti.
+- **Modificare un preferito** (dalla fase 8). Nell'elenco dei preferiti, scorrendo una riga verso sinistra compaiono due tessere: "Modifica" (solo per i piatti) ed "Elimina" (subito, senza conferma). "Modifica" apre la scheda del piatto (§4.2) con titolo "Modifica preferito", senza la riga Pasto e senza "Salva nei preferiti" ed "Elimina piatto"; "Salva" aggiorna quel preferito (nome, ingredienti, peso, numeri). I piatti già registrati nei giorni passati non cambiano. Se dopo la modifica nome e ingredienti coincidono con un altro preferito, restano due righe, che si eliminano scorrendo.
+- **Preferiti senza peso.** Oltre alla domanda nella proposta e al salvataggio, si completano con "Modifica".
 
 Casi di verifica:
 
@@ -256,9 +306,26 @@ Casi di verifica:
 | AP | Come AN con "2 porzioni" | 300 kcal, proteine 15,0 g, peso 300 g |
 | AQ | Come AN senza quantità | 150 kcal, peso 150 g, quantità ipotizzata |
 | AR | Preferito "Caffè con zucchero" senza peso, 20 kcal. Frase con etichetta e "×2" | 40 kcal, quantità "2 porzioni" |
-| AS | Come AR con "100 g" | 20 kcal, avviso "Peso del preferito sconosciuto" |
+| AS | Come AR con "100 g" (dalla fase 8) | 20 kcal, quantità "1 porzione", domanda "Quanto pesava la porzione salvata?", nessun avviso giallo |
 | AT | Piatto di 200 g, 300 kcal, carboidrati 40,0 g; nella scheda il peso diventa 250 g | 375 kcal, carboidrati 50,0 g |
-| AU | Piatto senza peso, 420 kcal, grassi 13,3 g; Porzioni ×1,5 | 630 kcal, grassi 20,0 g (19,95 arrotondato) |
+| AU | Motore: valori 420 kcal, grassi 13,3 g, rapporto 1,5 (la riga Porzioni non c'è più nella scheda dalla fase 8; il calcolo resta per "2 porzioni" detto nella frase) | 630 kcal, grassi 20,0 g (19,95 arrotondato) |
+| AV | Preferito "Torta della nonna" senza peso, 300 kcal. Frase con etichetta e "120 g"; alla domanda risponde 80 | 450 kcal, peso 120 g, quantità "120 g"; dopo la conferma il preferito ha peso 80 g |
+| AW | Come AN, testo solo "[Hummus fatto in casa] 100g" alle 13:10, nessuna fascia fissata | Nessuna chiamata al modello; pranzo, 100 kcal, proteine 5,0 g |
+| AX | Testo "[Colazione solita] [Hummus fatto in casa] 2 porzioni" alle 08:00 | Nessuna chiamata al modello; colazione con i piatti del pasto salvato più l'hummus a 300 kcal |
+| AY | Testo "[Hummus fatto in casa] 100 g e una mela" | Va al modello come prima |
+
+### 4.2 Scheda del piatto in Manuale (dalla fase 8)
+
+Scopo: si scrive il nome e il peso, l'AI stima per quel peso. Niente campi che non servono.
+
+- **Ordine dei campi**: Nome, Peso (g), Ingredienti; poi "Stima con l'AI"; poi Calorie, Proteine, Carboidrati, Grassi, Fibre, Sale; poi Pasto (solo se la fascia non è già fissata); in modifica, in fondo, "Salva nei preferiti" ed "Elimina piatto".
+- **Ingredienti** è il nuovo nome del campo "Quantità" (testo libero, facoltativo, a più righe), in tutta l'app: scheda, proposta aperta, esportazione CSV. Nel database la colonna resta quella che c'è. Nelle righe dei piatti in Oggi e nella proposta chiusa il testo sotto il nome non cambia.
+- **Peso (g)** facoltativo, intero, come oggi (§4.1).
+- **"Stima con l'AI"** manda al modello un testo composto da nome, peso (se c'è, "150 g") e ingredienti (se ci sono), con la stessa protezione di oggi (limite giornaliero, risposta validata). Se c'è il peso, il prompt chiede di stimare per quel peso totale e il peso restituito è quello scritto. Riempie i numeri anche se ci sono già; la riga sotto il tasto dice "Stimati dall'AI per 150 g" (o senza peso: "Stimati dall'AI: controlla i numeri").
+- **Porzioni**: la riga non c'è più, né in aggiunta né in modifica.
+- **Pasto libero**: l'interruttore non c'è più nella scheda del piatto (§2).
+- **Pasto**: in aggiunta con la fascia fissata ("Aggiungi a pranzo") la riga non c'è; negli altri casi resta.
+- Il resto della scheda non cambia: intestazione con X, titolo e "Salva", selettore AI | Manuale, comandi fermi.
 
 ## 5. Attività e automazioni
 
@@ -304,10 +371,11 @@ Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate,
 | 6 | Testi e grafica: tema solo scuro, stile di §10, nuova navigazione |
 | 6b | Ritocchi dopo la prova sul telefono: pannelli ad altezza stabile, comandi che non si spostano, difetti grafici della fase 6, screenshot mancanti |
 | 7 | Preferiti nella stima: peso dei piatti, etichette dei preferiti nel campo dell'AI, quantità ricalcolata senza AI (§4.1) |
+| 8 | Ritocchi dei flussi: scheda del piatto (nome, peso, ingredienti; via Porzioni e Pasto libero), peso dei preferiti chiesto, modifica dei preferiti, un solo tasto Preferiti, testo del Saldo, riga dell'obiettivo sempre visibile |
+| 9 | Trend: Settimana, Mese e Anno al posto di Settimana e Grafici (§2, §3.10) |
 | 7b | Tabella degli ingredienti con valori ufficiali, ingredienti uno per uno (fonte da decidere) |
 | 7c | Prodotti di marca da Open Food Facts |
-| da decidere | Grafici |
-| 7 | Promemoria (opzionale) |
+| da decidere | Promemoria (opzionale, tra le idee future) |
 
 ## 9. Fuori dalla prima versione
 
@@ -365,7 +433,7 @@ Pochi componenti condivisi, usati ovunque:
   - Nelle schede di Oggi e Settimana uno stato vuoto è alto quanto quello pieno.
 
 ### 10.4 Navigazione
-- **Barra in basso**: capsula sospesa in vetro, tre voci con icona e nome (Oggi, Settimana, Grafici). La voce attiva sta in una pillola più scura, nel colore Comando.
+- **Barra in basso**: capsula sospesa in vetro, voci con icona e nome. Dalla fase 9 le voci sono due, Oggi e Trend (icona del grafico a barre); prima erano tre (Oggi, Settimana, Grafici). La voce attiva sta in una pillola più scura, nel colore Comando.
 - **Tasto +**: cerchio di 52 px nel colore Comando al 62% di opacità, opaco (senza sfumature né alone), sospeso in basso a destra **sopra** la barra e staccato da essa di almeno 12 px. In fondo a ogni schermata c'è spazio vuoto sufficiente perché, a fine pagina, il + e la barra non coprano contenuto.
 - **Impostazioni**: non sono più nella barra. Si aprono da un tasto a ingranaggio in alto a destra, presente sia in Oggi sia in Settimana, come pannello con la X. Dentro, l'elenco a sezioni di §2.
 - **Intestazione di Oggi e Settimana**: a sinistra la data in piccolo e sotto il titolo; a destra, su una riga, quattro tasti tondi: freccia indietro, **ritorno al presente**, freccia avanti, ingranaggio. Il tasto di ritorno è un'icona (cerchio con un punto al centro) tra le due frecce: nel colore Comando quando si guarda un altro giorno o un'altra settimana, grigio e disattivato sul presente; resta sempre al suo posto, così le frecce non si spostano. Nessuna scritta "Oggi" o "Questa settimana". Titolo e tasti stanno su una riga anche a 375 px: se serve si riduce il titolo, mai a capo e mai tasti tagliati. I tasti possono apparire più piccoli di 44 px ma l'area toccabile resta di 44 px. Nei pannelli con le frecce delle settimane lo stesso tasto sta tra le due frecce.
@@ -378,9 +446,9 @@ Pochi componenti condivisi, usati ovunque:
   - **Passi** e **Bici**: in alto le frecce per passare alla settimana precedente e successiva restando nel pannello; il numero grande nel colore della misura (media dei passi al giorno; km della settimana); grafico a barre dei sette giorni; elenco dei soli giorni che hanno un valore, con la fonte. Bici mostra il dettaglio "4,4 km da Salute + 8 km a mano" e in fondo il tasto pieno "Aggiungi uscita in bici". Cambiare settimana nel pannello non cambia la settimana della schermata sotto.
   - **Peso**: ultima pesata con la variazione, storico completo in un elenco unico (senza frecce delle settimane), tasto pieno "Aggiungi pesata".
   - **Pasto libero**: frecce delle settimane; stato della settimana; elenco dei pasti della settimana con "Segna"; tasto pieno "Aggiungi pasto libero", che apre il pannello Aggiungi con l'interruttore "Pasto libero" già acceso. Se la settimana ha già un pasto libero: il pasto, "Rimuovi pasto libero", e niente tasto di aggiunta.
-- **Pannelli aperti dal tasto +** (come nella bozza): Aggiungi (selettore, campo, "Stima", poi Preferiti, Pesata, Uscita in bici); proposta dell'AI (pasto e interruttore "Pasto libero" in un elenco, piatti in tessere, correzione a parole, "Rifai la stima"); Preferiti (ricerca, pasti e piatti con il + nel colore Comando; scorrendo una riga a sinistra compare "Elimina" su fondo Fuori, come tessera separata); Uscita in bici (la riga "Giorno" apre il calendario di sistema; mai giorni futuri); Pesata. Nella scheda del piatto in Manuale "Stima con l'AI" sta sopra la riga "Calorie". "Copia da ieri" non esiste (tolta nella fase 4b) e non va reintrodotta.
+- **Pannelli aperti dal tasto +** (come nella bozza): Aggiungi (selettore, campo con il tasto "Preferiti", "Stima", poi Pesata e Uscita in bici; dalla fase 8 nessuna riga "Preferiti" sotto il campo); proposta dell'AI (pasto e interruttore "Pasto libero" in un elenco, piatti in tessere, correzione a parole, "Rifai la stima"); Preferiti (ricerca, pasti e piatti; dalla fase 8 un tocco mette l'etichetta nella frase e scorrendo una riga a sinistra compaiono "Modifica" su fondo Tessera ed "Elimina" su fondo Fuori, come tessere separate); Uscita in bici (la riga "Giorno" apre il calendario di sistema; mai giorni futuri); Pesata. Nella scheda del piatto in Manuale "Stima con l'AI" sta sopra la riga "Calorie". "Copia da ieri" non esiste (tolta nella fase 4b) e non va reintrodotta.
 - **Collegamenti**: sezione "Salute" (stato, ultimo invio, valori ricevuti oggi, "Rigenera il codice", "Disattiva") e sezione "Stime dei pasti" con il nome leggibile del modello in uso (per esempio "Gemini 2.5 Flash", ricavato dal modello configurato sul server), lo stato e le stime fatte oggi sul limite.
-- **Grafici**: resta com'è nei contenuti; prende solo colori, schede e caratteri nuovi.
+- **Trend** (dalla fase 9): come Settimana, con il selettore Settimana | Mese | Anno sotto l'intestazione (§2). Grafici non esiste più.
 
 ### 10.6 Testi
 I nomi di comandi, titoli ed etichette sono in `docs/TESTI.md`, tabella "com'è → come diventa", approvata dall'utente. Regole: un comando dice esattamente cosa fa ("Aggiungi uscita in bici", non "Bici a mano"); niente gergo interno; niente paragrafi di spiegazione; maiuscola solo a inizio frase.
@@ -389,5 +457,6 @@ I nomi di comandi, titoli ed etichette sono in `docs/TESTI.md`, tabella "com'è 
 
 Non decise e non pianificate: nessun task le anticipa. L'elenco aggiornato sta nel contesto del progetto su Claude; qui solo ciò che conviene sapere per non chiudersi delle strade.
 - Dispensa di ingredienti con i loro valori e piatti composti dall'AI secondo criteri dell'utente, con kcal e nutrienti sommati dall'app. Il campo "quantità" con ingredienti e grammi (§4) è il primo mattone: non va trasformato in qualcosa di incompatibile.
-- Viste di Oggi e Settimana compatte e personalizzabili, con trend.
+- Viste di Oggi e Trend compatte e personalizzabili.
+- Trend con intervalli personalizzati (dal… al…, "ultimi 30 giorni") e deficit stimato confrontato con il peso reale.
 - Calorie reali delle uscite in bici lette da Salute.
