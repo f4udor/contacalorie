@@ -52,9 +52,6 @@ export interface FavoriteSource extends ScalableNumbers {
 /** La quantità detta dall'utente per un'etichetta: grammi o porzioni; null se non l'ha detta. */
 export type SaidQuantity = { unit: "g"; amount: number } | { unit: "porzioni"; amount: number } | null;
 
-/** Avviso quando si dicono i grammi di un preferito che non ha il peso (§4.1). */
-export const UNKNOWN_WEIGHT_WARNING = "Peso del preferito sconosciuto: contata una porzione";
-
 export interface FavoriteDishResult {
   /** Rapporto applicato ai numeri del preferito. */
   ratio: number;
@@ -66,6 +63,8 @@ export interface FavoriteDishResult {
   /** Vero se la quantità non è stata detta (o non è stato possibile usarla): è ipotizzata. */
   assumed: boolean;
   warning: string | null;
+  /** Vero se sono stati detti i grammi di un preferito senza peso: l'app chiede quanto pesava la porzione salvata (§4.1, caso AS). */
+  needsWeight: boolean;
 }
 
 /** «1,5» per 1.5, «2» per 2: come si scrivono i numeri delle quantità. */
@@ -76,7 +75,7 @@ const asText = (n: number): string => String(n).replace(".", ",");
  * - peso del preferito e grammi detti: `r = grammi / peso`, peso del piatto = grammi detti, quantità «150 g»;
  * - porzioni dette: `r = porzioni`, peso = peso del preferito × porzioni (se c'è), quantità «2 porzioni»;
  * - nessuna quantità: `r = 1`, quantità ipotizzata (quella salvata nel preferito, altrimenti «1 porzione»), peso del preferito;
- * - preferito senza peso e grammi detti: `r = 1` con l'avviso `UNKNOWN_WEIGHT_WARNING`, quantità «1 porzione» ipotizzata.
+ * - preferito senza peso e grammi detti: `r = 1`, quantità «1 porzione», `needsWeight` (l'app chiede il peso della porzione salvata; nessun avviso).
  * Kcal arrotondate all'intero, nutrienti a un decimale. Quantità dette non positive valgono come non dette.
  */
 export function favoriteDishFromQuantity(favorite: FavoriteSource, said: SaidQuantity): FavoriteDishResult {
@@ -88,9 +87,9 @@ export function favoriteDishFromQuantity(favorite: FavoriteSource, said: SaidQua
     if (hasWeight) {
       const grams = Math.round(usable.amount);
       const ratio = usable.amount / (favorite.weightG as number);
-      return { ratio, numbers: numbersFor(ratio), weightG: grams > 0 ? grams : null, quantityText: `${asText(usable.amount)} g`, assumed: false, warning: null };
+      return { ratio, numbers: numbersFor(ratio), weightG: grams > 0 ? grams : null, quantityText: `${asText(usable.amount)} g`, assumed: false, warning: null, needsWeight: false };
     }
-    return { ratio: 1, numbers: numbersFor(1), weightG: null, quantityText: "1 porzione", assumed: true, warning: UNKNOWN_WEIGHT_WARNING };
+    return { ratio: 1, numbers: numbersFor(1), weightG: null, quantityText: "1 porzione", assumed: false, warning: null, needsWeight: true };
   }
   if (usable?.unit === "porzioni") {
     const ratio = usable.amount;
@@ -101,7 +100,8 @@ export function favoriteDishFromQuantity(favorite: FavoriteSource, said: SaidQua
       quantityText: `${asText(ratio)} ${ratio === 1 ? "porzione" : "porzioni"}`,
       assumed: false,
       warning: null,
+      needsWeight: false,
     };
   }
-  return { ratio: 1, numbers: numbersFor(1), weightG: hasWeight ? (favorite.weightG as number) : null, quantityText: favorite.quantity?.trim() || "1 porzione", assumed: true, warning: null };
+  return { ratio: 1, numbers: numbersFor(1), weightG: hasWeight ? (favorite.weightG as number) : null, quantityText: favorite.quantity?.trim() || "1 porzione", assumed: true, warning: null, needsWeight: false };
 }

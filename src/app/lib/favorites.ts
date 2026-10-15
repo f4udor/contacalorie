@@ -1,4 +1,5 @@
 import type { DateKey, MealSlot } from "@/engine";
+import { parseDecimal } from "./meal-form";
 import type { DataStore, DishBody, FavoriteDish, FavoriteMeal, MealRecord } from "@/data";
 
 const MAX_NAME = 40;
@@ -94,4 +95,24 @@ export function mealTotalKcal(f: FavoriteMeal): number {
 export async function deleteFavorite(store: DataStore, kind: "dish" | "meal", id: string): Promise<void> {
   if (kind === "dish") await store.deleteFavoriteDish(id);
   else await store.deleteFavoriteMeal(id);
+}
+
+/** Il peso scritto nel pannello «Salva nei preferiti» (BRIEF §4.1): vuoto = nessun peso; altrimenti un intero positivo fino a 5.000 g. */
+export function parseFavoriteWeight(text: string): { ok: true; weightG: number | null } | { ok: false } {
+  const r = parseDecimal(text);
+  if (r === "empty") return { ok: true, weightG: null };
+  if (r === "invalid" || !Number.isInteger(r) || r <= 0 || r > 5000) return { ok: false };
+  return { ok: true, weightG: r };
+}
+
+/** Un piatto senza peso, che non è già tra i preferiti: salvandolo si chiede il peso (pannello «Salva nei preferiti»). */
+export function needsWeightPrompt(favorites: readonly NameAndQuantity[], dish: NameAndQuantity & { weightG?: number | null }): boolean {
+  return (dish.weightG ?? null) === null && !isFavoriteDish(favorites, dish);
+}
+
+/** Salva il piatto nei preferiti con il nome e il peso scritti nel pannello; la regola dei doppioni (stesso nome e stessa quantità) è quella di sempre. */
+export async function saveFavoriteDishAs(store: DataStore, dish: Pick<MealRecord, keyof DishBody>, name: string, weightG: number | null, makeId: () => string): Promise<void> {
+  const existing = await store.listFavoriteDishes();
+  const named = { ...dish, name: name.trim() || dish.name, weightG };
+  await store.saveFavoriteDish(favoriteForDish(existing, named, makeId).favorite);
 }

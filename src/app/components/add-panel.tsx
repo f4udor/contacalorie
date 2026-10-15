@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { hasFreeMealInWeek } from "@/engine";
 import type { DateKey, Day, MealSlot, Settings } from "@/engine";
-import type { ActivityRecord, DataStore, MealRecord } from "@/data";
-import { defaultMealName, favoriteForMeal, isFavoriteDish, toggleFavoriteDish } from "../lib/favorites";
+import type { ActivityRecord, DataStore, FavoriteDish, MealRecord } from "@/data";
+import { defaultMealName, favoriteForMeal, isFavoriteDish, needsWeightPrompt, toggleFavoriteDish } from "../lib/favorites";
 import { newId } from "../lib/ids";
 import { isMealFree, saveDish } from "../lib/save-dish";
 import { todayKey } from "../lib/today";
@@ -19,6 +19,7 @@ import { DishEditAi } from "./dish-edit-ai";
 import { FavoritePicker } from "./favorite-picker";
 import { FavoritesView } from "./favorites-view";
 import { MealForm } from "./meal-form";
+import { SaveFavoritePanel } from "./save-favorite-panel";
 import { DateInput, FieldRow, GroupedList, PillButton, RowInput, Segmented, ActionRow, ValueRow } from "./ui/ui";
 import { Sheet } from "./sheet";
 
@@ -180,6 +181,8 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
   const [mode, setMode] = useState<Mode>("manuale");
   const [favoriteStatus, setFavoriteStatus] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteList, setFavoriteList] = useState<FavoriteDish[]>([]);
+  const [savingFavorite, setSavingFavorite] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [saving, setSaving] = useState(false);
   const freeAllowedFor = (slot: MealSlot) => !hasFreeMealInWeek(days, { date: meal.date, slot });
@@ -189,7 +192,11 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
   useEffect(() => {
     let alive = true;
     store.listFavoriteDishes().then(
-      (list) => alive && setIsFavorite(isFavoriteDish(list, meal)),
+      (list) => {
+        if (!alive) return;
+        setFavoriteList(list);
+        setIsFavorite(isFavoriteDish(list, meal));
+      },
       () => {
         // L'avviso in cima lo spiega.
       },
@@ -201,6 +208,11 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
 
   /** Salva il piatto com'è già salvato (non le modifiche non ancora salvate nella scheda) nei preferiti, o lo toglie se c'è già. */
   const toggleFavorite = async () => {
+    // Un piatto senza peso, non ancora tra i preferiti: prima si chiede il peso (facoltativo).
+    if (needsWeightPrompt(favoriteList, meal)) {
+      setSavingFavorite(true);
+      return;
+    }
     try {
       const done = await toggleFavoriteDish(store, meal, newId);
       setIsFavorite(done === "salvato");
@@ -241,6 +253,21 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
       setSaving(false);
     }
   };
+
+  if (savingFavorite) {
+    return (
+      <SaveFavoritePanel
+        store={store}
+        dish={meal}
+        onClose={() => setSavingFavorite(false)}
+        onSaved={() => {
+          setSavingFavorite(false);
+          setIsFavorite(true);
+          setFavoriteStatus("Salvato nei preferiti.");
+        }}
+      />
+    );
+  }
 
   if (confirming) {
     return (

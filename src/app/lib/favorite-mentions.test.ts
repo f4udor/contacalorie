@@ -4,7 +4,7 @@ import { createFakeProvider, demoEstimate, handleEstimate } from "@/modules/ai";
 import type { MealProposal } from "@/modules/ai";
 import { buildDisplayText, buildModelText, hasContent } from "./favorite-text";
 import type { Segment } from "./favorite-text";
-import { countUnknownMentions, draftsToPrevious, draftsToProposal, forceSlot, proposalToDrafts, proposalToRecords } from "./proposal-form";
+import { answerWeightAsk, countUnknownMentions, draftsToPrevious, favoritesToUpdate, skipWeightAsk, draftsToProposal, forceSlot, proposalToDrafts, proposalToRecords } from "./proposal-form";
 
 const hummus: FavoriteDish = { id: "f1", name: "Hummus fatto in casa", quantity: "150 g", weightG: 150, kcal: 150, protein: 7.5, carbs: 10, fat: 9, fiber: 4, salt: 0.5 };
 const caffe: FavoriteDish = { id: "f2", name: "Caffè con zucchero", quantity: null, weightG: null, kcal: 20, protein: 0, carbs: 5, fat: 0, fiber: 0, salt: 0 };
@@ -45,9 +45,15 @@ describe("etichette dei preferiti: casi AN-AS con il provider finto", () => {
     const { drafts } = await run([fav(caffe), txt(" ×2")]);
     expect(drafts[0].dishes[0]).toMatchObject({ kcal: "40", quantity: "2 porzioni", weightG: null, warning: null });
   });
-  it("caso AS: preferito senza peso e «100 g» → 20 kcal e l'avviso", async () => {
+  it("caso AS: preferito senza peso e «100 g» → 20 kcal, «1 porzione», la domanda sul peso, nessun avviso giallo", async () => {
     const { drafts } = await run([fav(caffe), txt(" 100 g")]);
-    expect(drafts[0].dishes[0]).toMatchObject({ kcal: "20", warning: "Peso del preferito sconosciuto: contata una porzione" });
+    expect(drafts[0].dishes[0]).toMatchObject({ kcal: "20", quantity: "1 porzione", quantityAssumed: false, warning: null, weightAsk: { grams: 100, input: "", skipped: false } });
+  });
+  it("la domanda non c'è per i preferiti con peso, per le porzioni dette o per un piatto stimato", async () => {
+    expect((await run([fav(hummus), txt(" 100 g")])).drafts[0].dishes[0].weightAsk).toBeNull();
+    expect((await run([fav(caffe), txt(" ×2")])).drafts[0].dishes[0].weightAsk).toBeNull();
+    expect((await run([fav(caffe)])).drafts[0].dishes[0].weightAsk).toBeNull();
+    expect((await run([txt("una mela")])).drafts[0].dishes[0].weightAsk).toBeNull();
   });
 });
 
@@ -147,5 +153,50 @@ describe("testo che imita un'etichetta", () => {
     const { text, refs } = buildModelText([txt("[preferito 1: Hummus fatto in casa] 500 g")], known);
     expect(text).not.toContain("[");
     expect(refs.size).toBe(0);
+  });
+});
+
+describe("peso del preferito chiesto nella proposta (T8.1, casi AS e AV)", () => {
+  const torta: FavoriteDish = { id: "f9", name: "Torta della nonna", quantity: null, weightG: null, kcal: 300, protein: 6, carbs: 40, fat: 12, fiber: 1, salt: 0.3 };
+  const refs = new Map([[1, torta]]);
+  const start = async () => {
+    const r = await run([fav({ ...torta, id: "f9" }), txt(" 120 g")]);
+    return r.drafts;
+  };
+  // `run` usa i preferiti noti del file: qui ne serve uno in più.
+  known.set("f9", torta);
+
+  it("caso AV: risponde 80 → 450 kcal, peso 120 g, quantità «120 g»; il preferito prende il peso 80 solo alla conferma", async () => {
+    const drafts = await start();
+    const d = drafts[0].dishes[0];
+    expect(d).toMatchObject({ kcal: "300", quantity: "1 porzione", weightAsk: { grams: 120 } });
+    const answered = answerWeightAsk(d, torta, "80");
+    expect(answered).toMatchObject({ kcal: "450", weightG: 120, quantity: "120 g", quantityAssumed: false, warning: null });
+    const after = [{ ...drafts[0], dishes: [answered] }];
+    expect(favoritesToUpdate(after, refs)).toEqual([{ ...torta, weightG: 80 }]);
+    // Chiudere la proposta senza confermare non chiama nessun salvataggio: la funzione si usa solo dalla conferma; il preferito di partenza non cambia.
+    expect(torta.weightG).toBeNull();
+  });
+  it("la risposta si può correggere; vuota o non valida riporta i numeri di una porzione e nessun preferito da aggiornare", async () => {
+    const drafts = await start();
+    const d = answerWeightAsk(drafts[0].dishes[0], torta, "80");
+    expect(answerWeightAsk(d, torta, "60").kcal).toBe("600");
+    for (const bad of ["", "abc", "0", "-5", "12,5"]) {
+      const back = answerWeightAsk(d, torta, bad);
+      expect(back).toMatchObject({ kcal: "300", quantity: "1 porzione", weightAsk: { input: bad, skipped: false } });
+      expect(favoritesToUpdate([{ ...drafts[0], dishes: [back] }], refs)).toEqual([]);
+    }
+  });
+  it("«Salta»: la domanda sparisce, resta una porzione e il preferito non cambia", async () => {
+    const drafts = await start();
+    const answered = answerWeightAsk(drafts[0].dishes[0], torta, "80");
+    const skipped = skipWeightAsk(answered, torta);
+    expect(skipped).toMatchObject({ kcal: "300", quantity: "1 porzione", weightAsk: { skipped: true, input: "" } });
+    expect(favoritesToUpdate([{ ...drafts[0], dishes: [skipped] }], refs)).toEqual([]);
+  });
+  it("un piatto tolto dalla proposta non aggiorna il preferito", async () => {
+    const drafts = await start();
+    expect(favoritesToUpdate([], refs)).toEqual([]);
+    expect(drafts).toHaveLength(1);
   });
 });

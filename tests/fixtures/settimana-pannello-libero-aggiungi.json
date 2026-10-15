@@ -1,6 +1,6 @@
 {
   "id": "settimana-pannello-libero-aggiungi",
-  "descrizione": "«Aggiungi pasto libero» (settimana corrente): si apre Aggiungi sul giorno di oggi, con il giorno modificabile, su Manuale l'interruttore «Pasto libero» è già acceso.",
+  "descrizione": "«Aggiungi pasto libero» (settimana corrente): si apre Aggiungi sul giorno di oggi, con il giorno modificabile, su Manuale la scheda non ha più l'interruttore (si segna solo nella proposta e nel pannello Pasto libero).",
   "oggi": "2026-01-08",
   "percorso": "/settimana",
   "dati": {

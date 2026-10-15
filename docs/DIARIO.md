@@ -90,6 +90,7 @@ Una riga per task chiuso.
 - T7.2 · fatto · etichette dei preferiti nella stima: campo «Cosa hai mangiato?» modificabile con tessere (un solo tasto indietro le cancella), tasto «Preferiti» (aria-label «Metti un preferito nella frase») e elenco dei piatti preferiti con ricerca; al modello `[preferito N: nome]` senza numeri; schema e validazione con `favorites` (ref, quantitySaid, grams, servings), pasto con soli preferiti ammesso; calcolo nel motore (`favoriteDishFromQuantity`, casi AN-AS); piatti «dai tuoi preferiti» senza controllo di coerenza; correzione a parole con riferimenti e quantità (ricalcolo dell'app); riferimento sconosciuto scartato con avviso; provider finto `demoEstimate` che riconosce etichette e quantità semplici; le parentesi quadre scritte a mano si tolgono dal testo; scenari e prova di scorrimento ora cliccano «Preferiti» per ruolo e nome.
 - T7.3 · fatto · `docs/REPORT-FASE-7.md`: l'istruzione SQL da eseguire prima del merge, un controllo da telefono per ogni task, parte tecnica.
 - T8.0 · fatto · scheda del piatto: Nome, Peso, Ingredienti (CSV compreso); tolte Porzioni e Pasto libero; riga Pasto solo senza fascia fissata; «Stima con l'AI» manda «Piatto / Peso / Ingredienti» e il peso scritto prevale. Tolti 9 scenari di screenshot che mostravano le righe eliminate.
+- T8.1 · fatto · domanda «Quanto pesava la porzione salvata?» nella proposta (casi AS e AV; il preferito prende il peso solo alla conferma; niente avviso giallo, la quantità non è più «ipotizzata»); pannello «Salva nei preferiti» con nome e peso facoltativo da Oggi e dalla scheda del piatto. Motore: `needsWeight` al posto dell'avviso, test del caso AS aggiornato.
 - T6.7 · fatto · `docs/REPORT-FASE-6.md` scritto; pull request verso main aperta a fine fase.
 
 ## Decisioni da confermare
@@ -243,3 +244,4 @@ Una riga per task chiuso.
 - Fase 7 (T7.0): la migrazione 16 (`weight_g` in `meals` e `favorites`) non è stata eseguita su un database vero: `supabase/aggiornamento-fase-7.sql` è controllato da un test sul testo e lo sportello Supabase solo con il database finto. Va eseguito su Supabase prima di usare la fase 7 con i dati online.
 
 - T8.0: il modello vero con il testo «Piatto / Peso / Ingredienti» (stima per il peso scritto) non è verificato: prompt provato solo con test sul testo e provider finto.
+- T8.1: i pannelli e la domanda sono provati con Chromium e tocco simulato, non su un iPhone vero (tastiera numerica, pannello con tastiera aperta).

@@ -1,4 +1,5 @@
 import { favoriteDishFromQuantity } from "@/engine";
+import type { FavoriteDishResult } from "@/engine";
 import type { DateKey, MealSlot, SaidQuantity } from "@/engine";
 import type { FavoriteDish, MealRecord } from "@/data";
 import type { FavoriteMention, MealProposal } from "@/modules/ai";
@@ -25,8 +26,13 @@ export interface DishDraft {
   salt: string;
   /** Se il piatto viene da un preferito messo nel testo con un'etichetta: il suo riferimento e la quantità detta (BRIEF §4.1). */
   favorite: { ref: number; said: SaidQuantity } | null;
-  /** Avviso breve su questo piatto (per esempio «Peso del preferito sconosciuto»); null se non c'è. */
+  /** Avviso breve su questo piatto; null se non c'è. */
   warning: string | null;
+  /**
+   * La domanda «Quanto pesava la porzione salvata?» (BRIEF §4.1, casi AS e AV): c'è per un preferito senza peso di cui sono stati detti i grammi.
+   * `grams` sono i grammi detti, `input` la risposta scritta finora, `skipped` se l'utente ha toccato «Salta».
+   */
+  weightAsk: { grams: number; input: string; skipped: boolean } | null;
 }
 
 export interface MealDraft {
@@ -85,6 +91,7 @@ export function proposalToDrafts(p: MealProposal, refs: FavoriteRefs = new Map()
       salt: asText(d.salt),
       favorite: null,
       warning: null,
+      weightAsk: null,
     }));
     (m.favorites ?? []).forEach((f, j) => {
       const fav = refs.get(f.ref);
@@ -106,11 +113,69 @@ export function proposalToDrafts(p: MealProposal, refs: FavoriteRefs = new Map()
         salt: asText(r.numbers.salt),
         favorite: { ref: f.ref, said },
         warning: r.warning,
+        weightAsk: r.needsWeight && said?.unit === "g" ? { grams: said.amount, input: "", skipped: false } : null,
       });
     });
     if (dishes.length > 0) drafts.push({ key: `m${i}`, slot: m.slot, isFree: m.freeMeal === true, dishes });
   });
   return drafts;
+}
+
+const WEIGHT_ASK_MAX_G = 5000;
+
+/** Il peso risposto alla domanda sul preferito: un intero positivo (fino a 5.000 g); altrimenti null. */
+export function answeredWeight(ask: DishDraft["weightAsk"]): number | null {
+  if (ask === null || ask.skipped) return null;
+  const r = parseDecimal(ask.input);
+  return r === "empty" || r === "invalid" || !Number.isInteger(r) || r <= 0 || r > WEIGHT_ASK_MAX_G ? null : r;
+}
+
+function withResult(d: DishDraft, r: FavoriteDishResult): DishDraft {
+  return {
+    ...d,
+    quantity: r.quantityText,
+    quantityAssumed: r.assumed,
+    weightG: r.weightG,
+    kcal: asText(r.numbers.kcal),
+    protein: asText(r.numbers.protein),
+    carbs: asText(r.numbers.carbs),
+    fat: asText(r.numbers.fat),
+    fiber: asText(r.numbers.fiber),
+    salt: asText(r.numbers.salt),
+    warning: r.warning,
+  };
+}
+
+/**
+ * Risposta (o correzione) alla domanda sul peso: se `input` è un peso valido numeri, quantità e peso del piatto si ricalcolano subito
+ * (`r = grammi detti / peso risposto`); se è vuoto o non valido tornano quelli di una porzione.
+ */
+export function answerWeightAsk(d: DishDraft, fav: FavoriteDish, input: string): DishDraft {
+  if (d.weightAsk === null || d.favorite === null) return d;
+  const ask = { ...d.weightAsk, input, skipped: false };
+  const w = answeredWeight(ask);
+  const r = favoriteDishFromQuantity({ ...fav, weightG: w }, d.favorite.said);
+  return { ...withResult(d, r), weightAsk: ask };
+}
+
+/** «Salta»: la domanda sparisce e il piatto resta com'era senza risposta (`r = 1`, «1 porzione»). */
+export function skipWeightAsk(d: DishDraft, fav: FavoriteDish): DishDraft {
+  if (d.weightAsk === null || d.favorite === null) return d;
+  const r = favoriteDishFromQuantity({ ...fav, weightG: null }, d.favorite.said);
+  return { ...withResult(d, r), weightAsk: { ...d.weightAsk, input: "", skipped: true } };
+}
+
+/** I preferiti che prendono il peso risposto: solo alla conferma della proposta, per i piatti rimasti e con una risposta valida. */
+export function favoritesToUpdate(drafts: readonly MealDraft[], refs: FavoriteRefs): FavoriteDish[] {
+  const updates = new Map<string, FavoriteDish>();
+  for (const m of drafts) {
+    for (const d of m.dishes) {
+      const w = answeredWeight(d.weightAsk);
+      const fav = d.favorite ? refs.get(d.favorite.ref) : undefined;
+      if (w !== null && fav) updates.set(fav.id, { ...fav, weightG: w });
+    }
+  }
+  return [...updates.values()];
 }
 
 /**

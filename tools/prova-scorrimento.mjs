@@ -138,6 +138,10 @@ try {
   page = await newPage();
   await touch(page, "Pasta al pomodoro", -140);
   await page.getByRole("button", { name: "Salva nei preferiti", exact: true }).filter({ visible: true }).click();
+  await page.waitForTimeout(400);
+  // Piatto senza peso: sale il pannello piccolo con nome e Peso facoltativo (T8.1); «Salva» funziona anche con il peso vuoto.
+  check("un piatto senza peso apre il pannello «Salva nei preferiti» con il campo Peso", (await page.getByLabel("Peso (g)").isVisible()) && (await page.getByLabel("Nome").isVisible()));
+  await page.getByRole("button", { name: "Salva", exact: true }).click();
   await page.waitForTimeout(500);
   check("«Salva nei preferiti» salva il piatto e lo dice", await page.getByText("Salvato nei preferiti.").isVisible());
   check("e la riga si richiude", (await open(page)) === 0);

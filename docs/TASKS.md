@@ -719,7 +719,7 @@ Vincoli di questa fase:
 - "Stima con l'AI": il testo mandato al modello è composto da nome, peso e ingredienti; il prompt chiede di stimare per il peso scritto, se c'è, e di restituire quel peso. Riga sotto il tasto come in §4.2. Il provider finto rispetta il peso scritto.
 - Test: testo mandato al modello con e senza peso e ingredienti; nessuna riga Porzioni né Pasto libero nello stato della scheda; riga Pasto presente solo senza fascia fissata; caso AT. Screenshot: aggiunta con fascia fissata prima e dopo la stima, modifica di un piatto con peso.
 
-### T8.1 Peso dei preferiti chiesto quando manca · da fare
+### T8.1 Peso dei preferiti chiesto quando manca · fatto
 - Proposta: preferito senza peso con grammi detti → domanda "Quanto pesava la porzione salvata?" nel piatto, con campo in grammi e "Salta" (§4.1). Rispondendo, numeri e peso del piatto si ricalcolano subito; alla conferma della proposta il preferito prende il peso. Nessun avviso giallo. Casi AS e AV.
 - Salvataggio di un piatto senza peso nei preferiti (scorrimento in Oggi e scheda del piatto): pannello piccolo "Salva nei preferiti" con nome e campo Peso facoltativo; "Salva" anche con il campo vuoto. Piatto con peso: si salva subito come ora. Regola dei doppioni invariata.
 - Test: casi AS e AV, preferito aggiornato solo alla conferma (non chiudendo la proposta), "Salta", salvataggio con e senza peso. Screenshot: domanda nella proposta vuota e compilata, pannello di salvataggio.

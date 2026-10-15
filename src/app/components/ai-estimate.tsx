@@ -12,7 +12,7 @@ import type { Segment } from "../lib/favorite-text";
 import { newId } from "../lib/ids";
 import { formatNumber } from "../lib/format";
 import { KCAL_CHECK_MESSAGE, SLOTS, parseDecimal, textNeedsKcalCheck } from "../lib/meal-form";
-import { DISH_NUMBER_KEYS, countUnknownMentions, draftsToPrevious, draftsToProposal, forceSlot, freeSwitchBlock, hasDishes, proposalToDrafts, proposalToRecords, withInitialFree, withSlot } from "../lib/proposal-form";
+import { DISH_NUMBER_KEYS, answerWeightAsk, countUnknownMentions, draftsToPrevious, draftsToProposal, favoritesToUpdate, forceSlot, freeSwitchBlock, hasDishes, proposalToDrafts, proposalToRecords, skipWeightAsk, withInitialFree, withSlot } from "../lib/proposal-form";
 import type { DishDraft, DishNumberKey, DraftErrors, FavoriteRefs, FreeRules, MealDraft } from "../lib/proposal-form";
 import { FavoriteTextField } from "./favorite-text-field";
 import type { FavoriteTextFieldHandle } from "./favorite-text-field";
@@ -143,6 +143,8 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
       // Il segno "libero" vale per l'intero pasto (stessa fascia); il tetto di kcal lo applica solo il motore.
       const isFree = new Map(r.proposal.meals.map((m) => [m.slot, m.freeMeal === true]));
       for (const record of proposalToRecords(r.proposal, date, displayText || original.text, newId)) await saveDish(store, record, isFree.get(record.slot) ?? false);
+      // Il peso risposto alla domanda «Quanto pesava la porzione salvata?» passa al preferito solo adesso, alla conferma.
+      for (const fav of favoritesToUpdate(drafts, requestRefs)) await store.saveFavoriteDish(fav);
       onChanged();
       onClose();
     } catch {
@@ -245,6 +247,24 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
                   </span>
                   <span className="shrink-0 font-cifre text-[17px] tabular-nums">{kcalText(d.kcal)}</span>
                 </button>
+                {d.weightAsk !== null && !d.weightAsk.skipped && (
+                  <div className="flex items-center gap-3 border-t border-separatore px-4 py-2.5">
+                    <label htmlFor={`ask-${d.key}`} className="min-w-0 flex-1 text-[15px] leading-snug">
+                      Quanto pesava la porzione salvata?
+                    </label>
+                    <input
+                      id={`ask-${d.key}`}
+                      value={d.weightAsk.input}
+                      inputMode="numeric"
+                      placeholder="grammi"
+                      onChange={(e) => setDish(meal.key, d.key, answerWeightAsk(d, requestRefs.get(d.favorite?.ref ?? -1) as FavoriteDish, e.target.value))}
+                      className="min-h-11 w-24 shrink-0 rounded-full bg-sfondo px-3 text-right text-[17px] tabular-nums outline-none placeholder:text-testo-secondario"
+                    />
+                    <button type="button" onClick={() => setDish(meal.key, d.key, skipWeightAsk(d, requestRefs.get(d.favorite?.ref ?? -1) as FavoriteDish))} className="min-h-11 shrink-0 px-1 text-[16px] font-semibold text-comando">
+                      Salta
+                    </button>
+                  </div>
+                )}
                 {isOpen && (
                   <div id={`dish-${d.key}`} className="border-t border-separatore">
                     <ul className="divide-y divide-separatore">

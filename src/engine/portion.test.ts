@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { UNKNOWN_WEIGHT_WARNING, favoriteDishFromQuantity, roundHalfUp, scaleNutrients, weightRatio } from "./portion";
+import { favoriteDishFromQuantity, roundHalfUp, scaleNutrients, weightRatio } from "./portion";
 
 const piatto = { kcal: 300, protein: 12, carbs: 40, fat: 8, fiber: 4, salt: 1 };
 
@@ -74,11 +74,12 @@ describe("preferiti nella stima (§4.1, casi AN-AS)", () => {
     expect(r).toMatchObject({ quantityText: "2 porzioni", weightG: null, assumed: false, warning: null });
     expect(r.numbers.kcal).toBe(40);
   });
-  it("caso AS: preferito senza peso e «100 g» → 20 kcal e l'avviso «Peso del preferito sconosciuto»", () => {
+  it("caso AS: preferito senza peso e «100 g» → 20 kcal, «1 porzione», la domanda sul peso e nessun avviso", () => {
     const r = favoriteDishFromQuantity(caffe, { unit: "g", amount: 100 });
     expect(r.numbers.kcal).toBe(20);
-    expect(r.warning).toBe(UNKNOWN_WEIGHT_WARNING);
-    expect(r.assumed).toBe(true);
+    expect(r.needsWeight).toBe(true);
+    expect(r.warning).toBeNull();
+    expect(r.assumed).toBe(false);
     expect(r.quantityText).toBe("1 porzione");
   });
   it("mezza porzione, porzioni con la virgola, una sola porzione", () => {
