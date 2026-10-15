@@ -714,6 +714,13 @@ add("pannello-piatto-8-senza-peso", "Aggiungi piatto senza peso: dopo la stima l
 add("pannello-piatto-8-senza-fascia", "Dal + generale la fascia non è fissata: la riga Pasto resta, in fondo ai numeri.", "2026-01-08", data({ settings: { weightKg: 100 } }), { fisso: true, passi: [apri, manuale, { scrollTo: "Pasto" }] });
 
 add("pannello-modifica-salva-preferiti", "Scheda del piatto (senza peso): «Salva nei preferiti» apre il pannello piccolo con nome e Peso facoltativo.", "2026-01-08", giornoPasti(), { fisso: true, passi: [{ click: "Pasta al pomodoro" }, { click: "Salva nei preferiti", exact: true }, { wait: 400 }] });
+// --- Saldo e scheda Calorie (T8.4)
+const saldoDati = (kcalLunedi) => data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", kcalLunedi, 40, 200, 40, 10, 3), meal("2026-01-06", "pranzo", "Pranzo", 600, 20, 70, 20, 5, 1.5)] });
+scenarios.push({ id: "saldo-positivo", descrizione: "Settimana: lunedì 1.900 kcal, oggi martedì → Saldo +200 kcal con «di margine» sotto il numero (verde).", oggi: "2026-01-06", percorso: "/settimana", dati: saldoDati(1900), scorre: true, fisso: true });
+scenarios.push({ id: "saldo-negativo", descrizione: "Settimana: lunedì 2.500 kcal, oggi martedì → Saldo −400 kcal con «da recuperare» sotto il numero.", oggi: "2026-01-06", percorso: "/settimana", dati: saldoDati(2500), scorre: true, fisso: true });
+scenarios.push({ id: "saldo-trattino", descrizione: "Settimana: oggi è lunedì, nessun giorno concluso → il Saldo ha il trattino, senza riga sotto ma con lo spazio; trattino uguale a quello della scheda Media.", oggi: "2026-01-05", percorso: "/settimana", dati: saldoDati(1900), scorre: true, fisso: true });
+add("oggi-composizione-base", "Oggi senza bici, passi sotto soglia o recupero: la riga sotto l'anello dice solo «Base 2.100» e la scheda Calorie ha la stessa altezza degli altri giorni.", "2026-01-08", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pasta al pomodoro", 650, 22, 110, 12, 6, 1.8)] }), { fisso: true });
+
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");

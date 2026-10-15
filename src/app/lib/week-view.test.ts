@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DEFAULT_SETTINGS } from "@/engine";
 import type { Activity, Day, Meal } from "@/engine";
-import { buildWeekView } from "./week-view";
+import { balanceCaption, buildWeekView } from "./week-view";
 
 const s = DEFAULT_SETTINGS;
 const noAct: Activity = { steps: null, bikeKm: null, bikeKcalHealth: null };
@@ -88,5 +88,37 @@ describe("linea della media kcal (T5b.6)", () => {
     const v = buildWeekView({ date: "2026-01-05", days: [day("2026-01-05", [meal("a", 600)])], settings: s, today: "2026-01-05" });
     expect(v.summary.balance).toBeNull();
     expect(v.isEmpty).toBe(false);
+  });
+});
+
+describe("testo sotto il Saldo (T8.4, BRIEF §3.3, casi AJ-AM)", () => {
+  const week = (...overrides: Day[]): Day[] => {
+    const dates = ["2026-01-05", "2026-01-06", "2026-01-07", "2026-01-08", "2026-01-09", "2026-01-10", "2026-01-11"];
+    return dates.map((d) => overrides.find((o) => o.date === d) ?? day(d));
+  };
+  const balance = (days: Day[], today: string) => buildWeekView({ date: "2026-01-05", days, settings: { ...s, baseKcal: 2100, creditCap: 300 }, today }).summary.balance;
+
+  it("caso AJ: lunedì 1.900, oggi martedì → +200, «di margine»", () => {
+    const b = balance(week(day("2026-01-05", [meal("a", 1900)]), day("2026-01-06", [meal("b", 600)])), "2026-01-06");
+    expect(b).toBe(200);
+    expect(balanceCaption(b)).toBe("di margine");
+  });
+  it("caso AK: oggi è lunedì → trattino, nessun testo", () => {
+    const b = balance(week(day("2026-01-05", [meal("a", 600)])), "2026-01-05");
+    expect(b).toBeNull();
+    expect(balanceCaption(b)).toBeNull();
+  });
+  it("caso AL: lunedì 2.500, oggi martedì senza pasti → −400, «da recuperare»", () => {
+    const b = balance(week(day("2026-01-05", [meal("a", 2500)])), "2026-01-06");
+    expect(b).toBe(-400);
+    expect(balanceCaption(b)).toBe("da recuperare");
+  });
+  it("caso AM: settimana passata, +300 al tetto → «di margine»", () => {
+    const b = balance(week(day("2026-01-05", [meal("a", 1900)]), day("2026-01-11", [meal("b", 2000)])), "2026-01-20");
+    expect(b).toBe(300);
+    expect(balanceCaption(b)).toBe("di margine");
+  });
+  it("saldo zero: «in pari»", () => {
+    expect(balanceCaption(0)).toBe("in pari");
   });
 });

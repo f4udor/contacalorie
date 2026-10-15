@@ -41,3 +41,9 @@ export function buildWeekView(input: { date: DateKey; days: readonly Day[]; sett
   const isEmpty = !summary.days.some((d) => d.hasMeals) && summary.totalKm === null && summary.avgSteps === null;
   return { summary, bars, avgRatio: summary.avgKcal === null ? null : summary.avgKcal / top, isEmpty };
 }
+
+/** Il testo sotto il numero della scheda Saldo (BRIEF §3.3): «di margine» se positivo, «da recuperare» se negativo, «in pari» se zero; con il trattino (null) nessun testo. */
+export function balanceCaption(balance: number | null): "di margine" | "da recuperare" | "in pari" | null {
+  if (balance === null) return null;
+  return balance > 0 ? "di margine" : balance < 0 ? "da recuperare" : "in pari";
+}

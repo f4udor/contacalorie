@@ -380,6 +380,57 @@ try {
     await page.context().close();
   }
 
+  // --- T8.4: la scheda Calorie ha la stessa altezza in ogni giorno (la riga «Base 2.100» c'è sempre) e i due trattini di Saldo e Media sono uguali.
+  {
+    const calorieData = baseData({
+      meals: [meal(day(12), "pranzo", "Pranzo grande", 3200), meal(day(13), "pranzo", "Pranzo", 1500)],
+      activity: [act(day(13), { steps: 12000, stepsSource: "salute", bikeKm: 30, bikeSource: "salute" })],
+      weighIns: [],
+    });
+    const cardOf = (page) => page.locator("section", { has: page.getByRole("heading", { name: "Calorie", exact: true }) }).first();
+    const states = [
+      { label: "vuoto", url: "/?d=2026-01-14" },
+      { label: "solo base", url: "/?d=2026-01-12" },
+      { label: "bici, passi e recupero", url: "/?d=2026-01-13" },
+    ];
+    const heights = [];
+    for (const st of states) {
+      const page = await newPage(st.url, calorieData, 844, { today: "2026-01-14" });
+      const box = await cardOf(page).boundingBox();
+      const line = await page.getByLabel("Composizione dell'obiettivo").innerText().catch(() => "");
+      heights.push({ label: st.label, h: Math.round(box.height * 10) / 10, line });
+      await page.context().close();
+    }
+    check(`Oggi: la riga di composizione c'è sempre (${heights.map((x) => `${x.label}: «${x.line}»`).join(" · ")})`, heights.every((x) => x.line.startsWith("Base ")));
+    check(`Oggi: la scheda Calorie ha la stessa altezza in ogni giorno (${heights.map((x) => `${x.label} ${x.h}`).join(" · ")})`, Math.max(...heights.map((x) => x.h)) - Math.min(...heights.map((x) => x.h)) === 0);
+    const noBike = await newPage("/?d=2026-01-14", calorieData, 844, { today: "2026-01-14" });
+    const withBike = await newPage("/?d=2026-01-13", calorieData, 844, { today: "2026-01-14" });
+    const hNo = (await cardOf(noBike).boundingBox()).height;
+    const hBike = (await cardOf(withBike).boundingBox()).height;
+    check(`Oggi: scheda Calorie con e senza bici ugualmente alta (${Math.round(hBike)} · ${Math.round(hNo)})`, Math.abs(hBike - hNo) < 0.5);
+    await noBike.context().close();
+    await withBike.context().close();
+
+    // Saldo: testo sotto il numero e trattino come quello della scheda Media (stessa misura e stessa altezza).
+    const dashData = { ...baseData(), meals: [], activity: [], weighIns: [] };
+    const dashPage = await newPage("/settimana", dashData, 844, { today: "2026-01-05" });
+    const saldo = dashPage.locator("section", { has: dashPage.getByRole("heading", { name: "Saldo", exact: true }) });
+    const media = dashPage.locator("section", { has: dashPage.getByRole("heading", { name: "Media", exact: true }) });
+    const dS = await saldo.getByText("–", { exact: true }).boundingBox();
+    const dM = await media.getByText("–", { exact: true }).boundingBox();
+    check(`Settimana: i trattini di Saldo e Media hanno la stessa misura e altezza (${Math.round(dS.width)}×${Math.round(dS.height)} · ${Math.round(dM.width)}×${Math.round(dM.height)}; alto ${Math.round(dS.y)} · ${Math.round(dM.y)})`, Math.abs(dS.height - dM.height) < 0.5 && Math.abs(dS.width - dM.width) < 0.5 && Math.abs(dS.y - dM.y) < 0.5);
+    const hS = (await saldo.boundingBox()).height;
+    const hM = (await media.boundingBox()).height;
+    check(`Settimana: le schede Saldo e Media sono alte uguali col trattino (${Math.round(hS)} · ${Math.round(hM)})`, Math.abs(hS - hM) < 0.5);
+    await dashPage.context().close();
+    const fullPage = await newPage("/settimana?w=2026-01-05", baseData(), 844, { today: "2026-01-20" });
+    const saldoFull = fullPage.locator("section", { has: fullPage.getByRole("heading", { name: "Saldo", exact: true }) });
+    const hSF = (await saldoFull.boundingBox()).height;
+    check(`Settimana: la scheda Saldo è alta uguale col numero e col trattino (${Math.round(hSF)} · ${Math.round(hS)})`, Math.abs(hSF - hS) < 0.5);
+    check("Settimana: sotto il numero del Saldo c'è «di margine», «da recuperare» o «in pari»", /di margine|da recuperare|in pari/.test(await saldoFull.innerText()));
+    await fullPage.context().close();
+  }
+
   await browser.close();
 } finally {
   stop();

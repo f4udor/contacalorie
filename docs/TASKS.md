@@ -734,7 +734,7 @@ Vincoli di questa fase:
 - Se la causa è nell'app, correggila. Se dipende dal modello, rinforza il prompt con un esempio esplicito ("200 g di petto di pollo" → quantità detta) e scrivilo nel diario sotto "Non verificato" (il modello vero non si prova qui).
 - Test fissi: frase con grammi detti → non ipotizzata; senza quantità → ipotizzata; piatto da preferito con grammi → non ipotizzata; correzione che aggiunge la quantità → non ipotizzata.
 
-### T8.4 Saldo e scheda Calorie · da fare
+### T8.4 Saldo e scheda Calorie · fatto
 - Scheda Saldo della Settimana: testo sotto il numero "di margine", "da recuperare" o "in pari"; con il trattino nessuna riga ma lo stesso spazio; trattino con misura e altezza uguali a quello della scheda Media (§3.3).
 - Oggi: riga di composizione dell'obiettivo sempre presente, "Base 2.100" nei giorni senza altro (§2); la scheda Calorie ha la stessa altezza in ogni giorno. Aggiorna `hasCompositionDetail` e il suo test di conseguenza.
 - Test della logica dei testi. Misure nella prova dei comandi: altezza della scheda Calorie con e senza bici, allineamento dei due trattini. Screenshot: Saldo positivo, negativo, trattino; Oggi senza bici.

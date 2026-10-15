@@ -93,6 +93,7 @@ Una riga per task chiuso.
 - T8.1 · fatto · domanda «Quanto pesava la porzione salvata?» nella proposta (casi AS e AV; il preferito prende il peso solo alla conferma; niente avviso giallo, la quantità non è più «ipotizzata»); pannello «Salva nei preferiti» con nome e peso facoltativo da Oggi e dalla scheda del piatto. Motore: `needsWeight` al posto dell'avviso, test del caso AS aggiornato.
 - T8.2 · fatto · scorrimento nei preferiti: «Modifica» (solo piatti, tono nuovo «tessera») ed «Elimina»; scheda «Modifica preferito» (`EditFavoritePanel`) che aggiorna il preferito con lo stesso id. Corretto un difetto: id dei campi duplicati con due schede aperte (`idPrefix` in `MealForm`).
 - T8.3 · fatto · cause nell'app: il caso AS (grammi detti di un preferito senza peso) segnava «ipotizzata» (corretto in T8.1: ora la quantità è detta); il resto dipende dal modello, che segnava «ipotizzata» anche con la quantità detta se aggiungeva ingredienti o con un numero di pezzi: prompt rinforzato con regola ed esempi e provider finto che distingue i casi. Test in `assumed-quantity.test.ts`.
+- T8.4 · fatto · Saldo: testo «di margine» / «da recuperare» / «in pari» (`balanceCaption`), trattino con nessuna riga ma stesso spazio e stessa misura di quello di Media; Oggi: riga di composizione sempre presente («Base 2.100»), `hasCompositionDetail` e test aggiornati; misure in `prova-comandi` (altezza scheda Calorie 227,5 px in tutti i giorni, trattini 14×34 uguali).
 - T6.7 · fatto · `docs/REPORT-FASE-6.md` scritto; pull request verso main aperta a fine fase.
 
 ## Decisioni da confermare
@@ -250,3 +251,4 @@ Una riga per task chiuso.
 - T8.1: i pannelli e la domanda sono provati con Chromium e tocco simulato, non su un iPhone vero (tastiera numerica, pannello con tastiera aperta).
 - T8.2: la scheda «Modifica preferito» con la tastiera dell'iPhone e il gesto a due tessere non sono provati su un iPhone vero (solo Chromium e tocco simulato).
 - T8.3: se «ipotizzata» compare ancora su piatti con la quantità detta, dipende dal modello vero (non provato qui): il prompt ora distingue quantità detta e ipotizzata con esempi (200 g di petto di pollo, due uova) ma nessuna stima è stata fatta con Vertex.
+- T8.4: le misure sono fatte con Chromium a 390 px; la riga di composizione più lunga (base, bici, passi e recupero) sta in una riga a 390 px, ma a 375 px non misurata.

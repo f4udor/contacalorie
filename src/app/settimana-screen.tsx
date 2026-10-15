@@ -15,7 +15,7 @@ import { ScreenHeader } from "./components/screen-header";
 import { SettingsPanel } from "./components/settings-view";
 import { useToday } from "./lib/use-today";
 import { useWeekData } from "./lib/use-week-data";
-import { buildWeekView } from "./lib/week-view";
+import { balanceCaption, buildWeekView } from "./lib/week-view";
 import { weekWeight, weightCard } from "./lib/week-weight";
 import { hasAnyValue } from "./lib/week-chart";
 
@@ -72,9 +72,10 @@ export function SettimanaScreen() {
           <div className="grid grid-cols-2 gap-3">
             <Card title="Saldo">
               <div className="mt-3">
-                {s.balance === null ? <Num value={dash} size="lg" tone="testo-secondario" /> : <Num value={formatSigned(s.balance)} unit="kcal" size="md" tone={s.balance > 0 ? "in-obiettivo" : "testo"} />}
+                {s.balance === null ? <Num value={dash} size="md" tone="testo-secondario" /> : <Num value={formatSigned(s.balance)} unit="kcal" size="md" tone={s.balance > 0 ? "in-obiettivo" : "testo"} />}
               </div>
-              <p className={sub}>sui giorni conclusi</p>
+              {/* Col trattino nessuna riga, ma lo spazio resta (stessa altezza della scheda Media). */}
+              <p className={sub}>{balanceCaption(s.balance) ?? "\u00a0"}</p>
             </Card>
             <Card title="Media">
               <div className="mt-3">{s.avgKcal === null ? <Num value={dash} size="md" tone="testo-secondario" /> : <Num value={formatNumber(s.avgKcal)} unit="kcal" size="md" />}</div>
