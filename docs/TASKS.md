@@ -695,6 +695,6 @@ Vincoli di questa fase:
 - Test: casi AN-AS end-to-end con il provider finto, due etichette nella stessa frase, etichetta più piatto normale, correzione della quantità, riferimento sconosciuto, validazione dei nuovi campi, il testo mandato al modello non contiene numeri del preferito. Screenshot: campo con due etichette, elenco aperto, proposta con un piatto "dai tuoi preferiti" e uno stimato.
 - Nel diario, sotto "Non verificato": il comportamento del modello vero con le etichette.
 
-### T7.3 Report di fase · da fare
+### T7.3 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-7.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: l'istruzione SQL da eseguire su Supabase prima del merge e un controllo da fare sul telefono per ogni task, partendo dal salvataggio di un piatto con il peso.
 
