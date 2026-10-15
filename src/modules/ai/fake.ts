@@ -43,9 +43,12 @@ export function demoEstimate(request: { text: string; localTime: string; previou
   const slot = said ? said[1].toLowerCase() : SLOT_BY_HOUR(request.localTime);
   if (request.previous && request.correction) {
     const quantity = saidIn(request.correction);
+    const hasQuantity = quantity.grams !== null || quantity.servings !== null || /\d/.test(request.correction);
     const meals = request.previous.meals.map((m) => ({
       ...m,
       freeMeal: false,
+      // Una correzione che dà la quantità (grammi, porzioni, un numero) la rende detta: il piatto non è più «ipotizzato».
+      dishes: hasQuantity && !(m.favorites ?? []).length ? m.dishes.map((d) => ({ ...(d as object), quantityAssumed: false })) : m.dishes,
       favorites: (m.favorites ?? []).map((f, i) => (i === 0 && (quantity.grams !== null || quantity.servings !== null) ? { ref: f.ref, quantitySaid: true, grams: quantity.grams, servings: quantity.servings } : f)),
     }));
     return { meals };
@@ -71,8 +74,10 @@ export function demoEstimate(request: { text: string; localTime: string; previou
   rest = rest.replace(/[\s,;.]+/g, " ").trim();
   // Restano solo congiunzioni («e», «con»): nessun piatto da stimare.
   const CONNECTIVES = /(?<![\p{L}])(?:e|ed|con|più)(?![\p{L}])/giu;
+  // La quantità è detta se nel testo c'è un numero (grammi, pezzi, porzioni): altrimenti il piatto è ipotizzato.
+  const quantityGiven = /\d/.test(rest) || /(?<![\p{L}])(?:un|uno|una|due|tre|quattro|cinque|mezzo|mezza)(?![\p{L}])/iu.test(rest);
   const dishes = /\p{L}/u.test(rest.replace(CONNECTIVES, " "))
-    ? [{ name: rest.replace(/^(?:(?:e|ed|con|più)\s+)+/iu, "").slice(0, 60), quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", quantityAssumed: true, weightG: 185, kcal: 400, protein: 20, carbs: 45, fat: 15, fiber: 5, salt: 1.5, note: "Stima di prova (provider finto)." }]
+    ? [{ name: rest.replace(/^(?:(?:e|ed|con|più)\s+)+/iu, "").slice(0, 60), quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", quantityAssumed: !quantityGiven, weightG: 185, kcal: 400, protein: 20, carbs: 45, fat: 15, fiber: 5, salt: 1.5, note: "Stima di prova (provider finto)." }]
     : [];
   return { meals: [{ slot, freeMeal: false, dishes, favorites: favorites.map(({ ref, quantitySaid, grams, servings }) => ({ ref, quantitySaid, grams, servings })) }] };
 }

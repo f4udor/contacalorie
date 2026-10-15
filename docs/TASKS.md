@@ -729,7 +729,7 @@ Vincoli di questa fase:
 - "Modifica" apre la scheda del piatto di §4.2 con titolo "Modifica preferito", senza riga Pasto, senza "Salva nei preferiti" ed "Elimina piatto". "Salva" aggiorna il preferito tramite lo sportello dei dati (browser e Supabase); i piatti già registrati non cambiano.
 - Test: aggiornamento di nome, ingredienti, peso e numeri; i piatti nei giorni passati invariati; i pasti preferiti hanno solo "Elimina". `prova-scorrimento` con la nuova tessera. Screenshot: riga scorsa con le due tessere, scheda "Modifica preferito".
 
-### T8.3 Difetto: "ipotizzata" con la quantità detta · da fare
+### T8.3 Difetto: "ipotizzata" con la quantità detta · fatto
 - Mauro vede "ipotizzata" anche su piatti di cui ha detto la quantità. Cerca la causa in tutto il percorso: prompt, validazione, `proposal-form.ts` (anche la correzione a parole e i piatti dai preferiti), riga della proposta.
 - Se la causa è nell'app, correggila. Se dipende dal modello, rinforza il prompt con un esempio esplicito ("200 g di petto di pollo" → quantità detta) e scrivilo nel diario sotto "Non verificato" (il modello vero non si prova qui).
 - Test fissi: frase con grammi detti → non ipotizzata; senza quantità → ipotizzata; piatto da preferito con grammi → non ipotizzata; correzione che aggiunge la quantità → non ipotizzata.

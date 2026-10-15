@@ -77,7 +77,7 @@ describe("etichette: più preferiti, preferiti e piatti normali", () => {
     const normale = dishes.find((d) => d.favorite === null)!;
     const dalPreferito = dishes.find((d) => d.favorite !== null)!;
     expect(normale.name).toContain("mela");
-    expect(normale.quantityAssumed).toBe(true);
+    expect(normale.quantityAssumed).toBe(false); // «una mela»: un pezzo è una quantità detta (T8.3)
     expect(dalPreferito.kcal).toBe("100");
   });
   it("testo dettato prima e dopo l'etichetta", async () => {

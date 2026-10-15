@@ -92,6 +92,7 @@ Una riga per task chiuso.
 - T8.0 · fatto · scheda del piatto: Nome, Peso, Ingredienti (CSV compreso); tolte Porzioni e Pasto libero; riga Pasto solo senza fascia fissata; «Stima con l'AI» manda «Piatto / Peso / Ingredienti» e il peso scritto prevale. Tolti 9 scenari di screenshot che mostravano le righe eliminate.
 - T8.1 · fatto · domanda «Quanto pesava la porzione salvata?» nella proposta (casi AS e AV; il preferito prende il peso solo alla conferma; niente avviso giallo, la quantità non è più «ipotizzata»); pannello «Salva nei preferiti» con nome e peso facoltativo da Oggi e dalla scheda del piatto. Motore: `needsWeight` al posto dell'avviso, test del caso AS aggiornato.
 - T8.2 · fatto · scorrimento nei preferiti: «Modifica» (solo piatti, tono nuovo «tessera») ed «Elimina»; scheda «Modifica preferito» (`EditFavoritePanel`) che aggiorna il preferito con lo stesso id. Corretto un difetto: id dei campi duplicati con due schede aperte (`idPrefix` in `MealForm`).
+- T8.3 · fatto · cause nell'app: il caso AS (grammi detti di un preferito senza peso) segnava «ipotizzata» (corretto in T8.1: ora la quantità è detta); il resto dipende dal modello, che segnava «ipotizzata» anche con la quantità detta se aggiungeva ingredienti o con un numero di pezzi: prompt rinforzato con regola ed esempi e provider finto che distingue i casi. Test in `assumed-quantity.test.ts`.
 - T6.7 · fatto · `docs/REPORT-FASE-6.md` scritto; pull request verso main aperta a fine fase.
 
 ## Decisioni da confermare
@@ -203,6 +204,7 @@ Una riga per task chiuso.
 - Peso del piatto (T7.0): un peso non valido nella risposta del modello (zero, negativo, oltre 5.000 g, non numerico) si scarta e il piatto resta valido (peso assente); un decimale è arrotondato all'intero. Il campo a mano rifiuta invece valori non interi o fuori 1–5.000.
 - Quantità senza AI (T7.1): la modalità («Peso (g)» o «Porzioni») si decide all'apertura della scheda (o dopo una stima AI che dà il peso): in un piatto nuovo, scrivere un peso a mano non ricalcola. Il peso non intero non ricalcola. Scrivendo «250» i valori intermedi («2», «25») cambiano momentaneamente i numeri; il risultato finale parte sempre dai valori di partenza.
 - Etichette dei preferiti (T7.2): l'elenco da cui si sceglie mostra solo i piatti preferiti (non i pasti); senza quantità detta il piatto da etichetta usa la quantità salvata nel preferito (o «1 porzione») ed è «ipotizzato»; nel caso AS la quantità scritta è «1 porzione»; un preferito eliminato dopo averlo messo nella frase si calcola comunque (si usa la copia di quando è stato scelto); il testo originale salvato nel piatto ha il nome del preferito al posto dell'etichetta.
+- «Ipotizzata» (T8.3): un numero di pezzi detto («due uova», «una mela») vale come quantità detta; «ipotizzata» resta solo se per il piatto non c'è nessun numero. Prima il prompt dava «una mela» come ipotizzata. Se preferisci l'altra regola, basta cambiare l'esempio nel prompt.
 
 ## Non verificato
 
@@ -247,3 +249,4 @@ Una riga per task chiuso.
 - T8.0: il modello vero con il testo «Piatto / Peso / Ingredienti» (stima per il peso scritto) non è verificato: prompt provato solo con test sul testo e provider finto.
 - T8.1: i pannelli e la domanda sono provati con Chromium e tocco simulato, non su un iPhone vero (tastiera numerica, pannello con tastiera aperta).
 - T8.2: la scheda «Modifica preferito» con la tastiera dell'iPhone e il gesto a due tessere non sono provati su un iPhone vero (solo Chromium e tocco simulato).
+- T8.3: se «ipotizzata» compare ancora su piatti con la quantità detta, dipende dal modello vero (non provato qui): il prompt ora distingue quantità detta e ipotizzata con esempi (200 g di petto di pollo, due uova) ma nessuna stima è stata fatta con Vertex.
