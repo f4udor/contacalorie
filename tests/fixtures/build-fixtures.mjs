@@ -233,7 +233,6 @@ sett("settimana-parziale", "Settimana a metà (oggi mercoledì): giorni futuri v
 }));
 sett("settimana-vuota", "Settimana senza dati: barre vuote con i soli obiettivi, valori '–', messaggio.", "2026-01-08", null);
 sett("settimana-precedente", "Settimana precedente (vuota) aperta con la freccia: compare 'Questa settimana'.", "2026-01-11", settimanaCompleta, { passi: [{ clickRole: { role: "link", name: "Settimana precedente" } }] });
-sett("settimana-tocco-barra", "Toccando la barra di mercoledì si apre quel giorno in Oggi.", "2026-01-11", settimanaCompleta, { percorso: "/settimana", passi: [{ clickRole: { role: "link", name: "Mercoledì 7 gennaio" } }], scorre: true });
 
 // --- Pasti composti da piatti (T3.2)
 const q = (quantity) => ({ quantity });
@@ -413,22 +412,14 @@ const preferiti = { favoriteDishes: [pesto2, mela, caffe], favoriteMeals: [
   { id: "p1", name: "Cena leggera", slot: "cena", dishes: [body(fav("x", "Anelli di totano", "150 g", 280, 22, 18, 14, 1, 1.4)), body(fav("y", "Insalata di pomodorini", "1 ciotola", 60, 2, 8, 2, 3, 0.1))] },
   { id: "p2", name: "Colazione solita con cappuccino e cornetto", slot: "colazione", dishes: [body(fav("z", "Cappuccino", "1 tazza", 90, 5, 8, 4, 0, 0.1)), body(fav("w", "Cornetto", "1", 300, 6, 38, 14, 1, 0.5)), body(fav("v", "Spremuta", "200 ml", 90, 1, 20, 0, 0, 0))] },
 ] };
-const apriPreferiti = [apri, { clickRole: { role: "button", name: "Preferiti", exact: true } }];
+const apriPreferiti = [apri, { clickRole: { role: "button", name: "Metti un preferito nella frase", exact: true } }, { wait: 400 }];
 const favScen = (id, descrizione, dati, passi, extra = {}) => add(id, descrizione, "2026-01-08", dati, { fisso: true, passi, ...extra });
 favScen("preferiti-vuoto", "Nessun preferito: spiega come salvarli.", giornoPasti({ meals: [] }), apriPreferiti);
-favScen("preferiti-lista", "Preferiti salvati: pasti (con numero di piatti e kcal totali) e piatti, ogni riga con un + a destra; campo di ricerca (senza il pulsante Modifica); scelta della fascia.", giornoPasti({ meals: [], ...preferiti }), apriPreferiti);
+favScen("preferiti-lista", "Elenco aperto dal tasto «Preferiti» nel campo: due gruppi, Pasti (numero di piatti e kcal totali) e Piatti, con la ricerca; righe senza il + (un tocco mette l'etichetta nella frase).", giornoPasti({ meals: [], ...preferiti }), apriPreferiti);
 favScen("preferiti-ricerca", "Ricerca 'caff': trova il pasto e il piatto con quel nome (senza accenti né maiuscole).", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, { fill: ["Cerca", "caff"] }]);
-add("preferiti-fascia-fissata", "Preferiti aperti da '+ Aggiungi piatto' del Pranzo: la scelta della fascia non compare (i piatti vanno nel Pranzo).", "2026-01-05", { ...pranzo2, ...preferiti }, { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, { clickRole: { role: "button", name: "Preferiti", exact: true } }] });
-add("preferiti-fascia-fissata-aggiunto", "Dopo un tocco su 'Mela' dai Preferiti aperti dal Pranzo: la mela è nel Pranzo di quel giorno.", "2026-01-05", { ...pranzo2, ...preferiti }, { passi: [{ click: "+ Aggiungi piatto" }, { clickRole: { role: "button", name: "Preferiti", exact: true } }, { clickRole: { role: "button", name: "Aggiungi Mela" } }, { wait: 700 }] });
 favScen("preferiti-nessun-risultato", "Ricerca senza risultati: messaggio.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, { fill: ["Cerca", "zzz"] }]);
-add("preferiti-dopo-aggiunta", "Dopo un tocco su 'Cena leggera' con la fascia Spuntino: i due piatti compaiono nello Spuntino di oggi.", "2026-01-08", giornoPasti({ meals: [], ...preferiti }), {
-  passi: [...apriPreferiti, { clickRole: { role: "radio", name: "Spuntino" } }, { clickRole: { role: "button", name: "Aggiungi Cena leggera" } }, { wait: 700 }],
-});
-add("preferiti-dopo-aggiunta-piatto", "Dopo un tocco su 'Mela' con la fascia predefinita (Pranzo): la mela è nel Pranzo di oggi.", "2026-01-08", giornoPasti({ ...preferiti }), {
-  passi: [...apriPreferiti, { clickRole: { role: "button", name: "Aggiungi Mela" } }, { wait: 700 }],
-});
 favScen("preferiti-salva-piatto", "Piatto toccato: in fondo al modulo 'Salva nei preferiti'.", giornoPasti(), [{ click: "Petto di pollo e verdure" }, { scrollTo: "Salva nei preferiti" }]);
-favScen("preferiti-piatto-salvato", "Dopo 'Salva nei preferiti': conferma 'Salvato nei preferiti.'", giornoPasti(), [{ click: "Petto di pollo e verdure" }, btn("Salva nei preferiti"), { wait: 400 }, { scrollTo: "Salvato nei preferiti" }]);
+favScen("preferiti-piatto-salvato", "Dopo 'Salva nei preferiti' e «Salva» nel pannello piccolo (piatto senza peso): si torna alla scheda del piatto con la conferma 'Salvato nei preferiti.'", giornoPasti(), [{ click: "Petto di pollo e verdure" }, btn("Salva nei preferiti"), { wait: 300 }, salvaScheda, { wait: 400 }]);
 favScen("preferiti-salva-pasto", "Intestazione del pasto toccata: pannello «Salva pasto nei preferiti» con il nome proposto (i nomi dei piatti).", giornoPasti(), [{ clickRole: { role: "button", name: "Pranzo: salva il pasto nei preferiti" } }]);
 favScen("preferiti-pasto-salvato", "Dopo «Salva nei preferiti» con un nome scelto: conferma 'Pasto salvato nei preferiti.'", giornoPasti(), [{ clickRole: { role: "button", name: "Pranzo: salva il pasto nei preferiti" } }, { fill: ["Nome del pasto", "Pranzo del lunedì"] }, btn("Salva nei preferiti"), { wait: 400 }]);
 
@@ -720,6 +711,16 @@ scenarios.push({ id: "saldo-positivo", descrizione: "Settimana: lunedì 1.900 kc
 scenarios.push({ id: "saldo-negativo", descrizione: "Settimana: lunedì 2.500 kcal, oggi martedì → Saldo −400 kcal con «da recuperare» sotto il numero.", oggi: "2026-01-06", percorso: "/settimana", dati: saldoDati(2500), scorre: true, fisso: true });
 scenarios.push({ id: "saldo-trattino", descrizione: "Settimana: oggi è lunedì, nessun giorno concluso → il Saldo ha il trattino, senza riga sotto ma con lo spazio; trattino uguale a quello della scheda Media.", oggi: "2026-01-05", percorso: "/settimana", dati: saldoDati(1900), scorre: true, fisso: true });
 add("oggi-composizione-base", "Oggi senza bici, passi sotto soglia o recupero: la riga sotto l'anello dice solo «Base 2.100» e la scheda Calorie ha la stessa altezza degli altri giorni.", "2026-01-08", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pasta al pomodoro", 650, 22, 110, 12, 6, 1.8)] }), { fisso: true });
+
+// --- Un solo tasto Preferiti (T8.5)
+const colazioneSolita = { id: "p9", name: "Colazione solita", slot: "colazione", dishes: [body(fav("a", "Cappuccino", "1 tazza", 90, 5, 8, 4, 0, 0.1)), body(fav("b", "Cornetto", "1", 300, 6, 38, 14, 1, 0.5))] };
+const datiMisti = giornoPasti({ meals: [], favoriteDishes: [hummusF, caffeF, melaF], favoriteMeals: [colazioneSolita] });
+add("aggiungi-senza-riga-preferiti", "Pannello Aggiungi: sotto il campo restano solo «Pesata» e «Uscita in bici»; i preferiti si scelgono dal tasto «Preferiti» nel campo.", "2026-01-08", datiMisti, { fisso: true, ai: { risposte: [] }, passi: [apri] });
+add("aggiungi-piatto-senza-riga-preferiti", "«Aggiungi piatto» a pranzo: nessuna riga «Preferiti» sotto il campo (resta il tasto nel campo).", "2026-01-05", { ...datiMisti, meals: pranzo2.meals }, { fisso: true, ai: { risposte: [] }, passi: [{ click: "+ Aggiungi piatto" }] });
+add("ai-preferiti-elenco-misto", "Elenco dei preferiti con due gruppi: Pasti (Colazione solita, 2 piatti) e Piatti (Hummus, Caffè, Mela), con la ricerca.", "2026-01-08", datiMisti, { fisso: true, ai: { risposte: [] }, passi: apriPreferiti });
+add("ai-preferiti-etichetta-pasto", "Campo con un'etichetta di pasto (bordo nel colore Comando) e una di piatto (senza bordo).", "2026-01-08", datiMisti, { fisso: true, ai: { risposte: [] }, passi: [apri, campo, ...scegli("Colazione solita"), ...scegli("Hummus fatto in casa"), { typeText: "2 porzioni" }] });
+add("ai-preferiti-composta-senza-ai", "Solo etichette e quantità semplici (pasto + Hummus 2 porzioni) alle 09:00: «Stima» compone la proposta senza chiamare il modello: colazione con i piatti del pasto salvato e l'hummus a 300 kcal.", "2026-01-08", datiMisti, { fisso: true, ai: { risposte: [] }, passi: [apri, campo, ...scegli("Colazione solita"), ...scegli("Hummus fatto in casa"), { typeText: "2 porzioni" }, ...stimaPreferiti] });
+add("ai-preferiti-pasto-con-modello", "Un pasto preferito più «e una mela» va al modello: nella proposta i piatti del pasto salvato (numeri salvati, «dai tuoi preferiti») e la mela stimata.", "2026-01-08", datiMisti, { fisso: true, ai: { risposte: [prop({ slot: "colazione", freeMeal: false, dishes: [dish("Mela", "1 mela, 180 g", false, 90, 0.5, 22, 0.3, 4, 0, "Mela media.")], favorites: [{ ref: 1, kind: "pasto", quantitySaid: false, grams: null, servings: null }] })] }, passi: [apri, campo, ...scegli("Colazione solita"), { typeText: " e una mela" }, ...stimaPreferiti] });
 
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));

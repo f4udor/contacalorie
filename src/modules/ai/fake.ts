@@ -13,7 +13,7 @@ export function createFakeProvider(respond: (request: EstimateRequest) => unknow
   };
 }
 
-const LABEL = /\[preferito (\d+):[^\]]*\]/g;
+const LABEL = /\[(pasto )?preferito (\d+):[^\]]*\]/g;
 const SLOT_BY_HOUR = (localTime: string) => {
   const hour = Number(localTime.slice(0, 2));
   return hour < 10 ? "colazione" : hour < 16 ? "pranzo" : hour < 18 ? "spuntino" : "cena";
@@ -67,7 +67,9 @@ export function demoEstimate(request: { text: string; localTime: string; previou
     const after = request.text.slice((m.index as number) + m[0].length, end).split(/[,;.\n]/)[0];
     const said = saidIn(after);
     const any = said.grams !== null || said.servings !== null;
-    return { ref: Number(m[1]), quantitySaid: any, grams: said.grams, servings: said.servings, matched: said.matched };
+    // Un pasto preferito non ha quantità: eventuali grammi o porzioni dopo l'etichetta si ignorano.
+    const pasto = m[1] !== undefined;
+    return { ref: Number(m[2]), ...(pasto ? { kind: "pasto" as const } : {}), quantitySaid: pasto ? false : any, grams: pasto ? null : said.grams, servings: pasto ? null : said.servings, matched: said.matched };
   });
   let rest = request.text.replace(LABEL, " ").replace(/\ba (colazione|pranzo|cena)\b/gi, " ");
   for (const f of favorites) if (f.matched) rest = rest.replace(f.matched, " ");
@@ -79,5 +81,5 @@ export function demoEstimate(request: { text: string; localTime: string; previou
   const dishes = /\p{L}/u.test(rest.replace(CONNECTIVES, " "))
     ? [{ name: rest.replace(/^(?:(?:e|ed|con|più)\s+)+/iu, "").slice(0, 60), quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", quantityAssumed: !quantityGiven, weightG: 185, kcal: 400, protein: 20, carbs: 45, fat: 15, fiber: 5, salt: 1.5, note: "Stima di prova (provider finto)." }]
     : [];
-  return { meals: [{ slot, freeMeal: false, dishes, favorites: favorites.map(({ ref, quantitySaid, grams, servings }) => ({ ref, quantitySaid, grams, servings })) }] };
+  return { meals: [{ slot, freeMeal: false, dishes, favorites: favorites.map(({ ref, kind, quantitySaid, grams, servings }) => ({ ref, ...(kind ? { kind } : {}), quantitySaid, grams, servings })) }] };
 }

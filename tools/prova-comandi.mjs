@@ -380,6 +380,59 @@ try {
     await page.context().close();
   }
 
+  // T8.5: un solo tasto «Preferiti» (nel campo), elenco con pasti e piatti, etichetta di pasto con il bordo nel colore Comando,
+  // proposta composta dall'app senza chiamare il modello quando ci sono solo etichette e quantità semplici.
+  {
+    const hummus = { id: "h1", name: "Hummus fatto in casa", quantity: "150 g", weightG: 150, kcal: 150, protein: 7.5, carbs: 10, fat: 9, fiber: 4, salt: 0.5 };
+    const dish = (name, kcal) => ({ name, quantity: "1", weightG: null, kcal, protein: 5, carbs: 30, fat: 8, fiber: 1, salt: 0.4 });
+    const colazione = { id: "p1", name: "Colazione solita", slot: "colazione", dishes: [dish("Cappuccino", 90), dish("Cornetto", 300)] };
+    const sent = [];
+    const page = await newPage("/?d=2026-01-11", { ...baseData(), favoriteDishes: [hummus], favoriteMeals: [colazione] }, 844, { sent, today: "2026-01-11", ai: [{ corpo: { proposal: { meals: [{ slot: "pranzo", freeMeal: false, dishes: [], favorites: [{ ref: 1, kind: "pasto", quantitySaid: false, grams: null, servings: null }] }] }, originalText: "x" } }] });
+    await byLabel(page, "Aggiungi").click();
+    await settle(page);
+    check("Aggiungi: la riga «Preferiti» sotto il campo non c'è più (resta il tasto nel campo)", (await dlg(page).getByRole("button", { name: "Preferiti", exact: true }).count()) === 0 && (await dlg(page).getByRole("button", { name: "Metti un preferito nella frase", exact: true }).count()) === 1);
+    const field = dlg(page).getByRole("textbox", { name: "Cosa hai mangiato?" });
+    const pick = async (name) => {
+      await dlg(page).getByRole("button", { name: "Metti un preferito nella frase", exact: true }).click();
+      await page.waitForTimeout(300);
+      await dlg(page).getByRole("button", { name: `Metti ${name} nella frase`, exact: true }).click();
+      await page.waitForTimeout(250);
+    };
+    await field.click();
+    await dlg(page).getByRole("button", { name: "Metti un preferito nella frase", exact: true }).click();
+    await page.waitForTimeout(300);
+    check("l'elenco ha i gruppi Pasti e Piatti", (await dlg(page).getByRole("region", { name: "Pasti salvati" }).count()) === 1 && (await dlg(page).getByRole("region", { name: "Piatti salvati" }).count()) === 1);
+    await dlg(page).getByRole("button", { name: "Metti Colazione solita nella frase", exact: true }).click();
+    await page.waitForTimeout(250);
+    await pick("Hummus fatto in casa");
+    await page.keyboard.type("2 porzioni");
+    const border = (sel) => field.locator(sel).first().evaluate((el) => ({ w: getComputedStyle(el).borderTopWidth, c: getComputedStyle(el).borderTopColor }));
+    const bm = await border('[data-favorite-kind="meal"]');
+    const bd = await border("[data-favorite-id]:not([data-favorite-kind])");
+    check(`l'etichetta di un pasto ha il bordo nel colore Comando, quella di un piatto no (${bm.w} ${bm.c} · ${bd.w})`, bm.w !== "0px" && bd.w === "0px" && /166, 255, 0|a6ff00/i.test(bm.c));
+    await dlg(page).getByRole("button", { name: "Stima", exact: true }).click();
+    await page.waitForTimeout(500);
+    check("solo etichette e quantità semplici: nessuna chiamata al modello", sent.length === 0);
+    check("la proposta è composta subito: i piatti del pasto salvato più l'hummus a 300 kcal", (await dlg(page).getByText("Cappuccino", { exact: true }).count()) === 1 && (await dlg(page).getByText("Cornetto", { exact: true }).count()) === 1 && (await dlg(page).getByText("Hummus fatto in casa", { exact: true }).count()) === 1 && (await dlg(page).getByText("300", { exact: true }).count()) >= 2);
+    await page.context().close();
+
+    const sent2 = [];
+    const page2 = await newPage("/?d=2026-01-11", { ...baseData(), favoriteDishes: [hummus], favoriteMeals: [colazione] }, 844, { sent: sent2, today: "2026-01-11", ai: [{ corpo: { proposal: { meals: [{ slot: "pranzo", freeMeal: false, dishes: [], favorites: [{ ref: 1, quantitySaid: true, grams: 100, servings: null }] }] }, originalText: "x" } }] });
+    await byLabel(page2, "Aggiungi").click();
+    await settle(page2);
+    const field2 = dlg(page2).getByRole("textbox", { name: "Cosa hai mangiato?" });
+    await field2.click();
+    await dlg(page2).getByRole("button", { name: "Metti un preferito nella frase", exact: true }).click();
+    await page2.waitForTimeout(300);
+    await dlg(page2).getByRole("button", { name: "Metti Hummus fatto in casa nella frase", exact: true }).click();
+    await page2.waitForTimeout(250);
+    await page2.keyboard.type("100 g e una mela");
+    await dlg(page2).getByRole("button", { name: "Stima", exact: true }).click();
+    await page2.waitForTimeout(600);
+    check("una parola in più: la frase va al modello come prima", sent2.length === 1 && /\[preferito 1: Hummus fatto in casa\] 100 g e una mela$/.test(sent2[0]?.text ?? ""));
+    await page2.context().close();
+  }
+
   // --- T8.4: la scheda Calorie ha la stessa altezza in ogni giorno (la riga «Base 2.100» c'è sempre) e i due trattini di Saldo e Media sono uguali.
   {
     const calorieData = baseData({

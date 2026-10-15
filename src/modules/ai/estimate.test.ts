@@ -204,3 +204,20 @@ describe("piatto scritto a mano: Piatto / Peso / Ingredienti (T8.0)", () => {
     expect(without.meals[0].dishes[0]).toMatchObject({ name: "Hummus", weightG: 185, quantityAssumed: true });
   });
 });
+
+describe("pasti preferiti nelle risposte (T8.5)", () => {
+  const meal = (favorites: unknown[]) => ({ meals: [{ slot: "colazione", freeMeal: false, dishes: [], favorites }] });
+  it("la risposta con un riferimento «pasto» è valida e conserva il tipo; senza tipo vale piatto", async () => {
+    const { parseProposal } = await import("./validate");
+    const p = parseProposal(meal([{ ref: 1, kind: "pasto", quantitySaid: true, grams: 200, servings: null }, { ref: 2, quantitySaid: false, grams: null, servings: null }]));
+    expect(p?.meals[0].favorites?.[0]).toMatchObject({ ref: 1, kind: "pasto" });
+    expect(p?.meals[0].favorites?.[1]).not.toHaveProperty("kind");
+  });
+  it("lo schema distingue pasti e piatti, e il prompt dice che del pasto si conosce solo nome e riferimento", () => {
+    const item = RESPONSE_SCHEMA.properties.meals.items.properties.favorites.items;
+    expect(item.properties.kind.enum).toEqual(["piatto", "pasto"]);
+    expect(item.required).toContain("kind");
+    expect(SYSTEM_PROMPT).toContain("[pasto preferito 2: Colazione solita]");
+    expect(SYSTEM_PROMPT).toContain("Del pasto preferito conosci solo nome e riferimento");
+  });
+});

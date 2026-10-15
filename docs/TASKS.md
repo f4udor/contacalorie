@@ -739,7 +739,7 @@ Vincoli di questa fase:
 - Oggi: riga di composizione dell'obiettivo sempre presente, "Base 2.100" nei giorni senza altro (§2); la scheda Calorie ha la stessa altezza in ogni giorno. Aggiorna `hasCompositionDetail` e il suo test di conseguenza.
 - Test della logica dei testi. Misure nella prova dei comandi: altezza della scheda Calorie con e senza bici, allineamento dei due trattini. Screenshot: Saldo positivo, negativo, trattino; Oggi senza bici.
 
-### T8.5 Un solo tasto Preferiti · da fare
+### T8.5 Un solo tasto Preferiti · fatto
 - Pannello Aggiungi (dal + e da "Aggiungi piatto"): tolta la riga "Preferiti" e il suo pannello con il + per riga. Resta solo il tasto "Preferiti" nel campo, che elenca **pasti e piatti** in due gruppi con la ricerca; un tocco sulla riga mette l'etichetta (§4.1).
 - Etichetta di un pasto preferito: bordo nel colore Comando; nella proposta si espande nei piatti del pasto con i numeri salvati; quantità dopo un pasto ignorata. Al modello va solo nome e riferimento (schema di risposta esteso per distinguere pasti e piatti).
 - **Solo etichette, niente AI**: funzione pura che riconosce un testo fatto solo di etichette e quantità semplici (forme in §4.1) e la fascia dall'ora; in quel caso "Stima" compone la proposta senza chiamare il modello né consumare il limite giornaliero.

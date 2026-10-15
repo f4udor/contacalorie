@@ -1,6 +1,6 @@
 {
   "id": "preferiti-piatto-salvato",
-  "descrizione": "Dopo 'Salva nei preferiti': conferma 'Salvato nei preferiti.'",
+  "descrizione": "Dopo 'Salva nei preferiti' e «Salva» nel pannello piccolo (piatto senza peso): si torna alla scheda del piatto con la conferma 'Salvato nei preferiti.'",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m387",
+        "id": "m377",
         "date": "2026-01-08",
         "slot": "colazione",
         "name": "Cappuccino e brioche",
@@ -24,7 +24,7 @@
         "originalText": null
       },
       {
-        "id": "m388",
+        "id": "m378",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",
@@ -38,7 +38,7 @@
         "originalText": null
       },
       {
-        "id": "m389",
+        "id": "m379",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Insalata mista con un nome molto lungo che deve andare a capo senza rompere nulla",
@@ -52,7 +52,7 @@
         "originalText": null
       },
       {
-        "id": "m390",
+        "id": "m380",
         "date": "2026-01-08",
         "slot": "spuntino",
         "name": "Pizza al taglio",
@@ -66,7 +66,7 @@
         "originalText": null
       },
       {
-        "id": "m391",
+        "id": "m381",
         "date": "2026-01-08",
         "slot": "cena",
         "name": "Petto di pollo e verdure",
@@ -97,10 +97,17 @@
       }
     },
     {
-      "wait": 400
+      "wait": 300
     },
     {
-      "scrollTo": "Salvato nei preferiti"
+      "clickRole": {
+        "role": "button",
+        "name": "Salva",
+        "exact": true
+      }
+    },
+    {
+      "wait": 400
     }
   ]
 }

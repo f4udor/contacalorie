@@ -1,7 +1,7 @@
 import { favoriteDishFromQuantity } from "@/engine";
 import type { FavoriteDishResult } from "@/engine";
 import type { DateKey, MealSlot, SaidQuantity } from "@/engine";
-import type { FavoriteDish, MealRecord } from "@/data";
+import type { FavoriteDish, FavoriteMeal, MealRecord } from "@/data";
 import type { FavoriteMention, MealProposal } from "@/modules/ai";
 import { parseDecimal } from "./meal-form";
 
@@ -25,7 +25,7 @@ export interface DishDraft {
   fiber: string;
   salt: string;
   /** Se il piatto viene da un preferito messo nel testo con un'etichetta: il suo riferimento e la quantità detta (BRIEF §4.1). */
-  favorite: { ref: number; said: SaidQuantity } | null;
+  favorite: { ref: number; said: SaidQuantity; /** Il piatto viene da un pasto preferito (etichetta di pasto): numeri salvati, nessuna quantità. */ meal?: true } | null;
   /** Avviso breve su questo piatto; null se non c'è. */
   warning: string | null;
   /**
@@ -56,6 +56,9 @@ const asText = (n: number) => String(n).replace(".", ",");
 /** I preferiti messi nel testo, per riferimento: l'app costruisce da questi i piatti delle etichette. */
 export type FavoriteRefs = ReadonlyMap<number, FavoriteDish>;
 
+/** I pasti preferiti messi nel testo, per riferimento. */
+export type FavoriteMealRefs = ReadonlyMap<number, FavoriteMeal>;
+
 /** Quantità detta dal modello per un preferito: grammi, altrimenti porzioni; null se non detta. */
 export function saidFromMention(m: FavoriteMention): SaidQuantity {
   if (!m.quantitySaid) return null;
@@ -65,15 +68,15 @@ export function saidFromMention(m: FavoriteMention): SaidQuantity {
 }
 
 /** Quante etichette della proposta non corrispondono a nessun preferito conosciuto (eliminato nel frattempo, riferimento sbagliato). */
-export function countUnknownMentions(p: MealProposal, refs: FavoriteRefs = new Map()): number {
-  return p.meals.reduce((sum, m) => sum + (m.favorites ?? []).filter((f) => !refs.has(f.ref)).length, 0);
+export function countUnknownMentions(p: MealProposal, refs: FavoriteRefs = new Map(), mealRefs: FavoriteMealRefs = new Map()): number {
+  return p.meals.reduce((sum, m) => sum + (m.favorites ?? []).filter((f) => !(f.kind === "pasto" ? mealRefs : refs).has(f.ref)).length, 0);
 }
 
 /**
  * La proposta come bozza da controllare. I piatti da etichetta si costruiscono qui dal preferito (BRIEF §4.1), mai dal modello; un'etichetta
  * sconosciuta si scarta (vedi `countUnknownMentions`) e un pasto rimasto senza piatti sparisce.
  */
-export function proposalToDrafts(p: MealProposal, refs: FavoriteRefs = new Map()): MealDraft[] {
+export function proposalToDrafts(p: MealProposal, refs: FavoriteRefs = new Map(), mealRefs: FavoriteMealRefs = new Map()): MealDraft[] {
   const drafts: MealDraft[] = [];
   p.meals.forEach((m, i) => {
     const dishes: DishDraft[] = m.dishes.map((d, j) => ({
@@ -94,6 +97,29 @@ export function proposalToDrafts(p: MealProposal, refs: FavoriteRefs = new Map()
       weightAsk: null,
     }));
     (m.favorites ?? []).forEach((f, j) => {
+      if (f.kind === "pasto") {
+        // Un pasto preferito diventa tutti i suoi piatti, con i numeri salvati; una quantità detta dopo di lui si ignora.
+        mealRefs.get(f.ref)?.dishes.forEach((d, k) =>
+          dishes.push({
+            key: `m${i}f${j}p${k}`,
+            name: d.name,
+            quantity: d.quantity ?? "",
+            quantityAssumed: false,
+            weightG: d.weightG ?? null,
+            note: "",
+            kcal: asText(d.kcal),
+            protein: asText(d.protein),
+            carbs: asText(d.carbs),
+            fat: asText(d.fat),
+            fiber: asText(d.fiber),
+            salt: asText(d.salt),
+            favorite: { ref: f.ref, said: null, meal: true },
+            warning: null,
+            weightAsk: null,
+          }),
+        );
+        return;
+      }
       const fav = refs.get(f.ref);
       if (!fav) return;
       const said = saidFromMention(f);
@@ -246,8 +272,15 @@ export function draftsToPrevious(drafts: readonly MealDraft[]): MealProposal | n
   for (const m of drafts) {
     const own = draftsToProposal([{ ...m, dishes: m.dishes.filter((d) => d.favorite === null) }]);
     if (!own.ok) return null;
+    const seenMeals = new Set<number>();
     const favorites: FavoriteMention[] = m.dishes.flatMap((d) => {
       if (d.favorite === null) return [];
+      if (d.favorite.meal) {
+        // Un pasto preferito va al modello una volta sola, come riferimento: i suoi piatti non sono stime.
+        if (seenMeals.has(d.favorite.ref)) return [];
+        seenMeals.add(d.favorite.ref);
+        return [{ ref: d.favorite.ref, kind: "pasto" as const, quantitySaid: false, grams: null, servings: null }];
+      }
       const said = d.favorite.said;
       return [{ ref: d.favorite.ref, quantitySaid: said !== null, grams: said?.unit === "g" ? said.amount : null, servings: said?.unit === "porzioni" ? said.amount : null }];
     });

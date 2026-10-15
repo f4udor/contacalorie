@@ -153,7 +153,7 @@ try {
   const favPage = async () => {
     const p = await newPage(favData);
     await p.getByRole("button", { name: "Aggiungi", exact: true }).click();
-    await p.getByRole("button", { name: "Preferiti", exact: true }).first().click();
+    await p.getByRole("button", { name: "Metti un preferito nella frase", exact: true }).click();
     await p.waitForTimeout(400);
     return p;
   };
@@ -196,9 +196,13 @@ try {
   await page.context().close();
 
   page = await favPage();
-  await page.getByRole("button", { name: "Aggiungi Mela", exact: true }).click();
+  await page.getByRole("button", { name: "Metti Mela nella frase", exact: true }).click();
   await page.waitForTimeout(700);
-  check("il tocco sulla riga aggiunge ancora il piatto al giorno", !(await dialog(page)) && (await page.getByText("Mela", { exact: true }).count()) >= 1);
+  check("il tocco sulla riga mette l'etichetta nel campo e torna alla frase (T8.5)", (await page.getByRole("textbox", { name: "Cosa hai mangiato?" }).getByText("Mela", { exact: true }).count()) === 1);
+  await page.context().close();
+
+  page = await favPage();
+  check("l'elenco ha due gruppi, Pasti e Piatti, e nessun + per riga", (await page.getByRole("region", { name: "Pasti salvati" }).count()) === 1 && (await page.getByRole("region", { name: "Piatti salvati" }).count()) === 1 && (await page.getByRole("button", { name: /^Aggiungi (Mela|Cena leggera)$/ }).count()) === 0);
   await page.context().close();
 
   page = await favPage();
