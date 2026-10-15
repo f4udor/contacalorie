@@ -634,7 +634,7 @@ Stessa regola, cercata dove non è stata segnalata. Si controlla, non si ridiseg
 - **Punto delle migliaia**: "2140 kcal" in Obiettivi diventa "2.140 kcal". Tutti i numeri di kcal e di passi mostrati a schermo passano dallo stesso formato, con il punto da 1.000 in su. I campi in cui si scrive un numero restano senza punto. Test del formato su 999, 1000, 2140, 12345 e ricerca nelle schermate di numeri mostrati senza passare dal formato.
 - Screenshot degli scenari toccati.
 
-### T6b.3 Screenshot mancanti · da fare
+### T6b.3 Screenshot mancanti · fatto
 - Lo scenario `oggi-dopo-modifica-settimana` fa fermare `tools/screens.mjs`: si ripara lo scenario (o lo script, se la causa è lì), senza cambiare l'app per farlo passare. Se rivela un difetto vero dell'app, il difetto va nel report e lo scenario resta segnato come rotto.
 - Lo script non si ferma più al primo scenario rotto: prosegue ed elenca alla fine quelli falliti, uscendo con errore.
 - Si rigenerano i 13 scenari `nav-*` e `pasti-*` rimasti alla versione precedente alla fase 6. Nel report: l'elenco dei file rigenerati.

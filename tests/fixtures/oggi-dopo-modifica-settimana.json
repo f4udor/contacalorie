@@ -48,9 +48,15 @@
       }
     },
     {
+      "swipe": {
+        "text": "Giovedì 8",
+        "dx": -140
+      }
+    },
+    {
       "clickRole": {
         "role": "button",
-        "name": "Elimina il valore di Giovedì 8 gennaio",
+        "name": "Elimina il valore di Giovedì 8",
         "exact": true
       }
     },

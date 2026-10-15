@@ -619,7 +619,7 @@ scenarios.push({
   percorso: "/settimana",
   dati: data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pranzo", 700, 30, 80, 20, 5, 2)], activity: [activity("2026-01-08", { steps: 9000, stepsSource: "manuale" })] }),
   scorre: true,
-  passi: [tocca("Passi"), { clickRole: { role: "button", name: "Elimina il valore di Giovedì 8 gennaio", exact: true } }, { wait: 400 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }, { clickRole: { role: "link", name: "Oggi", exact: true } }, { wait: 600 }],
+  passi: [tocca("Passi"), sw("Giovedì 8"), { clickRole: { role: "button", name: "Elimina il valore di Giovedì 8", exact: true } }, { wait: 400 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }, { clickRole: { role: "link", name: "Oggi", exact: true } }, { wait: 600 }],
 });
 // --- Scorrimento a sinistra per le azioni (T5.5), con il tocco simulato del browser.
 const giornoConPiatti = data({
