@@ -104,7 +104,16 @@ La soglia minima vale per la base: il bonus attività si somma sopra. Ogni luned
 
 **Anteprima dei giorni futuri.** Quando si mostra l'obiettivo di un giorno successivo a oggi, i giorni tra oggi e quel giorno che non hanno pasti contano come se si mangiasse esattamente il loro obiettivo; oggi conta con le kcal reali se sono sopra l'obiettivo, altrimenti come se si raggiungesse l'obiettivo. Così un debito di 250 kcal appare come −100, −100, −50 e non viene mostrato più volte.
 
-**Saldo mostrato in Settimana.** È lo stesso saldo della regola (con il tetto al margine), calcolato fino al giorno più recente con pasti.
+**Saldo mostrato in Settimana.** È lo stesso saldo della regola (con il tetto al margine), calcolato sui soli **giorni conclusi**: i giorni con pasti precedenti a oggi. Oggi è in corso e non conta, come per la media (§3.8): i pasti ancora da fare sembrerebbero margine. Per una settimana passata contano tutti i giorni con pasti. Senza giorni conclusi con pasti il saldo non c'è e la scheda mostra un trattino. La regola dell'obiettivo qui sopra non cambia: usava già solo i giorni precedenti.
+
+Casi di verifica (base 2.100, nessuna attività, `creditCap` 300):
+
+| Caso | Situazione | Saldo mostrato |
+|---|---|---|
+| AJ | Lunedì 1.900 kcal; oggi è martedì, mangiate finora 600 | +200 (non 300) |
+| AK | Oggi è lunedì, mangiate finora 600 | nessuno (trattino) |
+| AL | Lunedì 2.500 kcal; oggi è martedì senza pasti | −400 |
+| AM | Settimana passata: lunedì 1.900, domenica 2.000, altri giorni vuoti | +300 (tetto) |
 
 ### 3.4 Obiettivi dei nutrienti
 - Proteine = `proteinPerKgTarget × peso obiettivo` se il peso obiettivo è impostato, altrimenti `proteinPerKg × peso`; arrotondate ai 5 g. Il peso è l'ultima pesata, o quello del profilo se non ci sono pesate.
@@ -262,7 +271,8 @@ Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate,
 | 5b | Ritocchi dopo la prova sul telefono: attività in sola lettura e bici a mano, colori dell'anello, pasto libero e ricetta nella proposta AI, regola del crudo, controllo di coerenza, preferiti eliminabili scorrendo, media nella Settimana, segno della variazione di peso |
 | 5c | Scheda del piatto unica per aggiunta e modifica, preferiti senza doppioni, colore della linea della media, obiettivi calcolati dal profilo, Impostazioni a sezioni |
 | 6 | Testi e grafica: tema solo scuro, stile di §10, nuova navigazione |
-| 6b | Grafici |
+| 6b | Ritocchi dopo la prova sul telefono: pannelli ad altezza stabile, comandi che non si spostano, difetti grafici della fase 6, screenshot mancanti |
+| da decidere | Grafici |
 | 7 | Promemoria (opzionale) |
 
 ## 9. Fuori dalla prima versione
@@ -315,6 +325,10 @@ Pochi componenti condivisi, usati ovunque:
 - **Intestazione dei pannelli**: X in un cerchio a sinistra, titolo al centro, azione principale a destra (per esempio "Salva", piena). Sempre visibile.
 - **Selettore a segmenti** (AI | Manuale): capsula con la voce attiva più chiara.
 - **Numero con unità**: il componente unico per tutti i numeri in evidenza.
+- **Comandi fermi**: un comando non cambia posto quando cambia il contenuto. Vale per frecce, ritorno al presente, X, selettori e tasti pieni, passando da un giorno o da una settimana all'altra e tra stato pieno e vuoto.
+  - Un pannello con le frecce delle settimane ha altezza fissa, uguale per ogni settimana: la stessa con sette giorni di dati e con nessuno. Se l'elenco non ci sta, scorre dentro il pannello; intestazione e frecce restano ferme.
+  - Numero grande e grafico occupano sempre lo stesso spazio: senza dati, trattino al posto del numero e griglia vuota al posto delle barre, alte quanto quelle piene.
+  - Nelle schede di Oggi e Settimana uno stato vuoto è alto quanto quello pieno.
 
 ### 10.4 Navigazione
 - **Barra in basso**: capsula sospesa in vetro, tre voci con icona e nome (Oggi, Settimana, Grafici). La voce attiva sta in una pillola più scura, nel colore Comando.
