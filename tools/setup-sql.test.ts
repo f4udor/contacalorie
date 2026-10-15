@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 // @ts-expect-error file .mjs senza tipi
-import { UPDATE_HEADER_PHASE_5, UPDATE_HEADER_PHASE_5B, UPDATE_HEADER_PHASE_5C, buildSetupSql, buildUpdateSql } from "./build-setup-sql.mjs";
+import { UPDATE_HEADER_PHASE_5, UPDATE_HEADER_PHASE_5B, UPDATE_HEADER_PHASE_5C, UPDATE_HEADER_PHASE_7, buildSetupSql, buildUpdateSql } from "./build-setup-sql.mjs";
 
 const root = path.resolve(__dirname, "..");
 
@@ -51,12 +51,23 @@ describe("supabase/setup.sql", () => {
 
   it("aggiornamento-fase-5c.sql è aggiornato e contiene solo la migrazione 15: sesso e data dell'obiettivo, solo aggiunte", () => {
     const update = readFileSync(path.join(root, "supabase/aggiornamento-fase-5c.sql"), "utf8");
-    expect(update).toBe(buildUpdateSql(path.join(root, "supabase/migrations"), 15, UPDATE_HEADER_PHASE_5C));
+    expect(update).toBe(buildUpdateSql(path.join(root, "supabase/migrations"), 15, UPDATE_HEADER_PHASE_5C, 15));
     const names = [...update.matchAll(/-- ===== (\S+\.sql) =====/g)].map((m) => m[1]);
     expect(names).toEqual(["20260101000015_profilo_obiettivi.sql"]);
     expect(update).toContain("add column sex text");
     expect(update).toContain("add column target_date date");
     expect(update).not.toMatch(/drop column|rename column|drop table/i);
+  });
+
+  it("aggiornamento-fase-7.sql è aggiornato e contiene solo la migrazione 16: il peso del piatto, solo aggiunte", () => {
+    const update = readFileSync(path.join(root, "supabase/aggiornamento-fase-7.sql"), "utf8");
+    expect(update).toBe(buildUpdateSql(path.join(root, "supabase/migrations"), 16, UPDATE_HEADER_PHASE_7));
+    const names = [...update.matchAll(/-- ===== (\S+\.sql) =====/g)].map((m) => m[1]);
+    expect(names).toEqual(["20260101000016_peso_piatto.sql"]);
+    expect(update).toContain("alter table public.meals add column weight_g integer");
+    expect(update).toContain("alter table public.favorites add column weight_g integer");
+    expect(update).not.toMatch(/drop column|rename column|drop table/i);
+    expect(onDisk).toContain("add column weight_g integer");
   });
 
   it("la bici a mano (fase 5b): due colonne nuove, spostamento dei vecchi valori, l'ingresso non tocca la parte a mano", () => {

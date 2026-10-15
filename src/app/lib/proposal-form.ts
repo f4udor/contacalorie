@@ -13,6 +13,8 @@ export interface DishDraft {
   quantity: string;
   /** Vero finché la quantità è quella ipotizzata dal modello. */
   quantityAssumed: boolean;
+  /** Peso in grammi dal modello (non si modifica nella proposta; si porta nel piatto salvato). */
+  weightG: number | null;
   note: string;
   kcal: string;
   protein: string;
@@ -50,6 +52,7 @@ export function proposalToDrafts(p: MealProposal): MealDraft[] {
       name: d.name,
       quantity: d.quantity ?? "",
       quantityAssumed: d.quantityAssumed && d.quantity !== null,
+      weightG: d.weightG ?? null,
       note: d.note,
       kcal: asText(d.kcal),
       protein: asText(d.protein),
@@ -113,7 +116,7 @@ export function draftsToProposal(drafts: readonly MealDraft[]): { ok: true; prop
         else if (r < 0) (errors[d.key] ??= {})[k] = "Non può essere negativo";
         else nums[k] = r;
       }
-      dishes.push({ name: d.name.trim() || "Piatto", quantity: d.quantity.trim() || null, quantityAssumed: d.quantityAssumed && d.quantity.trim() !== "", note: d.note, ...nums });
+      dishes.push({ name: d.name.trim() || "Piatto", quantity: d.quantity.trim() || null, quantityAssumed: d.quantityAssumed && d.quantity.trim() !== "", weightG: d.weightG, note: d.note, ...nums });
     }
     if (dishes.length > 0) meals.push({ slot: m.slot, freeMeal: m.isFree, dishes });
   }
@@ -129,6 +132,7 @@ export function proposalToRecords(proposal: MealProposal, date: DateKey, origina
       slot: m.slot,
       name: d.name,
       quantity: d.quantity,
+      weightG: d.weightG ?? null,
       kcal: d.kcal,
       protein: d.protein,
       carbs: d.carbs,
@@ -142,17 +146,19 @@ export function proposalToRecords(proposal: MealProposal, date: DateKey, origina
 }
 
 /** Somma di tutti i piatti della proposta (per riempire i numeri di un solo piatto scritto a mano). */
-export function sumProposal(proposal: MealProposal): Record<DishNumberKey, number> & { notes: string[] } {
+export function sumProposal(proposal: MealProposal): Record<DishNumberKey, number> & { notes: string[]; weightG: number | null } {
   const total = { kcal: 0, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0 };
   const notes: string[] = [];
+  let weightG: number | null = null;
   for (const m of proposal.meals) {
     for (const d of m.dishes) {
       for (const k of DISH_NUMBER_KEYS) total[k] += d[k];
       if (d.note) notes.push(d.note);
+      if (d.weightG) weightG = (weightG ?? 0) + d.weightG;
     }
   }
   for (const k of DISH_NUMBER_KEYS) total[k] = k === "kcal" ? Math.round(total[k]) : Math.round(total[k] * 10) / 10;
-  return { ...total, notes };
+  return { ...total, notes, weightG };
 }
 
 /** Con la fascia fissata (si è partiti da "Aggiungi piatto" di un pasto) tutti i piatti proposti vanno in quella fascia, anche se il modello ne ha indicata un'altra. */

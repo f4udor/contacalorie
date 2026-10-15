@@ -27,7 +27,7 @@ interface MealFormProps {
   onEstimate: () => void;
 }
 
-const NUMERIC: { key: Exclude<MealFieldKey, "isFree">; label: string; unit: string }[] = [
+const NUMERIC: { key: Exclude<MealFieldKey, "isFree" | "weightG">; label: string; unit: string }[] = [
   { key: "kcal", label: "Calorie", unit: "kcal" },
   { key: "protein", label: "Proteine", unit: "g" },
   { key: "carbs", label: "Carboidrati", unit: "g" },
@@ -54,6 +54,9 @@ export function MealForm({ values, onChange, errors, freeAllowedFor, mealIsFreeF
         </FieldRow>
         <FieldRow label="Quantità" htmlFor="meal-quantity">
           <RowTextarea id="meal-quantity" value={values.quantity} onChange={(v) => set("quantity", v)} />
+        </FieldRow>
+        <FieldRow label="Peso (g)" htmlFor="meal-weightG" error={errors.weightG}>
+          <RowInput id="meal-weightG" value={values.weightG} onChange={(v) => set("weightG", v)} inputMode="numeric" placeholder="facoltativo" invalid={Boolean(errors.weightG)} />
         </FieldRow>
       </GroupedList>
 

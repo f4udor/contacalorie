@@ -5,6 +5,8 @@ import type { MealSlot } from "@/engine";
 export interface MealFormValues {
   name: string;
   quantity: string;
+  /** Peso del piatto in grammi, come testo (facoltativo). */
+  weightG: string;
   slot: MealSlot;
   kcal: string;
   protein: string;
@@ -15,13 +17,15 @@ export interface MealFormValues {
   isFree: boolean;
 }
 
-export type MealFieldKey = "kcal" | "protein" | "carbs" | "fat" | "fiber" | "salt" | "isFree";
+export type MealFieldKey = "weightG" | "kcal" | "protein" | "carbs" | "fat" | "fiber" | "salt" | "isFree";
 export type MealFormErrors = Partial<Record<MealFieldKey, string>>;
 
 export interface ParsedMeal {
   name: string;
   /** Quantità in testo libero; null se non indicata. */
   quantity: string | null;
+  /** Peso in grammi (intero); null se non indicato. */
+  weightG: number | null;
   slot: MealSlot;
   kcal: number;
   protein: number;
@@ -41,16 +45,20 @@ export const SLOTS: { value: MealSlot; label: string }[] = [
 
 export const DEFAULT_MEAL_NAME = "Piatto";
 
+/** Peso massimo di un piatto (g): come nella risposta del modello. */
+export const MAX_WEIGHT_G = 5000;
+
 export function emptyMealForm(slot: MealSlot = "pranzo"): MealFormValues {
-  return { name: "", quantity: "", slot, kcal: "", protein: "", carbs: "", fat: "", fiber: "", salt: "", isFree: false };
+  return { name: "", quantity: "", weightG: "", slot, kcal: "", protein: "", carbs: "", fat: "", fiber: "", salt: "", isFree: false };
 }
 
 const asText = (n: number) => String(n).replace(".", ",");
 
-export function mealToForm(m: Omit<ParsedMeal, "quantity"> & { quantity?: string | null }): MealFormValues {
+export function mealToForm(m: Omit<ParsedMeal, "quantity" | "weightG"> & { quantity?: string | null; weightG?: number | null }): MealFormValues {
   return {
     name: m.name,
     quantity: m.quantity ?? "",
+    weightG: m.weightG ? String(m.weightG) : "",
     slot: m.slot,
     kcal: asText(m.kcal),
     protein: m.protein ? asText(m.protein) : "",
@@ -117,10 +125,17 @@ export function validateMealForm(
       nums[key] = r;
     }
   }
+  // Il peso è facoltativo: vuoto = nessun peso; altrimenti un intero positivo (fino a 5.000 g).
+  let weightG: number | null = null;
+  const w = parseDecimal(values.weightG);
+  if (w !== "empty") {
+    if (w === "invalid" || !Number.isInteger(w) || w <= 0 || w > MAX_WEIGHT_G) errors.weightG = "Inserisci un peso in grammi (numero intero)";
+    else weightG = w;
+  }
   if (values.isFree && !freeAllowed) errors.isFree = "Già usato questa settimana.";
   if (Object.keys(errors).length > 0) return { ok: false, errors };
   return {
     ok: true,
-    meal: { name: values.name.trim() || DEFAULT_MEAL_NAME, quantity: values.quantity.trim() || null, slot: values.slot, isFree: values.isFree, ...nums },
+    meal: { name: values.name.trim() || DEFAULT_MEAL_NAME, quantity: values.quantity.trim() || null, weightG, slot: values.slot, isFree: values.isFree, ...nums },
   };
 }

@@ -57,3 +57,21 @@ describe("parseProposal", () => {
     expect(parseProposal([])).toBeNull();
   });
 });
+
+describe("peso del piatto (T7.0)", () => {
+  const weight = (w: unknown) => parseProposal(meal({ ...dish, weightG: w }))?.meals[0].dishes[0].weightG;
+  it("con il peso: intero, tenuto", () => {
+    expect(weight(185)).toBe(185);
+    expect(weight(185.4)).toBe(185);
+    expect(weight(5000)).toBe(5000);
+  });
+  it("senza il peso la risposta resta valida e il peso è null", () => {
+    expect(parseProposal(meal(dish))).not.toBeNull();
+    expect(weight(undefined)).toBeNull();
+    expect(weight(null)).toBeNull();
+  });
+  it.each([[0], [-20], [5001], [Number.NaN], ["185"]])("peso non valido (%s): si scarta, il piatto resta valido", (w) => {
+    expect(parseProposal(meal({ ...dish, weightG: w }))).not.toBeNull();
+    expect(weight(w)).toBeNull();
+  });
+});

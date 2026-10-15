@@ -81,3 +81,19 @@ describe("correzione a parole in modifica", () => {
     expect(estimateSourceText({ ...pasta, quantity: "" }, "  ")).toBe("Pasta");
   });
 });
+
+describe("peso del piatto (T7.0)", () => {
+  it("il peso del modulo passa nella stima precedente (intero positivo, altrimenti null)", () => {
+    expect(valuesToProposal({ ...pasta, weightG: "185" }).meals[0].dishes[0].weightG).toBe(185);
+    expect(valuesToProposal(pasta).meals[0].dishes[0].weightG).toBeNull();
+    expect(valuesToProposal({ ...pasta, weightG: "abc" }).meals[0].dishes[0].weightG).toBeNull();
+  });
+  it("la correzione di un solo piatto prende il peso del modello; senza peso nel modello resta quello scritto", () => {
+    const one = (w: number | null): MealProposal => ({ meals: [{ slot: "cena", dishes: [{ name: "Pasta", quantity: "120 g pasta", quantityAssumed: false, weightG: w, kcal: 420, protein: 14, carbs: 80, fat: 6, fiber: 5, salt: 1.2, note: "" }] }] });
+    expect(applyCorrection({ ...pasta, weightG: "100" }, one(120)).values.weightG).toBe("120");
+    expect(applyCorrection({ ...pasta, weightG: "100" }, one(null)).values.weightG).toBe("100");
+  });
+  it("scrivere il peso rende il piatto salvabile in modifica (è un campo del modulo)", () => {
+    expect(canSaveDish({ ...pasta, weightG: "150" }, pasta)).toBe(true);
+  });
+});

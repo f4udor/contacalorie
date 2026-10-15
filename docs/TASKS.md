@@ -671,7 +671,7 @@ Vincoli di questa fase:
 - Stile di §10, screenshot solo scuri a 390 px degli scenari toccati. Comandi fermi (§10.3).
 - Nessuna funzione oltre a quelle elencate: niente tabella di ingredienti, niente Open Food Facts, niente riconoscimento automatico dei preferiti senza etichetta (§11, fasi 7b e 7c).
 
-### T7.0 Peso del piatto · da fare
+### T7.0 Peso del piatto · fatto
 - Database: colonna del peso in `meals` e `favorites`, campo facoltativo nei piatti di `favorite_meals`. Sportello dei dati (browser e Supabase), esportazione CSV e tipi aggiornati.
 - Modello: lo schema di risposta guadagna il peso in grammi di ogni piatto (intero, facoltativo). Il prompt chiede come peso la somma dei grammi scritti nella quantità (per la pasta, i grammi a crudo), così resta controllabile a colpo d'occhio. La validazione accetta un peso assente; scarta valori non positivi o sopra 5.000 g.
 - Piatto a mano: campo "Peso (g)" facoltativo nella scheda del piatto, in Manuale.

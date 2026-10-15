@@ -7,6 +7,8 @@ export interface EstimatedDish {
   quantity: string | null;
   /** Vero se l'utente non l'ha detta e il modello ha ipotizzato una porzione standard. */
   quantityAssumed: boolean;
+  /** Peso del piatto in grammi (intero): la somma dei grammi scritti nella quantità (a crudo per pasta, riso, cereali e legumi secchi). Facoltativo. */
+  weightG?: number | null;
   kcal: number;
   protein: number;
   carbs: number;

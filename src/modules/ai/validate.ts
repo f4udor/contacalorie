@@ -6,6 +6,8 @@ import type { EstimatedDish, EstimatedMeal, MealProposal } from "./types";
 const MAX_KCAL = 5000;
 const MAX_GRAMS = 1000;
 const MAX_TEXT = 200;
+/** Peso del piatto in grammi: oltre questo valore (o a zero o negativo) il peso si scarta, il piatto resta. */
+const MAX_WEIGHT_G = 5000;
 /** Quantità: l'elenco degli ingredienti principali con i grammi. */
 const MAX_QUANTITY = 500;
 
@@ -17,6 +19,13 @@ function amount(v: unknown, max: number, decimals: number): number | null {
   if (typeof v !== "number" || !Number.isFinite(v) || v < 0 || v > max) return null;
   const f = 10 ** decimals;
   return Math.round(v * f) / f;
+}
+
+/** Il peso in grammi (intero, > 0 e ≤ 5.000); assente o non valido → null (il peso è facoltativo e un valore sbagliato si scarta senza scartare il piatto). */
+function weightOf(v: unknown): number | null {
+  if (typeof v !== "number" || !Number.isFinite(v)) return null;
+  const g = Math.round(v);
+  return g > 0 && g <= MAX_WEIGHT_G ? g : null;
 }
 
 function dish(raw: unknown): EstimatedDish | null {
@@ -34,7 +43,7 @@ function dish(raw: unknown): EstimatedDish | null {
   const fiber = amount(raw.fiber, MAX_GRAMS, 1);
   const salt = amount(raw.salt, MAX_GRAMS, 1);
   if (kcal === null || protein === null || carbs === null || fat === null || fiber === null || salt === null) return null;
-  return { name, quantity, quantityAssumed: raw.quantityAssumed, kcal, protein, carbs, fat, fiber, salt, note: (raw.note ?? "").trim().slice(0, 400) };
+  return { name, quantity, quantityAssumed: raw.quantityAssumed, weightG: weightOf(raw.weightG), kcal, protein, carbs, fat, fiber, salt, note: (raw.note ?? "").trim().slice(0, 400) };
 }
 
 /** Controlla la proposta (risposta del modello o stima precedente ricevuta dal browser). Restituisce null se non è valida. */

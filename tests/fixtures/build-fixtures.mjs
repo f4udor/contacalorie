@@ -695,6 +695,12 @@ sett("settimana-barra-etichetta", "Toccando la barra del mercoledì compare sopr
 sett("settimana-barra-etichetta-domenica", "Toccando la barra della domenica (la più alta, sul bordo) l'etichetta «3.050» resta dentro la scheda e non copre la legenda.", "2026-01-11", barre, { fisso: true, passi: [{ clickRole: { role: "button", name: "Domenica 11 gennaio", exact: false } }] });
 sett("settimana-barra-etichetta-sposta", "Dopo il tocco sul mercoledì, un tocco sul lunedì sposta l'etichetta: una sola alla volta («2.080»).", "2026-01-11", barre, { fisso: true, passi: [{ clickRole: { role: "button", name: "Mercoledì 7 gennaio", exact: false } }, { clickRole: { role: "button", name: "Lunedì 5 gennaio", exact: false } }] });
 
+// --- Peso del piatto (T7.0)
+const piattoConPeso = data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pasta al pomodoro", 420, 14, 80, 6, 5, 1.2, { quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", weightG: 185 })] });
+add("pannello-piatto-peso", "Scheda del piatto in Manuale con il campo «Peso (g)» già compilato (185) sotto la quantità.", "2026-01-08", piattoConPeso, { fisso: true, passi: [{ click: "Pasta al pomodoro" }] });
+add("pannello-piatto-peso-vuoto", "Aggiunta a mano: il campo «Peso (g)» è facoltativo e mostra «facoltativo».", "2026-01-08", data({ settings: { weightKg: 100 } }), { fisso: true, passi: [apri, manuale] });
+add("pannello-piatto-peso-errore", "Peso non valido (12,5): «Salva» mostra l'errore accanto al campo.", "2026-01-08", data({ settings: { weightKg: 100 } }), { fisso: true, passi: [apri, manuale, { fill: ["Nome", "Pasta"] }, { fill: ["Calorie", "400"] }, { fill: ["Peso (g)", "12,5"] }, salvaScheda] });
+
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");

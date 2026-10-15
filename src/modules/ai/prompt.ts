@@ -12,7 +12,8 @@ Regole:
 - Nome: solo il nome del piatto ("Polpette di maiale al sugo"), senza grammi né ingredienti.
 - Quantità: l'elenco degli ingredienti principali con i grammi, come testo libero ("200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro"). Per un alimento semplice basta la sua quantità ("1 mela, 180 g").
 - Crudo o cotto: per pasta, riso, altri cereali e legumi secchi i grammi detti dalla persona si intendono A CRUDO, salvo che dica "cotta", "cotto", "lessa" o "nel piatto". Scrivi sempre l'interpretazione nella quantità ("100 g pasta a crudo", oppure "100 g pasta cotta"), così un errore si vede prima di confermare.
-- Per ogni piatto indica: nome, quantità, se la quantità è ipotizzata, kcal, proteine, carboidrati, grassi e fibre in grammi, sale in grammi, e una nota breve (una frase).
+- Peso: per ogni piatto indica weightG, il peso in grammi (numero intero) come SOMMA dei grammi scritti nella quantità (per pasta, riso, altri cereali e legumi secchi i grammi a crudo, come scritto nella quantità). Per "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio" il peso è 185. Se nella quantità non ci sono grammi (per esempio "1 mela" senza il peso), stimalo; se non puoi, metti null.
+- Per ogni piatto indica: nome, quantità, se la quantità è ipotizzata, peso, kcal, proteine, carboidrati, grassi e fibre in grammi, sale in grammi, e una nota breve (una frase).
 - Se la persona dice una quantità, usala e metti quantityAssumed a false.
 - Se non la dice, usa una porzione standard di un adulto, scrivila nella quantità, metti quantityAssumed a true e spiegalo nella nota. Non fare domande.
 - Il sale è il sale totale (cloruro di sodio) in grammi, non il sodio.
@@ -58,6 +59,7 @@ export const RESPONSE_SCHEMA = {
                 name: { type: "STRING" },
                 quantity: { type: "STRING", nullable: true },
                 quantityAssumed: { type: "BOOLEAN" },
+                weightG: { type: "INTEGER", nullable: true },
                 kcal: { type: "NUMBER" },
                 protein: { type: "NUMBER" },
                 carbs: { type: "NUMBER" },
@@ -66,7 +68,7 @@ export const RESPONSE_SCHEMA = {
                 salt: { type: "NUMBER" },
                 note: { type: "STRING" },
               },
-              required: ["name", "quantity", "quantityAssumed", "kcal", "protein", "carbs", "fat", "fiber", "salt", "note"],
+              required: ["name", "quantity", "quantityAssumed", "weightG", "kcal", "protein", "carbs", "fat", "fiber", "salt", "note"],
             },
           },
         },

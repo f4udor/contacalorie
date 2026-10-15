@@ -40,7 +40,7 @@ export function useDishForm(initial: MealFormValues, freeAllowedFor: (slot: Meal
       setAiError(r.message);
       return;
     }
-    setValues((v) => applyNumbers(v, r.numbers));
+    setValues((v) => ({ ...applyNumbers(v, r.numbers), weightG: r.weightG ? String(r.weightG) : v.weightG }));
     setErrors({});
     setAiNote(r.note);
   };

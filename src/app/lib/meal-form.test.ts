@@ -38,7 +38,7 @@ describe("validateMealForm", () => {
     const r = validateMealForm(base, true);
     expect(r).toEqual({
       ok: true,
-      meal: { name: "Piatto", quantity: null, slot: "cena", kcal: 650, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0, isFree: false },
+      meal: { name: "Piatto", quantity: null, weightG: null, slot: "cena", kcal: 650, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0, isFree: false },
     });
   });
 
@@ -81,13 +81,33 @@ describe("validateMealForm", () => {
   });
 });
 
+describe("peso del piatto (T7.0)", () => {
+  const base = { ...emptyMealForm("cena"), kcal: "650" };
+  it("facoltativo: vuoto vale nessun peso", () => {
+    const r = validateMealForm(base, true);
+    expect(r.ok && r.meal.weightG).toBeNull();
+  });
+  it("un intero positivo si salva", () => {
+    const r = validateMealForm({ ...base, weightG: "185" }, true);
+    expect(r.ok && r.meal.weightG).toBe(185);
+  });
+  it("non valido: zero, negativo, decimale, testo, oltre 5.000 g", () => {
+    for (const w of ["0", "-5", "12,5", "abc", "5001"]) {
+      const r = validateMealForm({ ...base, weightG: w }, true);
+      expect(r.ok, w).toBe(false);
+      expect(!r.ok && r.errors.weightG, w).toBe("Inserisci un peso in grammi (numero intero)");
+    }
+    expect(validateMealForm({ ...base, weightG: "5000" }, true).ok).toBe(true);
+  });
+});
+
 describe("mealToForm", () => {
   it("riporta i numeri come testo italiano, con i campi a zero vuoti", () => {
-    const f = mealToForm({ name: "Pizza", quantity: "2 fette", slot: "cena", kcal: 1100, protein: 40, carbs: 130.5, fat: 0, fiber: 0, salt: 0.4, isFree: true });
-    expect(f).toEqual({ name: "Pizza", quantity: "2 fette", slot: "cena", kcal: "1100", protein: "40", carbs: "130,5", fat: "", fiber: "", salt: "0,4", isFree: true });
+    const f = mealToForm({ name: "Pizza", quantity: "2 fette", weightG: null, slot: "cena", kcal: 1100, protein: 40, carbs: 130.5, fat: 0, fiber: 0, salt: 0.4, isFree: true });
+    expect(f).toEqual({ name: "Pizza", quantity: "2 fette", weightG: "", slot: "cena", kcal: "1100", protein: "40", carbs: "130,5", fat: "", fiber: "", salt: "0,4", isFree: true });
   });
   it("andata e ritorno senza perdere valori", () => {
-    const meal = { name: "X", quantity: "100 g", slot: "pranzo" as const, kcal: 321.5, protein: 12, carbs: 40, fat: 9.5, fiber: 3, salt: 1.1, isFree: false };
+    const meal = { name: "X", quantity: "100 g", weightG: 185, slot: "pranzo" as const, kcal: 321.5, protein: 12, carbs: 40, fat: 9.5, fiber: 3, salt: 1.1, isFree: false };
     const r = validateMealForm(mealToForm(meal), true);
     expect(r.ok && r.meal).toEqual(meal);
   });

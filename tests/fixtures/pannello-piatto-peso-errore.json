@@ -1,0 +1,57 @@
+{
+  "id": "pannello-piatto-peso-errore",
+  "descrizione": "Peso non valido (12,5): «Salva» mostra l'errore accanto al campo.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "clickRole": {
+        "role": "radio",
+        "name": "Manuale"
+      }
+    },
+    {
+      "fill": [
+        "Nome",
+        "Pasta"
+      ]
+    },
+    {
+      "fill": [
+        "Calorie",
+        "400"
+      ]
+    },
+    {
+      "fill": [
+        "Peso (g)",
+        "12,5"
+      ]
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Salva",
+        "exact": true
+      }
+    }
+  ]
+}
