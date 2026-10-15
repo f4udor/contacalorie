@@ -10,7 +10,7 @@
     },
     "meals": [
       {
-        "id": "m214",
+        "id": "m199",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Polpette di maiale al sugo",
@@ -25,7 +25,7 @@
         "quantity": "200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro, 20 g parmigiano, 1 uovo, 15 g olio"
       },
       {
-        "id": "m215",
+        "id": "m200",
         "date": "2026-01-08",
         "slot": "pranzo",
         "name": "Pasta al pomodoro",

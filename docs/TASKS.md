@@ -713,7 +713,7 @@ Vincoli di questa fase:
 - Stile di §10, screenshot solo scuri a 390 px degli scenari toccati. Comandi fermi (§10.3): le prove `npm run prova-comandi` e `npm run prova-scorrimento` devono passare, aggiornate dove i pannelli cambiano.
 - Settimana, Grafici e la barra non si toccano: cambiano nella fase 9.
 
-### T8.0 Scheda del piatto: nome, peso, ingredienti · da fare
+### T8.0 Scheda del piatto: nome, peso, ingredienti · fatto
 - Scheda del piatto in Manuale come in §4.2: ordine Nome, Peso (g), Ingredienti; "Quantità" diventa "Ingredienti" ovunque (scheda, proposta aperta, intestazione del CSV); riga "Porzioni" tolta; interruttore "Pasto libero" tolto dalla scheda del piatto (aggiunta e modifica); riga "Pasto" assente quando la fascia è fissata.
 - Ricalcolo con il peso: invariato per i piatti che hanno un peso all'apertura (caso AT). Su un piatto senza peso, scrivere il peso lo registra senza ricalcolo.
 - "Stima con l'AI": il testo mandato al modello è composto da nome, peso e ingredienti; il prompt chiede di stimare per il peso scritto, se c'è, e di restituire quel peso. Riga sotto il tasto come in §4.2. Il provider finto rispetta il peso scritto.

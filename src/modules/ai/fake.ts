@@ -50,6 +50,14 @@ export function demoEstimate(request: { text: string; localTime: string; previou
     }));
     return { meals };
   }
+  // «Stima con l'AI» della scheda del piatto: «Piatto: …», «Peso: N g», «Ingredienti: …». Il peso scritto è quello restituito.
+  const written = /^Piatto: (.+)$/m.exec(request.text);
+  if (written) {
+    const weight = /^Peso: (\d+) g$/m.exec(request.text);
+    const ingredients = /^Ingredienti: (.+)$/m.exec(request.text);
+    const dish = { name: written[1].slice(0, 60), quantity: ingredients ? ingredients[1] : "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", quantityAssumed: !ingredients, weightG: weight ? Number(weight[1]) : 185, kcal: 400, protein: 20, carbs: 45, fat: 15, fiber: 5, salt: 1.5, note: "Stima di prova (provider finto)." };
+    return { meals: [{ slot, freeMeal: false, dishes: [dish], favorites: [] }] };
+  }
   const matches = [...request.text.matchAll(LABEL)];
   const favorites = matches.map((m, i) => {
     const end = i + 1 < matches.length ? (matches[i + 1].index as number) : request.text.length;

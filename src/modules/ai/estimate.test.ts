@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { handleEstimate } from "./estimate";
 import type { AccessGate } from "./estimate";
-import { createFakeProvider } from "./fake";
+import { createFakeProvider, demoEstimate } from "./fake";
 import { RESPONSE_SCHEMA, SYSTEM_PROMPT, buildUserMessage } from "./prompt";
 
 interface Fixture {
@@ -188,5 +188,19 @@ describe("accesso e configurazione", () => {
     const out = await handleEstimate({ provider, gate: gateFor(undefined), dailyLimit: 60 }, "Bearer t", b);
     expect(out.status).toBe(400);
     expect(provider.calls).toHaveLength(0);
+  });
+});
+
+describe("piatto scritto a mano: Piatto / Peso / Ingredienti (T8.0)", () => {
+  it("il prompt chiede di stimare per il peso scritto e di restituirlo", () => {
+    expect(SYSTEM_PROMPT).toContain("Peso: 150 g");
+    expect(SYSTEM_PROMPT).toContain("per quel peso totale");
+    expect(SYSTEM_PROMPT).toContain("weightG uguale al peso scritto");
+  });
+  it("il provider finto rispetta il peso scritto, e senza peso usa il suo", () => {
+    const withWeight = demoEstimate({ text: "Piatto: Hummus\nPeso: 150 g\nIngredienti: ceci, tahina", localTime: "13:00" });
+    expect(withWeight.meals[0].dishes[0]).toMatchObject({ name: "Hummus", weightG: 150, quantity: "ceci, tahina", quantityAssumed: false });
+    const without = demoEstimate({ text: "Piatto: Hummus", localTime: "13:00" });
+    expect(without.meals[0].dishes[0]).toMatchObject({ name: "Hummus", weightG: 185, quantityAssumed: true });
   });
 });

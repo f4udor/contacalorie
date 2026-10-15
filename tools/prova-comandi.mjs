@@ -255,7 +255,7 @@ try {
     await settle(page2);
     rows.push({ label: "Manuale vuoto", pos: await dialogPos(page2) });
     await dlg(page2).getByLabel("Nome", { exact: true }).fill("Spaghetti");
-    await dlg(page2).getByLabel("Quantità", { exact: true }).fill("80 g di pasta");
+    await dlg(page2).getByLabel("Ingredienti", { exact: true }).fill("80 g di pasta");
     await inDialog(page2, "button", "Stima con l'AI").click();
     await settle(page2, 700);
     rows.push({ label: "Manuale stima in errore", pos: await dialogPos(page2) });

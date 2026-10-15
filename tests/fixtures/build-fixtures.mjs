@@ -146,15 +146,7 @@ add("pannello-pasto-compilato", "Inserimento manuale compilato, con la fascia Co
   fisso: true,
   passi: [apri, manuale, { fill: ["Nome", "Toast e caffè"] }, { select: ["Pasto", "colazione"] }, { fill: ["Calorie", "420"] }, { fill: ["Proteine", "18,5", true] }, { fill: ["Carboidrati", "52", true] }],
 });
-add("pannello-libero-usato", "La settimana ha già un pasto libero: l'interruttore è disattivato e spiega perché.", "2026-01-08", giornoPasti({ meals: [meal("2026-01-06", "cena", "Pizza", 1100, 40, 130, 42, 6, 4.2, { isFree: true })] }), {
-  fisso: true,
-  passi: [apri, manuale, { scrollTo: "Pasto libero" }],
-});
 add("pannello-modifica", "Modifica di un pasto già inserito.", "2026-01-08", giornoPasti(), { fisso: true, passi: [{ click: "Pasta al pomodoro" }] });
-add("pannello-modifica-libero", "Modifica del pasto libero: l'interruttore resta attivo, è proprio quello della settimana.", "2026-01-08", giornoPasti(), {
-  fisso: true,
-  passi: [{ click: "Pizza al taglio" }, { scrollTo: "Pasto libero" }],
-});
 add("pannello-elimina", "Eliminazione: chiede conferma prima di cancellare.", "2026-01-08", giornoPasti(), { fisso: true, passi: [{ click: "Pasta al pomodoro" }, { click: "Elimina piatto" }] });
 // --- Colori dell'anello (T5b.1): obiettivo 2.100, nel giorno solo i kcal indicati.
 const giornoKcal = (kcal) => data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", kcal, Math.round(kcal / 15), Math.round(kcal / 9), Math.round(kcal / 30), 8, 2)] });
@@ -272,21 +264,8 @@ const pranzo2 = giornoPiatti([
 add("pannello-aggiungi-piatto", "'Aggiungi piatto' dentro il pranzo: si apre su AI con 'Pranzo' come titolo; sotto solo Preferiti.", "2026-01-05", pranzo2, { fisso: true, passi: [{ click: "+ Aggiungi piatto" }] });
 add("pannello-aggiungi-piatto-manuale", "'Aggiungi piatto' dentro il pranzo, su Manuale: la fascia è già scelta e non si chiede; sotto solo Preferiti.", "2026-01-05", pranzo2, { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, manuale] });
 add("dopo-aggiungi-piatto", "Dopo aver aggiunto 'Insalata' (80 kcal, 150 g) al pranzo: il totale del pasto passa da 800 a 880 kcal.", "2026-01-05", pranzo2, {
-  passi: [{ click: "+ Aggiungi piatto" }, manuale, { fill: ["Nome", "Insalata"] }, { fill: ["Quantità", "150 g"] }, { fill: ["Calorie", "80"] }, salvaScheda, { wait: 600 }],
+  passi: [{ click: "+ Aggiungi piatto" }, manuale, { fill: ["Nome", "Insalata"] }, { fill: ["Ingredienti", "150 g"] }, { fill: ["Calorie", "80"] }, salvaScheda, { wait: 600 }],
 });
-add("pannello-aggiungi-piatto-libero", "Aggiungere un piatto a un pasto libero: l'interruttore è già attivo e vale per tutto il pasto.", "2026-01-05", giornoPiatti([
-  meal("2026-01-05", "cena", "Pizza", 900, 30, 120, 30, 5, 3.5, { isFree: true }),
-]), { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, manuale, { scrollTo: "Pasto libero" }] });
-add("pannello-piatto-generale-pasto-libero", "Dal + generale, scegliendo la cena che è già un pasto libero: l'interruttore si accende da solo, così il piatto non toglie il segno al pasto.", "2026-01-05", giornoPiatti([
-  meal("2026-01-05", "cena", "Pizza", 900, 30, 120, 30, 5, 3.5, { isFree: true }),
-]), { fisso: true, passi: [apri, manuale, { select: ["Pasto", "cena"] }, { scrollTo: "Pasto libero" }] });
-add("dopo-pasto-libero", "Pasto libero attivato sul pranzo di due piatti: l'etichetta e il tetto valgono per tutto il pasto (800 su 800 kcal).", "2026-01-05", pranzo2, {
-  passi: [{ click: "Pasta al pomodoro" }, { clickRole: { role: "switch", name: "Pasto libero" } }, { click: "Salva", exact: true }, { wait: 600 }],
-});
-add("pannello-pasto-libero-bloccato", "Un altro pasto della settimana è già libero: l'interruttore è spento e spiega perché.", "2026-01-07", giornoPiatti([
-  meal("2026-01-06", "cena", "Pizza", 1100, 40, 130, 42, 6, 4.2, { isFree: true }),
-  meal("2026-01-07", "pranzo", "Riso", 400, 8, 80, 3, 2, 0.2),
-]), { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, manuale, { scrollTo: "Pasto libero" }] });
 
 // --- Accesso con email e codice (T3.4): schermate con l'accesso dimostrativo (senza Supabase)
 const accesso = (id, descrizione, passi, extra = {}) =>
@@ -369,10 +348,10 @@ add("oggi-quantita-lunga", "Oggi con un piatto dalla quantità lunga (sei ingred
   settings: { weightKg: 100 },
   meals: [meal("2026-01-08", "pranzo", "Polpette di maiale al sugo", 720, 48, 42, 38, 5, 2.4, { quantity: polpette }), meal("2026-01-08", "pranzo", "Pasta al pomodoro", 430, 14, 82, 6, 5, 1.2, { quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio" })],
 }));
-add("pannello-quantita-lunga", "Toccando il piatto con la quantità lunga si legge per intero nel campo Quantità.", "2026-01-08", data({
+add("pannello-quantita-lunga", "Toccando il piatto con la quantità lunga si legge per intero nel campo Ingredienti.", "2026-01-08", data({
   settings: { weightKg: 100 },
   meals: [meal("2026-01-08", "pranzo", "Polpette di maiale al sugo", 720, 48, 42, 38, 5, 2.4, { quantity: polpette })],
-}), { fisso: true, passi: [{ click: "Polpette di maiale al sugo" }, { scrollTo: "Quantità" }] });
+}), { fisso: true, passi: [{ click: "Polpette di maiale al sugo" }, { scrollTo: "Ingredienti" }] });
 aiScen("ai-proposta-ricetta", "Proposta con tre piatti dalla quantità lunga e la regola del crudo scritta nella quantità: la riga va a capo (al massimo due righe) senza coprire le kcal.", { risposte: [prop({ slot: "pranzo", dishes: [dish("Polpette di maiale al sugo", polpette, true, 720, 48, 42, 38, 5, 2.4, "Ho ipotizzato quattro polpette."), dish("Pasta al pomodoro", "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", false, 430, 14, 82, 6, 5, 1.2, "100 g di pasta intesi a crudo.")] })] }, [scrivi("polpette al sugo e pasta al pomodoro 100 g"), stima, { wait: 600 }]);
 
 // --- Scheda del piatto unica (T5c.0): intestazione fissa Chiudi · titolo · Salva
@@ -417,7 +396,7 @@ aiScen("piatto-stima-segnalato", "Piatto a mano stimato con l'AI con kcal troppo
 
 // --- Piatto a mano con stima (T4.3)
 const pesto = prop({ slot: "pranzo", dishes: [dish("Spaghetti al pesto", "80 g pasta a crudo, 20 g pesto alla genovese", false, 480, 15, 70, 16, 4, 1.3, "Pasta con circa 20 g di pesto alla genovese.")] });
-const aMano = [manuale, { fill: ["Nome", "Spaghetti al pesto"] }, { fill: ["Quantità", "80 g di pasta"] }];
+const aMano = [manuale, { fill: ["Nome", "Spaghetti al pesto"] }, { fill: ["Ingredienti", "80 g di pasta"] }];
 aiScen("piatto-stima-vuoto", "Piatto a mano con l'AI attiva: nome e quantità scritti, kcal vuote; compare 'Stima con AI' e il campo Kcal non ha più l'asterisco.", { risposte: [pesto] }, aMano);
 aiScen("piatto-stima-fatto", "Dopo 'Stima con AI': kcal e macro riempiti, riga 'Stimato con l'AI: controlla i numeri' con la nota del modello.", { risposte: [pesto] }, [...aMano, btn("Stima con l'AI"), { wait: 600 }]);
 aiScen("piatto-stima-senza-kcal", "Salvataggio con le kcal vuote e l'AI attiva: errore accanto al campo che indica anche la stima.", { risposte: [pesto] }, [...aMano, salvaScheda, { wait: 300 }]);
@@ -643,7 +622,7 @@ add("oggi-scorrimento-a-destra", "Scorrimento verso destra: non succede nulla.",
 settScheda("settimana-pannello-passi-precedente", "Pannello Passi: la freccia indietro carica la settimana prima (28 set – 4 ott) dentro il pannello, che ora ha la freccia avanti attiva e il ritorno a questa settimana attivo.", settimanaPiena, [tocca("Passi"), { clickRole: { role: "button", name: "Settimana precedente", exact: true } }, { wait: 500 }]);
 settScheda("settimana-pannello-cambio-non-tocca-schermata", "Dopo aver cambiato settimana nel pannello Passi e averlo chiuso, la schermata sotto è rimasta sulla sua settimana (5 – 11 gennaio).", settimanaPiena, [tocca("Passi"), { clickRole: { role: "button", name: "Settimana precedente", exact: true } }, { wait: 500 }, { clickRole: { role: "button", name: "Chiudi", exact: true } }]);
 settScheda("settimana-pannello-bici-precedente", "Pannello Bici su una settimana senza uscite (la precedente): numero con trattino e griglia vuota, nessun elenco, «Aggiungi uscita in bici» in fondo.", settimanaPiena, [tocca("Bici"), { clickRole: { role: "button", name: "Settimana precedente", exact: true } }, { wait: 500 }]);
-settScheda("settimana-pannello-libero-aggiungi", "«Aggiungi pasto libero» (settimana corrente): si apre Aggiungi sul giorno di oggi, con il giorno modificabile, su Manuale l'interruttore «Pasto libero» è già acceso.", settimanaPiena, [tocca("Pasto libero"), { click: "Aggiungi pasto libero", exact: true }, { clickRole: { role: "radio", name: "Manuale" } }, { scrollTo: "Tutto il pasto conta" }]);
+settScheda("settimana-pannello-libero-aggiungi", "«Aggiungi pasto libero» (settimana corrente): si apre Aggiungi sul giorno di oggi, con il giorno modificabile, su Manuale la scheda non ha più l'interruttore (si segna solo nella proposta e nel pannello Pasto libero).", settimanaPiena, [tocca("Pasto libero"), { click: "Aggiungi pasto libero", exact: true }, { clickRole: { role: "radio", name: "Manuale" } }]);
 scenarios.push({ id: "settimana-pannello-libero-aggiungi-passata", descrizione: "«Aggiungi pasto libero» da una settimana passata (5 – 11 gennaio, oggi è il 15): Aggiungi si apre sull'ultimo giorno di quella settimana (domenica 11), modificabile.", oggi: "2026-01-15", percorso: "/settimana?w=2026-01-05", dati: settimanaPiena, scorre: true, fisso: true, passi: [tocca("Pasto libero"), { click: "Aggiungi pasto libero", exact: true }, { clickRole: { role: "radio", name: "Manuale" } }] });
 scenarios.push({ id: "settimana-pannello-libero-passata", descrizione: "Pannello Pasto libero di una settimana passata: frecce, ritorno a questa settimana attivo, la freccia avanti c'è finché non si arriva alla settimana corrente.", oggi: "2026-01-15", percorso: "/settimana?w=2026-01-05", dati: settimanaPiena, scorre: true, fisso: true, passi: [tocca("Pasto libero")] });
 settScheda("settimana-pannello-bici-aggiungi-giorno", "«Aggiungi uscita in bici»: si apre il modulo sul giorno proposto (oggi), con titolo «Uscita in bici».", settimanaPiena, [tocca("Bici"), { click: "Aggiungi uscita in bici", exact: true }]);
@@ -704,10 +683,6 @@ add("pannello-piatto-peso-errore", "Peso non valido (12,5): «Salva» mostra l'e
 // --- Quantità ricalcolata senza AI (T7.1)
 const pastaPesata = data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pasta al pomodoro", 300, 12, 40, 8, 4, 1, { quantity: "200 g pasta cotta", weightG: 200 })] });
 add("pannello-piatto-peso-ricalcolato", "Piatto di 200 g (300 kcal, carboidrati 40): scritto 250 nel campo «Peso (g)», kcal e nutrienti si ricalcolano subito (375 kcal, carboidrati 50), senza AI.", "2026-01-08", pastaPesata, { fisso: true, passi: [{ click: "Pasta al pomodoro" }, { fill: ["Peso (g)", "250"] }] });
-const dolceSenzaPeso = data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "cena", "Torta", 420, 10, 30, 13.3, 2, 1, { quantity: "1 fetta" })] });
-add("pannello-piatto-porzioni", "Piatto senza peso: la riga «Porzioni» con ×0,5, ×1, ×1,5, ×2 e un numero a mano, all'apertura su ×1.", "2026-01-08", dolceSenzaPeso, { fisso: true, passi: [{ click: "Torta" }] });
-add("pannello-piatto-porzioni-ricalcolato", "Porzioni ×1,5: 630 kcal e grassi 20,0, senza AI.", "2026-01-08", dolceSenzaPeso, { fisso: true, passi: [{ click: "Torta" }, { clickRole: { role: "radio", name: "×1,5" } }] });
-add("pannello-piatto-porzioni-aggiunta", "Aggiunta a mano: la riga «Porzioni» c'è anche in un piatto nuovo.", "2026-01-08", data({ settings: { weightKg: 100 } }), { fisso: true, passi: [apri, manuale] });
 
 // --- Etichette dei preferiti nella stima (T7.2)
 const hummusF = { ...fav("h1", "Hummus fatto in casa", "150 g", 150, 7.5, 10, 9, 4, 0.5), weightG: 150 };
@@ -724,6 +699,14 @@ add("ai-preferiti-etichette", "Il campo con due etichette (tessere con il nome d
 add("ai-preferiti-proposta", "Proposta con due piatti «dai tuoi preferiti» (Hummus 100 g → 100 kcal; Caffè ×2 → 40 kcal) e uno stimato (Mela, «ipotizzata»); i piatti dai preferiti non hanno il controllo di coerenza.", "2026-01-08", datiPreferiti, { fisso: true, ai: { risposte: [prop(pastoPreferiti([{ ref: 1, quantitySaid: true, grams: 100, servings: null }, { ref: 2, quantitySaid: true, grams: null, servings: 2 }]))] }, passi: [...dueEtichette, ...stimaPreferiti] });
 add("ai-preferiti-sconosciuto", "Il modello risponde con un riferimento che non esiste (7): il piatto si scarta e un avviso breve lo dice; il resto della proposta resta.", "2026-01-08", datiPreferiti, { fisso: true, ai: { risposte: [prop(pastoPreferiti([{ ref: 1, quantitySaid: true, grams: 100, servings: null }, { ref: 7, quantitySaid: true, grams: 50, servings: null }]))] }, passi: [...dueEtichette, ...stimaPreferiti] });
 add("ai-preferiti-peso-sconosciuto", "Preferito senza peso con i grammi detti (Caffè «100 g»): contata una porzione, con l'avviso «Peso del preferito sconosciuto».", "2026-01-08", datiPreferiti, { fisso: true, ai: { risposte: [prop({ slot: "pranzo", freeMeal: false, dishes: [], favorites: [{ ref: 1, quantitySaid: true, grams: 100, servings: null }] })] }, passi: [apri, campo, ...scegli("Caffè con zucchero"), { typeText: "100 g" }, ...stimaPreferiti] });
+
+// --- Scheda del piatto: nome, peso, ingredienti (T8.0)
+const hummusStima = prop({ slot: "pranzo", dishes: [{ ...dish("Hummus", "ceci, tahina, olio, limone", false, 250, 9, 18, 15, 6, 0.8, "Hummus casalingo."), weightG: 150 }] });
+const compilaHummus = [{ click: "+ Aggiungi piatto" }, manuale, { fill: ["Nome", "Hummus"] }, { fill: ["Peso (g)", "150"] }, { fill: ["Ingredienti", "ceci, tahina, olio, limone"] }];
+add("pannello-piatto-8-prima", "Aggiungi piatto a pranzo in Manuale (fascia fissata): ordine Nome, Peso, Ingredienti, tasto «Stima con l'AI»; nessuna riga Pasto, Porzioni o Pasto libero.", "2026-01-05", pranzo2, { fisso: true, ai: { risposte: [hummusStima] }, passi: compilaHummus });
+add("pannello-piatto-8-dopo", "Dopo «Stima con l'AI» per 150 g: numeri riempiti e riga «Stimati dall'AI per 150 g».", "2026-01-05", pranzo2, { fisso: true, ai: { risposte: [hummusStima] }, passi: [...compilaHummus, btn("Stima con l'AI"), { wait: 700 }] });
+add("pannello-piatto-8-senza-peso", "Aggiungi piatto senza peso: dopo la stima la riga dice «Stimati dall'AI: controlla i numeri».", "2026-01-05", pranzo2, { fisso: true, ai: { risposte: [hummusStima] }, passi: [{ click: "+ Aggiungi piatto" }, manuale, { fill: ["Nome", "Hummus"] }, btn("Stima con l'AI"), { wait: 700 }] });
+add("pannello-piatto-8-senza-fascia", "Dal + generale la fascia non è fissata: la riga Pasto resta, in fondo ai numeri.", "2026-01-08", data({ settings: { weightKg: 100 } }), { fisso: true, passi: [apri, manuale, { scrollTo: "Pasto" }] });
 
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));

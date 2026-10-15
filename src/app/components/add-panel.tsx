@@ -141,16 +141,14 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Apert
             values={form.values}
             onChange={form.patch}
             errors={form.errors}
-            freeAllowedFor={freeAllowedFor}
             mealIsFreeFor={existingFree}
             lockedSlot={initialSlot !== undefined}
-            freeMealCap={settings.freeMealCap}
             aiAvailable={form.aiAvailable}
             aiBusy={form.busy}
             aiError={form.aiError}
             aiNote={form.aiNote}
             onEstimate={form.estimate}
-            portion={form.portion}
+            aiForWeightG={form.aiForWeightG}
           />
           {menu}
         </div>
@@ -178,7 +176,7 @@ export function AddPanel(ctx: PanelContext & { initialSlot?: MealSlot; /** Apert
 
 /** Scheda di modifica di un piatto: la stessa dell'aggiunta, aperta su Manuale. In fondo, separati, "Elimina" e l'azione sui preferiti. */
 export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecord }) {
-  const { store, days, settings, onChanged, onClose } = ctx;
+  const { store, days, onChanged, onClose } = ctx;
   const [mode, setMode] = useState<Mode>("manuale");
   const [favoriteStatus, setFavoriteStatus] = useState<string | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -275,15 +273,13 @@ export function EditMealPanel({ meal, ...ctx }: PanelContext & { meal: MealRecor
             values={form.values}
             onChange={form.patch}
             errors={form.errors}
-            freeAllowedFor={freeAllowedFor}
             mealIsFreeFor={(slot) => isMealFree(days.find((d) => d.date === meal.date)?.meals ?? [], slot, meal.id)}
-            freeMealCap={settings.freeMealCap}
             aiAvailable={form.aiAvailable}
             aiBusy={form.busy}
             aiError={form.aiError}
             aiNote={form.aiNote}
             onEstimate={form.estimate}
-            portion={form.portion}
+            aiForWeightG={form.aiForWeightG}
           />
         </div>
         {mode === "ai" && <DishEditAi values={form.values} busy={form.busy} error={form.aiError} note={form.aiNote} onCorrect={form.correct} />}

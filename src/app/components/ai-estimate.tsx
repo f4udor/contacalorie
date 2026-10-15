@@ -251,7 +251,7 @@ export function AiEstimate({ store, date, free, freeMealCap, onChanged, onClose,
                       <FieldRow label="Nome" htmlFor={`name-${d.key}`}>
                         <RowInput id={`name-${d.key}`} value={d.name} onChange={(v) => setDish(meal.key, d.key, { name: v })} />
                       </FieldRow>
-                      <FieldRow label="Quantità" htmlFor={`qty-${d.key}`}>
+                      <FieldRow label="Ingredienti" htmlFor={`qty-${d.key}`}>
                         <RowTextarea id={`qty-${d.key}`} value={d.quantity} onChange={(v) => setDish(meal.key, d.key, { quantity: v, quantityAssumed: false })} />
                       </FieldRow>
                       {DISH_NUMBER_KEYS.map((k) => {

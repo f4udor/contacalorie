@@ -93,3 +93,14 @@ export function applyCorrection(v: MealFormValues, proposal: MealProposal): { va
   }
   return { values: withNumbers, note: notes.join(" ") };
 }
+
+/** La riga sotto «Stima con l'AI» dopo una stima (BRIEF §4.2): con il peso scritto dice per quanti grammi, senza peso invita a controllare. */
+export function aiEstimateHeadline(weightG: number | null): string {
+  return weightG !== null ? `Stimati dall'AI per ${weightG} g` : "Stimati dall'AI: controlla i numeri";
+}
+
+/** Le righe della scheda del piatto in Manuale, nell'ordine (BRIEF §4.2). «pasto» c'è solo se la fascia non è già fissata; niente «porzioni» né «pasto libero». */
+export function dishSheetFields(lockedSlot: boolean): readonly string[] {
+  const fields = ["nome", "peso", "ingredienti", "stima", "calorie", "proteine", "carboidrati", "grassi", "fibre", "sale"];
+  return lockedSlot ? fields : [...fields, "pasto"];
+}

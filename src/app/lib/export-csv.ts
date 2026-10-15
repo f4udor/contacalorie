@@ -58,7 +58,7 @@ export function dishesCsv(data: Pick<StoredData, "meals">): CsvFile {
     m.isFree ? "sì" : "no",
   ]);
   return {
-    content: toCsv(["Data", "Pasto", "Piatto", "Quantità", "Peso (g)", "Kcal", "Proteine (g)", "Carboidrati (g)", "Grassi (g)", "Fibre (g)", "Sale (g)", "Libero"], rows),
+    content: toCsv(["Data", "Pasto", "Piatto", "Ingredienti", "Peso (g)", "Kcal", "Proteine (g)", "Carboidrati (g)", "Grassi (g)", "Fibre (g)", "Sale (g)", "Libero"], rows),
     rows: rows.length,
   };
 }

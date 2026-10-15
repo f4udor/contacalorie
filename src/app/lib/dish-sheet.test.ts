@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { MealProposal } from "@/modules/ai";
-import { applyCorrection, applyNumbers, canSaveDish, estimateSourceText, hasWritten, isDirty, valuesToProposal } from "./dish-sheet";
+import { aiEstimateHeadline, applyCorrection, applyNumbers, canSaveDish, estimateSourceText, dishSheetFields, hasWritten, isDirty, valuesToProposal } from "./dish-sheet";
 import { emptyMealForm } from "./meal-form";
 import type { MealFormValues } from "./meal-form";
 
@@ -95,5 +95,22 @@ describe("peso del piatto (T7.0)", () => {
   });
   it("scrivere il peso rende il piatto salvabile in modifica (è un campo del modulo)", () => {
     expect(canSaveDish({ ...pasta, weightG: "150" }, pasta)).toBe(true);
+  });
+});
+
+describe("scheda del piatto in Manuale (T8.0, BRIEF §4.2)", () => {
+  it("l'ordine è Nome, Peso, Ingredienti, Stima, i numeri; nessuna riga Porzioni né Pasto libero", () => {
+    const fields = dishSheetFields(false);
+    expect(fields.slice(0, 5)).toEqual(["nome", "peso", "ingredienti", "stima", "calorie"]);
+    expect(fields).not.toContain("porzioni");
+    expect(fields).not.toContain("pasto libero");
+  });
+  it("la riga Pasto c'è solo se la fascia non è fissata", () => {
+    expect(dishSheetFields(false)).toContain("pasto");
+    expect(dishSheetFields(true)).not.toContain("pasto");
+  });
+  it("la riga sotto il tasto dice per quanti grammi, o invita a controllare", () => {
+    expect(aiEstimateHeadline(150)).toBe("Stimati dall'AI per 150 g");
+    expect(aiEstimateHeadline(null)).toBe("Stimati dall'AI: controlla i numeri");
   });
 });

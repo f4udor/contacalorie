@@ -57,20 +57,32 @@ export async function fetchAiAvailable(doFetch: Fetch = fetch as unknown as Fetc
 
 export type DishEstimateResult = { ok: true; numbers: Record<DishNumberKey, number>; weightG: number | null; note: string } | { ok: false; code: AiErrorCode; message: string };
 
-/** Stima i numeri di un piatto scritto a mano, dal nome e dalla quantità. Se il modello li divide in più piatti si sommano. */
+/** Ciò che l'utente ha scritto nella scheda del piatto: nome, peso in grammi (facoltativo) e ingredienti (facoltativi). */
+export interface DishDescription {
+  name: string;
+  weightG: number | null;
+  ingredients: string;
+}
+
+/** Il testo mandato al modello per «Stima con l'AI» (BRIEF §4.2): nome, peso e ingredienti, ciascuno su una riga e solo se presenti. */
+export function composeDishText({ name, weightG, ingredients }: DishDescription): string {
+  const lines = [`Piatto: ${name.trim()}`];
+  if (weightG !== null) lines.push(`Peso: ${weightG} g`);
+  if (ingredients.trim() !== "") lines.push(`Ingredienti: ${ingredients.trim()}`);
+  return lines.join("\n");
+}
+
+/** Stima i numeri di un piatto scritto a mano, dal nome, dal peso e dagli ingredienti. Se il modello li divide in più piatti si sommano; il peso scritto prevale. */
 export async function estimateDish(
-  name: string,
-  quantity: string,
+  dish: DishDescription,
   getToken: (() => Promise<string | null>) | null,
   doFetch?: Fetch,
   now?: Date,
 ): Promise<DishEstimateResult> {
-  const n = name.trim();
-  const q = quantity.trim();
-  const r = await requestEstimate({ text: q ? `${n}, ${q}` : n }, getToken, doFetch, now);
+  const r = await requestEstimate({ text: composeDishText(dish) }, getToken, doFetch, now);
   if (!r.ok) return r;
   const { notes, weightG, ...numbers } = sumProposal(r.proposal);
-  return { ok: true, numbers, weightG, note: notes.join(" ") };
+  return { ok: true, numbers, weightG: dish.weightG ?? weightG, note: notes.join(" ") };
 }
 
 /** Ciò che il server dice della stima automatica (per la pagina Collegamenti): attiva o no, nome leggibile del modello, limite al giorno e stime di oggi. */

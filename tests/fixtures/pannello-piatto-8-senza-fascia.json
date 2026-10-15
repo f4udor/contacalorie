@@ -1,6 +1,6 @@
 {
-  "id": "pannello-piatto-porzioni-aggiunta",
-  "descrizione": "Aggiunta a mano: la riga «Porzioni» c'è anche in un piatto nuovo.",
+  "id": "pannello-piatto-8-senza-fascia",
+  "descrizione": "Dal + generale la fascia non è fissata: la riga Pasto resta, in fondo ai numeri.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -27,6 +27,9 @@
         "role": "radio",
         "name": "Manuale"
       }
+    },
+    {
+      "scrollTo": "Pasto"
     }
   ]
 }
