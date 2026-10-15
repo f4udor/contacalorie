@@ -745,7 +745,7 @@ Vincoli di questa fase:
 - **Solo etichette, niente AI**: funzione pura che riconosce un testo fatto solo di etichette e quantità semplici (forme in §4.1) e la fascia dall'ora; in quel caso "Stima" compone la proposta senza chiamare il modello né consumare il limite giornaliero.
 - Test: casi AW, AX, AY; tutte le forme di quantità semplice; confini delle fasce orarie (10:59/11:00, 14:59/15:00, 18:29/18:30, 04:59/05:00); fascia fissata che prevale sull'ora; nessuna chiamata al provider con sole etichette; pasto con etichetta in una frase che va al modello. Aggiorna `prova-comandi` e `prova-scorrimento` per l'elenco nuovo. Screenshot: elenco con pasti e piatti, campo con un'etichetta di pasto e una di piatto, proposta composta senza AI.
 
-### T8.6 Report di fase · da fare
+### T8.6 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-8.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: nessun SQL da eseguire; un controllo da fare sul telefono per ogni task, partendo da "Aggiungi piatto" a pranzo in Manuale con nome e peso.
 
 ## Fase 9: Trend

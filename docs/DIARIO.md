@@ -95,6 +95,7 @@ Una riga per task chiuso.
 - T8.3 · fatto · cause nell'app: il caso AS (grammi detti di un preferito senza peso) segnava «ipotizzata» (corretto in T8.1: ora la quantità è detta); il resto dipende dal modello, che segnava «ipotizzata» anche con la quantità detta se aggiungeva ingredienti o con un numero di pezzi: prompt rinforzato con regola ed esempi e provider finto che distingue i casi. Test in `assumed-quantity.test.ts`.
 - T8.4 · fatto · Saldo: testo «di margine» / «da recuperare» / «in pari» (`balanceCaption`), trattino con nessuna riga ma stesso spazio e stessa misura di quello di Media; Oggi: riga di composizione sempre presente («Base 2.100»), `hasCompositionDetail` e test aggiornati; misure in `prova-comandi` (altezza scheda Calorie 227,5 px in tutti i giorni, trattini 14×34 uguali).
 - T8.5 · fatto · tolta la riga «Preferiti» e il suo pannello; il tasto nel campo apre un elenco unico con pasti e piatti (ricerca, tocco = etichetta, scorrimento = Modifica/Elimina); etichetta di pasto con bordo Comando che nella proposta diventa i suoi piatti con i numeri salvati; schema esteso (`kind`); «solo etichette» (`routeEstimate`): proposta composta dall'app senza modello né limite, fascia fissata o dall'ora. Casi AW, AX, AY e i confini delle fasce in `label-only.test.ts`.
+- T8.6 · fatto · `docs/REPORT-FASE-8.md` scritto (nessun SQL da eseguire).
 - T6.7 · fatto · `docs/REPORT-FASE-6.md` scritto; pull request verso main aperta a fine fase.
 
 ## Decisioni da confermare
