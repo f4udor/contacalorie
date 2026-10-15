@@ -19,17 +19,19 @@ interface SheetProps {
   /** Riga fissa sotto l'intestazione (es. il selettore AI | Manuale), che non scorre con il contenuto. */
   subHeader?: ReactNode;
   /**
-   * Pannello ad altezza fissa (BRIEF §10.3 «Comandi fermi»): alto uguale qualunque sia il contenuto. Il corpo non scorre da solo:
-   * chi lo usa fa scorrere dentro l'elenco e mette i tasti pieni in `footer`, che resta fermo in fondo.
+   * Pannello ad altezza fissa (BRIEF §10.3 «Comandi fermi»): alto uguale qualunque sia il contenuto, così X, selettori e «Salva»
+   * non cambiano posto. Il corpo scorre dentro il pannello.
    */
   tall?: boolean;
-  /** Solo con `tall`: tasti fissi in fondo al pannello, fuori dall'area che scorre. */
+  /** Solo con `tall`: il corpo non scorre da solo; chi lo usa fa scorrere dentro l'elenco e mette i tasti pieni in `footer`, fermo in fondo. */
+  ownScroll?: boolean;
+  /** Solo con `ownScroll`: tasti fissi in fondo al pannello, fuori dall'area che scorre. */
   footer?: ReactNode;
   children: ReactNode;
 }
 
 /** Pannello che sale dal basso. Si chiude con la X, Esc, un tocco fuori o trascinando verso il basso. */
-export function Sheet({ open, onClose, title, bar, back, subHeader, tall, footer, children }: SheetProps) {
+export function Sheet({ open, onClose, title, bar, back, subHeader, tall, ownScroll, footer, children }: SheetProps) {
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ startY: number; startT: number } | null>(null);
@@ -96,11 +98,13 @@ export function Sheet({ open, onClose, title, bar, back, subHeader, tall, footer
           </div>
         </div>
         {subHeader && <div className="px-4 pb-1 pt-1">{subHeader}</div>}
-        {tall ? (
+        {tall && ownScroll ? (
           <>
             <div className="flex min-h-0 flex-1 flex-col px-4 pt-2">{children}</div>
-            {footer && <div className="px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-3">{footer}</div>}
+            <div className="px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-3">{footer}</div>
           </>
+        ) : tall ? (
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-2">{children}</div>
         ) : (
           <div className="overflow-y-auto px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-2">{children}</div>
         )}

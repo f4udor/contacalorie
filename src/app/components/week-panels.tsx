@@ -186,6 +186,7 @@ export function WeightPanel({ store, initialMonday, today, onChanged, onClose }:
       onClose={onClose}
       title="Peso"
       tall
+      ownScroll
       footer={
         <PillButton filled disabled={busy} onClick={() => setAdding(true)}>
           Aggiungi pesata
@@ -268,6 +269,7 @@ export function ActivityWeekPanel({ kind, store, initialMonday, today, onChanged
       onClose={onClose}
       title={kind === "passi" ? "Passi" : "Bici"}
       tall
+      ownScroll
       footer={
         kind === "bici" ? (
           <PillButton filled disabled={busy || !data} onClick={() => setEditing(defaultDayInWeek(w.dates, today))}>
@@ -412,6 +414,7 @@ export function FreeMealPanel({ store, initialMonday, today, onChanged, onClose 
       onClose={onClose}
       title="Pasto libero"
       tall
+      ownScroll
       footer={
         free ? (
           <PillButton disabled={busy} onClick={() => void run(() => removeFreeMeal(store, free))}>

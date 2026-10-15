@@ -56,7 +56,8 @@ try {
     await new Promise((r) => setTimeout(r, 300));
   }
   const browser = await chromium.launch({ executablePath: process.env.PW_CHROMIUM ?? (existsSync("/opt/pw-browsers/chromium") ? "/opt/pw-browsers/chromium" : undefined) });
-  const newPage = async (url, data, height = 844) => {
+  const newPage = async (url, data, height = 844, opts = {}) => {
+    const today = opts.today ?? TODAY;
     const context = await browser.newContext({ viewport: { width: 390, height }, hasTouch: true, locale: "it-IT", timezoneId: "Europe/Rome" });
     await context.addInitScript((fixed) => {
       const R = Date;
@@ -69,8 +70,18 @@ try {
           return fixed;
         }
       };
-    }, new Date(`${TODAY}T09:00:00+01:00`).getTime());
+    }, new Date(`${today}T09:00:00+01:00`).getTime());
     await context.addInitScript(([k, v]) => localStorage.setItem(k, v), ["personal-health:v1", JSON.stringify(data)]);
+    if (opts.ai) {
+      // Stima automatica finta: risposte in ordine (l'ultima si ripete); `ritardo` = millisecondi di attesa.
+      const risposte = [...opts.ai];
+      await context.route("**/api/estimate", async (route) => {
+        if (route.request().method() === "GET") return route.fulfill({ json: { available: true } });
+        const r = risposte.length > 1 ? risposte.shift() : risposte[0];
+        if (r.ritardo) await new Promise((res) => setTimeout(res, r.ritardo));
+        return route.fulfill({ status: r.stato ?? 200, json: r.corpo ?? {} });
+      });
+    }
     const page = await context.newPage();
     await page.goto(BASE + url, { waitUntil: "networkidle" });
     return page;
@@ -148,6 +159,148 @@ try {
     const passi = (await page.getByRole("dialog").boundingBox()).height;
     check(`Peso: stessa altezza del pannello Passi (${heights[0]} · ${passi})`, heights[0] === passi);
     await page.context().close();
+  }
+
+  // --- T6b.1: gli altri comandi che si spostano. Ogni confronto misura gli stessi comandi in stati diversi: differenza zero.
+  const byLabel = (page, label) => page.locator(`[aria-label="${label}"]`).filter({ visible: true }).first();
+  const dlg = (page) => page.getByRole("dialog").last();
+  const inDialog = (page, role, name) => dlg(page).getByRole(role, { name, exact: true }).first();
+  const settle = (page, ms = 450) => page.waitForTimeout(ms);
+  const height = async (loc) => Math.round((await loc.boundingBox()).height * 10) / 10;
+
+  // Oggi: giorno con pasti, senza pasti, futuro. Comandi dell'intestazione e tasto +.
+  {
+    const rows = [];
+    const calorie = [];
+    for (const [label, url] of [["con pasti", "/?d=2026-01-07"], ["senza pasti", "/?d=2026-01-03"], ["futuro", "/?d=2026-01-12"]]) {
+      const page = await newPage(url, baseData());
+      const pos = {
+        "freccia indietro": await topOf(byLabel(page, "Giorno precedente")),
+        "ritorno al presente": await topOf(byLabel(page, "Torna a oggi")),
+        "freccia avanti": await topOf(byLabel(page, "Giorno successivo")),
+        ingranaggio: await topOf(byLabel(page, "Impostazioni")),
+        "tasto +": await topOf(byLabel(page, "Aggiungi")),
+        "titolo": await topOf(page.locator("h1")),
+      };
+      calorie.push(`${label} ${await height(page.locator("section", { has: page.getByRole("heading", { name: "Calorie", exact: true }) }).first())}`);
+      rows.push({ label, pos });
+      await page.context().close();
+    }
+    same("Oggi (giorno con pasti → senza → futuro)", rows);
+    // Solo da riferire (non è un comando): la scheda Calorie cambia altezza per la riga di composizione, che il brief (§2) mostra solo se c'è qualcosa oltre alla base.
+    console.log(`-- info: altezza della scheda Calorie di Oggi: ${calorie.join(" · ")}`);
+  }
+
+  // Settimana: con dati, senza dati, corrente appena iniziata (oggi lunedì 12, un solo pasto di oggi).
+  {
+    const rows = [];
+    const casi = [
+      ["con dati", "/settimana?w=2026-01-05", {}],
+      ["senza dati", "/settimana?w=2025-12-22", {}],
+      ["appena iniziata", "/settimana", { today: "2026-01-12" }],
+    ];
+    for (const [label, url, opts] of casi) {
+      const data = label === "appena iniziata" ? baseData({ meals: [meal("2026-01-12", "colazione", "Cappuccino", 120)], activity: [], weighIns: [] }) : baseData();
+      const page = await newPage(url, data, 844, opts);
+      const pos = {
+        "freccia indietro": await topOf(byLabel(page, "Settimana precedente")),
+        "ritorno al presente": await topOf(byLabel(page, "Torna a questa settimana")),
+        "freccia avanti": await topOf(byLabel(page, "Settimana successiva")),
+        ingranaggio: await topOf(byLabel(page, "Impostazioni")),
+        "scheda Calorie (altezza)": await height(page.locator("section", { has: page.getByRole("heading", { name: "Calorie", exact: true }) }).first()),
+        "scheda Passi (altezza)": await height(byLabel(page, "Apri Passi")),
+        "scheda Bici (altezza)": await height(byLabel(page, "Apri Bici")),
+      };
+      rows.push({ label, pos });
+      await page.context().close();
+    }
+    same("Settimana (con dati → senza → corrente appena iniziata)", rows);
+  }
+
+  const proposta = { proposal: { meals: [{ slot: "cena", dishes: [{ name: "Anelli di totano", quantity: "150 g totano, 20 g farina", quantityAssumed: true, kcal: 280, protein: 22, carbs: 18, fat: 14, fiber: 1, salt: 1.4, note: "Ho ipotizzato 150 g di totano." }, { name: "Insalata di pomodorini", quantity: "200 g pomodorini", quantityAssumed: true, kcal: 60, protein: 2, carbs: 8, fat: 2, fiber: 3, salt: 0.1, note: "" }] }] }, originalText: "testo" };
+  const errore = { error: { code: "limite", message: "Hai raggiunto il limite di stime di oggi. Riprova domani o inserisci i numeri a mano." } };
+  const dialogPos = async (page) => ({
+    pannello: await topOf(dlg(page)),
+    "X": await topOf(inDialog(page, "button", "Chiudi")),
+    "selettore AI": await topOf(inDialog(page, "radio", "AI")),
+    "selettore Manuale": await topOf(inDialog(page, "radio", "Manuale")),
+    "Salva": await topOf(inDialog(page, "button", "Salva")),
+  });
+
+  // Pannello Aggiungi (scheda del piatto in aggiunta): AI vuoto, in caricamento, proposta, errore; Manuale vuoto, stima in caricamento, errore.
+  {
+    const rows = [];
+    const page = await newPage("/?d=2026-01-11", baseData(), 844, { ai: [{ ritardo: 1200, corpo: proposta }] });
+    await byLabel(page, "Aggiungi").click();
+    await settle(page);
+    rows.push({ label: "AI vuoto", pos: await dialogPos(page) });
+    await dlg(page).getByLabel("Cosa hai mangiato?").fill("anelli di totano e un'insalata di pomodorini");
+    await inDialog(page, "button", "Stima").click();
+    await settle(page, 400);
+    rows.push({ label: "AI in caricamento", pos: await dialogPos(page) });
+    await settle(page, 1500);
+    rows.push({ label: "AI proposta", pos: await dialogPos(page) });
+    await page.context().close();
+
+    const page2 = await newPage("/?d=2026-01-11", baseData(), 844, { ai: [{ stato: 429, corpo: errore }] });
+    await byLabel(page2, "Aggiungi").click();
+    await settle(page2);
+    await dlg(page2).getByLabel("Cosa hai mangiato?").fill("una pera");
+    await inDialog(page2, "button", "Stima").click();
+    await settle(page2, 700);
+    rows.push({ label: "AI errore", pos: await dialogPos(page2) });
+    await inDialog(page2, "radio", "Manuale").click();
+    await settle(page2);
+    rows.push({ label: "Manuale vuoto", pos: await dialogPos(page2) });
+    await dlg(page2).getByLabel("Nome", { exact: true }).fill("Spaghetti");
+    await dlg(page2).getByLabel("Quantità", { exact: true }).fill("80 g di pasta");
+    await inDialog(page2, "button", "Stima con l'AI").click();
+    await settle(page2, 700);
+    rows.push({ label: "Manuale stima in errore", pos: await dialogPos(page2) });
+    await page2.context().close();
+    same("Pannello Aggiungi / scheda del piatto in aggiunta", rows);
+  }
+
+  // Scheda del piatto in modifica: Manuale ↔ AI, e stima in caricamento / errore.
+  {
+    const rows = [];
+    const page = await newPage("/?d=2026-01-07", baseData(), 844, { ai: [{ ritardo: 1200, stato: 429, corpo: errore }] });
+    await page.getByText("Pranzo 2", { exact: true }).first().click();
+    await settle(page);
+    rows.push({ label: "Manuale", pos: await dialogPos(page) });
+    await inDialog(page, "radio", "AI").click();
+    await settle(page);
+    rows.push({ label: "AI", pos: await dialogPos(page) });
+    await inDialog(page, "radio", "Manuale").click();
+    await settle(page);
+    await inDialog(page, "button", "Stima con l'AI").click();
+    await settle(page, 400);
+    rows.push({ label: "Manuale stima in caricamento", pos: await dialogPos(page) });
+    await settle(page, 1500);
+    rows.push({ label: "Manuale stima in errore", pos: await dialogPos(page) });
+    await page.context().close();
+    same("Scheda del piatto in modifica", rows);
+  }
+
+  // Impostazioni: elenco → pagina interna → ritorno. X nell'elenco e freccia indietro nella pagina stanno nello stesso punto.
+  {
+    const rows = [];
+    const page = await newPage("/?d=2026-01-11", baseData());
+    await byLabel(page, "Impostazioni").click();
+    await settle(page);
+    const lista = async () => ({ pannello: await topOf(dlg(page)), "X / indietro": await topOf(dlg(page).locator('button[aria-label="Chiudi"], button[aria-label="Indietro"]').first()) });
+    rows.push({ label: "elenco", pos: await lista() });
+    await dlg(page).getByRole("button", { name: /^Obiettivi/ }).click();
+    await settle(page);
+    rows.push({ label: "pagina Obiettivi", pos: await lista() });
+    await inDialog(page, "button", "Indietro").click();
+    await settle(page);
+    rows.push({ label: "ritorno all'elenco", pos: await lista() });
+    await dlg(page).getByRole("button", { name: /^Profilo/ }).click();
+    await settle(page);
+    rows.push({ label: "pagina Profilo", pos: await lista() });
+    await page.context().close();
+    same("Impostazioni", rows);
   }
 
   await browser.close();

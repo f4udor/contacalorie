@@ -616,7 +616,7 @@ Difetto visto sul telefono: nel pannello Passi, passando con la freccia da una s
 - Prova automatica con Playwright: per ciascuno dei tre pannelli con le frecce, la posizione verticale di frecce, ritorno al presente e X è identica (differenza zero) tra una settimana con sette giorni di dati, una con due e una vuota.
 - Screenshot: i tre pannelli nella settimana piena e in quella vuota, più il pannello Peso.
 
-### T6b.1 Ricerca degli altri comandi che si spostano · da fare
+### T6b.1 Ricerca degli altri comandi che si spostano · fatto
 Stessa regola, cercata dove non è stata segnalata. Si controlla, non si ridisegna.
 - Con la stessa prova automatica di T6b.0 si misura la posizione dei comandi in questi passaggi:
   - Oggi: giorno con pasti → giorno senza pasti → giorno futuro (frecce, ritorno al presente, ingranaggio, tasto +);
