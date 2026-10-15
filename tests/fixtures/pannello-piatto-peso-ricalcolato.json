@@ -1,0 +1,45 @@
+{
+  "id": "pannello-piatto-peso-ricalcolato",
+  "descrizione": "Piatto di 200 g (300 kcal, carboidrati 40): scritto 250 nel campo «Peso (g)», kcal e nutrienti si ricalcolano subito (375 kcal, carboidrati 50), senza AI.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m494",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 300,
+        "protein": 12,
+        "carbs": 40,
+        "fat": 8,
+        "fiber": 4,
+        "salt": 1,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "200 g pasta cotta",
+        "weightG": 200
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "click": "Pasta al pomodoro"
+    },
+    {
+      "fill": [
+        "Peso (g)",
+        "250"
+      ]
+    }
+  ]
+}

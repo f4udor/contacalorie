@@ -36,7 +36,7 @@ export interface CsvFile {
   rows: number;
 }
 
-/** I piatti: data, pasto, piatto, quantità, kcal, macro, fibre, sale, libero. In ordine di data, fascia e inserimento. */
+/** I piatti: data, pasto, piatto, quantità, peso, kcal, macro, fibre, sale, libero. In ordine di data, fascia e inserimento. */
 export function dishesCsv(data: Pick<StoredData, "meals">): CsvFile {
   const slotIndex = (s: MealSlot) => MEAL_SLOTS.indexOf(s);
   const sorted = data.meals
@@ -48,6 +48,7 @@ export function dishesCsv(data: Pick<StoredData, "meals">): CsvFile {
     SLOT_LABEL[m.slot],
     csvText(m.name),
     csvText(m.quantity),
+    csvNumber(m.weightG),
     csvNumber(m.kcal),
     csvNumber(m.protein),
     csvNumber(m.carbs),
@@ -57,7 +58,7 @@ export function dishesCsv(data: Pick<StoredData, "meals">): CsvFile {
     m.isFree ? "sì" : "no",
   ]);
   return {
-    content: toCsv(["Data", "Pasto", "Piatto", "Quantità", "Kcal", "Proteine (g)", "Carboidrati (g)", "Grassi (g)", "Fibre (g)", "Sale (g)", "Libero"], rows),
+    content: toCsv(["Data", "Pasto", "Piatto", "Quantità", "Peso (g)", "Kcal", "Proteine (g)", "Carboidrati (g)", "Grassi (g)", "Fibre (g)", "Sale (g)", "Libero"], rows),
     rows: rows.length,
   };
 }

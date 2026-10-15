@@ -1,0 +1,39 @@
+{
+  "id": "pannello-piatto-peso",
+  "descrizione": "Scheda del piatto in Manuale con il campo «Peso (g)» già compilato (185) sotto la quantità.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [
+      {
+        "id": "m493",
+        "date": "2026-01-08",
+        "slot": "pranzo",
+        "name": "Pasta al pomodoro",
+        "kcal": 420,
+        "protein": 14,
+        "carbs": 80,
+        "fat": 6,
+        "fiber": 5,
+        "salt": 1.2,
+        "isFree": false,
+        "originalText": null,
+        "quantity": "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio",
+        "weightG": 185
+      }
+    ],
+    "activity": [],
+    "weighIns": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "passi": [
+    {
+      "click": "Pasta al pomodoro"
+    }
+  ]
+}

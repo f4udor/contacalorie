@@ -20,7 +20,8 @@
             "fat": 6,
             "fiber": 5,
             "salt": 1.2,
-            "note": "Ho ipotizzato 80 g di pasta cruda."
+            "note": "Ho ipotizzato 80 g di pasta cruda.",
+            "weightG": 80
           }
         ]
       }

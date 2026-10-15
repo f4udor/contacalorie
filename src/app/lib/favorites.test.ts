@@ -32,7 +32,7 @@ describe("favoriteForDish", () => {
   it("nuovo: id nuovo, senza data, fascia né segno libero", () => {
     const { favorite, updated } = favoriteForDish([], dish("Pasta", "80 g"), ids());
     expect(updated).toBe(false);
-    expect(favorite).toEqual({ id: "id1", name: "Pasta", quantity: "80 g", kcal: 100, protein: 10, carbs: 20, fat: 5, fiber: 2, salt: 0.5 });
+    expect(favorite).toEqual({ id: "id1", name: "Pasta", quantity: "80 g", weightG: null, kcal: 100, protein: 10, carbs: 20, fat: 5, fiber: 2, salt: 0.5 });
   });
   it("stesso nome e quantità (senza maiuscole): aggiorna il preferito esistente", () => {
     const existing: FavoriteDish[] = [{ id: "f9", name: "pasta", quantity: "80 G", kcal: 1, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0 }];
@@ -145,5 +145,32 @@ describe("un piatto è tra i preferiti (T5c.1)", () => {
     const r = favoriteForMeal(existing, " cena LEGGERA ", "cena", [dish("X")], ids());
     expect(r.updated).toBe(true);
     expect(r.favorite.id).toBe("p7");
+  });
+});
+
+describe("il peso nei preferiti (T7.0)", () => {
+  it("salvando un piatto si salva anche il peso", () => {
+    const { favorite } = favoriteForDish([], { ...dish("Hummus", "150 g"), weightG: 150 }, ids());
+    expect(favorite.weightG).toBe(150);
+  });
+  it("un preferito senza peso, salvato di nuovo con il peso (stesso nome e quantità), è aggiornato e non duplicato", () => {
+    const existing: FavoriteDish[] = [{ id: "f9", name: "Hummus", quantity: "150 g", weightG: null, kcal: 1, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0 }];
+    const r = favoriteForDish(existing, { ...dish("Hummus", "150 g"), weightG: 150 }, ids());
+    expect(r.updated).toBe(true);
+    expect(r.favorite).toMatchObject({ id: "f9", weightG: 150 });
+  });
+  it("un preferito già pesato prende il nuovo peso", () => {
+    const existing: FavoriteDish[] = [{ id: "f9", name: "Hummus", quantity: "150 g", weightG: 120, kcal: 1, protein: 0, carbs: 0, fat: 0, fiber: 0, salt: 0 }];
+    expect(favoriteForDish(existing, { ...dish("Hummus", "150 g"), weightG: 180 }, ids()).favorite.weightG).toBe(180);
+  });
+  it("salvando un pasto si salva il peso di ogni piatto", () => {
+    const { favorite } = favoriteForMeal([], "Cena", "cena", [{ ...dish("Totano"), weightG: 150 }, dish("Insalata")], ids());
+    expect(favorite.dishes.map((d) => d.weightG)).toEqual([150, null]);
+  });
+  it("aggiungendo un preferito al giorno il piatto porta con sé il peso", () => {
+    const f: FavoriteDish = { id: "f1", name: "Hummus", quantity: "150 g", weightG: 150, kcal: 150, protein: 7.5, carbs: 10, fat: 9, fiber: 4, salt: 0.5 };
+    expect(recordsFromFavoriteDish(f, "2026-01-07", "cena", ids())[0].weightG).toBe(150);
+    const m: FavoriteMeal = { id: "p1", name: "Cena", slot: "cena", dishes: [f] };
+    expect(recordsFromFavoriteMeal(m, "2026-01-07", "cena", ids())[0].weightG).toBe(150);
   });
 });

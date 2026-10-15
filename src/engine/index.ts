@@ -12,3 +12,4 @@ export * from "./week";
 export * from "./preview";
 export * from "./coherence";
 export * from "./profile";
+export * from "./portion";

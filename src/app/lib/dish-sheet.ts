@@ -6,7 +6,7 @@ import type { DishNumberKey } from "./proposal-form";
 
 const asText = (n: number) => String(n).replace(".", ",");
 
-const TEXT_KEYS = ["name", "quantity", "kcal", "protein", "carbs", "fat", "fiber", "salt"] as const;
+const TEXT_KEYS = ["name", "quantity", "weightG", "kcal", "protein", "carbs", "fat", "fiber", "salt"] as const;
 
 /** Nel modulo c'è scritto qualcosa (nome, quantità o un numero). */
 export function hasWritten(v: MealFormValues): boolean {
@@ -27,6 +27,12 @@ export function canSaveDish(v: MealFormValues, initial: MealFormValues | null, b
   return initial === null ? hasWritten(v) : isDirty(v, initial);
 }
 
+/** Il peso scritto nel modulo come intero positivo; vuoto o non valido → null. */
+function parseWeight(text: string): number | null {
+  const r = parseDecimal(text);
+  return r === "empty" || r === "invalid" || !Number.isInteger(r) || r <= 0 ? null : r;
+}
+
 /** Il piatto del modulo come stima precedente da correggere (numeri vuoti o non validi valgono 0). */
 export function valuesToProposal(v: MealFormValues): MealProposal {
   const num = (t: string) => {
@@ -43,6 +49,7 @@ export function valuesToProposal(v: MealFormValues): MealProposal {
             name: v.name.trim() || "Piatto",
             quantity: v.quantity.trim() || null,
             quantityAssumed: false,
+            weightG: parseWeight(v.weightG),
             note: "",
             kcal: num(v.kcal),
             protein: num(v.protein),
@@ -82,7 +89,7 @@ export function applyCorrection(v: MealFormValues, proposal: MealProposal): { va
   const withNumbers = applyNumbers(v, numbers);
   if (dishes.length === 1) {
     const d = dishes[0];
-    return { values: { ...withNumbers, name: d.name, quantity: d.quantity ?? "" }, note: notes.join(" ") };
+    return { values: { ...withNumbers, name: d.name, quantity: d.quantity ?? "", weightG: d.weightG ? String(d.weightG) : withNumbers.weightG }, note: notes.join(" ") };
   }
   return { values: withNumbers, note: notes.join(" ") };
 }

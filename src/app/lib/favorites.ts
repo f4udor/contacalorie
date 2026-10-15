@@ -11,7 +11,7 @@ export function normalizeText(text: string): string {
 }
 
 export function dishBody(d: Pick<MealRecord, keyof DishBody>): DishBody {
-  return { name: d.name, quantity: d.quantity ?? null, kcal: d.kcal, protein: d.protein, carbs: d.carbs, fat: d.fat, fiber: d.fiber, salt: d.salt };
+  return { name: d.name, quantity: d.quantity ?? null, weightG: d.weightG ?? null, kcal: d.kcal, protein: d.protein, carbs: d.carbs, fat: d.fat, fiber: d.fiber, salt: d.salt };
 }
 
 /** Nome proposto per un pasto salvato: i nomi dei piatti separati da virgola, accorciato. */

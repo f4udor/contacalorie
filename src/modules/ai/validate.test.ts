@@ -57,3 +57,53 @@ describe("parseProposal", () => {
     expect(parseProposal([])).toBeNull();
   });
 });
+
+describe("peso del piatto (T7.0)", () => {
+  const weight = (w: unknown) => parseProposal(meal({ ...dish, weightG: w }))?.meals[0].dishes[0].weightG;
+  it("con il peso: intero, tenuto", () => {
+    expect(weight(185)).toBe(185);
+    expect(weight(185.4)).toBe(185);
+    expect(weight(5000)).toBe(5000);
+  });
+  it("senza il peso la risposta resta valida e il peso è null", () => {
+    expect(parseProposal(meal(dish))).not.toBeNull();
+    expect(weight(undefined)).toBeNull();
+    expect(weight(null)).toBeNull();
+  });
+  it.each([[0], [-20], [5001], [Number.NaN], ["185"]])("peso non valido (%s): si scarta, il piatto resta valido", (w) => {
+    expect(parseProposal(meal({ ...dish, weightG: w }))).not.toBeNull();
+    expect(weight(w)).toBeNull();
+  });
+});
+
+describe("preferiti messi con un'etichetta (T7.2)", () => {
+  const withFavs = (favorites: unknown, dishes: unknown[] = [dish]) => ({ meals: [{ slot: "pranzo", dishes, favorites }] });
+  it("elenco assente: nessun preferito, la risposta resta valida", () => {
+    expect(parseProposal(meal(dish))?.meals[0].favorites).toBeUndefined();
+    expect(parseProposal(withFavs(null))?.meals[0].favorites).toBeUndefined();
+  });
+  it("preferito con grammi o con porzioni", () => {
+    const p = parseProposal(withFavs([{ ref: 1, quantitySaid: true, grams: 100, servings: null }, { ref: 2, quantitySaid: true, grams: null, servings: 1.5 }]));
+    expect(p?.meals[0].favorites).toEqual([
+      { ref: 1, quantitySaid: true, grams: 100, servings: null },
+      { ref: 2, quantitySaid: true, grams: null, servings: 1.5 },
+    ]);
+  });
+  it("quantità non detta: grammi e porzioni si azzerano; «detta» senza numeri vale non detta", () => {
+    const p = parseProposal(withFavs([{ ref: 1, quantitySaid: false, grams: 100, servings: 2 }, { ref: 2, quantitySaid: true, grams: 0, servings: -1 }]));
+    expect(p?.meals[0].favorites).toEqual([
+      { ref: 1, quantitySaid: false, grams: null, servings: null },
+      { ref: 2, quantitySaid: false, grams: null, servings: null },
+    ]);
+  });
+  it("un pasto con solo preferiti è valido; senza piatti né preferiti no", () => {
+    expect(parseProposal(withFavs([{ ref: 1, quantitySaid: false, grams: null, servings: null }], []))).not.toBeNull();
+    expect(parseProposal(withFavs([], []))).toBeNull();
+    expect(parseProposal(withFavs(undefined, []))).toBeNull();
+  });
+  it("riferimento non valido o elenco non valido: risposta non valida", () => {
+    for (const ref of [0, -1, 1.5, "1", 100, null]) expect(parseProposal(withFavs([{ ref, quantitySaid: false, grams: null, servings: null }])), String(ref)).toBeNull();
+    expect(parseProposal(withFavs("sì"))).toBeNull();
+    expect(parseProposal(withFavs([42]))).toBeNull();
+  });
+});

@@ -41,10 +41,16 @@ describe("dishesCsv", () => {
     expect(content.endsWith("\r\n")).toBe(true);
     const l = lines(content);
     expect(rows).toBe(4);
-    expect(l[0]).toBe("Data;Pasto;Piatto;Quantità;Kcal;Proteine (g);Carboidrati (g);Grassi (g);Fibre (g);Sale (g);Libero");
+    expect(l[0]).toBe("Data;Pasto;Piatto;Quantità;Peso (g);Kcal;Proteine (g);Carboidrati (g);Grassi (g);Fibre (g);Sale (g);Libero");
     expect(l.slice(1).map((x) => x.split(";")[2])).toEqual(["colazione1", "pranzo1", "pranzo0", "cena2"]); // stesso pasto: ordine di inserimento
-    expect(l[2]).toBe("2026-01-05;Pranzo;pranzo1;100 g;100;1,5;10;2;3;1,25;no");
-    expect(l[4]).toBe("2026-01-06;Cena;cena2;;900;1,5;10;2;3;0,4;sì");
+    expect(l[2]).toBe("2026-01-05;Pranzo;pranzo1;100 g;;100;1,5;10;2;3;1,25;no");
+    expect(l[4]).toBe("2026-01-06;Cena;cena2;;;900;1,5;10;2;3;0,4;sì");
+  });
+
+  it("il peso del piatto è una colonna: numero intero, vuoto se assente", () => {
+    const l = lines(dishesCsv({ meals: [dish("a", "2026-01-05", "pranzo", { weightG: 185 }), dish("b", "2026-01-05", "cena")] }).content);
+    expect(l[1].split(";")[4]).toBe("185");
+    expect(l[2].split(";")[4]).toBe("");
   });
 
   it("senza piatti: solo l'intestazione", () => {
@@ -55,7 +61,7 @@ describe("dishesCsv", () => {
 
   it("un nome con punto e virgola non rompe le colonne", () => {
     const l = lines(dishesCsv({ meals: [dish("x", "2026-01-05", "pranzo", { name: "pasta; pane" })] }).content);
-    expect(l[1].split(";")).toHaveLength(12); // il ";" dentro il nome fa 1 colonna in più prima di togliere le virgolette
+    expect(l[1].split(";")).toHaveLength(13); // il ";" dentro il nome fa 1 colonna in più prima di togliere le virgolette
     expect(l[1]).toContain('"pasta; pane"');
   });
 });

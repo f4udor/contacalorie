@@ -7,6 +7,8 @@ export interface EstimatedDish {
   quantity: string | null;
   /** Vero se l'utente non l'ha detta e il modello ha ipotizzato una porzione standard. */
   quantityAssumed: boolean;
+  /** Peso del piatto in grammi (intero): la somma dei grammi scritti nella quantità (a crudo per pasta, riso, cereali e legumi secchi). Facoltativo. */
+  weightG?: number | null;
   kcal: number;
   protein: number;
   carbs: number;
@@ -17,12 +19,30 @@ export interface EstimatedDish {
   note: string;
 }
 
+/**
+ * Un preferito inserito come etichetta nel testo («[preferito 1: Hummus fatto in casa]»): il modello non lo stima, restituisce solo in quale
+ * pasto va e la quantità detta. Nome e numeri li scrive l'app dal preferito (BRIEF §4.1).
+ */
+export interface FavoriteMention {
+  /** Il numero di riferimento scritto nell'etichetta (da 1). */
+  ref: number;
+  /** Vero se l'utente ha detto la quantità (in grammi o in porzioni). */
+  quantitySaid: boolean;
+  /** Grammi detti; null se non detti in grammi. */
+  grams: number | null;
+  /** Porzioni dette (0,5, 1, 2…); null se non dette in porzioni. */
+  servings: number | null;
+}
+
 /** I piatti stimati di una fascia. */
 export interface EstimatedMeal {
   slot: MealSlot;
   /** Vero se la persona ha detto espressamente che è un pasto libero (assente = falso). Il tetto di kcal e il limite settimanale li applica il motore. */
   freeMeal?: boolean;
+  /** Piatti stimati dal modello. Può essere vuoto se il pasto ha solo preferiti. */
   dishes: EstimatedDish[];
+  /** Preferiti messi nel pasto con un'etichetta (assente = nessuno). */
+  favorites?: FavoriteMention[];
 }
 
 /** Proposta di pasti: nulla è salvato finché l'utente non conferma. */

@@ -19,6 +19,8 @@ export interface MealRecord extends Meal {
   date: DateKey;
   /** Quantità in testo libero (es. "100 g"); assente o null se non indicata. */
   quantity?: string | null;
+  /** Peso del piatto in grammi (intero, facoltativo): la somma dei grammi della quantità. I piatti già salvati non lo hanno. */
+  weightG?: number | null;
   /** Testo dettato o scritto da cui è nata la stima; null per l'inserimento manuale. */
   originalText: string | null;
 }
@@ -67,6 +69,8 @@ export interface DishBody {
   name: string;
   /** Quantità in testo libero; null se non indicata. */
   quantity: string | null;
+  /** Peso in grammi (intero), se noto: serve a ricalcolare le quantità (BRIEF §4.1). */
+  weightG?: number | null;
   kcal: number;
   protein: number;
   carbs: number;

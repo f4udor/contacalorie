@@ -434,13 +434,13 @@ const preferiti = { favoriteDishes: [pesto2, mela, caffe], favoriteMeals: [
   { id: "p1", name: "Cena leggera", slot: "cena", dishes: [body(fav("x", "Anelli di totano", "150 g", 280, 22, 18, 14, 1, 1.4)), body(fav("y", "Insalata di pomodorini", "1 ciotola", 60, 2, 8, 2, 3, 0.1))] },
   { id: "p2", name: "Colazione solita con cappuccino e cornetto", slot: "colazione", dishes: [body(fav("z", "Cappuccino", "1 tazza", 90, 5, 8, 4, 0, 0.1)), body(fav("w", "Cornetto", "1", 300, 6, 38, 14, 1, 0.5)), body(fav("v", "Spremuta", "200 ml", 90, 1, 20, 0, 0, 0))] },
 ] };
-const apriPreferiti = [apri, { click: "Preferiti", exact: true }];
+const apriPreferiti = [apri, { clickRole: { role: "button", name: "Preferiti", exact: true } }];
 const favScen = (id, descrizione, dati, passi, extra = {}) => add(id, descrizione, "2026-01-08", dati, { fisso: true, passi, ...extra });
 favScen("preferiti-vuoto", "Nessun preferito: spiega come salvarli.", giornoPasti({ meals: [] }), apriPreferiti);
 favScen("preferiti-lista", "Preferiti salvati: pasti (con numero di piatti e kcal totali) e piatti, ogni riga con un + a destra; campo di ricerca (senza il pulsante Modifica); scelta della fascia.", giornoPasti({ meals: [], ...preferiti }), apriPreferiti);
 favScen("preferiti-ricerca", "Ricerca 'caff': trova il pasto e il piatto con quel nome (senza accenti né maiuscole).", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, { fill: ["Cerca", "caff"] }]);
-add("preferiti-fascia-fissata", "Preferiti aperti da '+ Aggiungi piatto' del Pranzo: la scelta della fascia non compare (i piatti vanno nel Pranzo).", "2026-01-05", { ...pranzo2, ...preferiti }, { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, { click: "Preferiti", exact: true }] });
-add("preferiti-fascia-fissata-aggiunto", "Dopo un tocco su 'Mela' dai Preferiti aperti dal Pranzo: la mela è nel Pranzo di quel giorno.", "2026-01-05", { ...pranzo2, ...preferiti }, { passi: [{ click: "+ Aggiungi piatto" }, { click: "Preferiti", exact: true }, { clickRole: { role: "button", name: "Aggiungi Mela" } }, { wait: 700 }] });
+add("preferiti-fascia-fissata", "Preferiti aperti da '+ Aggiungi piatto' del Pranzo: la scelta della fascia non compare (i piatti vanno nel Pranzo).", "2026-01-05", { ...pranzo2, ...preferiti }, { fisso: true, passi: [{ click: "+ Aggiungi piatto" }, { clickRole: { role: "button", name: "Preferiti", exact: true } }] });
+add("preferiti-fascia-fissata-aggiunto", "Dopo un tocco su 'Mela' dai Preferiti aperti dal Pranzo: la mela è nel Pranzo di quel giorno.", "2026-01-05", { ...pranzo2, ...preferiti }, { passi: [{ click: "+ Aggiungi piatto" }, { clickRole: { role: "button", name: "Preferiti", exact: true } }, { clickRole: { role: "button", name: "Aggiungi Mela" } }, { wait: 700 }] });
 favScen("preferiti-nessun-risultato", "Ricerca senza risultati: messaggio.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, { fill: ["Cerca", "zzz"] }]);
 add("preferiti-dopo-aggiunta", "Dopo un tocco su 'Cena leggera' con la fascia Spuntino: i due piatti compaiono nello Spuntino di oggi.", "2026-01-08", giornoPasti({ meals: [], ...preferiti }), {
   passi: [...apriPreferiti, { clickRole: { role: "radio", name: "Spuntino" } }, { clickRole: { role: "button", name: "Aggiungi Cena leggera" } }, { wait: 700 }],
@@ -694,6 +694,36 @@ const barre = data({
 sett("settimana-barra-etichetta", "Toccando la barra del mercoledì compare sopra la barra «2.250» (Testo secondario), senza spostare nulla; la legenda resta libera.", "2026-01-11", barre, { fisso: true, passi: [{ clickRole: { role: "button", name: "Mercoledì 7 gennaio", exact: false } }] });
 sett("settimana-barra-etichetta-domenica", "Toccando la barra della domenica (la più alta, sul bordo) l'etichetta «3.050» resta dentro la scheda e non copre la legenda.", "2026-01-11", barre, { fisso: true, passi: [{ clickRole: { role: "button", name: "Domenica 11 gennaio", exact: false } }] });
 sett("settimana-barra-etichetta-sposta", "Dopo il tocco sul mercoledì, un tocco sul lunedì sposta l'etichetta: una sola alla volta («2.080»).", "2026-01-11", barre, { fisso: true, passi: [{ clickRole: { role: "button", name: "Mercoledì 7 gennaio", exact: false } }, { clickRole: { role: "button", name: "Lunedì 5 gennaio", exact: false } }] });
+
+// --- Peso del piatto (T7.0)
+const piattoConPeso = data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pasta al pomodoro", 420, 14, 80, 6, 5, 1.2, { quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", weightG: 185 })] });
+add("pannello-piatto-peso", "Scheda del piatto in Manuale con il campo «Peso (g)» già compilato (185) sotto la quantità.", "2026-01-08", piattoConPeso, { fisso: true, passi: [{ click: "Pasta al pomodoro" }] });
+add("pannello-piatto-peso-vuoto", "Aggiunta a mano: il campo «Peso (g)» è facoltativo e mostra «facoltativo».", "2026-01-08", data({ settings: { weightKg: 100 } }), { fisso: true, passi: [apri, manuale] });
+add("pannello-piatto-peso-errore", "Peso non valido (12,5): «Salva» mostra l'errore accanto al campo.", "2026-01-08", data({ settings: { weightKg: 100 } }), { fisso: true, passi: [apri, manuale, { fill: ["Nome", "Pasta"] }, { fill: ["Calorie", "400"] }, { fill: ["Peso (g)", "12,5"] }, salvaScheda] });
+
+// --- Quantità ricalcolata senza AI (T7.1)
+const pastaPesata = data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "pranzo", "Pasta al pomodoro", 300, 12, 40, 8, 4, 1, { quantity: "200 g pasta cotta", weightG: 200 })] });
+add("pannello-piatto-peso-ricalcolato", "Piatto di 200 g (300 kcal, carboidrati 40): scritto 250 nel campo «Peso (g)», kcal e nutrienti si ricalcolano subito (375 kcal, carboidrati 50), senza AI.", "2026-01-08", pastaPesata, { fisso: true, passi: [{ click: "Pasta al pomodoro" }, { fill: ["Peso (g)", "250"] }] });
+const dolceSenzaPeso = data({ settings: { weightKg: 100 }, meals: [meal("2026-01-08", "cena", "Torta", 420, 10, 30, 13.3, 2, 1, { quantity: "1 fetta" })] });
+add("pannello-piatto-porzioni", "Piatto senza peso: la riga «Porzioni» con ×0,5, ×1, ×1,5, ×2 e un numero a mano, all'apertura su ×1.", "2026-01-08", dolceSenzaPeso, { fisso: true, passi: [{ click: "Torta" }] });
+add("pannello-piatto-porzioni-ricalcolato", "Porzioni ×1,5: 630 kcal e grassi 20,0, senza AI.", "2026-01-08", dolceSenzaPeso, { fisso: true, passi: [{ click: "Torta" }, { clickRole: { role: "radio", name: "×1,5" } }] });
+add("pannello-piatto-porzioni-aggiunta", "Aggiunta a mano: la riga «Porzioni» c'è anche in un piatto nuovo.", "2026-01-08", data({ settings: { weightKg: 100 } }), { fisso: true, passi: [apri, manuale] });
+
+// --- Etichette dei preferiti nella stima (T7.2)
+const hummusF = { ...fav("h1", "Hummus fatto in casa", "150 g", 150, 7.5, 10, 9, 4, 0.5), weightG: 150 };
+const caffeF = { ...fav("h2", "Caffè con zucchero", null, 20, 0, 5, 0, 0, 0), weightG: null };
+const melaF = { ...fav("h3", "Mela", "1 media", 95, 0.5, 25, 0.3, 4, 0), weightG: 180 };
+const datiPreferiti = giornoPasti({ meals: [], favoriteDishes: [hummusF, caffeF, melaF], favoriteMeals: [] });
+const campo = { clickRole: { role: "textbox", name: "Cosa hai mangiato?" } };
+const scegli = (nome) => [{ clickRole: { role: "button", name: "Metti un preferito nella frase", exact: true } }, { wait: 300 }, { clickRole: { role: "button", name: `Metti ${nome} nella frase`, exact: true } }, { wait: 400 }];
+const dueEtichette = [apri, campo, { typeText: "a pranzo " }, ...scegli("Hummus fatto in casa"), { typeText: "100 g e " }, ...scegli("Caffè con zucchero"), { typeText: "x2 e una mela" }];
+const stimaPreferiti = [{ clickRole: { role: "button", name: "Stima", exact: true } }, { wait: 700 }];
+const pastoPreferiti = (favorites) => ({ slot: "pranzo", freeMeal: false, dishes: [dish("Mela", "1 mela, 180 g", true, 90, 0.5, 22, 0.3, 4, 0, "Ho ipotizzato una mela media.")], favorites });
+add("ai-preferiti-elenco", "Il tasto «Preferiti» accanto al campo apre l'elenco dei piatti preferiti con la ricerca, nello stile del pannello Preferiti.", "2026-01-08", datiPreferiti, { fisso: true, ai: { risposte: [] }, passi: [apri, { clickRole: { role: "button", name: "Metti un preferito nella frase", exact: true } }, { wait: 400 }] });
+add("ai-preferiti-etichette", "Il campo con due etichette (tessere con il nome dei preferiti) dentro la frase, testo scritto prima e dopo; il tasto «Preferiti» in colore Comando.", "2026-01-08", datiPreferiti, { fisso: true, ai: { risposte: [] }, passi: dueEtichette });
+add("ai-preferiti-proposta", "Proposta con due piatti «dai tuoi preferiti» (Hummus 100 g → 100 kcal; Caffè ×2 → 40 kcal) e uno stimato (Mela, «ipotizzata»); i piatti dai preferiti non hanno il controllo di coerenza.", "2026-01-08", datiPreferiti, { fisso: true, ai: { risposte: [prop(pastoPreferiti([{ ref: 1, quantitySaid: true, grams: 100, servings: null }, { ref: 2, quantitySaid: true, grams: null, servings: 2 }]))] }, passi: [...dueEtichette, ...stimaPreferiti] });
+add("ai-preferiti-sconosciuto", "Il modello risponde con un riferimento che non esiste (7): il piatto si scarta e un avviso breve lo dice; il resto della proposta resta.", "2026-01-08", datiPreferiti, { fisso: true, ai: { risposte: [prop(pastoPreferiti([{ ref: 1, quantitySaid: true, grams: 100, servings: null }, { ref: 7, quantitySaid: true, grams: 50, servings: null }]))] }, passi: [...dueEtichette, ...stimaPreferiti] });
+add("ai-preferiti-peso-sconosciuto", "Preferito senza peso con i grammi detti (Caffè «100 g»): contata una porzione, con l'avviso «Peso del preferito sconosciuto».", "2026-01-08", datiPreferiti, { fisso: true, ai: { risposte: [prop({ slot: "pranzo", freeMeal: false, dishes: [], favorites: [{ ref: 1, quantitySaid: true, grams: 100, servings: null }] })] }, passi: [apri, campo, ...scegli("Caffè con zucchero"), { typeText: "100 g" }, ...stimaPreferiti] });
 
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));

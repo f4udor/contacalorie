@@ -64,6 +64,7 @@ export function rowToMeal(r: Row): MealRecord {
     slot: r.slot as MealRecord["slot"],
     name: String(r.name),
     quantity: (r.quantity as string | null | undefined) ?? null,
+    weightG: numOrNull(r.weight_g),
     kcal: num(r.kcal),
     protein: num(r.protein),
     carbs: num(r.carbs),
@@ -83,6 +84,7 @@ export function mealToRow(m: MealRecord, userId: string): Row {
     slot: m.slot,
     name: m.name,
     quantity: m.quantity ?? null,
+    weight_g: m.weightG ?? null,
     kcal: m.kcal,
     protein: m.protein,
     carbs: m.carbs,
@@ -147,18 +149,18 @@ export const rowToWeighIn = (r: Row): WeighIn => ({ date: String(r.date), weight
 export const weighInToRow = (w: WeighIn, userId: string): Row => ({ user_id: userId, date: w.date, weight_kg: w.weightKg });
 
 export function rowToFavoriteDish(r: Row): FavoriteDish {
-  return { id: String(r.id), name: String(r.name), quantity: (r.quantity as string | null | undefined) ?? null, kcal: num(r.kcal), protein: num(r.protein), carbs: num(r.carbs), fat: num(r.fat), fiber: num(r.fiber), salt: num(r.salt) };
+  return { id: String(r.id), name: String(r.name), quantity: (r.quantity as string | null | undefined) ?? null, weightG: numOrNull(r.weight_g), kcal: num(r.kcal), protein: num(r.protein), carbs: num(r.carbs), fat: num(r.fat), fiber: num(r.fiber), salt: num(r.salt) };
 }
 
 export function favoriteDishToRow(f: FavoriteDish, userId: string): Row {
-  return { id: f.id, user_id: userId, name: f.name, quantity: f.quantity, slot: null, kcal: f.kcal, protein: f.protein, carbs: f.carbs, fat: f.fat, fiber: f.fiber, salt: f.salt };
+  return { id: f.id, user_id: userId, name: f.name, quantity: f.quantity, weight_g: f.weightG ?? null, slot: null, kcal: f.kcal, protein: f.protein, carbs: f.carbs, fat: f.fat, fiber: f.fiber, salt: f.salt };
 }
 
 function bodyFromJson(raw: unknown): DishBody | null {
   if (typeof raw !== "object" || raw === null) return null;
   const d = raw as Record<string, unknown>;
   if (typeof d.name !== "string") return null;
-  return { name: d.name, quantity: typeof d.quantity === "string" ? d.quantity : null, kcal: num(d.kcal), protein: num(d.protein), carbs: num(d.carbs), fat: num(d.fat), fiber: num(d.fiber), salt: num(d.salt) };
+  return { name: d.name, quantity: typeof d.quantity === "string" ? d.quantity : null, weightG: typeof d.weightG === "number" && Number.isFinite(d.weightG) ? d.weightG : null, kcal: num(d.kcal), protein: num(d.protein), carbs: num(d.carbs), fat: num(d.fat), fiber: num(d.fiber), salt: num(d.salt) };
 }
 
 export function rowToFavoriteMeal(r: Row): FavoriteMeal {

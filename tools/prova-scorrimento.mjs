@@ -149,7 +149,7 @@ try {
   const favPage = async () => {
     const p = await newPage(favData);
     await p.getByRole("button", { name: "Aggiungi", exact: true }).click();
-    await p.getByText("Preferiti", { exact: true }).filter({ visible: true }).first().click();
+    await p.getByRole("button", { name: "Preferiti", exact: true }).first().click();
     await p.waitForTimeout(400);
     return p;
   };

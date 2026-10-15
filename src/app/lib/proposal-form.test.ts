@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { draftsToProposal, forceSlot, freeSwitchBlock, hasDishes, proposalToDrafts, proposalToRecords, sumProposal, withInitialFree, withSlot } from "./proposal-form";
 import type { FreeRules } from "./proposal-form";
 
-const dish = (name: string, quantity: string | null, assumed: boolean, kcal: number) => ({ name, quantity, quantityAssumed: assumed, kcal, protein: 22.5, carbs: 18, fat: 14, fiber: 1, salt: 1.4, note: "nota" });
+const dish = (name: string, quantity: string | null, assumed: boolean, kcal: number) => ({ name, quantity, quantityAssumed: assumed, weightG: quantity ? 185 : null, kcal, protein: 22.5, carbs: 18, fat: 14, fiber: 1, salt: 1.4, note: "nota" });
 const proposal = { meals: [{ slot: "cena" as const, dishes: [dish("Anelli di totano", "150 g", true, 280), dish("Insalata", null, false, 60)] }] };
 
 describe("proposalToDrafts", () => {

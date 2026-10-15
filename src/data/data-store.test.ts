@@ -126,11 +126,28 @@ describe.each(factories)("DataStore %s", (_nome, make) => {
     expect((await s.exportAll()).meals).toHaveLength(2);
   });
 
+  it("il peso del piatto (T7.0) si salva e si rilegge in piatti, preferiti e pasti preferiti; i dati senza peso restano validi", async () => {
+    const s = make();
+    await s.saveMeal({ ...meal("w", "2026-01-05"), weightG: 185 });
+    await s.saveMeal(meal("n", "2026-01-05"));
+    const list = await s.listMeals("2026-01-05");
+    expect(list.find((m) => m.id === "w")?.weightG).toBe(185);
+    expect(list.find((m) => m.id === "n")?.weightG ?? null).toBeNull();
+    const body = { name: "Hummus", quantity: "150 g", weightG: 150, kcal: 150, protein: 7.5, carbs: 10, fat: 9, fiber: 4, salt: 0.5 };
+    await s.saveFavoriteDish({ id: "f1", ...body });
+    await s.saveFavoriteMeal({ id: "p1", name: "Antipasto", slot: "cena", dishes: [body, { ...body, name: "Senza peso", weightG: null }] });
+    expect((await s.listFavoriteDishes())[0].weightG).toBe(150);
+    expect((await s.listFavoriteMeals())[0].dishes.map((d) => d.weightG)).toEqual([150, null]);
+    const all = await s.exportAll();
+    expect(all.meals.find((m) => m.id === "w")?.weightG).toBe(185);
+    expect(all.favoriteDishes[0].weightG).toBe(150);
+  });
+
   it("preferiti: piatti e pasti, sostituzione per id, eliminazione, e compaiono in exportAll", async () => {
     const s = make();
     expect(await s.listFavoriteDishes()).toEqual([]);
     expect(await s.listFavoriteMeals()).toEqual([]);
-    const body = { name: "Pasta al pesto", quantity: "80 g", kcal: 480, protein: 15, carbs: 70, fat: 16, fiber: 4, salt: 1.3 };
+    const body = { name: "Pasta al pesto", quantity: "80 g", weightG: null, kcal: 480, protein: 15, carbs: 70, fat: 16, fiber: 4, salt: 1.3 };
     await s.saveFavoriteDish({ id: "f1", ...body });
     await s.saveFavoriteDish({ id: "f2", ...body, name: "Mela", quantity: null, kcal: 95 });
     await s.saveFavoriteDish({ id: "f1", ...body, kcal: 500 });

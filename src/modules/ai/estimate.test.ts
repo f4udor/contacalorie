@@ -56,6 +56,32 @@ describe("frasi tipiche con il provider finto", () => {
   });
 });
 
+describe("peso dei piatti (T7.0)", () => {
+  const richiesta = { text: "pasta al pomodoro", localDate: "2026-01-08", localTime: "13:10" };
+  const risposta = (w: unknown) => ({ meals: [{ slot: "pranzo", freeMeal: false, dishes: [{ name: "Pasta al pomodoro", quantity: "100 g pasta a crudo, 80 g sugo di pomodoro, 5 g olio", quantityAssumed: false, ...(w === undefined ? {} : { weightG: w }), kcal: 420, protein: 14, carbs: 80, fat: 6, fiber: 5, salt: 1.2, note: "" }] }] });
+  const run = async (w: unknown) => {
+    const out = await handleEstimate({ provider: createFakeProvider(() => risposta(w)), gate: null, dailyLimit: 60 }, null, richiesta);
+    return out.status === 200 ? (out.body as Extract<typeof out, { status: 200 }>["body"]).proposal.meals[0].dishes[0].weightG : "errore";
+  };
+  it("risposta con peso: arriva all'app", async () => {
+    expect(await run(185)).toBe(185);
+  });
+  it("risposta senza peso: valida, peso null", async () => {
+    expect(await run(undefined)).toBeNull();
+  });
+  it("peso non valido: scartato, la proposta resta", async () => {
+    expect(await run(-3)).toBeNull();
+    expect(await run(9999)).toBeNull();
+  });
+  it("il prompt chiede come peso la somma dei grammi della quantità (a crudo) e lo schema ha il campo", () => {
+    expect(SYSTEM_PROMPT).toContain("weightG");
+    expect(SYSTEM_PROMPT).toContain("SOMMA dei grammi");
+    expect(SYSTEM_PROMPT).toContain("a crudo");
+    expect(RESPONSE_SCHEMA.properties.meals.items.properties.dishes.items.properties.weightG.type).toBe("INTEGER");
+    expect(RESPONSE_SCHEMA.properties.meals.items.properties.dishes.items.required).toContain("weightG");
+  });
+});
+
 describe("cosa arriva al modello", () => {
   const richiesta = { text: "un caffè", localDate: "2026-01-08", localTime: "08:05", email: "mario@example.com", weightKg: 90, token: "x" };
 

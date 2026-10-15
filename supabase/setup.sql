@@ -563,3 +563,9 @@ update public.settings set recovery_min = 50 where recovery_min = 25;
 -- Età, altezza, peso e peso obiettivo ci sono già. Nessun valore predefinito: vuoto = profilo incompleto o senza data.
 alter table public.settings add column sex text check (sex in ('uomo', 'donna'));
 alter table public.settings add column target_date date;
+
+-- ===== 20260101000016_peso_piatto.sql =====
+-- Fase 7 (T7.0): peso del piatto in grammi. Solo aggiunte: una colonna facoltativa (intero, vuoto ammesso) in `meals` e in `favorites`.
+-- Il peso dei piatti di `favorite_meals` sta dentro il campo JSON `dishes` (campo `weightG`, facoltativo): nessuna colonna da aggiungere.
+alter table public.meals add column weight_g integer check (weight_g is null or weight_g > 0);
+alter table public.favorites add column weight_g integer check (weight_g is null or weight_g > 0);

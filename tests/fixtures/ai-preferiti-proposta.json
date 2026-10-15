@@ -1,0 +1,176 @@
+{
+  "id": "ai-preferiti-proposta",
+  "descrizione": "Proposta con due piatti «dai tuoi preferiti» (Hummus 100 g → 100 kcal; Caffè ×2 → 40 kcal) e uno stimato (Mela, «ipotizzata»); i piatti dai preferiti non hanno il controllo di coerenza.",
+  "oggi": "2026-01-08",
+  "percorso": "/",
+  "dati": {
+    "version": 1,
+    "settings": {
+      "weightKg": 100
+    },
+    "meals": [],
+    "activity": [],
+    "weighIns": [],
+    "favoriteDishes": [
+      {
+        "id": "h1",
+        "name": "Hummus fatto in casa",
+        "quantity": "150 g",
+        "kcal": 150,
+        "protein": 7.5,
+        "carbs": 10,
+        "fat": 9,
+        "fiber": 4,
+        "salt": 0.5,
+        "weightG": 150
+      },
+      {
+        "id": "h2",
+        "name": "Caffè con zucchero",
+        "quantity": null,
+        "kcal": 20,
+        "protein": 0,
+        "carbs": 5,
+        "fat": 0,
+        "fiber": 0,
+        "salt": 0,
+        "weightG": null
+      },
+      {
+        "id": "h3",
+        "name": "Mela",
+        "quantity": "1 media",
+        "kcal": 95,
+        "protein": 0.5,
+        "carbs": 25,
+        "fat": 0.3,
+        "fiber": 4,
+        "salt": 0,
+        "weightG": 180
+      }
+    ],
+    "favoriteMeals": []
+  },
+  "scorre": true,
+  "fisso": true,
+  "ai": {
+    "risposte": [
+      {
+        "stato": 200,
+        "corpo": {
+          "proposal": {
+            "meals": [
+              {
+                "slot": "pranzo",
+                "freeMeal": false,
+                "dishes": [
+                  {
+                    "name": "Mela",
+                    "quantity": "1 mela, 180 g",
+                    "quantityAssumed": true,
+                    "kcal": 90,
+                    "protein": 0.5,
+                    "carbs": 22,
+                    "fat": 0.3,
+                    "fiber": 4,
+                    "salt": 0,
+                    "note": "Ho ipotizzato una mela media."
+                  }
+                ],
+                "favorites": [
+                  {
+                    "ref": 1,
+                    "quantitySaid": true,
+                    "grams": 100,
+                    "servings": null
+                  },
+                  {
+                    "ref": 2,
+                    "quantitySaid": true,
+                    "grams": null,
+                    "servings": 2
+                  }
+                ]
+              }
+            ]
+          },
+          "originalText": "testo"
+        }
+      }
+    ]
+  },
+  "passi": [
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Aggiungi",
+        "exact": true
+      }
+    },
+    {
+      "clickRole": {
+        "role": "textbox",
+        "name": "Cosa hai mangiato?"
+      }
+    },
+    {
+      "typeText": "a pranzo "
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Metti un preferito nella frase",
+        "exact": true
+      }
+    },
+    {
+      "wait": 300
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Metti Hummus fatto in casa nella frase",
+        "exact": true
+      }
+    },
+    {
+      "wait": 400
+    },
+    {
+      "typeText": "100 g e "
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Metti un preferito nella frase",
+        "exact": true
+      }
+    },
+    {
+      "wait": 300
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Metti Caffè con zucchero nella frase",
+        "exact": true
+      }
+    },
+    {
+      "wait": 400
+    },
+    {
+      "typeText": "x2 e una mela"
+    },
+    {
+      "clickRole": {
+        "role": "button",
+        "name": "Stima",
+        "exact": true
+      }
+    },
+    {
+      "wait": 700
+    }
+  ]
+}
