@@ -91,6 +91,7 @@ Una riga per task chiuso.
 - T7.3 · fatto · `docs/REPORT-FASE-7.md`: l'istruzione SQL da eseguire prima del merge, un controllo da telefono per ogni task, parte tecnica.
 - T8.0 · fatto · scheda del piatto: Nome, Peso, Ingredienti (CSV compreso); tolte Porzioni e Pasto libero; riga Pasto solo senza fascia fissata; «Stima con l'AI» manda «Piatto / Peso / Ingredienti» e il peso scritto prevale. Tolti 9 scenari di screenshot che mostravano le righe eliminate.
 - T8.1 · fatto · domanda «Quanto pesava la porzione salvata?» nella proposta (casi AS e AV; il preferito prende il peso solo alla conferma; niente avviso giallo, la quantità non è più «ipotizzata»); pannello «Salva nei preferiti» con nome e peso facoltativo da Oggi e dalla scheda del piatto. Motore: `needsWeight` al posto dell'avviso, test del caso AS aggiornato.
+- T8.2 · fatto · scorrimento nei preferiti: «Modifica» (solo piatti, tono nuovo «tessera») ed «Elimina»; scheda «Modifica preferito» (`EditFavoritePanel`) che aggiorna il preferito con lo stesso id. Corretto un difetto: id dei campi duplicati con due schede aperte (`idPrefix` in `MealForm`).
 - T6.7 · fatto · `docs/REPORT-FASE-6.md` scritto; pull request verso main aperta a fine fase.
 
 ## Decisioni da confermare
@@ -245,3 +246,4 @@ Una riga per task chiuso.
 
 - T8.0: il modello vero con il testo «Piatto / Peso / Ingredienti» (stima per il peso scritto) non è verificato: prompt provato solo con test sul testo e provider finto.
 - T8.1: i pannelli e la domanda sono provati con Chromium e tocco simulato, non su un iPhone vero (tastiera numerica, pannello con tastiera aperta).
+- T8.2: la scheda «Modifica preferito» con la tastiera dell'iPhone e il gesto a due tessere non sono provati su un iPhone vero (solo Chromium e tocco simulato).

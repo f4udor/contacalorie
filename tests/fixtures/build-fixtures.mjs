@@ -643,8 +643,9 @@ sett("settimana-colori-barre", "Settimana con i quattro colori delle barre: acce
 }));
 
 // --- Preferiti eliminabili scorrendo (T5b.5)
-favScen("preferiti-scorrimento-aperto", "Preferiti: la riga 'Mela' scorsa a sinistra mostra il cestino; il + e il tocco sulla riga restano come prima.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, sw("Mela")]);
-favScen("preferiti-scorrimento-pasto", "Preferiti: anche un pasto salvato ('Cena leggera') si scorre e mostra il cestino.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, sw("Cena leggera")]);
+favScen("preferiti-scorrimento-aperto", "Preferiti: la riga 'Mela' scorsa a sinistra mostra due tessere separate, «Modifica» (fondo Tessera) ed «Elimina» (fondo Fuori); il + e il tocco sulla riga restano come prima.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, sw("Mela", -220)]);
+favScen("preferiti-modifica-scheda", "«Modifica» su 'Mela': scheda «Modifica preferito» con i valori salvati, senza la riga Pasto né «Salva nei preferiti» ed «Elimina piatto».", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, sw("Mela", -220), { clickRole: { role: "button", name: "Modifica Mela", exact: true } }, { wait: 400 }]);
+favScen("preferiti-scorrimento-pasto", "Preferiti: anche un pasto salvato ('Cena leggera') si scorre e mostra solo «Elimina» (niente «Modifica»).", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, sw("Cena leggera")]);
 favScen("preferiti-scorrimento-elimina", "Dopo il cestino su 'Mela': il preferito è eliminato subito, senza conferma; restano gli altri.", giornoPasti({ meals: [], ...preferiti }), [...apriPreferiti, sw("Mela"), { clickRole: { role: "button", name: "Elimina Mela dai preferiti", exact: true } }, { wait: 500 }]);
 
 // --- Media della settimana sul grafico (T5b.6): oggi domenica 11 (senza pasti), le barre sono i giorni conclusi.

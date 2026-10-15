@@ -1,6 +1,6 @@
 {
   "id": "preferiti-scorrimento-aperto",
-  "descrizione": "Preferiti: la riga 'Mela' scorsa a sinistra mostra il cestino; il + e il tocco sulla riga restano come prima.",
+  "descrizione": "Preferiti: la riga 'Mela' scorsa a sinistra mostra due tessere separate, «Modifica» (fondo Tessera) ed «Elimina» (fondo Fuori); il + e il tocco sulla riga restano come prima.",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {
@@ -133,7 +133,7 @@
     {
       "swipe": {
         "text": "Mela",
-        "dx": -140
+        "dx": -220
       }
     }
   ]

@@ -1,6 +1,6 @@
 {
   "id": "preferiti-scorrimento-pasto",
-  "descrizione": "Preferiti: anche un pasto salvato ('Cena leggera') si scorre e mostra il cestino.",
+  "descrizione": "Preferiti: anche un pasto salvato ('Cena leggera') si scorre e mostra solo «Elimina» (niente «Modifica»).",
   "oggi": "2026-01-08",
   "percorso": "/",
   "dati": {

@@ -724,7 +724,7 @@ Vincoli di questa fase:
 - Salvataggio di un piatto senza peso nei preferiti (scorrimento in Oggi e scheda del piatto): pannello piccolo "Salva nei preferiti" con nome e campo Peso facoltativo; "Salva" anche con il campo vuoto. Piatto con peso: si salva subito come ora. Regola dei doppioni invariata.
 - Test: casi AS e AV, preferito aggiornato solo alla conferma (non chiudendo la proposta), "Salta", salvataggio con e senza peso. Screenshot: domanda nella proposta vuota e compilata, pannello di salvataggio.
 
-### T8.2 Modificare un preferito · da fare
+### T8.2 Modificare un preferito · fatto
 - Nell'elenco dei preferiti lo scorrimento a sinistra mostra "Modifica" (solo piatti) ed "Elimina" come tessere separate (§4.1, §10.5); `SwipeRow` già supporta più azioni.
 - "Modifica" apre la scheda del piatto di §4.2 con titolo "Modifica preferito", senza riga Pasto, senza "Salva nei preferiti" ed "Elimina piatto". "Salva" aggiorna il preferito tramite lo sportello dei dati (browser e Supabase); i piatti già registrati non cambiano.
 - Test: aggiornamento di nome, ingredienti, peso e numeri; i piatti nei giorni passati invariati; i pasti preferiti hanno solo "Elimina". `prova-scorrimento` con la nuova tessera. Screenshot: riga scorsa con le due tessere, scheda "Modifica preferito".

@@ -1,5 +1,6 @@
 import type { DateKey, MealSlot } from "@/engine";
-import { parseDecimal } from "./meal-form";
+import { mealToForm, parseDecimal } from "./meal-form";
+import type { MealFormValues, ParsedMeal } from "./meal-form";
 import type { DataStore, DishBody, FavoriteDish, FavoriteMeal, MealRecord } from "@/data";
 
 const MAX_NAME = 40;
@@ -115,4 +116,19 @@ export async function saveFavoriteDishAs(store: DataStore, dish: Pick<MealRecord
   const existing = await store.listFavoriteDishes();
   const named = { ...dish, name: name.trim() || dish.name, weightG };
   await store.saveFavoriteDish(favoriteForDish(existing, named, makeId).favorite);
+}
+
+/** I campi della scheda del piatto con i valori di un preferito (BRIEF §4.1, «Modifica preferito»). La fascia non c'entra: la riga Pasto non c'è. */
+export function favoriteToForm(f: FavoriteDish): MealFormValues {
+  return mealToForm({ ...f, slot: "pranzo", isFree: false });
+}
+
+/** Il preferito aggiornato con i campi controllati della scheda: stesso id, nome, ingredienti, peso e numeri nuovi. I piatti già registrati non cambiano. */
+export function favoriteFromForm(id: string, parsed: ParsedMeal): FavoriteDish {
+  return { id, name: parsed.name, quantity: parsed.quantity, weightG: parsed.weightG, kcal: parsed.kcal, protein: parsed.protein, carbs: parsed.carbs, fat: parsed.fat, fiber: parsed.fiber, salt: parsed.salt };
+}
+
+/** Le tessere che compaiono scorrendo una riga dei preferiti (BRIEF §4.1): «Modifica» solo per i piatti, «Elimina» per tutti. */
+export function favoriteRowActions(kind: "dish" | "meal"): ("modifica" | "elimina")[] {
+  return kind === "dish" ? ["modifica", "elimina"] : ["elimina"];
 }

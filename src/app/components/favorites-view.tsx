@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import type { DateKey, Meal, MealSlot } from "@/engine";
 import type { DataStore, FavoriteDish, FavoriteMeal, MealRecord } from "@/data";
-import { deleteFavorite, filterByName, mealTotalKcal, recordsFromFavoriteDish, recordsFromFavoriteMeal } from "../lib/favorites";
+import { deleteFavorite, favoriteRowActions, filterByName, mealTotalKcal, recordsFromFavoriteDish, recordsFromFavoriteMeal } from "../lib/favorites";
 import { formatNumber } from "../lib/format";
 import { newId } from "../lib/ids";
 import { SLOTS } from "../lib/meal-form";
 import { isMealFree, saveDish } from "../lib/save-dish";
 import { plural } from "../lib/plural";
+import { EditFavoritePanel } from "./edit-favorite-panel";
 import { SwipeRow, useOpenRow } from "./swipe-row";
 import { IconPlus } from "./ui/icons";
 import { Caption, GroupedList, Segmented } from "./ui/ui";
@@ -30,6 +31,7 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
   const [busy, setBusy] = useState(false);
   const rows = useOpenRow();
   const [loadFailed, setLoadFailed] = useState(false);
+  const [editing, setEditing] = useState<FavoriteDish | null>(null);
 
   const load = () =>
     Promise.all([store.listFavoriteDishes(), store.listFavoriteMeals()])
@@ -92,7 +94,11 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
         id={`${kind}-${id}`}
         openId={rows.openId}
         setOpen={rows.setOpen}
-        actions={[{ key: "elimina", label: `Elimina ${name} dai preferiti`, visibleLabel: "Elimina", tone: "danger", onClick: () => void remove(kind, id) }]}
+        actions={[
+          // «Modifica» solo per i piatti: i pasti hanno solo «Elimina» (BRIEF §4.1).
+          ...(favoriteRowActions(kind).includes("modifica") ? [{ key: "modifica", label: `Modifica ${name}`, visibleLabel: "Modifica", tone: "tessera" as const, onClick: () => setEditing(lists.dishes.find((f) => f.id === id) ?? null) }] : []),
+          { key: "elimina", label: `Elimina ${name} dai preferiti`, visibleLabel: "Elimina", tone: "danger" as const, onClick: () => void remove(kind, id) },
+        ]}
       >
         <button type="button" disabled={busy} onClick={onAdd} aria-label={`Aggiungi ${name}`} className="flex min-h-14 w-full min-w-0 items-center justify-between gap-3 px-4 py-2 text-left disabled:opacity-50">
           <span className="min-w-0 flex-1">
@@ -129,8 +135,19 @@ export function FavoritesView({ store, date, initialSlot, dayDishes, onChanged, 
             </section>
           )}
           {meals.length === 0 && dishes.length === 0 && <p className="px-1 text-[15px] text-testo-secondario">Nessun preferito con questo nome.</p>}
-          <Caption>Scorri una riga verso sinistra per eliminarla.</Caption>
+          <Caption>Scorri una riga verso sinistra per modificarla o eliminarla.</Caption>
         </>
+      )}
+      {editing && (
+        <EditFavoritePanel
+          favorite={editing}
+          store={store}
+          onClose={() => setEditing(null)}
+          onSaved={() => {
+            setEditing(null);
+            void load();
+          }}
+        />
       )}
     </div>
   );

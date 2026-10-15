@@ -147,7 +147,7 @@ try {
   check("e la riga si richiude", (await open(page)) === 0);
   await page.context().close();
 
-  // 10. Preferiti (T5b.5): stesso gesto e stesso cestino dei piatti; niente «Modifica»; il + e il tocco aggiungono ancora.
+  // 10. Preferiti (T5b.5): stesso gesto dei piatti; dalla fase 8 «Modifica» (solo piatti) ed «Elimina» come tessere separate (T8.2); il + e il tocco aggiungono ancora.
   const favFixture = JSON.parse(readFileSync(path.join(root, "tests/fixtures/preferiti-lista.json"), "utf8"));
   const favData = { ...favFixture.dati, settings: { ...favFixture.dati.settings, onboardingDone: true } };
   const favPage = async () => {
@@ -158,11 +158,27 @@ try {
     return p;
   };
   page = await favPage();
-  check("nei preferiti non c'è più il pulsante «Modifica»", (await page.getByRole("button", { name: "Modifica", exact: true }).count()) === 0);
-  await touch(page, "Mela", -140);
+  await touch(page, "Mela", -220);
   check("scorrendo un piatto preferito si apre la riga", await rowOpen(page, "Mela"));
+  check("un piatto preferito mostra «Modifica» ed «Elimina» come tessere separate", (await page.getByRole("button", { name: "Modifica Mela", exact: true }).count()) === 1 && (await page.getByRole("button", { name: "Elimina Mela dai preferiti", exact: true }).count()) === 1);
   await touch(page, "Cena leggera", -140);
   check("una sola riga aperta alla volta (anche tra pasto e piatto)", (await open(page)) === 1 && (await rowOpen(page, "Cena leggera")));
+  check("un pasto preferito ha solo «Elimina»", (await page.getByRole("button", { name: "Modifica Cena leggera", exact: true }).count()) === 0 && (await page.getByRole("button", { name: "Elimina Cena leggera dai preferiti", exact: true }).count()) === 1);
+  await page.context().close();
+
+  // 10b. «Modifica» apre la scheda del piatto con titolo «Modifica preferito», senza riga Pasto né «Salva nei preferiti» / «Elimina piatto»; «Salva» aggiorna.
+  page = await favPage();
+  await touch(page, "Mela", -220);
+  await page.getByRole("button", { name: "Modifica Mela", exact: true }).click();
+  await page.getByText("Modifica preferito", { exact: true }).waitFor();
+  await page.waitForTimeout(400);
+  const scheda = page.getByRole("dialog", { name: "Modifica preferito" });
+  check("«Modifica» apre «Modifica preferito» con i valori del preferito", (await scheda.getByText("Modifica preferito", { exact: true }).isVisible()) && (await scheda.getByLabel("Nome").inputValue()) === "Mela");
+  check("la scheda non ha la riga Pasto, «Salva nei preferiti» né «Elimina piatto»", (await scheda.getByText("Pasto", { exact: true }).count()) === 0 && (await scheda.getByText("Salva nei preferiti", { exact: true }).count()) === 0 && (await scheda.getByText("Elimina piatto", { exact: true }).count()) === 0);
+  await scheda.getByLabel("Nome").fill("Mela verde");
+  await scheda.getByRole("button", { name: "Salva", exact: true }).click();
+  await page.waitForTimeout(500);
+  check("«Salva» aggiorna il preferito nell'elenco", (await page.getByText("Mela verde", { exact: true }).count()) === 1 && (await page.getByText("Mela", { exact: true }).count()) === 0);
   await page.context().close();
 
   page = await favPage();

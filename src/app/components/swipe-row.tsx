@@ -11,7 +11,7 @@ export interface SwipeAction {
   icon?: ReactNode;
   /** Testo mostrato nel pulsante quando `label` è solo per la lettura vocale (es. «Elimina»). */
   visibleLabel?: string;
-  tone: "accent" | "danger";
+  tone: "accent" | "danger" | "tessera";
   /** Larghezza del pulsante in px, se l'etichetta è più lunga del solito. */
   width?: number;
   onClick: () => void;
@@ -110,7 +110,7 @@ export function SwipeRow({ id, openId, setOpen, actions, children, className = "
               setOpen(id, false);
               a.onClick();
             }}
-            className={`flex min-h-11 items-center justify-center rounded-tessera px-1 text-center text-[15px] font-semibold leading-tight ${a.tone === "danger" ? "bg-fuori text-testo" : "bg-comando text-testo-su-comando"}`}
+            className={`flex min-h-11 items-center justify-center rounded-tessera px-1 text-center text-[15px] font-semibold leading-tight ${a.tone === "danger" ? "bg-fuori text-testo" : a.tone === "tessera" ? "bg-pannello text-comando ring-1 ring-inset ring-separatore" : "bg-comando text-testo-su-comando"}`}
             style={{ width: actionWidth(a), marginLeft: SWIPE_TILE_GAP }}
           >
             {a.icon ?? a.visibleLabel ?? a.label}

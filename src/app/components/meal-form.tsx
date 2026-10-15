@@ -12,6 +12,8 @@ interface MealFormProps {
   errors: MealFormErrors;
   /** Dice se il pasto di quella fascia è già libero: scegliendo una fascia lo stato libero del pasto segue quello della fascia. */
   mealIsFreeFor?: (slot: MealSlot) => boolean;
+  /** Prefisso degli id dei campi: serve se due schede del piatto sono aperte insieme (es. «Modifica preferito» sopra Aggiungi), perché le etichette puntino ai campi giusti. */
+  idPrefix?: string;
   /** La fascia è già stabilita (si aggiunge un piatto a un pasto) e non si sceglie. */
   lockedSlot?: boolean;
   /** La stima automatica è attiva: compare "Stima con l'AI". */
@@ -38,19 +40,19 @@ const NUMERIC: { key: Exclude<MealFieldKey, "isFree" | "weightG">; label: string
  * Campi del piatto a mano (BRIEF §4.2), controllati da chi li usa: Nome, Peso (g), Ingredienti, «Stima con l'AI» (sopra le calorie), i numeri
  * e il pasto (solo se la fascia non è fissata). Il nome del campo sta a sinistra, il valore a destra con l'unità accanto.
  */
-export function MealForm({ values, onChange, errors, mealIsFreeFor, lockedSlot = false, aiAvailable, aiBusy, aiError, aiNote, aiForWeightG, onEstimate }: MealFormProps) {
+export function MealForm({ values, onChange, errors, mealIsFreeFor, lockedSlot = false, idPrefix = "meal", aiAvailable, aiBusy, aiError, aiNote, aiForWeightG, onEstimate }: MealFormProps) {
   const set = <K extends keyof MealFormValues>(key: K, value: MealFormValues[K]) => onChange({ [key]: value });
   return (
     <div className="flex flex-col gap-3">
       <GroupedList>
-        <FieldRow label="Nome" htmlFor="meal-name">
-          <RowInput id="meal-name" value={values.name} onChange={(v) => set("name", v)} />
+        <FieldRow label="Nome" htmlFor={`${idPrefix}-name`}>
+          <RowInput id={`${idPrefix}-name`} value={values.name} onChange={(v) => set("name", v)} />
         </FieldRow>
-        <FieldRow label="Peso (g)" htmlFor="meal-weightG" error={errors.weightG}>
-          <RowInput id="meal-weightG" value={values.weightG} onChange={(v) => set("weightG", v)} inputMode="numeric" placeholder="facoltativo" invalid={Boolean(errors.weightG)} />
+        <FieldRow label="Peso (g)" htmlFor={`${idPrefix}-weightG`} error={errors.weightG}>
+          <RowInput id={`${idPrefix}-weightG`} value={values.weightG} onChange={(v) => set("weightG", v)} inputMode="numeric" placeholder="facoltativo" invalid={Boolean(errors.weightG)} />
         </FieldRow>
-        <FieldRow label="Ingredienti" htmlFor="meal-quantity">
-          <RowTextarea id="meal-quantity" value={values.quantity} onChange={(v) => set("quantity", v)} />
+        <FieldRow label="Ingredienti" htmlFor={`${idPrefix}-quantity`}>
+          <RowTextarea id={`${idPrefix}-quantity`} value={values.quantity} onChange={(v) => set("quantity", v)} />
         </FieldRow>
       </GroupedList>
 
@@ -78,17 +80,17 @@ export function MealForm({ values, onChange, errors, mealIsFreeFor, lockedSlot =
 
       <GroupedList>
         {NUMERIC.map(({ key, label, unit }) => (
-          <FieldRow key={key} label={label} htmlFor={`meal-${key}`} unit={unit} error={errors[key]}>
-            <RowInput id={`meal-${key}`} value={values[key]} onChange={(v) => set(key, v)} inputMode="decimal" invalid={Boolean(errors[key])} />
+          <FieldRow key={key} label={label} htmlFor={`${idPrefix}-${key}`} unit={unit} error={errors[key]}>
+            <RowInput id={`${idPrefix}-${key}`} value={values[key]} onChange={(v) => set(key, v)} inputMode="decimal" invalid={Boolean(errors[key])} />
           </FieldRow>
         ))}
       </GroupedList>
 
       {dishSheetFields(lockedSlot).includes("pasto") && (
         <GroupedList>
-          <FieldRow label="Pasto" htmlFor="meal-slot">
+          <FieldRow label="Pasto" htmlFor={`${idPrefix}-slot`}>
             <SelectInput
-              id="meal-slot"
+              id={`${idPrefix}-slot`}
               value={values.slot}
               options={SLOTS}
               onChange={(slot) => {
