@@ -656,3 +656,45 @@ Aggiunta chiesta da un utente: nel grafico Calorie della Settimana, toccando una
 
 ### T6b.6 Report di fase · fatto
 Scrivi `docs/REPORT-FASE-6b.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: un controllo da fare sul telefono per ogni task e, a parte, l'elenco delle incongruenze trovate in T6b.1 e non corrette.
+
+## Fase 7: preferiti nella stima
+
+Obiettivo: i piatti che l'utente conosce meglio del modello si salvano una volta e si usano nella frase con i loro numeri, in qualunque quantità; la quantità di un piatto si cambia senza rifare la stima. Regola in `docs/BRIEF.md` §4.1, con i casi AN-AU.
+
+I task si eseguono in quest'ordine.
+
+Vincoli di questa fase:
+- Nessuna chiave reale e nessuna chiamata di rete reale nei test: Supabase e Vertex restano simulati.
+- Il database cresce per aggiunte: le sole colonne nuove sono il peso del piatto in `meals` e in `favorites` (intero, null ammesso) e il peso dentro i piatti di `favorite_meals` (campo JSON facoltativo). Istruzioni SQL in `supabase/aggiornamento-fase-7.sql`; `supabase/setup.sql` va rigenerato.
+- I calcoli di §4.1 stanno nel motore (`src/engine`), come funzioni pure con test. I casi da A a AM restano identici e i loro test non si toccano.
+- Al modello non va nessun numero dei preferiti: solo il testo, con nome e riferimento delle etichette (§4).
+- Stile di §10, screenshot solo scuri a 390 px degli scenari toccati. Comandi fermi (§10.3).
+- Nessuna funzione oltre a quelle elencate: niente tabella di ingredienti, niente Open Food Facts, niente riconoscimento automatico dei preferiti senza etichetta (§11, fasi 7b e 7c).
+
+### T7.0 Peso del piatto · da fare
+- Database: colonna del peso in `meals` e `favorites`, campo facoltativo nei piatti di `favorite_meals`. Sportello dei dati (browser e Supabase), esportazione CSV e tipi aggiornati.
+- Modello: lo schema di risposta guadagna il peso in grammi di ogni piatto (intero, facoltativo). Il prompt chiede come peso la somma dei grammi scritti nella quantità (per la pasta, i grammi a crudo), così resta controllabile a colpo d'occhio. La validazione accetta un peso assente; scarta valori non positivi o sopra 5.000 g.
+- Piatto a mano: campo "Peso (g)" facoltativo nella scheda del piatto, in Manuale.
+- Salvando nei preferiti (piatto o pasto) si salva anche il peso; vale la regola dei doppioni di T5c.1, e un preferito aggiornato prende il nuovo peso.
+- Il provider finto restituisce pesi realistici.
+- Test: risposta con e senza peso, peso non valido scartato, salvataggio e aggiornamento del preferito con il peso, esportazione. Screenshot della scheda del piatto in Manuale con il peso.
+
+### T7.1 Quantità ricalcolata senza AI · da fare
+- Motore: funzione pura che applica il ricalcolo di §4.1 (rapporto, arrotondamenti). Test: casi AT e AU, rapporto 1, valori a zero.
+- Scheda del piatto, in Manuale, aggiunta e modifica: riga "Peso (g)" se il piatto ha un peso, altrimenti "Porzioni" con le scelte ×0,5, ×1, ×1,5, ×2 e un numero a mano. Cambiandola si aggiornano subito kcal e nutrienti, partendo dai valori di quando la scheda è stata aperta (cambiare 200 → 250 → 200 riporta i numeri di partenza). Scrivere a mano un numero nutrizionale dopo il ricalcolo lo tiene così com'è.
+- Nessuna chiamata al modello. Il controllo di coerenza non si applica ai numeri ricalcolati.
+- Test della logica della scheda. Screenshot: piatto con peso, piatto a porzioni.
+
+### T7.2 Etichette dei preferiti nella stima · da fare
+- Campo "Cosa hai mangiato?": tasto "Preferiti" accanto al campo (icona più etichetta, nel colore Comando) che apre l'elenco dei piatti preferiti con la ricerca, nello stesso stile del pannello Preferiti. Scegliendo un piatto, nel testo compare un'etichetta (tessera piccola con il nome) al punto del cursore; si cancella con un solo tasto indietro. Più etichette nella stessa frase. Funziona anche con il testo dettato prima o dopo l'etichetta.
+- Al modello il testo arriva con ogni etichetta scritta come nome più riferimento (per esempio `[preferito 1: Hummus fatto in casa]`). Il prompt spiega che quei piatti non vanno stimati: per ognuno il modello restituisce il riferimento, il pasto in cui va, la quantità detta in grammi o in porzioni e se è stata detta. Lo schema di risposta guadagna questi campi.
+- L'app costruisce il piatto dal preferito con il calcolo di §4.1 (funzione pura nel motore, casi AN-AS) e lo mette nella proposta con la scritta "dai tuoi preferiti". Il piatto non passa dal controllo di coerenza. Si corregge, si sposta di pasto e si elimina come gli altri.
+- Correzione a parole ("dell'hummus erano 200 g"): il piatto dal preferito si ricalcola dall'app con la nuova quantità restituita dal modello, non viene stimato.
+- Riferimento sconosciuto nella risposta (preferito eliminato nel frattempo, risposta sbagliata): il piatto si scarta e la proposta mostra un avviso breve; il resto della proposta resta valido.
+- Il provider finto gestisce le etichette (riconosce il riferimento e una quantità semplice nel testo).
+- Test: casi AN-AS end-to-end con il provider finto, due etichette nella stessa frase, etichetta più piatto normale, correzione della quantità, riferimento sconosciuto, validazione dei nuovi campi, il testo mandato al modello non contiene numeri del preferito. Screenshot: campo con due etichette, elenco aperto, proposta con un piatto "dai tuoi preferiti" e uno stimato.
+- Nel diario, sotto "Non verificato": il comportamento del modello vero con le etichette.
+
+### T7.3 Report di fase · da fare
+Scrivi `docs/REPORT-FASE-7.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: l'istruzione SQL da eseguire su Supabase prima del merge e un controllo da fare sul telefono per ogni task, partendo dal salvataggio di un piatto con il peso.
+

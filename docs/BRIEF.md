@@ -215,7 +215,7 @@ Casi di verifica (oggi = 1 gennaio):
 
 ## 4. Pasti e modello AI
 
-- **Cosa riceve il modello**: solo il testo scritto o dettato dall'utente, la data e l'ora locali (per dedurre la fascia) ed eventualmente la stima precedente con la correzione. Nessun altro dato dell'utente: niente peso, obiettivi, email.
+- **Cosa riceve il modello**: solo il testo scritto o dettato dall'utente, la data e l'ora locali (per dedurre la fascia) ed eventualmente la stima precedente con la correzione. Se nel testo ci sono preferiti inseriti come etichetta (§4.1), il testo contiene il loro nome e un riferimento; i loro numeri non vengono mandati. Nessun altro dato dell'utente: niente peso, obiettivi, email.
 - **Cosa restituisce**: uno o più pasti; per ogni pasto la fascia (colazione, pranzo, cena, spuntino), se l'utente lo ha indicato come pasto libero, e i piatti. Per ogni piatto: nome, quantità, se la quantità è stata ipotizzata, kcal, proteine, carboidrati, grassi, fibre, sale, e una nota breve.
 - **Fascia**: quella detta dall'utente ("a pranzo"); se non la dice, si deduce dall'ora. Si può cambiare prima di confermare.
 - **Nome e quantità**: il nome è solo il nome del piatto ("Polpette di maiale al sugo"). La quantità è l'elenco degli ingredienti principali con i grammi, come testo libero ("200 g carne di maiale, 10 g pangrattato, 300 g salsa di pomodoro"); per un alimento semplice basta la sua quantità ("1 mela, 180 g"). Nessuna tabella di ingredienti nel database: resta il campo di testo che c'è già.
@@ -228,6 +228,37 @@ Casi di verifica (oggi = 1 gennaio):
 - **Provider**: intercambiabile dietro `AiProvider`. Il primo è Gemini su **Vertex AI** (Google Cloud), chiamato solo dal server. Modello, progetto e regione sono variabili d'ambiente. In sviluppo si usa un provider finto con risposte fisse.
 - **Protezioni**: solo utenti con accesso possono chiamare il modello; massimo 60 stime al giorno per utente (impostazione del server); risposta del modello sempre validata prima di mostrarla.
 - **Preferiti**: piatti singoli e pasti interi salvati con i loro numeri, da riaggiungere senza passare dal modello; si eliminano scorrendo. Niente ricettario separato, niente foto.
+
+### 4.1 Preferiti nella stima e peso dei piatti (dalla fase 7)
+
+Scopo: un piatto che l'utente conosce meglio del modello (per esempio un hummus fatto in casa, molto più leggero di quello comune) si scrive una volta, si salva tra i preferiti e da lì in poi si usa nella frase con i suoi numeri, in qualunque quantità.
+
+- **Peso del piatto.** Ogni piatto ha un **peso in grammi** facoltativo (numero intero). Il modello lo restituisce per ogni piatto che stima: la somma dei grammi scritti nella quantità (per pasta, riso, cereali e legumi secchi, i grammi a crudo). Nel piatto a mano è un campo "Peso (g)" facoltativo. I piatti già salvati non hanno peso.
+- **Preferito con peso.** Salvando un piatto nei preferiti si salva anche il suo peso. Kcal e nutrienti restano quelli del piatto salvato: le proporzioni si ricavano dal rapporto con il peso. Un preferito senza peso funziona a porzioni, come oggi.
+- **Etichetta nel campo dell'AI.** Accanto al campo "Cosa hai mangiato?" un tasto "Preferiti" apre l'elenco dei piatti preferiti (con ricerca). Scegliendone uno, nel testo compare un'**etichetta** con il nome del piatto, che si cancella come una parola. Dopo l'etichetta l'utente scrive la quantità ("150 g", "2 porzioni", "mezza porzione") e il resto della frase come sempre. Si possono inserire più etichette.
+- **Cosa fa il modello con un'etichetta.** Non stima il piatto: lo mette nel pasto giusto e restituisce solo la quantità detta (grammi oppure porzioni) e se è stata detta o no. Nome, numeri e quantità del piatto li scrive l'app dal preferito.
+- **Calcolo** (lo fa l'app, mai il modello). Con `r` = rapporto:
+  - preferito con peso e grammi detti: `r = grammi detti / peso del preferito`;
+  - porzioni dette: `r = porzioni`; il peso del piatto diventa `peso del preferito × porzioni`, se c'è;
+  - nessuna quantità detta: `r = 1` e la quantità è segnata come ipotizzata;
+  - preferito senza peso ma grammi detti: `r = 1`, con l'avviso "Peso del preferito sconosciuto: contata una porzione".
+  - kcal e nutrienti = valori del preferito × `r`; kcal arrotondate all'intero, nutrienti a un decimale. La quantità scritta nel piatto diventa "150 g" oppure "2 porzioni".
+- **Nella proposta** il piatto da un'etichetta mostra "dai tuoi preferiti" e non passa dal controllo di coerenza (§3.7). Si corregge come gli altri piatti.
+- **Cambiare quantità senza AI.** Nella scheda del piatto (aggiunta e modifica, Manuale) c'è la riga "Peso (g)" se il piatto ha un peso, altrimenti "Porzioni" (×0,5, ×1, ×1,5, ×2 o un numero). Cambiandola, kcal e nutrienti si ricalcolano in proporzione partendo dai valori di quando la scheda è stata aperta; nessuna chiamata al modello.
+- **Preferiti senza peso.** Si possono completare: nella scheda di un piatto in Oggi si scrive il peso e lo si salva di nuovo nei preferiti; il preferito con lo stesso nome e la stessa quantità viene aggiornato, non duplicato.
+
+Casi di verifica:
+
+| Caso | Situazione | Risultato |
+|---|---|---|
+| AN | Preferito "Hummus fatto in casa": peso 150 g, 150 kcal, proteine 7,5 g. Frase con etichetta e "100 g" | 100 kcal, proteine 5,0 g, peso 100 g, quantità "100 g" |
+| AO | Come AN con "220 g" | 220 kcal, proteine 11,0 g |
+| AP | Come AN con "2 porzioni" | 300 kcal, proteine 15,0 g, peso 300 g |
+| AQ | Come AN senza quantità | 150 kcal, peso 150 g, quantità ipotizzata |
+| AR | Preferito "Caffè con zucchero" senza peso, 20 kcal. Frase con etichetta e "×2" | 40 kcal, quantità "2 porzioni" |
+| AS | Come AR con "100 g" | 20 kcal, avviso "Peso del preferito sconosciuto" |
+| AT | Piatto di 200 g, 300 kcal, carboidrati 40,0 g; nella scheda il peso diventa 250 g | 375 kcal, carboidrati 50,0 g |
+| AU | Piatto senza peso, 420 kcal, grassi 13,3 g; Porzioni ×1,5 | 630 kcal, grassi 20,0 g (19,95 arrotondato) |
 
 ## 5. Attività e automazioni
 
@@ -272,6 +303,9 @@ Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate,
 | 5c | Scheda del piatto unica per aggiunta e modifica, preferiti senza doppioni, colore della linea della media, obiettivi calcolati dal profilo, Impostazioni a sezioni |
 | 6 | Testi e grafica: tema solo scuro, stile di §10, nuova navigazione |
 | 6b | Ritocchi dopo la prova sul telefono: pannelli ad altezza stabile, comandi che non si spostano, difetti grafici della fase 6, screenshot mancanti |
+| 7 | Preferiti nella stima: peso dei piatti, etichette dei preferiti nel campo dell'AI, quantità ricalcolata senza AI (§4.1) |
+| 7b | Tabella degli ingredienti con valori ufficiali, ingredienti uno per uno (fonte da decidere) |
+| 7c | Prodotti di marca da Open Food Facts |
 | da decidere | Grafici |
 | 7 | Promemoria (opzionale) |
 
