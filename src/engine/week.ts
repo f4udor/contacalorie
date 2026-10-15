@@ -27,7 +27,7 @@ export interface NutrientAverages {
 
 export interface WeekSummary {
   days: WeekDayRow[];
-  /** Saldo della regola (§3.3, con il tetto al margine) fino al giorno più recente con pasti, questo compreso; null se nessun giorno ha pasti. */
+  /** Saldo mostrato in Settimana (§3.3): la regola, con il tetto al margine, sui soli giorni conclusi con pasti (oggi escluso); null se non ce n'è nessuno. */
   balance: number | null;
   /** Media delle kcal reali sui giorni con pasti, escluso oggi (è in corso: abbasserebbe la media); null se nessun giorno è valido (§3.8). */
   avgKcal: number | null;
@@ -50,7 +50,7 @@ function mean(values: number[]): number | null {
 /**
  * Riepilogo della settimana (lunedì-domenica) che contiene `date`. I giorni mancanti sono considerati vuoti.
  * Se `today` è dato, l'obiettivo dei giorni dopo oggi è l'anteprima di §3.3 (`previewDayTarget`) e la media delle kcal
- * esclude il giorno di oggi (§3.8). Senza `today` nessun giorno è escluso. Il motore non legge la data da solo.
+ * e il saldo mostrato escludono il giorno di oggi (§3.8, §3.3). Senza `today` nessun giorno è escluso. Il motore non legge la data da solo.
  */
 export function weekSummary(date: DateKey, knownDays: readonly Day[], settings: WeekSettings, today?: DateKey): WeekSummary {
   const dates = weekDates(date);
@@ -67,7 +67,10 @@ export function weekSummary(date: DateKey, knownDays: readonly Day[], settings: 
     target: (today !== undefined && d.date > today ? previewDayTarget(d.date, today, days, settings) : dayTarget(d.date, days, settings)).total,
   }));
 
-  const balance = eatenDays.length === 0 ? null : runBalance(eatenDays, settings);
+  // Saldo mostrato: solo i giorni conclusi, cioè precedenti a oggi (oggi è in corso e i pasti ancora da fare sembrerebbero margine).
+  // Senza `today` nessun giorno è escluso. La regola dell'obiettivo del giorno (`weekBalanceBefore`) non cambia.
+  const concludedDays = eatenDays.filter((d) => today === undefined || d.date < today);
+  const balance = concludedDays.length === 0 ? null : runBalance(concludedDays, settings);
 
   const avgOf = (pick: (d: Day) => number): number | null => mean(eatenDays.map(pick));
   const avgNutrients: NutrientAverages | null =

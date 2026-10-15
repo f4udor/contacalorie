@@ -639,7 +639,7 @@ Stessa regola, cercata dove non è stata segnalata. Si controlla, non si ridiseg
 - Lo script non si ferma più al primo scenario rotto: prosegue ed elenca alla fine quelli falliti, uscendo con errore.
 - Si rigenerano i 13 scenari `nav-*` e `pasti-*` rimasti alla versione precedente alla fase 6. Nel report: l'elenco dei file rigenerati.
 
-### T6b.4 Saldo della Settimana sui giorni conclusi · da fare
+### T6b.4 Saldo della Settimana sui giorni conclusi · fatto
 Difetto visto sul telefono: con un solo giorno concluso (2.080 su 2.200, margine 120) la scheda Saldo mostrava 300, perché contava anche oggi, ancora in corso.
 - Motore: il saldo del riepilogo della settimana segue `docs/BRIEF.md` §3.3 "Saldo mostrato in Settimana": esclude oggi, che arriva già come parametro. **I test esistenti di questo saldo si aggiornano alla nuova regola.** La funzione del saldo usata per l'obiettivo del giorno, il recupero e l'anteprima non si tocca, e nessun altro test del motore cambia: i casi da A a Z e da AA ad AH restano identici.
 - Scheda Saldo: sotto il numero la dicitura "sui giorni conclusi", come nella scheda Media. Senza saldo, trattino e nessun colore.

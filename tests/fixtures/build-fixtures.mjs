@@ -682,6 +682,10 @@ const sette = data({
 settScheda("settimana-pannello-passi-sette", "Pannello Passi con sette giorni di dati: l'elenco scorre dentro il pannello, che ha la stessa altezza delle altre settimane.", sette, [tocca("Passi")], { oggi: "2026-01-11" });
 settScheda("settimana-pannello-bici-sette", "Pannello Bici con sette giorni di dati: elenco che scorre, «Aggiungi uscita in bici» fermo in fondo.", sette, [tocca("Bici")], { oggi: "2026-01-11" });
 
+// --- Saldo della Settimana sui giorni conclusi (T6b.4)
+sett("settimana-saldo-conclusi", "Lunedì 1.980 kcal (margine +120), oggi martedì con 600 kcal finora: il saldo mostra +120 «sui giorni conclusi» e non conta oggi.", "2026-01-06", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "pranzo", "Pranzo", 1980, 80, 220, 60, 20, 4), meal("2026-01-06", "colazione", "Colazione", 600, 20, 80, 15, 4, 1)] }));
+sett("settimana-saldo-trattino", "Oggi lunedì con 600 kcal finora: nessun giorno concluso, la scheda Saldo mostra il trattino (senza colore) e «sui giorni conclusi».", "2026-01-05", data({ settings: { weightKg: 100 }, meals: [meal("2026-01-05", "colazione", "Colazione", 600, 20, 80, 15, 4, 1)] }));
+
 // Toglie gli scenari non più definiti qui.
 for (const f of readdirSync(dir)) if (f.endsWith(".json")) rmSync(path.join(dir, f));
 for (const s of scenarios) writeFileSync(path.join(dir, `${s.id}.json`), JSON.stringify(s, null, 2) + "\n");
