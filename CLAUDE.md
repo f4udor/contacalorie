@@ -1,12 +1,13 @@
 # Personal Health: regole di lavoro
 
-App personale per tracciare dieta e attività fisica. Un solo utente, che non scrive codice e giudica solo schermate e comportamento. Cosa costruire è in `docs/BRIEF.md`; in che ordine è in `docs/TASKS.md`.
+App personale per tracciare dieta e attività fisica. La fanno crescere due persone che non scrivono codice e giudicano solo schermate e comportamento (vedi "Lavoro in due"). Cosa costruire è in `docs/BRIEF.md`; in che ordine è in `docs/TASKS.md`.
 
 ## Prima di ogni sessione
 
 1. Leggi `docs/BRIEF.md`, `docs/TASKS.md` e `docs/DIARIO.md`.
 2. Riparti dal primo task con stato `da fare`. Non rifare task `fatto`.
 3. Lavora solo sui task della fase indicata. Non anticipare fasi successive.
+4. Prepara il branch come dice "Lavoro in due".
 
 ## Stack
 
@@ -49,7 +50,7 @@ Per ogni task:
    - respinto: correggi seguendo le note e ripeti dal punto 2;
    - respinto due volte: stato `bloccato`, motivo nel diario, passa al task successivo.
 5. Un commit per task, con il codice del task nel messaggio (es. `T1.4 target del giorno`).
-6. **Push dopo ogni commit**, sul ramo della sessione. Anche un task `bloccato` va salvato e inviato: aggiornamento di `docs/TASKS.md` e del diario in un commit a parte. Nessun lavoro deve restare solo nell'ambiente della sessione.
+6. **Push dopo ogni commit**, sul branch della fase (vedi "Lavoro in due"). Anche un task `bloccato` va salvato e inviato: aggiornamento di `docs/TASKS.md` e del diario in un commit a parte. Nessun lavoro deve restare solo nell'ambiente della sessione.
 
 Lavora in autonomia, senza chiedere conferme all'utente: nessuno sta guardando. Se serve una scelta, applica la regola dei "Limiti" qui sotto e prosegui.
 
@@ -60,6 +61,17 @@ Lavora in autonomia, senza chiedere conferme all'utente: nessuno sta guardando. 
 - Nessun file fuori dal modulo del task è stato modificato senza motivo.
 - `src/engine` è rimasto puro e i suoi test esistenti non sono stati cambiati per farli passare.
 - Per i task con schermate: screenshot a 390 px di larghezza (tema chiaro e scuro fino alla fase 5c; dalla fase 6 solo scuro), senza testo tagliato, sovrapposizioni o scorrimento orizzontale.
+
+## Lavoro in due
+
+Al progetto lavorano due persone, ognuna con le proprie sessioni: Mauro (GitHub `f4udor`) e Claudiu (GitHub `niss23`). Queste regole valgono per ogni sessione.
+
+- **Di chi è la fase.** Ogni fase in `docs/TASKS.md` ha, sotto il titolo, la riga `Di: <utente GitHub>`. Lavori solo sulla fase che ti è stata indicata e non modifichi task di altre fasi. Se la riga manca, scrivilo nel diario e fermati.
+- **Branch.** Parti sempre dall'ultimo `dev`, mai da `main`. Il branch si chiama `<utente>/fase-<N>-<parola>` (es. `f4udor/fase-9-trend`), con l'utente della riga `Di:`. Se l'ambiente della sessione impone un branch con un altro nome, usa quello e scrivine il nome nel report.
+- **Prima della pull request.** Porta nel branch l'ultimo `dev` (merge) e rilancia `npm run lint`, `npm test` e `npm run build`. Nei conflitti su `docs/TASKS.md` e `docs/DIARIO.md` tieni le righe di entrambe le parti. Nei conflitti sul codice non scegliere tu: fermati e scrivilo nel diario.
+- **Pull request.** A fine fase apri una pull request verso `dev`, mai verso `main`. Titolo `Fase N: <nome>`; nel testo la parte "In parole semplici" del report. Non unire mai una pull request: la uniscono le persone, dopo l'approvazione dell'altra.
+- **Database.** Ogni migrazione nuova è un file nuovo in `supabase/migrations/` con il numero successivo all'ultimo presente in `dev`. Se, portando dentro `dev`, trovi un file con lo stesso numero, rinumera il tuo e aggiorna il file SQL della fase. Mai modificare migrazioni esistenti.
+- **Main.** Non scrivere mai su `main`, nemmeno per i documenti.
 
 ## Limiti
 
@@ -75,7 +87,7 @@ Una riga per task chiuso: codice, esito, eventuale nota. In fondo due elenchi, s
 
 ## Fine fase
 
-Quando tutti i task della fase sono `fatto` o `bloccato`, scrivi `docs/REPORT-FASE-N.md` e fermati. Il report ha due parti:
+Quando tutti i task della fase sono `fatto` o `bloccato`, scrivi `docs/REPORT-FASE-N.md`, apri la pull request verso `dev` (vedi "Lavoro in due") e fermati. Il report ha due parti:
 
 1. **In parole semplici**: cosa c'è ora, cosa si può provare e come, cosa manca.
 2. **Tecnica**: task chiusi e bloccati, copertura dei test, decisioni da confermare, limiti e cose non verificate.
