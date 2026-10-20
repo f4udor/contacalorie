@@ -2,6 +2,8 @@
 
 Stati: `da fare`, `fatto`, `bloccato`. I riferimenti (§) rimandano a `docs/BRIEF.md`.
 
+Dalla fase 9 ogni fase ha sotto il titolo la riga `Di: <utente GitHub>` (regole in `CLAUDE.md`, "Lavoro in due"). Le fasi precedenti sono tutte di Mauro.
+
 ## Fase 1: motore dei calcoli e schema del database
 
 Nessuna schermata in questa fase. Alla fine il motore è completo, testato e non dipende da nient'altro.
@@ -749,6 +751,8 @@ Vincoli di questa fase:
 Scrivi `docs/REPORT-FASE-8.md` come indicato in `CLAUDE.md` e fermati. Nella parte in parole semplici: nessun SQL da eseguire; un controllo da fare sul telefono per ogni task, partendo da "Aggiungi piatto" a pranzo in Manuale con nome e peso.
 
 ## Fase 9: Trend
+
+Di: f4udor
 
 Obiettivo: la schermata Settimana diventa Trend, con le viste Settimana, Mese e Anno; la schermata Grafici sparisce. Regole in `docs/BRIEF.md` §2 (Trend), §3.10 (numeri, casi TA-TI), §10.4 e §10.5.
 
