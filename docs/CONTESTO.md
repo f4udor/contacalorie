@@ -4,7 +4,7 @@ Documento statico, in `docs/CONTESTO.md`: dice cos'è l'app, cosa deve fare e co
 
 ## 1. Cos'è
 
-App personale di Mauro per tracciare dieta e attività fisica: calorie e nutrienti dei pasti, passi, bici, peso. La usa anche un suo amico, aggiunto da Mauro. Non è un prodotto da vendere. Dal 20 ottobre 2026 Mauro (GitHub `f4udor`) la sviluppa insieme a Claudiu (GitHub `niss23`). Nessuno dei due scrive codice: l'app è costruita da Claude Code e deve restare semplice da capire e da mantenere.
+App per tracciare dieta e attività fisica: calorie e nutrienti dei pasti, passi, bici, peso. È nata come app personale di Mauro; dal 20 ottobre 2026 Mauro (GitHub `f4udor`) la sviluppa insieme a Claudiu (GitHub `niss23`) con l'obiettivo di farne un prodotto da vendere e fondare una startup. Oggi la usano Mauro e alcuni amici, aggiunti da Mauro. Nessuno dei due scrive codice: l'app è costruita da Claude Code e deve restare semplice da capire e da mantenere.
 
 - App pubblicata: contacalorie-rho.vercel.app
 - Repository: f4udor/contacalorie
@@ -128,6 +128,8 @@ Poi: la decisione si prende in chat, il lavoro diventa un'issue `da-fare` con un
 
 Stanno nelle issue di GitHub con l'etichetta `idea`: non decise e non pianificate. Si riprendono da lì.
 
+Rimandata al futuro, non scartata: app nativa per iPhone (serve l'abbonamento Apple Developer), per leggere Salute senza il Comando rapido.
+
 ## 10. Fuori per scelta
 
 Scartate, non rimandate. Si riaprono solo se Mauro lo chiede.
@@ -139,7 +141,8 @@ Scartate, non rimandate. Si riaprono solo se Mauro lo chiede.
 - Piani che scendono sotto il metabolismo basale; livello di attività nel profilo.
 - "Copia da ieri".
 - Foto del piatto; ricettario separato.
-- Gestione inviti nell'app; app nativa; app a pagamento per leggere Salute.
+- Gestione inviti nell'app; app a pagamento per leggere Salute.
+- Chat libera con il modello: troppo rischiosa. Al massimo, in futuro, una chat di guida all'uso dell'app.
 - Collegamento diretto a Strava (API a pagamento); attività diverse da bici e passi.
 - Email di avviso per i dati da Salute (basta l'avviso nell'app).
 - Riconoscimento automatico dei preferiti senza etichetta (si usa l'etichetta: niente falsi riconoscimenti).

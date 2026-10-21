@@ -8,7 +8,7 @@ Regole per le persone e per la chat che progetta l'app (il progetto Claude di Ma
 - Ognuno ha la sua chat di progetto, le sue sessioni di Claude Code e i limiti del suo piano.
 - **Il prodotto si decide in due**: regole, numeri, schermate (`docs/BRIEF.md`).
 - **Il processo è di Mauro**: questo documento, `CLAUDE.md`, `.claude/agents/`, `docs/ATTIVITA.md`, `docs/AVVIO.md`, le guide `docs/COLLEGA-*.md`. Mauro li cambia e unisce da solo; Claudiu li legge. Sono di Mauro anche gli **strumenti di lavoro**: codice che serve solo a come si lavora (anteprime, icone delle versioni di prova, script di prova) e non cambia l'app vera; le loro issue hanno l'etichetta `strumenti`.
-- L'obiettivo è un'app che si usa davvero, non un prodotto da vendere.
+- L'obiettivo è un prodotto da vendere, con cui fondare una startup; si parte da un'app che si usa davvero ogni giorno.
 
 ## Ruolo della chat
 
