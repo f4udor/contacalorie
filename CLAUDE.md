@@ -1,6 +1,6 @@
 # Personal Health: regole di lavoro
 
-App personale per tracciare dieta e attività fisica. La fanno crescere due persone, Mauro (GitHub `f4udor`) e Claudiu (GitHub `niss23`), che non scrivono codice e giudicano solo schermate e comportamento. Ogni lavoro nasce da un'issue di GitHub; le regole del prodotto stanno in `docs/BRIEF.md`; il metodo delle persone in `docs/METODO.md`.
+App per tracciare dieta e attività fisica, nata come app personale e oggi base di un prodotto da vendere (`docs/CONTESTO.md` §1). La fanno crescere due persone, Mauro (GitHub `f4udor`) e Claudiu (GitHub `niss23`), che non scrivono codice e giudicano solo schermate e comportamento. Ogni lavoro nasce da un'issue di GitHub; le regole del prodotto stanno in `docs/BRIEF.md`; il metodo delle persone in `docs/METODO.md`.
 
 Lavora in autonomia, senza chiedere conferme: di solito nessuno sta guardando. Quando serve una persona, lo scrivi su GitHub con un'etichetta `per-…` (vedi "GitHub").
 
