@@ -21,6 +21,12 @@ Se il subagente `pianificatore` o `revisore` non è disponibile nella sessione, 
 
 Quando il messaggio di avvio dice "sessione notturna per `<utente>`":
 
+0. **Recuperi**, prima di tutto, anche se poi non c'è nessuna issue da fare:
+   - **Valutazioni mancanti.** Cerca le pull request aperte verso `dev`, non in bozza, uscite dalla bozza da più di 12 ore e senza un commento "## Valutazione" più recente del loro ultimo commit (escluse quelle di processo, documenti e strumenti di `<utente>` stesso).
+     - Se l'autore è l'altra persona: valutala tu, avviando il subagente `valutatore-pr` con `<utente>` come approvatore. Poi scrivi sulla pull request un commento "Recupero" come dice "Imprevisti".
+     - Se l'autore è `<utente>`: non valutarla. Avvisa come dice "Imprevisti": il valutatore dell'altra persona non è partito; cosa fare: lanciare la valutazione a mano da qualunque account (testo in `docs/METODO.md`, "Imprevisti").
+     - Se l'avviso c'è già, non ripeterlo.
+   - **Sessioni interrotte.** Cerca le issue con `in-lavorazione` il cui branch non ha commit da più di 6 ore. Per ognuna avvisa il responsabile come dice "Imprevisti": la sessione si è interrotta; cosa fare: rilanciarla a mano, oppure togliere `in-lavorazione` e rimettere `pronta` per la notte dopo. Non riprenderla tu. Se l'avviso c'è già, non ripeterlo.
 1. Cerca le issue aperte assegnate a `<utente>` con l'etichetta `pronta` e senza `in-lavorazione`, `domanda` o `bloccata`. Se non ce ne sono, fermati senza fare nulla.
 2. Prendi la più vecchia: una sola issue per notte.
 3. Sull'issue togli `pronta` e metti `in-lavorazione`.
@@ -54,6 +60,12 @@ docs/            brief, lavori, archivio, guide
 - Ogni chiamata al modello AI passa da `src/modules/ai` tramite un'interfaccia unica (`AiProvider`). Nessun altro file conosce Gemini.
 - Il database cresce per aggiunte: nuove tabelle e nuove colonne. Mai rinominare o eliminare colonne esistenti.
 - Nessun numero di regola scritto nel codice delle schermate: le costanti stanno nelle impostazioni, con i default in `src/engine/defaults.ts`.
+
+## Prima i test, poi il codice
+
+- Il primo task di ogni lavoro che ha logica da verificare è "Test di accettazione": scrive solo i test dei criteri di accettazione, con i numeri del task o del brief. In quel momento possono fallire. Si committa così.
+- I task successivi devono farli passare **senza modificarli**. Se un test di accettazione sembra sbagliato (contraddice l'issue o il brief), puoi cambiarlo solo scrivendolo nel diario sotto "Decisioni da confermare", con la riga dell'issue o del brief che lo giustifica.
+- Per i task con schermate valgono anche i **percorsi**: script Playwright che usano l'app simulata a 390 px come farebbe una persona (tocco, scrivo, confermo, torno) e salvano uno screenshot per ogni passo. Stanno in `tests/percorsi/`, si lanciano con `npm run percorsi` (sul modello di `tools/screens.mjs`), gli screenshot vanno in `docs/screenshots/percorsi/<nome>/`. I **percorsi base** (accesso, aggiungere un pasto, aprire Trend, aprire Impostazioni) si lanciano in ogni lavoro con schermate e devono passare. Se lo script o i percorsi base non esistono ancora, il primo lavoro con schermate li crea in un suo task.
 
 ## Ciclo di un task
 
@@ -102,6 +114,28 @@ Quando tutti i task sono `fatto` o `bloccato`:
    - sempre `per-<responsabile>`, con il commento "Pronta da provare sull'anteprima";
    - se c'è un file SQL, anche `sql-da-eseguire` e `per-mauro`, con il commento che nomina il file da eseguire sul database di prova.
 5. Fermati.
+
+## Imprevisti
+
+Quando succede qualcosa che una persona deve sapere (valutazione non partita, sessione interrotta, recupero fatto), lo scrivi su GitHub perché arrivi su Slack: **prima l'etichetta `per-…` della persona che deve agire, poi il commento**. Se nessuno deve agire, l'etichetta va a chi deve solo sapere.
+
+Il commento di avviso ha sempre questa forma:
+
+```
+⚠️ Imprevisto: <cosa è successo, in una frase>
+Cosa puoi fare: <azioni, numerate, con il testo esatto da usare se serve>
+Se non fai nulla: <cosa succede>
+```
+
+Quando un imprevisto si risolve (il valutatore parte in ritardo, un recupero lo sistema, una sessione rilanciata va avanti), chi se ne accorge scrive sullo stesso posto:
+
+```
+✅ Risolto: <cosa è successo>. Nessuna azione da fare.
+```
+
+e toglie le etichette `per-…` messe solo per quell'avviso.
+
+Il commento "Recupero" dopo una valutazione fatta dalla sessione notturna: `✅ Risolto: il valutatore non era partito, la valutazione l'ha fatta la sessione notturna di <utente>. Nessuna azione in più oltre a quelle della valutazione.`
 
 ## Fermarsi
 

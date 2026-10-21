@@ -59,3 +59,5 @@ Scrivi un solo commento sulla pull request, in italiano, in questo ordine:
 - Verdetto "non approvare ancora" per un problema da correggere nel codice: rimetti la pull request in bozza e metti `per-<responsabile>` sulla pull request, con un commento breve che rimanda alla valutazione. Per dubbi che spettano alle persone (decisioni da confermare), resta "approvare" e lascia decidere all'approvatore.
 
 L'approvatore è indicato nel messaggio di avvio; il responsabile è l'assegnatario dell'issue.
+
+Se sulla pull request c'è un avviso "⚠️ Imprevisto" sulla valutazione non partita, dopo il tuo commento scrivi `✅ Risolto: la valutazione è stata fatta. Nessuna azione in più oltre a quelle della valutazione.` e togli le etichette `per-…` messe solo per quell'avviso (vedi `CLAUDE.md`, "Imprevisti").
