@@ -23,7 +23,7 @@ e guidami nella preparazione per lavorare a Personal Health.
 ## I passi
 
 1. **Invito GitHub.** Accettare l'invito di Mauro al repository `f4udor/contacalorie`: arriva per email da GitHub, oppure si trova tra le notifiche di github.com.
-2. **Notifiche GitHub.** Installare l'app GitHub sul telefono e lasciare attive le notifiche: avvisa quando l'altro approva o commenta una pull request.
+2. **Notifiche GitHub.** Installare l'app GitHub sul telefono e lasciare attive le notifiche: avvisa quando arrivano commenti e approvazioni sulle pull request.
 3. **Connettori della chat.** Nelle impostazioni di claude.ai, tra i connettori, collegare **Google Drive** e **Google Docs** (file di stato), e nei permessi degli strumenti di ciascuno scegliere **"Consenti sempre"**: va fatto lì, non dal "Consenti sempre" dentro una chat, che vale solo per quella chat. Su GitHub la chat lavora agganciando il repository quando serve: chiede una conferma, una volta per chat.
 4. **Claude Code.** Aprire Claude Code sul web (claude.ai/code) e collegare l'account GitHub. Poi avviare una sessione cloud sul repository `f4udor/contacalorie`, branch `dev`, con il messaggio "elenca le issue chiuse del repository con gh api". Se compaiono, le sessioni funzionano.
 5. **Progetto Claude.** Creare un progetto "Personal Health" e incollare come istruzioni il testo di "Istruzioni del progetto" qui sotto, con nome, utente GitHub e file di stato giusti. Non serve caricare file: tutto il resto la chat lo legge dal repository.
