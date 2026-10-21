@@ -1,13 +1,31 @@
 # Personal Health: regole di lavoro
 
-App personale per tracciare dieta e attività fisica. La fanno crescere due persone che non scrivono codice e giudicano solo schermate e comportamento (vedi "Lavoro in due"). Cosa costruire è in `docs/BRIEF.md`; in che ordine è in `docs/TASKS.md`.
+App personale per tracciare dieta e attività fisica. La fanno crescere due persone, Mauro (GitHub `f4udor`) e Claudiu (GitHub `niss23`), che non scrivono codice e giudicano solo schermate e comportamento. Ogni lavoro nasce da un'issue di GitHub; le regole del prodotto stanno in `docs/BRIEF.md`; il metodo delle persone in `docs/METODO.md`.
 
-## Prima di ogni sessione
+Lavora in autonomia, senza chiedere conferme: di solito nessuno sta guardando. Quando serve una persona, lo scrivi su GitHub con un'etichetta `per-…` (vedi "GitHub").
 
-1. Leggi `docs/BRIEF.md`, `docs/TASKS.md` e `docs/DIARIO.md`.
-2. Riparti dal primo task con stato `da fare`. Non rifare task `fatto`.
-3. Lavora solo sui task della fase indicata. Non anticipare fasi successive.
-4. Prepara il branch come dice "Lavoro in due".
+## Sessione su un'issue
+
+Ogni sessione lavora su una sola issue, indicata nel messaggio di avvio o scelta come dice "Sessione notturna".
+
+1. **Regole aggiornate.** Lavora a partire da `dev` (`git fetch origin dev`). Se all'avvio il repository era su un altro branch, rileggi questo file dalla versione di `dev`: vale quella.
+2. **Leggi** l'issue con tutti i commenti, e se esiste la cartella del lavoro `docs/lavori/<n>-<parola>/`. Di `docs/BRIEF.md` leggi i titoli delle sezioni e per intero solo le sezioni che l'issue o i task nominano. `docs/archivio/` si legge solo se un task lo richiede.
+3. **Branch.** Il responsabile è l'assegnatario dell'issue. Se esiste già un branch `<responsabile>/<n>-*`, continui su quello; altrimenti lo crei da `dev` con il nome `<responsabile>/<n>-<parola>` (es. `f4udor/31-trend`). Se l'ambiente impone un altro nome, usa quello e scrivilo nel report.
+4. **Piano.** Avvia il subagente `pianificatore` (`.claude/agents/pianificatore.md`) passandogli il numero dell'issue e il nome del branch. Il pianificatore scrive i task o li aggiorna dopo nuovi commenti. Se risponde `DOMANDA` o `TROPPO GRANDE`, salva e invia ciò che ha scritto, poi fermati (vedi "Fermarsi").
+5. **Task.** Esegui i task `da fare` in ordine, con il ciclo qui sotto. Non rifare task `fatto` e non fare nulla che i task non chiedono.
+6. **Fine.** Come dice "Fine del lavoro".
+
+Se il subagente `pianificatore` o `revisore` non è disponibile nella sessione, avvia un agente `general-purpose` passandogli come istruzioni il contenuto integrale del suo file, più ciò che gli passeresti. Vale a tutti gli effetti.
+
+## Sessione notturna
+
+Quando il messaggio di avvio dice "sessione notturna per `<utente>`":
+
+1. Cerca le issue aperte assegnate a `<utente>` con l'etichetta `pronta` e senza `in-lavorazione`, `domanda` o `bloccata`. Se non ce ne sono, fermati senza fare nulla.
+2. Prendi la più vecchia: una sola issue per notte.
+3. Sull'issue togli `pronta` e metti `in-lavorazione`.
+4. Prosegui come dice "Sessione su un'issue".
+5. Alla fine togli `in-lavorazione`, in ogni caso.
 
 ## Stack
 
@@ -15,7 +33,7 @@ App personale per tracciare dieta e attività fisica. La fanno crescere due pers
 - Tailwind CSS per lo stile.
 - Supabase per database (Postgres) e login.
 - Vitest per i test della logica, Playwright per gli screenshot delle schermate.
-- Nessuna altra dipendenza senza un motivo scritto nel diario.
+- Nessuna altra dipendenza senza un motivo scritto nel diario del lavoro.
 
 ## Struttura e modularità
 
@@ -24,10 +42,10 @@ Questa è la regola più importante del progetto: si devono poter aggiungere mod
 ```
 src/engine/      motore dei calcoli: funzioni pure, nessun import da UI, database o rete
 src/modules/     un modulo per funzione: meals, activity, weight, challenge, ai, reminders
-src/data/        sportello dei dati: unica interfaccia per leggere e scrivere (browser oggi, Supabase poi)
+src/data/        sportello dei dati: unica interfaccia per leggere e scrivere (browser e Supabase)
 src/app/         schermate e route
 supabase/migrations/   schema del database
-docs/            brief, task, diario
+docs/            brief, lavori, archivio, guide
 ```
 
 - `src/engine` non importa nulla dal resto del progetto e non legge data, ora o rete: riceve tutto come parametri.
@@ -37,63 +55,70 @@ docs/            brief, task, diario
 - Il database cresce per aggiunte: nuove tabelle e nuove colonne. Mai rinominare o eliminare colonne esistenti.
 - Nessun numero di regola scritto nel codice delle schermate: le costanti stanno nelle impostazioni, con i default in `src/engine/defaults.ts`.
 
-## Ciclo di lavoro
-
-Per ogni task:
+## Ciclo di un task
 
 1. **Costruisci** solo ciò che il task chiede.
 2. **Verifica**: `npm run lint`, `npm test`, `npm run build` devono passare.
-3. **Revisione**: avvia il subagente `revisore` (definito in `.claude/agents/revisore.md`), passandogli solo il testo del task e il diff. Il revisore non vede il tuo ragionamento.
-   Se il subagente `revisore` non è disponibile nella sessione, avvia un agente `general-purpose` passandogli come istruzioni il contenuto integrale di `.claude/agents/revisore.md`, più il testo del task e il diff. Vale come revisione a tutti gli effetti.
+3. **Revisione**: avvia il subagente `revisore` (`.claude/agents/revisore.md`), passandogli solo il testo del task e il diff. Il revisore non vede il tuo ragionamento.
 4. **Esito**:
-   - approvato: commit, stato del task a `fatto`, una riga nel diario;
+   - approvato: commit, stato del task a `fatto`, una riga nel diario del lavoro;
    - respinto: correggi seguendo le note e ripeti dal punto 2;
    - respinto due volte: stato `bloccato`, motivo nel diario, passa al task successivo.
-5. Un commit per task, con il codice del task nel messaggio (es. `T1.4 target del giorno`).
-6. **Push dopo ogni commit**, sul branch della fase (vedi "Lavoro in due"). Anche un task `bloccato` va salvato e inviato: aggiornamento di `docs/TASKS.md` e del diario in un commit a parte. Nessun lavoro deve restare solo nell'ambiente della sessione.
+5. Un commit per task, con issue e codice del task nel messaggio (es. `#31 T31.2 schermata Trend`).
+6. **Push dopo ogni commit.** Anche un task `bloccato` va salvato e inviato. Nessun lavoro deve restare solo nell'ambiente della sessione: la sessione può interrompersi in qualsiasi momento.
 
-Lavora in autonomia, senza chiedere conferme all'utente: nessuno sta guardando. Se serve una scelta, applica la regola dei "Limiti" qui sotto e prosegui.
+## Cartella del lavoro
 
-### Cosa controlla il revisore
+`docs/lavori/<n>-<parola>/`, una per issue. Le sessioni scrivono solo nella cartella del proprio lavoro.
 
-- I criteri di accettazione del task sono soddisfatti, uno per uno.
-- I test passano e coprono i casi elencati nel task.
-- Nessun file fuori dal modulo del task è stato modificato senza motivo.
-- `src/engine` è rimasto puro e i suoi test esistenti non sono stati cambiati per farli passare.
-- Per i task con schermate: screenshot a 390 px di larghezza (tema chiaro e scuro fino alla fase 5c; dalla fase 6 solo scuro), senza testo tagliato, sovrapposizioni o scorrimento orizzontale.
+- **`TASKS.md`**: lo scrive il pianificatore (formato nel suo file). Stati: `da fare`, `fatto`, `bloccato`. La sessione cambia solo gli stati.
+- **`DIARIO.md`**: una riga per task chiuso (codice, esito, eventuale nota). In fondo due elenchi sempre aggiornati: "Decisioni da confermare" e "Non verificato". Niente racconto del lavoro.
+- **`REPORT.md`**: a fine lavoro (vedi sotto).
 
-## Lavoro in due
+## GitHub
 
-Al progetto lavorano due persone, ognuna con le proprie sessioni: Mauro (GitHub `f4udor`) e Claudiu (GitHub `niss23`). Queste regole valgono per ogni sessione.
+- **Scrivere** (issue, etichette, commenti, pull request, bozza o pronta): usa lo strumento GitHub integrato della sessione. Con `gh api` solo letture, tramite l'API REST (GraphQL non è disponibile).
+- **Etichette `per-mauro` e `per-claudiu`**: le metti quando serve un'azione di quella persona, sempre con un commento che dice in una o due frasi cosa deve fare. Arrivano come notifica su Slack.
+- **Mai unire una pull request**, mai approvarne una, mai scrivere su `dev` o su `main`. Le pull request vanno sempre verso `dev`.
 
-- **Di chi è la fase.** Ogni fase in `docs/TASKS.md` ha, sotto il titolo, la riga `Di: <utente GitHub>`. Lavori solo sulla fase che ti è stata indicata e non modifichi task di altre fasi. Se la riga manca, scrivilo nel diario e fermati.
-- **Branch.** Parti sempre dall'ultimo `dev`, mai da `main`. Il branch si chiama `<utente>/fase-<N>-<parola>` (es. `f4udor/fase-9-trend`), con l'utente della riga `Di:`. Se l'ambiente della sessione impone un branch con un altro nome, usa quello e scrivine il nome nel report.
-- **Prima della pull request.** Porta nel branch l'ultimo `dev` (merge) e rilancia `npm run lint`, `npm test` e `npm run build`. Nei conflitti su `docs/TASKS.md` e `docs/DIARIO.md` tieni le righe di entrambe le parti. Nei conflitti sul codice non scegliere tu: fermati e scrivilo nel diario.
-- **Pull request.** A fine fase apri una pull request verso `dev`, mai verso `main`. Titolo `Fase N: <nome>`; nel testo la parte "In parole semplici" del report. Non unire mai una pull request: la uniscono le persone, dopo l'approvazione dell'altra.
-- **Database.** Ogni migrazione nuova è un file nuovo in `supabase/migrations/` con il numero successivo all'ultimo presente in `dev`. Se, portando dentro `dev`, trovi un file con lo stesso numero, rinumera il tuo e aggiorna il file SQL della fase. Mai modificare migrazioni esistenti.
-- **Main.** Non scrivere mai su `main`, nemmeno per i documenti.
+## Database
+
+- Ogni migrazione nuova è un file nuovo in `supabase/migrations/` con il numero successivo all'ultimo presente in `dev`. Se, portando dentro `dev`, trovi un file con lo stesso numero, rinumera il tuo. Mai modificare migrazioni esistenti.
+- Ogni lavoro che cambia il database ha un file `supabase/aggiornamento-<n>.sql` da eseguire a mano, con solo aggiunte.
+- Nessun agente esegue SQL su un database vero, nemmeno di prova: lo fa Mauro.
+
+## Fine del lavoro
+
+Quando tutti i task sono `fatto` o `bloccato`:
+
+1. **Porta dentro `dev`** (merge) e rilancia `npm run lint`, `npm test` e `npm run build`.
+   - Conflitti negli screenshot: rigenerali.
+   - Conflitti sul codice: non scegliere tu. Fermati (vedi "Fermarsi").
+2. **Scrivi `REPORT.md`**, in due parti:
+   - **In parole semplici**: cosa c'è ora, cosa si può provare e come (un controllo sul telefono per ogni task), cosa manca, se c'è un SQL da eseguire.
+   - **Tecnica**: task chiusi e bloccati, copertura dei test, decisioni da confermare, limiti e cose non verificate.
+3. **Pull request** verso `dev`, **in bozza**, o aggiorna quella che esiste già. Titolo `#<n> <titolo dell'issue>`; nel testo la parte "In parole semplici" del report e la riga `Closes #<n>`.
+4. **Etichette sulla pull request**:
+   - sempre `per-<responsabile>`, con il commento "Pronta da provare sull'anteprima";
+   - se c'è un file SQL, anche `sql-da-eseguire` e `per-mauro`, con il commento che nomina il file da eseguire sul database di prova.
+5. Fermati.
+
+## Fermarsi
+
+Quando non puoi andare avanti (domanda del pianificatore, lavoro troppo grande, conflitto sul codice, errore che non riesci a risolvere):
+- salva e invia tutto ciò che è fatto;
+- sull'issue metti `domanda` (se serve una scelta di prodotto) oppure `bloccata` (negli altri casi), più `per-<responsabile>`;
+- scrivi un commento sull'issue: cosa è successo e cosa serve, in parole semplici. Le domande sono numerate e ognuna ha una proposta di default.
 
 ## Limiti
 
 - Lavora solo dentro il repository.
-- Nessuna chiave, nessun servizio reale, nessun dato personale: Supabase, modello AI ed email sono simulati con finti locali finché l'utente non collega quelli veri.
-- Non prendere decisioni di prodotto. Se il brief non copre un caso, scegli l'opzione più semplice, scrivila nel diario sotto "Decisioni da confermare" e prosegui.
+- Nessuna chiave, nessun servizio reale, nessun dato personale: Supabase, modello AI ed email sono simulati con finti locali.
+- Non prendere decisioni di prodotto. Se un caso piccolo non è coperto (non cambia numeri né cosa si vede sullo schermo), scegli l'opzione più semplice, scrivila nel diario sotto "Decisioni da confermare" e prosegui. Se è grande, è una domanda: fermati.
 - Non aggiungere funzioni non richieste, nemmeno se sembrano utili.
+- Non toccare file di processo (`CLAUDE.md`, `.claude/`, `docs/METODO.md`, `docs/ATTIVITA.md`, `docs/AVVIO.md`) né `docs/BRIEF.md`, salvo che l'issue lo chieda esplicitamente.
 - Se una verifica non si può fare nell'ambiente, dichiaralo nel diario: non scrivere che funziona.
-
-## Diario (`docs/DIARIO.md`)
-
-Una riga per task chiuso: codice, esito, eventuale nota. In fondo due elenchi, sempre aggiornati: "Decisioni da confermare" e "Non verificato". Niente racconto del lavoro.
-
-## Fine fase
-
-Quando tutti i task della fase sono `fatto` o `bloccato`, scrivi `docs/REPORT-FASE-N.md`, apri la pull request verso `dev` (vedi "Lavoro in due") e fermati. Il report ha due parti:
-
-1. **In parole semplici**: cosa c'è ora, cosa si può provare e come, cosa manca.
-2. **Tecnica**: task chiusi e bloccati, copertura dei test, decisioni da confermare, limiti e cose non verificate.
 
 ## Stile dell'interfaccia
 
-Fino alla fase 5c: struttura chiara come l'app Salute di Apple, anelli come Fitness, font di sistema, schede arrotondate su sfondo neutro, tema chiaro e scuro automatici, un solo colore d'accento più verde, giallo e rosso per i semafori.
-
-Dalla fase 6 vale `docs/BRIEF.md` §10: tema solo scuro su nero pieno, ispirato all'app Fitness, con la bozza di riferimento in `docs/design/`. Inserimenti in pannelli che salgono dal basso. Nessuna decorazione. Testi dell'interfaccia in italiano.
+Vale `docs/BRIEF.md` §10: tema solo scuro su nero pieno, ispirato all'app Fitness, con le bozze di riferimento in `docs/design/`. Inserimenti in pannelli che salgono dal basso. Nessuna decorazione. Testi dell'interfaccia in italiano. Screenshot a 390 px di larghezza in `docs/screenshots/`.

@@ -358,6 +358,8 @@ Tabelle previste: impostazioni, pasti, preferiti, attività giornaliera, pesate,
 
 ## 8. Fasi
 
+Storia fino alla fase 9. Dal 21 ottobre 2026 ogni lavoro è un'issue di GitHub (`docs/METODO.md`); task e report delle fasi sono in `docs/archivio/`.
+
 | Fase | Contenuto |
 |---|---|
 | 1 | Motore dei calcoli con test, schema del database |
@@ -455,7 +457,7 @@ I nomi di comandi, titoli ed etichette sono in `docs/TESTI.md`, tabella "com'è 
 
 ## 11. Idee future
 
-Non decise e non pianificate: nessun task le anticipa. L'elenco aggiornato sta nel contesto del progetto su Claude; qui solo ciò che conviene sapere per non chiudersi delle strade.
+Non decise e non pianificate: nessun task le anticipa. L'elenco aggiornato sta nelle issue di GitHub con l'etichetta `idea`; qui solo ciò che conviene sapere per non chiudersi delle strade.
 - Dispensa di ingredienti con i loro valori e piatti composti dall'AI secondo criteri dell'utente, con kcal e nutrienti sommati dall'app. Il campo "quantità" con ingredienti e grammi (§4) è il primo mattone: non va trasformato in qualcosa di incompatibile.
 - Viste di Oggi e Trend compatte e personalizzabili.
 - Trend con intervalli personalizzati (dal… al…, "ultimi 30 giorni") e deficit stimato confrontato con il peso reale.
