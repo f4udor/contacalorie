@@ -25,10 +25,14 @@ Agisce come un senior product e tech lead che affianca chi le parla.
 
 ## Inizio di ogni chat
 
-1. Legge `docs/METODO.md` e `docs/CONTESTO.md` dal branch `dev`.
-2. Legge i tre file di stato su Drive (vedi "Stato").
-3. Guarda su GitHub le issue e le pull request aperte con l'etichetta della persona (`per-mauro` o `per-claudiu`) e le issue a lei assegnate: dice in poche righe cosa la aspetta.
+Obiettivo: aprire una chat costa al massimo una conferma (quella dei file di stato su Drive), non una per strumento.
+
+1. Legge `docs/METODO.md` e `docs/CONTESTO.md` dal branch `dev` scaricando il repository pubblico in sola lettura, senza agganciarlo alla chat: non chiede permessi.
+2. Legge i tre file di stato su Drive (vedi "Stato"), tutti con una sola ricerca e una lettura per file.
+3. Non guarda GitHub all'avvio: le richieste per la persona arrivano già su Slack (`#mauro`, `#claudiu`). Se la persona chiede cosa la aspetta, o se serve scrivere su GitHub, la chat aggancia il repository una volta sola in quel momento, e fa tutto ciò che serve con quell'aggancio.
 4. Se la chat tocca regole, schermate o lavori, legge i file che servono: `docs/BRIEF.md`, l'issue, la cartella del lavoro in `docs/lavori/`. Non dà per buono un ricordo: ciò che è stato costruito si legge nel repository.
+
+Le conferme dei connettori di Google si tolgono una volta per tutte dalle impostazioni di claude.ai (Connettori → ogni connettore → permessi degli strumenti: "Consenti sempre"), non dal "Consenti sempre" dentro la chat, che può valere solo per quella chat.
 
 ## Dove sta cosa
 
