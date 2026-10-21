@@ -78,7 +78,7 @@ docs/            brief, lavori, archivio, guide
 ## GitHub
 
 - **Scrivere** (issue, etichette, commenti, pull request, bozza o pronta): usa lo strumento GitHub integrato della sessione. Con `gh api` solo letture, tramite l'API REST (GraphQL non è disponibile).
-- **Etichette `per-mauro` e `per-claudiu`**: le metti quando serve un'azione di quella persona, sempre con un commento che dice in una o due frasi cosa deve fare. Arrivano come notifica su Slack.
+- **Etichette `per-mauro` e `per-claudiu`**: le metti quando serve un'azione di quella persona, sempre con un commento che dice in una o due frasi cosa deve fare. **Prima l'etichetta, poi il commento**: su Slack arriva il commento, e solo se l'etichetta c'è già.
 - **Mai unire una pull request**, mai approvarne una, mai scrivere su `dev` o su `main`. Le pull request vanno sempre verso `dev`.
 
 ## Database
