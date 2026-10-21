@@ -18,23 +18,24 @@ e guidami nella preparazione per lavorare a Personal Health.
 - Quando un passo lo può fare lei con i propri strumenti (creare o condividere un file su Drive), lo fa, dopo averlo detto.
 - Non indovina menu o percorsi delle impostazioni che non conosce: descrive cosa cercare.
 - Alla fine segna la preparazione come conclusa (passo 9).
+- Se la persona ha già fatto la preparazione con la versione precedente di questo documento, la chat le fa fare solo i passi che mancano (di solito 4, 7 e 8).
 
 ## I passi
 
 1. **Invito GitHub.** Accettare l'invito di Mauro al repository `f4udor/contacalorie`: arriva per email da GitHub, oppure si trova tra le notifiche di github.com.
-2. **Notifiche.** Installare l'app GitHub sul telefono e lasciare attive le notifiche: avvisa quando l'altro chiede di approvare una pull request.
-3. **Connettori della chat.** Nelle impostazioni di claude.ai, tra i connettori, collegare **GitHub** (per aprire le pull request dei documenti), **Google Drive** e **Google Docs** (per i file di stato).
-4. **Claude Code.** Aprire Claude Code sul web (claude.ai/code) e collegare l'account GitHub, dando accesso al repository `f4udor/contacalorie`. Serve per lanciare le sessioni che scrivono il codice.
+2. **Notifiche GitHub.** Installare l'app GitHub sul telefono e lasciare attive le notifiche: avvisa quando l'altro approva o commenta una pull request.
+3. **Connettori della chat.** Nelle impostazioni di claude.ai, tra i connettori, collegare **GitHub** (issue, etichette e pull request dei documenti), **Google Drive** e **Google Docs** (file di stato).
+4. **Claude Code.** Aprire Claude Code sul web (claude.ai/code) e collegare l'account GitHub. Poi avviare una sessione cloud sul repository `f4udor/contacalorie`, branch `dev`, con il messaggio "elenca le issue chiuse del repository con gh api". Se compaiono, le sessioni funzionano.
 5. **Progetto Claude.** Creare un progetto "Personal Health" e incollare come istruzioni il testo di "Istruzioni del progetto" qui sotto, con nome, utente GitHub e file di stato giusti. Non serve caricare file: tutto il resto la chat lo legge dal repository.
 6. **File di stato.** Tre passaggi:
    - creare nel proprio Drive il file `personal-health-stato-<nome>.md` con il modello qui sotto (lo può creare la chat);
    - condividerlo in sola lettura con l'altra persona (la chat chiede l'email);
    - aprire il file `personal-health-stato-comune.md` che Mauro ha condiviso come editor, e quello personale di Mauro, per controllare che si leggano.
-7. **Database di prova.** Accettare l'invito al progetto Supabase di prova, quando arriva. Serve per eseguire gli SQL delle proprie fasi. Il database vero resta solo di Mauro.
-8. **Gruppo WhatsApp.** Entrare nel gruppo di lavoro e scrivere "pronto".
-9. **Fine.** La chat scrive nel file di stato personale "Preparazione conclusa il <data>" e toglie la voce corrispondente dal file comune. Poi suggerisce di aprire la prima chat dentro il progetto.
+7. **Slack.** Accettare l'invito allo spazio Slack, installare Slack sul telefono e attivare le notifiche di tutti i messaggi per il proprio canale (`#claudiu` o `#mauro`). Lì arrivano le richieste degli agenti.
+8. **Attività programmate.** Creare sul proprio account le due attività di `docs/ATTIVITA.md` (notturna e valutatore), con i testi già pronti lì: la chat guida passo per passo e ricorda di togliere tutti i connettori. Se non si riesce a crearle, vale il piano B di `docs/METODO.md`: le lancia Mauro.
+9. **Fine.** La chat scrive nel file di stato personale "Preparazione conclusa il <data>" e toglie la voce corrispondente dal file comune. Poi spiega in cinque righe il ciclo di un lavoro (`docs/METODO.md`) e suggerisce di aprire la prima chat dentro il progetto.
 
-Su Vercel entra solo Mauro: il piano gratuito ha un posto. I link alle anteprime si trovano nei commenti di Vercel sulle pull request.
+Su Vercel e su Supabase entra solo Mauro: il piano gratuito di Vercel ha un posto, e gli SQL li esegue lui. I link alle anteprime si trovano nei commenti di Vercel sulle pull request.
 
 ## Istruzioni del progetto
 
@@ -56,8 +57,8 @@ ALL'INIZIO DI OGNI CHAT
    passi mancanti di docs/AVVIO.md.
 
 VINCOLI MIEI
-- Credito per le sessioni di Claude Code: <importo e scadenza, oppure
-  "piano Pro">. Ogni proposta ne tiene conto.
+- Claude Code con il piano Pro: le attività notturne consumano gli
+  stessi limiti della chat.
 ```
 
 ## Modello del file di stato personale
@@ -68,7 +69,7 @@ VINCOLI MIEI
 Aggiornato: <data e ora>
 Altri stati: personal-health-stato-comune.md e personal-health-stato-<altro>.md. Regole in docs/METODO.md, sezione Stato.
 
-## Fase attuale
+## A cosa sto lavorando
 Preparazione in corso (docs/AVVIO.md).
 
 ## Prossimo passo
@@ -79,7 +80,4 @@ Preparazione in corso (docs/AVVIO.md).
 
 ## Verifiche da fare
 - Nessuna.
-
-## Credito
-<importo e scadenza, oppure piano Pro>
 ```

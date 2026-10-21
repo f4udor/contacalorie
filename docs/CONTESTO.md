@@ -17,12 +17,13 @@ Ogni informazione ha un solo posto. Se due posti dicono cose diverse, vale quell
 
 | Cosa | Dove | Chi lo aggiorna |
 |---|---|---|
-| Quadro dell'app, principi, idee future | `docs/CONTESTO.md` (questo documento) | la chat, con pull request, quando cambia un requisito |
+| Quadro dell'app, principi | `docs/CONTESTO.md` (questo documento) | la chat, con pull request, quando cambia un requisito |
+| Idee e lavori da fare | issue di GitHub (`idea`, `da-fare`) | la chat |
 | Regole esatte, numeri, casi di verifica, schermate, stile | `docs/BRIEF.md` nel repository | la chat, con pull request |
-| Lavoro da fare e fatto, fase per fase | `docs/TASKS.md` nel repository | la chat scrive i task, Claude Code segna lo stato |
-| Decisioni prese dagli agenti e cose non verificate | `docs/DIARIO.md` e `docs/REPORT-FASE-*.md` | Claude Code |
-| Regole di lavoro degli agenti | `CLAUDE.md` e `.claude/agents/revisore.md` | la chat, con pull request |
-| Metodo di lavoro in due: fasi, branch, approvazioni | `docs/METODO.md` nel repository | la chat, con pull request |
+| Task di un lavoro | `docs/lavori/<n>-<parola>/TASKS.md` | il pianificatore scrive i task, Claude Code segna lo stato |
+| Decisioni prese dagli agenti e cose non verificate | `docs/lavori/<n>-<parola>/DIARIO.md` e `REPORT.md`; fino alla fase 8 in `docs/archivio/` | Claude Code |
+| Regole di lavoro degli agenti e attività programmate | `CLAUDE.md`, `.claude/agents/`, `docs/ATTIVITA.md` | la chat di Mauro, con pull request |
+| Metodo di lavoro in due: lavori, branch, approvazioni | `docs/METODO.md` nel repository | la chat di Mauro, con pull request |
 | Bozze grafiche approvate | `docs/design/` | la chat |
 | Guide ai collegamenti (Supabase, Vertex, Salute) | `docs/COLLEGA-*.md` | Claude Code |
 | A che punto è ciascuno, decisioni comuni in attesa | tre file di stato su Google Drive (`docs/METODO.md`, "Stato") | le chat, nei momenti indicati lì |
@@ -110,9 +111,9 @@ Dettaglio in `docs/BRIEF.md` §10, bozze in `docs/design/`.
 
 ## 8. Come si aggiunge un'idea nuova
 
-Ogni idea, prima di diventare un task, passa da queste domande. Se una risposta è "no", l'idea si ridimensiona o va tra le idee future.
+Ogni idea, prima di diventare un task, passa da queste domande. Se una risposta è "no", l'idea si ridimensiona o resta un'issue `idea`.
 
-1. **Serve davvero all'uso quotidiano?** Se è un "sarebbe bello", va nella sezione 9.
+1. **Serve davvero all'uso quotidiano?** Se è un "sarebbe bello", resta un'issue `idea`.
 2. **Qual è la versione più piccola che dà lo stesso risultato?** Si parte da quella.
 3. **In quale modulo vive?** Uno esistente o uno nuovo. Non deve obbligare un modulo a dipendere da un altro.
 4. **Tocca i calcoli?** Se sì: regola scritta nel brief con casi di verifica numerici, e formula nel motore. Mai lasciata all'AI.
@@ -121,27 +122,11 @@ Ogni idea, prima di diventare un task, passa da queste domande. Se una risposta 
 7. **Ha un colore o un comando nuovo?** Deve rispettare "un colore, un significato" e i componenti esistenti.
 8. **Come si verifica?** Test per la logica, schermata per ciò che Mauro deve giudicare.
 
-Poi: la decisione si prende in chat, la regola entra in `docs/BRIEF.md`, il lavoro in `docs/TASKS.md` come nuova fase, tutto con una pull request verso `dev` che l'altra persona approva. Solo dopo parte Claude Code.
+Poi: la decisione si prende in chat, il lavoro diventa un'issue `da-fare` con un responsabile, la regola entra in `docs/BRIEF.md` con una pull request che l'altra persona approva. Il ciclo completo è in `docs/METODO.md`, "Ciclo di un lavoro".
 
 ## 9. Idee future
 
-Non decise e non pianificate. Si riprendono da qui.
-
-- **Tabella degli ingredienti** con valori ufficiali (fonte da decidere: BDA dell'IEO in italiano, uso non commerciale con citazione, scaricabilità da verificare; oppure Ciqual, aperta ma in francese): il modello elenca ingredienti e grammi, l'app calcola; le correzioni cambiano una riga. Prevista come fase 7b; servono prima 3-5 esempi reali di stime sbagliate.
-- **Prodotti di marca** ("hummus della Lidl") da Open Food Facts: ricerca per nome e marca, scelta dell'utente, salvataggio tra i suoi alimenti. Il nome del prodotto andrebbe a Open Food Facts (approvato da Mauro). Prevista come fase 7c.
-- **Trend con intervalli personalizzati** (dal… al…, "ultimi 30 giorni").
-- **Deficit stimato confrontato con il peso reale** in Trend ("dovresti aver perso 1,8 kg, hai perso 1,5"): formula nuova, con casi di verifica.
-- **Promemoria**: la sera, solo se manca qualcosa; riepilogo la domenica. Tramite Comando rapido e Promemoria di iCloud. Se si rivela fragile, si fa a mano.
-- **"/" nel campo dell'AI** per aprire i preferiti: utile solo da computer (sull'iPhone il tasto è più rapido).
-- **Tasto "Sincronizza ora"** che lancia il Comando rapido di Salute: prima va provato se l'app sulla Home riesce a lanciarlo.
-- **Massa grassa** nella pesata, solo da guardare, senza effetto sui calcoli: dipende da come la si misura (bilancia che scrive in Salute o valore a mano).
-- **Più personalizzazione**: da definire con un esempio concreto.
-- **Dispensa e piatti composti dall'AI**: ingredienti salvati con i loro valori; l'AI propone piatti secondo criteri scritti dall'utente in app; kcal e nutrienti calcolati dall'app sommando gli ingredienti. Da decidere allora: quali dati della giornata mandare al modello.
-- **Viste compatte e personalizzabili** di Oggi e Trend.
-- **Segna pasto con Siri** senza aprire l'app.
-- **Calorie reali delle uscite in bici** lette da Salute, se disponibili, al posto della formula per km.
-- **Pasti preferiti collegati** ai piatti preferiti, che si aggiornano insieme; modifica dei pasti preferiti.
-- **Tasto "Chiedi un consiglio"** sugli obiettivi.
+Stanno nelle issue di GitHub con l'etichetta `idea`: non decise e non pianificate. Si riprendono da lì.
 
 ## 10. Fuori per scelta
 

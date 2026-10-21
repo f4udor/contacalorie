@@ -1,6 +1,6 @@
 # Testi dell'interfaccia: com'è → come diventa
 
-Approvata dall'utente il 9 ottobre 2026. Vale per la fase 6 (`docs/TASKS.md`) insieme a `docs/BRIEF.md` §10.
+Approvata dall'utente il 9 ottobre 2026. Vale per la fase 6 (`docs/archivio/TASKS.md`) insieme a `docs/BRIEF.md` §10.
 
 ## Come si legge
 
