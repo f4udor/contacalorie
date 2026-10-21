@@ -56,7 +56,7 @@ I numeri stanno solo in `docs/BRIEF.md`. Ogni informazione ha un solo posto. `<n
 | Branch | Cos'è | Si aggiorna |
 |---|---|---|
 | `main` | l'app che si usa tutti i giorni | solo con la pull request da `dev`, approvata da Claudiu |
-| `dev` | versione comune di prova | solo con pull request (vedi "Chi approva cosa") |
+| `dev` | versione comune di prova | solo con pull request, senza approvazioni obbligatorie (vedi "Chi approva cosa") |
 | `<utente>/<n>-<parola>` | un lavoro, es. `f4udor/31-trend` | dalle sessioni di Claude Code |
 | `<utente>/docs-<parola>` | documenti scritti dalla chat | dalla chat |
 
@@ -66,19 +66,19 @@ I numeri stanno solo in `docs/BRIEF.md`. Ogni informazione ha un solo posto. `<n
 
 ## Chi approva cosa
 
-GitHub non lascia approvare la propria pull request. Le regole su GitHub:
-- **`dev`**: serve un'approvazione; Mauro, come amministratore, può unire senza, ma solo tramite pull request.
+Le regole su GitHub:
+- **`dev`**: si entra solo con una pull request, ma senza approvazioni obbligatorie (deciso da Mauro il 21 ottobre). Il "cosa" di ogni lavoro è già deciso in due; il controllo prima di unire è la valutazione.
 - **`main`**: serve sempre un'approvazione, senza eccezioni. Nessun agente può pubblicare l'app da solo.
 
-| Pull request | Chi approva | Chi unisce |
+| Pull request | Cosa serve prima di unire | Chi unisce |
 |---|---|---|
-| Lavoro (codice) verso `dev` | l'altra persona | il responsabile |
-| Regole di prodotto (`docs/BRIEF.md`) verso `dev` | l'altra persona | chi l'ha aperta |
-| Processo e documenti di Mauro (vedi "Chi lavora") | nessuno | Mauro, da solo |
-| Strumenti di lavoro (issue con `strumenti`) | nessuno; il valutatore di Claudiu commenta comunque | Mauro, da solo |
-| `dev` verso `main` | Claudiu | Mauro |
+| Lavoro (codice) verso `dev` | un commento "## Valutazione" con "consiglio di approvare", più recente dell'ultimo commit | il responsabile, da solo |
+| Regole di prodotto (`docs/BRIEF.md`) verso `dev` | l'ok dell'altra persona (il prodotto si decide in due) | chi l'ha aperta |
+| Processo e documenti di Mauro (vedi "Chi lavora") | niente | Mauro, da solo |
+| Strumenti di lavoro (issue con `strumenti`) | niente; il valutatore di Claudiu commenta comunque | Mauro, da solo |
+| `dev` verso `main` | l'approvazione di Claudiu su GitHub | Mauro |
 
-L'eccezione di Mauro su `dev` vale solo per le pull request di processo, documenti e strumenti di lavoro: per i lavori e le regole di prodotto si aspetta sempre l'altro. GitHub registra ogni uso dell'eccezione.
+Su `dev` queste regole non le impone GitHub: valgono per accordo, come la deroga qui sotto.
 
 **Deroga all'unanimità.** Se Mauro e Claudiu decidono insieme di saltare una regola per un caso preciso, lo scrivono in `#generale` e Mauro la applica come amministratore. Le protezioni di GitHub restano sempre: sono ciò che impedisce a un agente di scrivere su `dev` o `main` per errore. Gli agenti non derogano mai.
 
@@ -110,8 +110,8 @@ Le etichette `per-…` arrivano come notifica su Slack (vedi "Comunicazione").
 4. **Notte: pianificare e costruire.** L'attività notturna del responsabile prende un'issue `pronta`: il pianificatore legge issue, brief e codice e scrive i task (al massimo 8); costruttore e revisore li eseguono; alla fine la sessione apre la pull request verso `dev` in bozza e mette `per-<responsabile>`. Se il pianificatore trova comunque una scelta di prodotto non decisa, non scrive i task: mette `domanda` e `per-<responsabile>` e si ferma. Il responsabile risponde nella sua chat, che aggiorna l'issue e rimette `pronta`; di giorno si può rilanciare a mano senza aspettare la notte.
 5. **SQL.** Se il lavoro ha un file SQL, la pull request ha `sql-da-eseguire` e `per-mauro`: Mauro lo esegue sul database di prova, scrive "eseguito" e toglie le due etichette. Prima di questo l'anteprima non funziona.
 6. **Provare.** Il responsabile prova l'anteprima del branch sul telefono, con l'elenco di prove del report. Se va bene, segna la pull request come pronta ("Ready for review") e toglie la sua etichetta. Se c'è da correggere, lo dice alla sua chat: la chat scrive cosa correggere nell'issue e rimette `pronta`; la notte dopo la sessione continua sullo stesso branch.
-7. **Valutare.** Appena la pull request non è più in bozza, parte da sola l'attività "valutatore" dell'altra persona: scrive un commento con il verdetto in parole semplici, le decisioni da confermare e le prove sul telefono, e mette `per-<altro>`. Se trova problemi gravi rimette la pull request in bozza e mette `per-<responsabile>`.
-8. **Approvare e unire.** L'altro legge la valutazione, se vuole prova l'anteprima, approva e toglie la sua etichetta. Si approva solo se c'è un commento "## Valutazione" più recente dell'ultimo commit; se manca, vedi "Imprevisti". Il responsabile unisce in `dev`. L'issue si chiude da sola.
+7. **Valutare.** Appena la pull request non è più in bozza, parte da sola l'attività "valutatore" dell'altra persona: scrive un commento con il verdetto in parole semplici, le decisioni da confermare e le prove sul telefono, e mette `per-<responsabile>`. Se trova problemi gravi rimette la pull request in bozza.
+8. **Unire.** Il responsabile legge la valutazione: se dice "consiglio di approvare" ed è più recente dell'ultimo commit, unisce in `dev` da solo e toglie la sua etichetta; le "Decisioni da confermare" che toccano il prodotto le porta prima all'altro. Se la valutazione manca, vedi "Imprevisti". L'altro può sempre leggere la valutazione e provare l'anteprima. L'issue si chiude da sola.
 9. **Uscita di versione.** Da definire meglio prima della prima uscita (per esempio un valutatore anche qui). Per ora: quando entrambi hanno usato `dev` e va bene: Mauro esegue gli SQL sul Supabase vero, apre la pull request da `dev` a `main`, Claudiu approva, Mauro unisce. Vercel ripubblica da solo. Le rifiniture sono lavori come gli altri: si passa sempre da `dev`.
 
 Due lavori in parallelo non toccano lo stesso modulo: lo si decide quando si assegnano. Se capita, chi unisce per secondo fa aggiornare il branch con `dev` da una sessione.
@@ -122,7 +122,7 @@ Quando qualcosa non va come previsto, chi deve agire lo sa da Slack, con un mess
 
 | Imprevisto | Chi se ne accorge | Cosa succede |
 |---|---|---|
-| Il valutatore non parte (evento di GitHub perso, sessione bloccata) | la sessione notturna dell'approvatore, dopo 12 ore senza valutazione | la valuta lei; la persona trova il commento la mattina |
+| Il valutatore non parte (evento di GitHub perso, sessione bloccata) | la sessione notturna dell'altra persona, dopo 12 ore senza valutazione | la valuta lei; la persona trova il commento la mattina |
 | Il valutatore dell'altro non parte sulla propria pull request (account fermo, limiti finiti) | la sessione notturna del responsabile | avviso a entrambi: lanciare la valutazione a mano, da qualunque account |
 | Una sessione si interrompe a metà lavoro (issue ancora `in-lavorazione` senza commit da 6 ore) | la sessione notturna successiva di chiunque | avviso al responsabile: rilanciare a mano, oppure rimettere `pronta` |
 | Il pianificatore ha una domanda, o un lavoro si blocca | la sessione stessa | `domanda` o `bloccata` con le domande (vedi "Ciclo di un lavoro") |
@@ -148,7 +148,7 @@ Le attività girano senza chiedere conferme e senza connettori: solo il reposito
 ## Lancio a mano e piano B
 
 - **A mano**: una sessione cloud su `dev` con il messaggio "Lavora sull'issue #<n> come dice `CLAUDE.md`, sezione 'Sessione su un'issue'". Serve per rifare subito un giro senza aspettare la notte. Mai due sessioni sullo stesso lavoro.
-- **Piano B**, se Claudiu non può usare le attività: Mauro lancia anche i lavori di Claudiu. Il branch prende comunque il nome di Claudiu; le pull request risultano di Mauro, quindi le approva Claudiu dopo averle provate e Mauro unisce. Il valutatore va lanciato a mano.
+- **Piano B**, se Claudiu non può usare le attività: Mauro lancia anche i lavori di Claudiu. Il branch prende comunque il nome di Claudiu; le pull request risultano di Mauro: Claudiu le prova e Mauro unisce dopo la valutazione. Il valutatore va lanciato a mano.
 
 ## Stato
 
