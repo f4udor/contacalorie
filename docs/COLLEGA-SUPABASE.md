@@ -56,6 +56,26 @@ L'app fa entrare con un **codice di 6 cifre** ricevuto per email (niente passwor
 
 ---
 
+## Passo 3 bis. Collega Gmail per spedire le email
+
+Senza questo passo il codice arriva solo agli indirizzi dei membri del team del progetto Supabase: i progetti gratuiti nuovi spediscono le email di accesso solo a loro. Per farlo arrivare a tutti gli utenti, Supabase deve spedire dal tuo Gmail.
+
+1. Sull'account Google che spedirà le email (myaccount.google.com) attiva la **Verifica in due passaggi**, se non è già attiva.
+2. Sempre lì, cerca **Password per le app**, creane una con il nome `Supabase` e copia le 16 lettere. Le scrivi solo su Supabase: mai in chat, in un documento o nel repository.
+3. Su Supabase: **Authentication → Emails → SMTP Settings** (in alcune versioni: **Project Settings → Authentication**). Accendi **Enable Custom SMTP**.
+4. Compila:
+   - **Sender email**: il tuo indirizzo Gmail
+   - **Sender name**: `Personal Health`
+   - **Host**: `smtp.gmail.com`
+   - **Port**: `465`
+   - **Username**: il tuo indirizzo Gmail
+   - **Password**: la password per le app del punto 2
+5. Premi **Save**.
+
+**Cosa vedi:** al passo 8 il codice arriva anche a un indirizzo che non è nel team del progetto, con mittente *Personal Health*.
+
+---
+
 ## Passo 4. Cambia il modello dell'email, così arriva il codice
 
 Per impostazione predefinita Supabase manda un **link**. A noi serve il **codice**. Bisogna cambiare due modelli di email.
@@ -166,6 +186,7 @@ Se è così, hai finito.
 | Cosa succede | Cosa fare |
 |---|---|
 | Al passo 2 compare un errore rosso | Controlla di aver copiato **tutto** il file, dalla prima all'ultima riga, e di averlo eseguito **una sola volta**. Se l'errore dice che una tabella *esiste già*, il file è stato già eseguito: puoi andare avanti. |
+| Il codice arriva a te ma non agli altri utenti | Manca il passo 3 bis: Supabase spedisce solo ai membri del team finché non colleghi Gmail. Se l'hai fatto, controlla la password per le app e la porta `465`. |
 | Non arriva l'email con il codice | Aspetta qualche minuto e controlla lo **spam**. Poi in app premi **Invia un nuovo codice**. Il servizio gratuito limita le email: se ne chiedi troppe l'app dice di aspettare un minuto. |
 | L'email contiene un link e non un codice | Il modello del passo 4 non è stato salvato, oppure hai cambiato solo uno dei due modelli. Rifai il passo 4 per **Magic Link** e **Confirm signup**. |
 | "Il codice non è corretto o è scaduto" | Scrivi il codice dell'**ultima** email ricevuta; i codici vecchi non valgono più. Si può copiare con o senza spazi. |
