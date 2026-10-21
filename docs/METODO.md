@@ -7,7 +7,7 @@ Regole per le persone e per la chat che progetta l'app (il progetto Claude di Ma
 - **Mauro** (GitHub `f4udor`) e **Claudiu** (GitHub `niss23`). Nessuno dei due scrive codice e nemmeno la chat: il codice lo scrive solo Claude Code. Le persone giudicano schermate e comportamento.
 - Ognuno ha la sua chat di progetto, le sue sessioni di Claude Code e i limiti del suo piano.
 - **Il prodotto si decide in due**: regole, numeri, schermate (`docs/BRIEF.md`).
-- **Il processo è di Mauro**: questo documento, `CLAUDE.md`, `.claude/agents/`, `docs/ATTIVITA.md`, `docs/AVVIO.md`, le guide `docs/COLLEGA-*.md`. Mauro li cambia e unisce da solo; Claudiu li legge.
+- **Il processo è di Mauro**: questo documento, `CLAUDE.md`, `.claude/agents/`, `docs/ATTIVITA.md`, `docs/AVVIO.md`, le guide `docs/COLLEGA-*.md`. Mauro li cambia e unisce da solo; Claudiu li legge. Sono di Mauro anche gli **strumenti di lavoro**: codice che serve solo a come si lavora (anteprime, icone delle versioni di prova, script di prova) e non cambia l'app vera; le loro issue hanno l'etichetta `strumenti`.
 - L'obiettivo è un'app che si usa davvero, non un prodotto da vendere.
 
 ## Ruolo della chat
@@ -71,9 +71,10 @@ GitHub non lascia approvare la propria pull request. Le regole su GitHub:
 | Lavoro (codice) verso `dev` | l'altra persona | il responsabile |
 | Regole di prodotto (`docs/BRIEF.md`) verso `dev` | l'altra persona | chi l'ha aperta |
 | Processo e documenti di Mauro (vedi "Chi lavora") | nessuno | Mauro, da solo |
+| Strumenti di lavoro (issue con `strumenti`) | nessuno; il valutatore di Claudiu commenta comunque | Mauro, da solo |
 | `dev` verso `main` | Claudiu | Mauro |
 
-L'eccezione di Mauro su `dev` vale solo per le pull request di processo e documenti: per i lavori e le regole di prodotto si aspetta sempre l'altro. GitHub registra ogni uso dell'eccezione.
+L'eccezione di Mauro su `dev` vale solo per le pull request di processo, documenti e strumenti di lavoro: per i lavori e le regole di prodotto si aspetta sempre l'altro. GitHub registra ogni uso dell'eccezione.
 
 ## Etichette
 
@@ -83,6 +84,7 @@ Le etichette sono il semaforo: dicono a chi tocca. Gli agenti mettono le etichet
 |---|---|---|---|
 | `idea` | issue | idea non decisa | la chat |
 | `da-fare` | issue | lavoro deciso, con responsabile assegnato | la chat |
+| `strumenti` | issue | strumento di lavoro di Mauro: lo unisce da solo (vedi "Chi lavora") | la chat di Mauro |
 | `pronta` | issue | il "cosa" è scritto e approvato dal responsabile: la sessione notturna la prende | la chat |
 | `in-lavorazione` | issue | una sessione ci sta lavorando | la sessione |
 | `domanda` | issue | il pianificatore ha una domanda di prodotto (nei commenti) | la sessione |
