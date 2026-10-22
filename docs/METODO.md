@@ -4,7 +4,7 @@ Regole per le persone e per la chat che progetta l'app (il progetto Claude di Ma
 
 ## Chi lavora
 
-- **Mauro** (GitHub `f4udor`) e **Claudiu** (GitHub `niss23`). Nessuno dei due scrive codice e nemmeno la chat: il codice lo scrive solo Claude Code. Le persone giudicano schermate e comportamento.
+- **Mauro** (GitHub `f4udor`) e **Claudiu** (GitHub `NIss-gif`). Nessuno dei due scrive codice e nemmeno la chat: il codice lo scrive solo Claude Code. Le persone giudicano schermate e comportamento.
 - Ognuno ha la sua chat di progetto, le sue sessioni di Claude Code e i limiti del suo piano.
 - **Il prodotto si decide in due**: regole, numeri, schermate (`docs/BRIEF.md`).
 - **Il processo è di Mauro**: questo documento, `CLAUDE.md`, `.claude/agents/`, `docs/ATTIVITA.md`, `docs/AVVIO.md`, le guide `docs/COLLEGA-*.md`. Mauro li cambia e unisce da solo; Claudiu li legge. Sono di Mauro anche gli **strumenti di lavoro**: codice che serve solo a come si lavora (anteprime, icone delle versioni di prova, script di prova) e non cambia l'app vera; le loro issue hanno l'etichetta `strumenti`.
@@ -100,6 +100,9 @@ Le etichette sono il semaforo: dicono a chi tocca. Gli agenti mettono le etichet
 | `per-mauro`, `per-claudiu` | issue e pull request | serve un'azione di quella persona (nei commenti cosa) | gli agenti |
 
 Le etichette `per-…` arrivano come notifica su Slack (vedi "Comunicazione").
+
+**Assegnare un compito**, di codice o no, lo fa sempre la chat su GitHub: l'issue `da-fare` assegnata all'account GitHub della persona, l'etichetta `per-<persona>` e subito dopo un commento con cosa deve fare. Così la persona lo vede su Slack. Vale in tutti e due i sensi: chi assegna lo chiede alla propria chat.
+- I compiti che non sono codice (roadmap, testi legali, ricerche) non diventano mai `pronta`: `pronta` fa partire la sessione notturna. Quando la persona li finisce lo dice alla sua chat, che scrive l'esito nell'issue e la chiude.
 
 ## Ciclo di un lavoro
 

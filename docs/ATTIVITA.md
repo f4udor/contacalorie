@@ -2,7 +2,7 @@
 
 Le due attività che ognuno crea sul proprio account di Claude Code, da **claude.ai/code/routines** (nell'interfaccia italiana: "Attività pianificate" → "Nuova attività" → "Configura manualmente"). Repository e connettori stanno in "Impostazioni avanzate". Regole in `docs/METODO.md`, "Agenti e attività programmate". I testi qui sotto restano corti apposta: la logica sta in `CLAUDE.md` e negli agenti, così cambiare il processo non richiede di toccare le attività.
 
-Sostituisci `<utente>` con il proprio utente GitHub (`f4udor` o `niss23`) e `<altro>` con quello dell'altra persona.
+Sostituisci `<utente>` con il proprio utente GitHub (`f4udor` o `NIss-gif`) e `<altro>` con quello dell'altra persona.
 
 ## Impostazioni comuni
 
@@ -29,7 +29,7 @@ con <utente> come utente.
 ## 2. Valutatore
 
 - **Nome**: `Personal Health: valutatore per <utente>`
-- **Quando**: evento GitHub, pull request, azione "ready_for_review", con i filtri: branch di destinazione uguale a `dev`; autore tra `<altro>` scritto in tutte le grafie usate su GitHub (per Claudiu: `niss23, NIss23`), perché il filtro potrebbe distinguere maiuscole e minuscole.
+- **Quando**: evento GitHub, pull request, azione "ready_for_review", con i filtri: branch di destinazione uguale a `dev`; autore tra `<altro>` scritto in tutte le grafie usate su GitHub (per Claudiu: `NIss-gif, niss-gif`), perché il filtro potrebbe distinguere maiuscole e minuscole.
 - **Testo**:
 
 ```
