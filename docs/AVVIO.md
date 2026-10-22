@@ -1,6 +1,6 @@
 # Avvio: preparazione di un progetto nuovo
 
-Istruzioni per la chat che guida una persona nella preparazione per lavorare a Personal Health. Oggi serve a Claudiu (GitHub `niss23`); vale anche per Mauro, se deve rifare il suo progetto.
+Istruzioni per la chat che guida una persona nella preparazione per lavorare a Personal Health. Oggi serve a Claudiu (GitHub `NIss-gif`); vale anche per Mauro, se deve rifare il suo progetto.
 
 ## Come si usa
 

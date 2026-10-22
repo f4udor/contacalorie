@@ -4,7 +4,7 @@ Documento statico, in `docs/CONTESTO.md`: dice cos'è l'app, cosa deve fare e co
 
 ## 1. Cos'è
 
-App per tracciare dieta e attività fisica: calorie e nutrienti dei pasti, passi, bici, peso. È nata come app personale di Mauro; dal 20 ottobre 2026 Mauro (GitHub `f4udor`) la sviluppa insieme a Claudiu (GitHub `niss23`) con l'obiettivo di farne un prodotto da vendere e fondare una startup. Oggi la usano Mauro e alcuni amici, aggiunti da Mauro. Nessuno dei due scrive codice: l'app è costruita da Claude Code e deve restare semplice da capire e da mantenere.
+App per tracciare dieta e attività fisica: calorie e nutrienti dei pasti, passi, bici, peso. È nata come app personale di Mauro; dal 20 ottobre 2026 Mauro (GitHub `f4udor`) la sviluppa insieme a Claudiu (GitHub `NIss-gif`) con l'obiettivo di farne un prodotto da vendere e fondare una startup. Oggi la usano Mauro e alcuni amici, aggiunti da Mauro. Nessuno dei due scrive codice: l'app è costruita da Claude Code e deve restare semplice da capire e da mantenere.
 
 - App pubblicata: contacalorie-rho.vercel.app
 - Repository: f4udor/contacalorie
