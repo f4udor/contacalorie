@@ -13,11 +13,11 @@ Vincoli: nessun database; nessuna modifica a colori o testi dentro l'app.
 
 ## Giro 1
 
-### T50.1 Test di accettazione · da fare
+### T50.1 Test di accettazione · fatto
 - Test di `sceglieVersione(env, branch)`: `production` → principale; `preview` + `dev` → dev; `preview` + altro branch → prova; variabili assenti → principale. Più test su nome e icone di ogni versione.
 - File: `src/app/lib/versione.test.ts`.
 
-### T50.2 Versione, manifest, titolo e icone · da fare
+### T50.2 Versione, manifest, titolo e icone · fatto
 - Funzione pura, manifest e layout che la usano (titolo browser, `appleWebApp.title`, icone), icone gialla e rossa.
 - File: `src/app/lib/versione.ts`, `src/app/manifest.ts`, `src/app/layout.tsx`, `public/icone/`, `tools/build-icons.mjs`, `package.json`.
 - Criteri: quelli dell'issue #50, uno per uno; lint, test e build passano.

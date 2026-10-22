@@ -6,12 +6,20 @@ import { BottomNav } from "./components/nav";
 import { Onboarding } from "./components/onboarding";
 import { NoticeBanner } from "./components/notice-banner";
 import { DataProvider } from "./data-provider";
+import { VERSIONI, versioneCorrente } from "./lib/versione";
+
+const versione = versioneCorrente();
+const dati = VERSIONI[versione];
 
 export const metadata: Metadata = {
-  title: "Personal Health",
+  title: dati.nome,
   description: "Dieta e attività fisica, in un posto solo.",
-  appleWebApp: { capable: true, title: "Personal Health", statusBarStyle: "black" },
+  appleWebApp: { capable: true, title: dati.nome, statusBarStyle: "black" },
   formatDetection: { telephone: false },
+  // Nella versione principale restano le icone di src/app (icon.png, apple-icon.png).
+  ...(versione === "principale"
+    ? {}
+    : { icons: { icon: dati.icona512, apple: dati.iconaApple } }),
 };
 
 export const viewport: Viewport = {
