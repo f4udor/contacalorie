@@ -18,7 +18,7 @@ Vincoli: database no (nessuna migrazione, nessun SQL). Si toccano solo `.github/
 
 ## Giro 1
 
-### T64.1 Test di accettazione · da fare
+### T64.1 Test di accettazione · fatto
 - Cosa fare: scrivere solo i test dei criteri, in `tools/controlli-pr.test.ts`, con repository git finti. Importano le funzioni da `tools/controlli-pr.mjs` (che ancora non esiste: i test possono fallire). Almeno un caso che passa e uno che fallisce per ogni controllo.
 - File e cartelle: `tools/controlli-pr.test.ts`.
 - Criteri di accettazione: ogni caso sotto c'è nel file, e ogni messaggio d'errore atteso contiene il percorso del file coinvolto e testo in italiano.
