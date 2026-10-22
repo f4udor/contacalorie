@@ -12,6 +12,8 @@ function git(dir, ...args) {
   return execFileSync("git", args, { cwd: dir, encoding: "utf8" });
 }
 
+const FILE_DI_TEST = /(^|\/)tests\/|\.(test|spec)\.[cm]?[jt]sx?$/;
+
 function righe(testo) {
   return testo.split("\n").filter((r) => r.trim() !== "");
 }
@@ -62,7 +64,9 @@ export function controllaTestAccettazione(dir, base, branch) {
   for (const c of commit) {
     if (inizio.test(c.soggetto)) {
       trovato = true;
-      for (const f of righe(git(dir, "diff-tree", "--root", "--no-commit-id", "--name-only", "--no-renames", "--diff-filter=AM", "-r", c.sha))) test.add(f);
+      for (const f of righe(git(dir, "diff-tree", "--root", "--no-commit-id", "--name-only", "--no-renames", "--diff-filter=AM", "-r", c.sha))) {
+        if (FILE_DI_TEST.test(f)) test.add(f);
+      }
     } else if (trovato) {
       successivi.push(c);
     }
