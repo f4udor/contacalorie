@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "screens": "node tools/screens.mjs",
+    "icone": "node tools/build-icons.mjs",
     "fixtures": "node tests/fixtures/build-fixtures.mjs",
     "setup-sql": "node tools/build-setup-sql.mjs",
     "prova-scorrimento": "node tools/prova-scorrimento.mjs",
