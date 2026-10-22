@@ -1,6 +1,7 @@
 # Diario #64
 
 T64.1 · fatto · test di accettazione in `tools/controlli-pr.test.ts` (falliscono finché non c'è lo script) · revisore: APPROVATO
+T64.2 · fatto · script `tools/controlli-pr.mjs`, 27 test passano · revisore: APPROVATO
 
 ## Decisioni da confermare
 - Versione di Node del workflow: 22 (il repository non ne dichiara una).

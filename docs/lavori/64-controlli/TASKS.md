@@ -30,7 +30,7 @@ Vincoli: database no (nessuna migrazione, nessun SQL). Si toccano solo `.github/
   - Riconoscimento del branch: `f4udor/docs-orientamento` → nessun errore anche con file di processo toccati; `f4udor/64-controlli` → controlli 2-5.
 - Percorsi: nessuna schermata.
 
-### T64.2 Script dei controlli · da fare
+### T64.2 Script dei controlli · fatto
 - Cosa fare: scrivere `tools/controlli-pr.mjs` come descritto nelle scelte (funzioni esportate per i controlli 2, 3, 4, 5 e `main` da riga di comando: argomenti branch e riferimento base, stampa un errore per riga, codice di uscita 1 se ce ne sono). Solo moduli di Node (`node:child_process`, `node:fs`, `node:path`). Messaggi in italiano, ognuno con il file.
 - File e cartelle: `tools/controlli-pr.mjs`.
 - Criteri di accettazione: i test di T64.1 passano senza essere modificati; `npm run lint`, `npm test` e `npm run build` passano; lo script non legge nulla fuori dal repository e non usa rete.
