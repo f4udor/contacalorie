@@ -37,7 +37,7 @@ Vincoli: database no (nessuna migrazione, nessun SQL). Si toccano solo `.github/
 - Test: quelli di T64.1.
 - Percorsi: nessuna schermata.
 
-### T64.3 Workflow GitHub · da fare
+### T64.3 Workflow GitHub · fatto
 - Cosa fare: creare `.github/workflows/controlli-pr.yml`, che parte su `pull_request` verso `dev` con tipi `opened`, `synchronize`, `reopened`, `ready_for_review`. Permessi minimi (`contents: read`). Passi: checkout con `fetch-depth: 0`; Node 22 con cache npm; `npm ci`; `npm run lint`, `npm test`, `npm run build` (controllo 1); poi, se il branch non è `<utente>/docs-<parola>`, `node tools/controlli-pr.mjs "$BRANCH" origin/dev`, con il nome del branch passato tramite variabile d'ambiente (mai inserito direttamente nel comando). Fare in modo che i controlli 2-5 girino anche se il controllo 1 fallisce, così ogni errore compare in una volta sola. Nessun segreto, nessuna azione esterna oltre a quelle ufficiali `actions/*`.
 - File e cartelle: `.github/workflows/controlli-pr.yml`.
 - Criteri di accettazione: il file è YAML valido; niente `secrets.`; niente servizi esterni; versione di Node uguale a quella delle scelte; `npm run lint` e `npm test` passano. Verifica reale su GitHub: non possibile nella sessione, da scrivere in "Non verificato".
