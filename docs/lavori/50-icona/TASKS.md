@@ -22,5 +22,5 @@ Vincoli: nessun database; nessuna modifica a colori o testi dentro l'app.
 - File: `src/app/lib/versione.ts`, `src/app/manifest.ts`, `src/app/layout.tsx`, `public/icone/`, `tools/build-icons.mjs`, `package.json`.
 - Criteri: quelli dell'issue #50, uno per uno; lint, test e build passano.
 
-### T50.3 Report · da fare
+### T50.3 Report · fatto
 Scrivi `REPORT.md` come dice `CLAUDE.md`, "Fine del lavoro".
