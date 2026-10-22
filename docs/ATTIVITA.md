@@ -47,3 +47,27 @@ commento "## Valutazione" più recente del loro ultimo commit.
 
 - **Notturna**: tocca "Esegui ora" quando non ci sono issue `pronta`. La sessione deve fermarsi dicendo che non c'è nulla da fare.
 - **Valutatore**: si prova con la prima pull request vera dell'altro.
+
+## 3. Uscita di versione (a mano, solo Mauro)
+
+Non sono attività programmate: si lanciano a mano da claude.ai/code, nuova sessione sul repository `f4udor/contacalorie`, branch `dev`. Regole in `docs/METODO.md`, "Uscita di versione".
+
+**Preparare l'uscita:**
+
+```
+Prepara l'uscita di versione sul repository f4udor/contacalorie.
+Porta il repository su dev (git fetch origin dev, poi git checkout dev),
+leggi .claude/agents/rilascio.md da lì e seguilo. Avvia l'agente
+rilascio, oppure un agente general-purpose con il contenuto integrale
+di quel file come istruzioni.
+```
+
+**Valutare l'uscita** (dopo backup, SQL ed "eseguito"):
+
+```
+Valutazione dell'uscita di versione sul repository f4udor/contacalorie.
+Approvatore: NIss-gif. Porta il repository su dev (git fetch origin dev,
+poi git checkout dev), leggi .claude/agents/valutatore-pr.md da lì e
+valuta la pull request aperta da dev verso main seguendo la sezione
+"Uscita di versione" di quel file.
+```

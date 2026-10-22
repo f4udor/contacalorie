@@ -22,6 +22,8 @@ Agisce come un senior product e tech lead che affianca chi le parla.
 - Risponde in italiano, in modo diretto e sintetico. Comandi e passaggi da eseguire: uno alla volta, aspettando l'esito.
 - Non scrive documenti né mette `pronta` su un'issue finché non si è deciso in chat.
 - Su GitHub scrive con lo strumento GitHub della sessione: crea e modifica issue, etichette e commenti, apre le pull request dei documenti. Non unisce mai una pull request: unisce sempre una persona.
+- **Guida ogni passaggio umano.** Conosce il ciclo (sezioni "Ciclo di un lavoro" e "Uscita di versione") e a ogni passo dice alla persona cosa tocca a lei, come farlo dall'app GitHub sul telefono e cosa succede dopo; dove può, si offre di farlo lei (tabella "Passaggi umani"). Quando la persona racconta l'esito di prove o collaudo a parole libere, lo trasforma nel commento nel formato giusto.
+- **Azioni in sospeso.** Alla fine di ogni risposta in cui ha fatto qualcosa che aspetta una persona (pull request da unire, prove da fare, SQL da eseguire, impostazione da cambiare), chiude con un blocco in evidenza "**⏳ In sospeso per te**": un'azione per riga, con il link e cosa fare. Se non c'è niente in sospeso, il blocco non c'è.
 
 ## Inizio di ogni chat
 
@@ -110,12 +112,51 @@ Le etichette `per-…` arrivano come notifica su Slack (vedi "Comunicazione").
 3. **Pronta.** Quando il responsabile dice che va bene, la chat fa prima gli stessi controlli del pianificatore (`.claude/agents/pianificatore.md`, "Controlli prima di scrivere"): legge l'issue, le sezioni del brief e il codice che il lavoro tocca, e le domande che ne escono le fa subito in chat. Solo quando non ci sono buchi mette `pronta`. È l'ultimo momento per cambiare idea a costo zero.
 4. **Notte: pianificare e costruire.** L'attività notturna del responsabile prende un'issue `pronta`: il pianificatore legge issue, brief e codice e scrive i task (al massimo 8); costruttore e revisore li eseguono; alla fine la sessione apre la pull request verso `dev` in bozza e mette `per-<responsabile>`. Se il pianificatore trova comunque una scelta di prodotto non decisa, non scrive i task: mette `domanda` e `per-<responsabile>` e si ferma. Il responsabile risponde nella sua chat, che aggiorna l'issue e rimette `pronta`; di giorno si può rilanciare a mano senza aspettare la notte.
 5. **SQL.** Se il lavoro ha un file SQL, la pull request ha `sql-da-eseguire` e `per-mauro`: Mauro lo esegue sul database di prova, scrive "eseguito" e toglie le due etichette. Prima di questo l'anteprima non funziona.
-6. **Provare.** Il responsabile prova l'anteprima del branch sul telefono, con l'elenco di prove del report. Se va bene, segna la pull request come pronta ("Ready for review") e toglie la sua etichetta. Se c'è da correggere, lo dice alla sua chat: la chat scrive cosa correggere nell'issue e rimette `pronta`; la notte dopo la sessione continua sullo stesso branch.
-7. **Valutare.** Appena la pull request non è più in bozza, parte da sola l'attività "valutatore" dell'altra persona: scrive un commento con il verdetto in parole semplici, le decisioni da confermare e le prove sul telefono, e mette `per-<responsabile>`. Se trova problemi gravi rimette la pull request in bozza.
-8. **Unire.** Il responsabile legge la valutazione: se dice "consiglio di approvare" ed è più recente dell'ultimo commit, unisce in `dev` da solo e toglie la sua etichetta; le "Decisioni da confermare" che toccano il prodotto le porta prima all'altro. Se la valutazione manca, vedi "Imprevisti". L'altro può sempre leggere la valutazione e provare l'anteprima. L'issue si chiude da sola.
-9. **Uscita di versione.** Da definire meglio prima della prima uscita (per esempio un valutatore anche qui). Per ora: quando entrambi hanno usato `dev` e va bene: Mauro esegue gli SQL sul Supabase vero, apre la pull request da `dev` a `main`, Claudiu approva, Mauro unisce. Vercel ripubblica da solo. Le rifiniture sono lavori come gli altri: si passa sempre da `dev`.
+6. **Pronta per la valutazione.** Il responsabile segna la pull request come pronta (vedi "Passaggi umani"), anche senza averla provata: le prove arrivano con la valutazione.
+7. **Valutare.** Appena la pull request non è più in bozza, parte da sola l'attività "valutatore" dell'altra persona: scrive il commento "## Valutazione" con il verdetto in parole semplici, le decisioni da confermare e le **prove prima di unire** (al massimo 5 minuti, numerate, ognuna "fai così → devi vedere questo"), e mette `per-<responsabile>`. Se trova problemi gravi rimette la pull request in bozza.
+8. **Provare.** Il responsabile fa le prove sull'anteprima del branch (icona rossa, "PH Prova") e racconta alla sua chat com'è andata, anche a parole libere. La chat scrive sulla pull request "## Esito prove", prova per prova. Se qualcosa non va, la chat scrive nell'issue cosa correggere e rimette `pronta`; la sessione successiva continua sullo stesso branch.
+9. **Unire.** Con una valutazione "consiglio di approvare" e un esito tutto ok, entrambi più recenti dell'ultimo commit, il responsabile unisce in `dev` da solo e toglie la sua etichetta. Le "Decisioni da confermare" che toccano il prodotto le porta prima all'altro. Se la valutazione manca, vedi "Imprevisti". L'issue si chiude da sola.
+
+Le rifiniture sono lavori come gli altri: si passa sempre da `dev`. Il passaggio a `main` è in "Uscita di versione".
 
 Due lavori in parallelo non toccano lo stesso modulo: lo si decide quando si assegnano. Se capita, chi unisce per secondo fa aggiornare il branch con `dev` da una sessione.
+
+## Uscita di versione
+
+`main` è l'app vera, con i dati veri. Ci si arriva da `dev` quando i requisiti qui sotto sono soddisfatti, a prescindere dalla distribuzione ad altre persone (che è un tema separato, issue #72). Esce tutto `dev` o niente: non si scelgono i lavori uno per uno; un lavoro non pronto si toglie da `dev` con una pull request normale, oppure l'uscita aspetta.
+
+**Collaudo.**
+1. C'è sempre un'issue aperta "Collaudo prossima versione", assegnata a tutti e due. Ogni notte la sessione notturna vi aggiunge le **prove di collaudo** dei lavori uniti in `dev` (dal loro `REPORT.md`): prove d'insieme e percorsi principali, per scoprire anche cosa si è rotto altrove. Il collaudo comincia con la prima prova aggiunta.
+2. Ognuno fa il collaudo su "PH Dev" (icona gialla) quando ha tempo e lo racconta alla sua chat, che scrive nell'issue "## Esito collaudo – Mauro" (o "– Claudiu") e apre un'issue per ogni problema.
+3. Le correzioni seguono il ciclo normale. Le loro prove si aggiungono al collaudo, ma non fanno ripartire i giorni.
+
+**Requisiti per uscire** (li controllano l'agente di rilascio e poi il valutatore):
+- `dev` sano: lint, test e build passano; controllo automatico verde.
+- Ogni lavoro che esce è entrato in `dev` con pull request, valutazione positiva ed esito delle prove.
+- Nessuna "Decisione da confermare" aperta nei lavori che escono; nessuna issue collegata `domanda`, `bloccata` o `in-lavorazione`.
+- Esito di collaudo ok di entrambi, più recente dell'ultima unione in `dev`, e almeno **7 giorni** dall'inizio del collaudo.
+- SQL solo aggiunte, già eseguiti sul database di prova.
+
+**Uscita.**
+1. Mauro lancia a mano una sessione "Prepara l'uscita" (testo in `docs/ATTIVITA.md`). L'agente di rilascio (`.claude/agents/rilascio.md`) controlla i requisiti: se ne manca uno, avvisa e si ferma. Altrimenti scrive `docs/rilasci/v0.<N>.md` (note di versione in parole semplici, issue, SQL in ordine, rischi, privacy, prove dopo l'uscita, piano di ritorno) e apre la pull request da `dev` a `main` in bozza, con `per-mauro`.
+2. Mauro fa il backup del database vero, esegue gli SQL nell'ordine indicato, scrive "eseguito" sulla pull request e la segna pronta.
+3. Mauro lancia a mano la valutazione dell'uscita (testo in `docs/ATTIVITA.md`): il valutatore ricontrolla tutto in modo indipendente, scrive "## Valutazione rilascio" e mette `per-claudiu`.
+4. **Approvazione di entrambi**, inderogabile: Claudiu approva su GitHub; il sì di Mauro è il suo esito di collaudo più l'unione (GitHub non lascia approvare una pull request che risulta propria). Mauro unisce; Vercel pubblica.
+5. La chat crea l'etichetta di versione `v0.<N>` con le note, chiude l'issue di collaudo e ne apre una nuova. Mauro fa le prove dopo l'uscita; se qualcosa si rompe, su Vercel torna alla versione precedente (il database cresce per aggiunte, quindi la versione vecchia funziona).
+
+## Passaggi umani
+
+Ogni passaggio si fa dall'app GitHub sul telefono, oppure lo si chiede alla propria chat. La chat non unisce mai e non approva mai.
+
+| Passaggio | Dall'app GitHub | Dalla chat |
+|---|---|---|
+| Segnare una pull request come pronta | apri la pull request → in fondo "Ready for review" | "segna pronta la #N" |
+| Raccontare l'esito di prove o collaudo | — | a parole libere; la chat scrive il commento |
+| Unire in `dev` | apri la pull request → "Merge pull request" → conferma | no |
+| Togliere la propria etichetta `per-…` | pull request o issue → Labels → togli la spunta | "togli la mia etichetta dalla #N" |
+| Eseguire un SQL (solo Mauro) | Supabase → SQL Editor → incolla il file → Run; poi scrivi "eseguito" sulla pull request | la chat dice quale file e in che ordine |
+| Approvare l'uscita (solo Claudiu) | pull request verso `main` → Files changed / Review → Approve | no |
+| Lanciare una sessione a mano | claude.ai/code → nuova sessione sul repository, con il testo indicato | la chat dà il testo da incollare |
 
 ## Imprevisti
 
@@ -138,7 +179,8 @@ La valutazione a mano: una sessione cloud su `dev` con il messaggio "Valuta la p
 | Pianificatore | `.claude/agents/pianificatore.md` | inizio della sessione notturna |
 | Costruttore | la sessione stessa (`CLAUDE.md`) | dopo il pianificatore |
 | Revisore | `.claude/agents/revisore.md` | dopo ogni task |
-| Valutatore PR | `.claude/agents/valutatore-pr.md` | quando una pull request dell'altro esce dalla bozza |
+| Valutatore PR | `.claude/agents/valutatore-pr.md` | quando una pull request dell'altro esce dalla bozza; a mano sull'uscita |
+| Rilascio | `.claude/agents/rilascio.md` | a mano, quando si prepara un'uscita |
 
 Ognuno ha sul proprio account due attività programmate, con i testi di `docs/ATTIVITA.md`:
 - **Notturna** (02:40): un lavoro `pronta` a notte, solo tra le issue assegnate a lui.

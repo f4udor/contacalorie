@@ -43,8 +43,9 @@ Scrivi un solo commento sulla pull request, in italiano, in questo ordine:
 ### Decisioni da confermare
 <elenco dal diario, ognuna con la scelta fatta; "Nessuna" se vuoto>
 
-### Prove da fare sul telefono
-1. <azione → cosa si deve vedere>
+### Prove prima di unire
+Al massimo 5 minuti in tutto, sull'anteprima del branch (icona rossa, "PH Prova").
+1. <fai così → devi vedere questo>
 
 ### SQL
 <nessuno, oppure: file, cosa fa in parole semplici, se è già stato eseguito>
@@ -55,9 +56,18 @@ Scrivi un solo commento sulla pull request, in italiano, in questo ordine:
 
 ## Etichette
 
-- Verdetto "approvare": metti `per-<responsabile>` sulla pull request, poi un commento breve: "Valutazione positiva: puoi unire in `dev`" (se ci sono decisioni da confermare che toccano il prodotto, aggiungi "dopo averle viste con <approvatore>").
+- Verdetto "approvare": metti `per-<responsabile>` sulla pull request, poi un commento breve: "Valutazione positiva: fai le prove qui sopra e racconta l'esito alla tua chat; con esito ok puoi unire in `dev`" (se ci sono decisioni da confermare che toccano il prodotto, aggiungi "dopo averle viste con <approvatore>").
 - Verdetto "non approvare ancora" per un problema da correggere nel codice: rimetti la pull request in bozza e metti `per-<responsabile>` sulla pull request, con un commento breve che rimanda alla valutazione. Per dubbi che spettano alle persone (decisioni da confermare), resta "approvare" e le persone decidono.
 
 L'approvatore è indicato nel messaggio di avvio; il responsabile è l'assegnatario dell'issue.
 
 Se sulla pull request c'è un avviso "⚠️ Imprevisto" sulla valutazione non partita, dopo il tuo commento scrivi `✅ Risolto: la valutazione è stata fatta. Nessuna azione in più oltre a quelle della valutazione.` e togli le etichette `per-…` messe solo per quell'avviso (vedi `CLAUDE.md`, "Imprevisti").
+
+## Uscita di versione (pull request da `dev` a `main`)
+
+Quando ti lanciano sulla pull request dell'uscita (testo in `docs/ATTIVITA.md`), approvatore è Claudiu. Al posto di "Cosa controlli":
+1. Ricontrolli tu, senza fidarti del rapporto, ogni requisito di `docs/METODO.md`, "Uscita di versione": verifiche su `dev`, valutazione ed esito prove di ogni lavoro, decisioni da confermare, issue collegate, esiti di collaudo di entrambi e 7 giorni, SQL solo aggiunte.
+2. Confronti `docs/rilasci/v0.<N>.md` con il diff vero tra `main` e `dev`: niente esce senza essere nelle note, nessun SQL manca dall'elenco.
+3. Sulla pull request c'è "eseguito" di Mauro dopo l'elenco degli SQL.
+
+Il commento si intitola "## Valutazione rilascio", con verdetto, in parole semplici cosa esce, SQL, rischi e privacy. Verdetto positivo: `per-claudiu` e commento "Valutazione positiva: approva su GitHub se sei d'accordo". Negativo: rimetti in bozza, `per-mauro`, e spiega cosa manca.
