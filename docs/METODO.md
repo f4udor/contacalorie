@@ -60,6 +60,7 @@ I numeri stanno solo in `docs/BRIEF.md`. Ogni informazione ha un solo posto. `<n
 | `<utente>/<n>-<parola>` | un lavoro, es. `f4udor/31-trend` | dalle sessioni di Claude Code |
 | `<utente>/docs-<parola>` | documenti scritti dalla chat | dalla chat |
 
+- `dev` è il **branch predefinito** di GitHub (dal 22 ottobre): da lì partono sessioni, attività programmate e agenti, le pull request puntano lì da sole e `Closes #<n>` chiude l'issue quando si unisce in `dev`. L'app vera resta `main`: su Vercel il branch di produzione è impostato a mano su `main`.
 - `<utente>` è il responsabile dell'issue, chiunque lanci la sessione.
 - Ogni branch ha la sua anteprima su Vercel: il link compare nei commenti della pull request.
 - Le anteprime (`dev` e branch dei lavori) usano il database Supabase di prova e Gemini vero con un limite basso. Il `main` usa il database vero.
