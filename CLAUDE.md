@@ -26,6 +26,7 @@ Quando il messaggio di avvio dice "sessione notturna per `<utente>`":
      - Se l'autore è l'altra persona: valutala tu, avviando il subagente `valutatore-pr` con `<utente>` come approvatore. Poi scrivi sulla pull request un commento "Recupero" come dice "Imprevisti".
      - Se l'autore è `<utente>`: non valutarla. Avvisa come dice "Imprevisti": il valutatore dell'altra persona non è partito; cosa fare: lanciare la valutazione a mano da qualunque account (testo in `docs/METODO.md`, "Imprevisti").
      - Se l'avviso c'è già, non ripeterlo.
+   - **Collaudo.** Per ogni pull request unita in `dev` dall'ultimo aggiornamento, copia le "Prove di collaudo" del suo `REPORT.md` nell'issue aperta "Collaudo prossima versione" (se non c'è, creala, assegnata a tutti e due). Nel testo dell'issue tieni in alto la data di inizio del collaudo (la prima prova aggiunta). Se hai aggiunto prove, metti `per-mauro` e `per-claudiu` e un commento: "Nuove prove di collaudo per <lavori>: falle su PH Dev quando puoi e racconta l'esito alla tua chat."
    - **Sessioni interrotte.** Cerca le issue con `in-lavorazione` il cui branch non ha commit da più di 6 ore. Per ognuna avvisa il responsabile come dice "Imprevisti": la sessione si è interrotta; cosa fare: rilanciarla a mano, oppure togliere `in-lavorazione` e rimettere `pronta` per la notte dopo. Non riprenderla tu. Se l'avviso c'è già, non ripeterlo.
 1. Cerca le issue aperte assegnate a `<utente>` con l'etichetta `pronta` e senza `in-lavorazione`, `domanda` o `bloccata`. Se non ce ne sono, fermati senza fare nulla.
 2. Prendi la più vecchia: una sola issue per notte.
@@ -108,10 +109,11 @@ Quando tutti i task sono `fatto` o `bloccato`:
    - Conflitti sul codice: non scegliere tu. Fermati (vedi "Fermarsi").
 2. **Scrivi `REPORT.md`**, in due parti:
    - **In parole semplici**: cosa c'è ora, cosa si può provare e come (un controllo sul telefono per ogni task), cosa manca, se c'è un SQL da eseguire.
+   - **Prove di collaudo**: 2-5 prove da fare su `dev` prima dell'uscita, d'insieme (la funzione nuova insieme al resto dell'app), numerate, ognuna "fai così → devi vedere questo".
    - **Tecnica**: task chiusi e bloccati, copertura dei test, decisioni da confermare, limiti e cose non verificate.
 3. **Pull request** verso `dev`, **in bozza**, o aggiorna quella che esiste già. Titolo `#<n> <titolo dell'issue>`; nel testo la parte "In parole semplici" del report e la riga `Closes #<n>`.
 4. **Etichette sulla pull request**:
-   - sempre `per-<responsabile>`, con il commento "Pronta da provare sull'anteprima";
+   - sempre `per-<responsabile>`, con il commento "Lavoro finito. Segna la pull request come pronta (Ready for review), oppure chiedilo alla tua chat: parte la valutazione con le prove da fare.";
    - se c'è un file SQL, anche `sql-da-eseguire` e `per-mauro`, con il commento che nomina il file da eseguire sul database di prova.
 5. Fermati.
 
