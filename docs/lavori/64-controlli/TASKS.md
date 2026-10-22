@@ -51,5 +51,5 @@ Vincoli: database no (nessuna migrazione, nessun SQL). Si toccano solo `.github/
 - Test: nessuno oltre a lint, test, build.
 - Percorsi: nessuna schermata.
 
-### T64.5 Report · da fare
+### T64.5 Report · fatto
 Scrivi `REPORT.md` come dice `CLAUDE.md`, "Fine del lavoro". Includi: la pull request di questo lavoro tocca `CLAUDE.md` e `.github/` per autorizzazione dell'issue, quindi il controllo 2 la segnalerà (atteso); la verifica del workflow su GitHub resta da fare alla prima pull request.
