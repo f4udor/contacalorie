@@ -85,7 +85,7 @@ docs/            brief, lavori, archivio, guide
 `docs/lavori/<n>-<parola>/`, una per issue. Le sessioni scrivono solo nella cartella del proprio lavoro.
 
 - **`TASKS.md`**: lo scrive il pianificatore (formato nel suo file). Stati: `da fare`, `fatto`, `bloccato`. La sessione cambia solo gli stati.
-- **`DIARIO.md`**: una riga per task chiuso (codice, esito, eventuale nota). In fondo due elenchi sempre aggiornati: "Decisioni da confermare" e "Non verificato". Niente racconto del lavoro.
+- **`DIARIO.md`**: una riga per task chiuso (codice, esito, eventuale nota, verdetto del revisore nel formato `revisore: APPROVATO` o `revisore: RESPINTO`; escluso il task del report). In fondo due elenchi sempre aggiornati: "Decisioni da confermare" e "Non verificato". Niente racconto del lavoro.
 - **`REPORT.md`**: a fine lavoro (vedi sotto).
 
 ## GitHub

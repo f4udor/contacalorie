@@ -3,6 +3,7 @@
 T64.1 · fatto · test di accettazione in `tools/controlli-pr.test.ts` (falliscono finché non c'è lo script) · revisore: APPROVATO
 T64.2 · fatto · script `tools/controlli-pr.mjs`, 27 test passano · revisore: APPROVATO
 T64.3 · fatto · workflow `.github/workflows/controlli-pr.yml` e test `tools/workflow-controlli.test.ts` (4 test) · revisore: APPROVATO
+T64.4 · fatto · una riga in `CLAUDE.md` (formato del verdetto nel diario) · revisore: APPROVATO
 
 ## Decisioni da confermare
 - Versione di Node del workflow: 22 (il repository non ne dichiara una).

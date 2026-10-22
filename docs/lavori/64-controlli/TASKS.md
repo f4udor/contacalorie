@@ -44,7 +44,7 @@ Vincoli: database no (nessuna migrazione, nessun SQL). Si toccano solo `.github/
 - Test: un test separato `tools/workflow-controlli.test.ts` (senza toccare quelli di T64.1) che legge il file e controlla: presenza di `pull_request`, `branches: [dev]`, i quattro tipi, assenza di `secrets.`, presenza di `node-version: 22`.
 - Percorsi: nessuna schermata.
 
-### T64.4 Regola nel CLAUDE.md · da fare
+### T64.4 Regola nel CLAUDE.md · fatto
 - Cosa fare: in `CLAUDE.md`, sezione "Cartella del lavoro", nella riga di `DIARIO.md`, aggiungere che ogni riga di task chiuso riporta il verdetto del revisore nel formato `revisore: APPROVATO` o `revisore: RESPINTO` (escluso il task del report). Nessun'altra modifica.
 - File e cartelle: `CLAUDE.md`.
 - Criteri di accettazione: il diff di `CLAUDE.md` è di una sola riga cambiata; il formato scritto coincide con quello cercato dallo script.
