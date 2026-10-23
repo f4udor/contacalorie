@@ -114,7 +114,7 @@ Le etichette `per-…` arrivano come notifica su Slack (vedi "Comunicazione").
    - Per la grafica si preparano bozze da guardare prima.
 3. **Pronta.** Quando il responsabile dice che va bene, la chat fa prima gli stessi controlli del pianificatore (`.claude/agents/pianificatore.md`, "Controlli prima di scrivere"): legge l'issue, le sezioni del brief e il codice che il lavoro tocca, e le domande che ne escono le fa subito in chat. Solo quando non ci sono buchi mette `pronta`. È l'ultimo momento per cambiare idea a costo zero.
 4. **Notte: pianificare e costruire.** L'attività notturna del responsabile prende un'issue `pronta`: il pianificatore legge issue, brief e codice e scrive i task (al massimo 8); costruttore e revisore li eseguono; alla fine la sessione apre la pull request verso `dev` in bozza e mette `per-<responsabile>`. Se il pianificatore trova comunque una scelta di prodotto non decisa, non scrive i task: mette `domanda` e `per-<responsabile>` e si ferma. Il responsabile risponde nella sua chat, che aggiorna l'issue e rimette `pronta`; di giorno si può rilanciare a mano senza aspettare la notte.
-5. **SQL.** Se il lavoro ha un file SQL, la pull request ha `sql-da-eseguire` e `per-mauro`: Mauro lo esegue sul database di prova, scrive "eseguito" e toglie le due etichette. Prima di questo l'anteprima non funziona.
+5. **SQL.** Se il lavoro ha un file SQL, la pull request ha `sql-da-eseguire` e `per-mauro`. La chat di Mauro, quando lui glielo chiede, lo esegue sul database di prova con il connettore Supabase, dopo aver controllato che contenga solo aggiunte; poi scrive "eseguito" e toglie le due etichette. Prima di questo l'anteprima non funziona.
 6. **Pronta per la valutazione.** Il responsabile segna la pull request come pronta (vedi "Passaggi umani"), anche senza averla provata: le prove arrivano con la valutazione.
 7. **Valutare.** Appena la pull request non è più in bozza, parte da sola l'attività "valutatore" dell'altra persona: scrive il commento "## Valutazione" con il verdetto in parole semplici, le decisioni da confermare e le **prove prima di unire** (al massimo 5 minuti, numerate, ognuna "fai così → devi vedere questo"), e mette `per-<responsabile>`. Se trova problemi gravi rimette la pull request in bozza.
 8. **Provare.** Il responsabile fa le prove sull'anteprima del branch (icona rossa, "PH Prova") e racconta alla sua chat com'è andata, anche a parole libere. La chat scrive sulla pull request "## Esito prove", prova per prova. Se qualcosa non va, la chat scrive nell'issue cosa correggere e rimette `pronta`; la sessione successiva continua sullo stesso branch.
@@ -157,7 +157,8 @@ Ogni passaggio si fa dall'app GitHub sul telefono, oppure lo si chiede alla prop
 | Raccontare l'esito di prove o collaudo | — | a parole libere; la chat scrive il commento |
 | Unire in `dev` | apri la pull request → "Merge pull request" → conferma | no |
 | Togliere la propria etichetta `per-…` | pull request o issue → Labels → togli la spunta | "togli la mia etichetta dalla #N" |
-| Eseguire un SQL (solo Mauro) | Supabase → SQL Editor → incolla il file → Run; poi scrivi "eseguito" sulla pull request | la chat dice quale file e in che ordine |
+| Eseguire un SQL sul database di prova | Supabase → SQL Editor → incolla il file → Run; poi scrivi "eseguito" sulla pull request | "esegui lo SQL della #N": la chat di Mauro lo esegue e scrive "eseguito" |
+| Eseguire un SQL sul database vero (solo Mauro) | Supabase → SQL Editor, dopo il backup | no: la chat dice quale file e in che ordine |
 | Approvare l'uscita (solo Claudiu) | pull request verso `main` → Files changed / Review → Approve | no |
 | Lanciare una sessione a mano | claude.ai/code → nuova sessione sul repository, con il testo indicato | la chat dà il testo da incollare |
 
@@ -221,8 +222,9 @@ La chat propone di aprirne una nuova quando la conversazione è lunga (molte dec
 
 - Al modello AI dell'app va solo il testo del pasto con data e ora. Mandare altri dati è una decisione esplicita di Mauro.
 - Il database cresce per aggiunte: mai rinominare o eliminare.
-- Gli SQL li esegue solo Mauro: sul database di prova prima di provare un'anteprima, su quello vero prima dell'uscita di versione. Nessun agente tocca un database.
-- Su Vercel e sul Supabase vero agisce solo Mauro.
+- **Connettori della chat di Mauro** (dal 23 ottobre): Supabase, collegato solo al progetto di prova, e Vercel. La chat li usa per automatizzare il lavoro di Mauro: esegue gli SQL sul database di prova, legge log e stato delle pubblicazioni, controlla le anteprime. Prima di eseguire uno SQL controlla che contenga solo aggiunte e lo dice.
+- **Restano decisioni di Mauro, non della chat**: il database vero (backup ed SQL dell'uscita), cambiare impostazioni o variabili di Vercel e Supabase, pubblicare o tornare indietro in produzione, tutto ciò che costa soldi o non si annulla. La chat prepara e propone; agisce solo quando Mauro dice di sì in chat.
+- Le sessioni di Claude Code (notturne, a mano, agenti) non toccano nessun database e nessun servizio: non hanno connettori.
 - Niente si costruisce su ipotesi non verificate: se un punto è incerto, prima si prova.
 - Prezzi, limiti e condizioni dei servizi esterni si verificano online prima di darli per buoni.
 - Ogni proposta tiene conto del costo: un lavoro che tocca tutte le schermate costa molto più di uno mirato.
