@@ -1,0 +1,56 @@
+name: Controlli pull request
+
+on:
+  pull_request:
+    branches: [dev]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  controlli:
+    name: Controlli
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Installa le dipendenze
+        run: npm ci
+
+      - name: "Controllo 1: lint, test e build"
+        id: controllo1
+        continue-on-error: true
+        run: |
+          npm run lint
+          npm test
+          npm run build
+
+      - name: "Controlli 2-5: processo, test, diario, database"
+        id: controlli25
+        if: ${{ !contains(github.head_ref, '/docs-') }}
+        continue-on-error: true
+        env:
+          BRANCH: ${{ github.head_ref }}
+        run: node tools/controlli-pr.mjs "$BRANCH" origin/dev
+
+      - name: Esito
+        if: ${{ always() }}
+        run: |
+          if [ "${{ steps.controllo1.outcome }}" = "failure" ]; then
+            echo "❌ Controllo 1: lint, test o build non passano (vedi il passo sopra)."
+          fi
+          if [ "${{ steps.controlli25.outcome }}" = "failure" ]; then
+            echo "❌ Controlli 2-5: vedi le righe del passo sopra, ognuna dice il file."
+          fi
+          if [ "${{ steps.controllo1.outcome }}" = "failure" ] || [ "${{ steps.controlli25.outcome }}" = "failure" ]; then
+            exit 1
+          fi
+          echo "✅ Tutti i controlli passati."
