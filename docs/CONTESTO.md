@@ -23,6 +23,7 @@ Ogni informazione ha un solo posto. Se due posti dicono cose diverse, vale quell
 | Task di un lavoro | `docs/lavori/<n>-<parola>/TASKS.md` | il pianificatore scrive i task, Claude Code segna lo stato |
 | Decisioni prese dagli agenti e cose non verificate | `docs/lavori/<n>-<parola>/DIARIO.md` e `REPORT.md`; fino alla fase 8 in `docs/archivio/` | Claude Code |
 | Regole di lavoro degli agenti e attività programmate | `CLAUDE.md`, `.claude/agents/`, `docs/ATTIVITA.md` | la chat di Mauro, con pull request |
+| Ruoli della chat (development, operations, ...) e loro tracce | `docs/ruoli/` e issue "Ruoli: tracce delle chat" | chi crea il ruolo, con pull request; le tracce le lasciano le chat |
 | Metodo di lavoro in due: lavori, branch, approvazioni | `docs/METODO.md` nel repository | la chat di Mauro, con pull request |
 | Bozze grafiche approvate | `docs/design/` | la chat |
 | Guide ai collegamenti (Supabase, Vertex, Salute) | `docs/COLLEGA-*.md` | Claude Code |

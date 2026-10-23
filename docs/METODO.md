@@ -7,10 +7,12 @@ Regole per le persone e per la chat che progetta l'app (il progetto Claude di Ma
 - **Mauro** (GitHub `f4udor`) e **Claudiu** (GitHub `NIss-gif`). Nessuno dei due scrive codice e nemmeno la chat: il codice lo scrive solo Claude Code. Le persone giudicano schermate e comportamento.
 - Ognuno ha la sua chat di progetto, le sue sessioni di Claude Code e i limiti del suo piano.
 - **Il prodotto si decide in due**: regole, numeri, schermate (`docs/BRIEF.md`).
-- **Il processo è di Mauro**: questo documento, `CLAUDE.md`, `.claude/agents/`, `docs/ATTIVITA.md`, `docs/AVVIO.md`, le guide `docs/COLLEGA-*.md`. Mauro li cambia e unisce da solo; Claudiu li legge. Sono di Mauro anche gli **strumenti di lavoro**: codice che serve solo a come si lavora (anteprime, icone delle versioni di prova, script di prova) e non cambia l'app vera; le loro issue hanno l'etichetta `strumenti`.
+- **Il processo è di Mauro**: questo documento, `CLAUDE.md`, `.claude/agents/`, `docs/ATTIVITA.md`, `docs/AVVIO.md`, le guide `docs/COLLEGA-*.md`. Mauro li cambia e unisce da solo; Claudiu li legge. Sono di Mauro anche gli **strumenti di lavoro**: codice che serve solo a come si lavora (anteprime, icone delle versioni di prova, script di prova) e non cambia l'app vera; le loro issue hanno l'etichetta `strumenti`. Fanno eccezione i ruoli della chat (`docs/ruoli/`): ognuno crea e modifica i suoi e li unisce da solo.
 - L'obiettivo è un prodotto da vendere, con cui fondare una startup; si parte da un'app che si usa davvero ogni giorno.
 
 ## Ruolo della chat
+
+Questo è il comportamento di base, che vale sempre. A inizio chat la persona può scegliere anche un ruolo specifico (`docs/ruoli/`), che aggiunge regole proprie.
 
 Agisce come un senior product e tech lead che affianca chi le parla.
 
@@ -32,7 +34,8 @@ Obiettivo: aprire una chat costa al massimo una conferma (quella dei file di sta
 1. Legge `docs/METODO.md` e `docs/CONTESTO.md` dal branch `dev` scaricando il repository pubblico in sola lettura, senza agganciarlo alla chat: non chiede permessi.
 2. Legge i tre file di stato su Drive (vedi "Stato"), tutti con una sola ricerca e una lettura per file.
 3. Non guarda GitHub all'avvio: le richieste per la persona arrivano già su Slack (`#mauro`, `#claudiu`). Se la persona chiede cosa la aspetta, o se serve scrivere su GitHub, la chat aggancia il repository una volta sola in quel momento, e fa tutto ciò che serve con quell'aggancio.
-4. Se la chat tocca regole, schermate o lavori, legge i file che servono: `docs/BRIEF.md`, l'issue, la cartella del lavoro in `docs/lavori/`. Non dà per buono un ricordo: ciò che è stato costruito si legge nel repository.
+4. **Ruolo.** Chiede "Quale ruolo?", con l'elenco di `docs/ruoli/README.md` più "nessuno", salvo che la persona l'abbia già detto ("inizia operations"). Con un ruolo legge il suo file e lavora così; con "nessuno" si ferma al contesto e aspetta che la persona dica cosa vuole fare. Avvio, cambio di ruolo e nascita di ruoli nuovi: `docs/ruoli/README.md`.
+5. Se la chat tocca regole, schermate o lavori, legge i file che servono: `docs/BRIEF.md`, l'issue, la cartella del lavoro in `docs/lavori/`. Non dà per buono un ricordo: ciò che è stato costruito si legge nel repository.
 
 Le conferme dei connettori di Google si tolgono una volta per tutte dalle impostazioni di claude.ai (Connettori → ogni connettore → permessi degli strumenti: "Consenti sempre"), non dal "Consenti sempre" dentro la chat, che può valere solo per quella chat.
 
@@ -46,6 +49,8 @@ Le conferme dei connettori di Google si tolgono una volta per tutte dalle impost
 | Task, diario e report di un lavoro | `docs/lavori/<n>-<parola>/` (`TASKS.md`, `DIARIO.md`, `REPORT.md`) |
 | Task, diario e report fino alla fase 8 | `docs/archivio/` (si legge solo se serve) |
 | Regole per Claude Code e agenti | `CLAUDE.md` e `.claude/agents/` |
+| Ruoli della chat | `docs/ruoli/` |
+| Tracce del lavoro delle chat fuori dai ruoli | issue #81 "Ruoli: tracce delle chat" |
 | Testi delle attività programmate | `docs/ATTIVITA.md` |
 | Questo metodo | `docs/METODO.md` |
 | Preparazione di un progetto nuovo | `docs/AVVIO.md` |
@@ -79,6 +84,7 @@ Le regole su GitHub:
 | Regole di prodotto (`docs/BRIEF.md`) verso `dev` | l'ok dell'altra persona (il prodotto si decide in due) | chi l'ha aperta |
 | Processo e documenti di Mauro (vedi "Chi lavora") | niente | Mauro, da solo |
 | Strumenti di lavoro (issue con `strumenti`) | niente; il valutatore di Claudiu commenta comunque | Mauro, da solo |
+| Ruoli della chat (`docs/ruoli/`) | niente | chi l'ha aperta, da solo |
 | `dev` verso `main` | l'approvazione di Claudiu su GitHub | Mauro |
 
 Su `dev` queste regole non le impone GitHub: valgono per accordo, come la deroga qui sotto.
@@ -179,7 +185,7 @@ La valutazione a mano: una sessione cloud su `dev` con il messaggio "Valuta la p
 
 | Agente | Dove | Quando |
 |---|---|---|
-| Chat di progetto | claude.ai, progetto di ciascuno | quando la persona la apre |
+| Chat di progetto | claude.ai, progetto di ciascuno, con il ruolo scelto (`docs/ruoli/`) | quando la persona la apre |
 | Pianificatore | `.claude/agents/pianificatore.md` | inizio della sessione notturna |
 | Costruttore | la sessione stessa (`CLAUDE.md`) | dopo il pianificatore |
 | Revisore | `.claude/agents/revisore.md` | dopo ogni task |
@@ -216,7 +222,7 @@ Tre Google Doc, letti da entrambe le chat a ogni inizio:
 
 ## Quando cambiare chat
 
-La chat propone di aprirne una nuova quando la conversazione è lunga (molte decisioni, molti file letti, più lavori attraversati) o quando si accorge di dover rileggere cose già dette. Meglio un po' prima che un po' dopo. Prima aggiorna stato, contesto e, se serve, brief e issue; poi scrive un messaggio di poche righe da incollare nella nuova chat: a che punto si è, cosa fare per primo, cosa leggere, eventuali link. Niente che sia già negli stati.
+La chat propone di aprirne una nuova quando la conversazione è lunga (molte decisioni, molti file letti, più lavori attraversati) o quando si accorge di dover rileggere cose già dette. Meglio un po' prima che un po' dopo. Prima aggiorna stato, contesto e, se serve, brief e issue, e lascia la traccia del ruolo se serve (`docs/ruoli/README.md`); poi scrive un messaggio di poche righe da incollare nella nuova chat: a che punto si è, cosa fare per primo, cosa leggere, eventuali link. Niente che sia già negli stati.
 
 ## Regole fisse
 
