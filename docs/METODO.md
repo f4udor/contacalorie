@@ -135,7 +135,7 @@ Due lavori in parallelo non toccano lo stesso modulo: lo si decide quando si ass
 `main` è l'app vera, con i dati veri. Ci si arriva da `dev` quando i requisiti qui sotto sono soddisfatti, a prescindere dalla distribuzione ad altre persone (che è un tema separato, issue #72). Esce tutto `dev` o niente: non si scelgono i lavori uno per uno; un lavoro non pronto si toglie da `dev` con una pull request normale, oppure l'uscita aspetta.
 
 **Collaudo.**
-1. C'è sempre un'issue aperta "Collaudo prossima versione", assegnata a tutti e due. Ogni notte la sessione notturna vi aggiunge le **prove di collaudo** dei lavori uniti in `dev` (dal loro `REPORT.md`): prove d'insieme e percorsi principali, per scoprire anche cosa si è rotto altrove. Il collaudo comincia con la prima prova aggiunta.
+1. C'è sempre un'issue aperta "Collaudo prossima versione", assegnata a tutti e due. Ogni notte la sessione notturna vi aggiunge le **prove di collaudo** dei lavori che cambiano l'app e sono uniti in `dev` (dal loro `REPORT.md`; processo, documenti e strumenti non ne generano): prove d'insieme e percorsi principali, per scoprire anche cosa si è rotto altrove. Il collaudo comincia con la prima prova aggiunta.
 2. Ognuno fa il collaudo su "PH Dev" (icona gialla) quando ha tempo e lo racconta alla sua chat, che scrive nell'issue "## Esito collaudo – Mauro" (o "– Claudiu") e apre un'issue per ogni problema.
 3. Le correzioni seguono il ciclo normale. Le loro prove si aggiungono al collaudo, ma non fanno ripartire i giorni.
 
