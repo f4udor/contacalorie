@@ -462,3 +462,5 @@ Non decise e non pianificate: nessun task le anticipa. L'elenco aggiornato sta n
 - Viste di Oggi e Trend compatte e personalizzabili.
 - Trend con intervalli personalizzati (dal… al…, "ultimi 30 giorni") e deficit stimato confrontato con il peso reale.
 - Calorie reali delle uscite in bici lette da Salute.
+
+<!-- Prova collaudo #84 (da non unire) -->
