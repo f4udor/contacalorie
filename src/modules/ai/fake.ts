@@ -83,3 +83,5 @@ export function demoEstimate(request: { text: string; localTime: string; previou
     : [];
   return { meals: [{ slot, freeMeal: false, dishes, favorites: favorites.map(({ ref, kind, quantitySaid, grams, servings }) => ({ ref, ...(kind ? { kind } : {}), quantitySaid, grams, servings })) }] };
 }
+
+// Prova collaudo #84 (da non unire)
