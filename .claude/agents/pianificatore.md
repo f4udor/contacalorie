@@ -59,7 +59,7 @@ Regole per i task:
 - Un task tocca un modulo; il motore (`src/engine`) va in task suoi, prima delle schermate che lo usano.
 - Ogni task che tocca il database ha la migrazione e il file `supabase/aggiornamento-<n>.sql`.
 - Criteri e test usano i numeri del brief, mai numeri inventati.
-- Se il lavoro ha logica da verificare, il primo task è "Test di accettazione": solo i test dei criteri, con i numeri esatti (vedi `CLAUDE.md`, "Prima i test, poi il codice"). Gli altri task li devono far passare senza modificarli.
+- Se il lavoro ha logica da verificare, il primo task è "Test di accettazione": solo i test dei criteri, con i numeri esatti (vedi `CLAUDE.md`, "Prima i test, poi il codice"). Lo esegue il `collaudatore-test`, che vede solo issue, brief e questo task e non il codice del lavoro: per questo il task deve nominare i file, i nomi e le firme delle funzioni da testare e ogni criterio con i suoi numeri, in modo che i test si possano scrivere senza vedere l'implementazione. Gli altri task li devono far passare senza modificarli.
 - Ogni task con schermate elenca i suoi **percorsi**: per ognuno i passi (cosa si tocca, cosa si scrive) e cosa si deve vedere alla fine. Se `npm run percorsi` o i percorsi base non esistono ancora, aggiungi prima un task che li crea.
 - L'ultimo task è sempre il report.
 
