@@ -15,7 +15,7 @@ Ogni sessione lavora su una sola issue, indicata nel messaggio di avvio o scelta
 5. **Task.** Esegui i task `da fare` in ordine, con il ciclo qui sotto. Non rifare task `fatto` e non fare nulla che i task non chiedono.
 6. **Fine.** Come dice "Fine del lavoro".
 
-Se il subagente `pianificatore` o `revisore` non è disponibile nella sessione, avvia un agente `general-purpose` passandogli come istruzioni il contenuto integrale del suo file, più ciò che gli passeresti. Vale a tutti gli effetti.
+Se il subagente `pianificatore`, `collaudatore-test` o `revisore` non è disponibile nella sessione, avvia un agente `general-purpose` passandogli come istruzioni il contenuto integrale del suo file, più ciò che gli passeresti. Vale a tutti gli effetti.
 
 ## Sessione notturna
 
@@ -64,8 +64,11 @@ docs/            brief, lavori, archivio, guide
 
 ## Prima i test, poi il codice
 
-- Il primo task di ogni lavoro che ha logica da verificare è "Test di accettazione": scrive solo i test dei criteri di accettazione, con i numeri del task o del brief. In quel momento possono fallire. Si committa così.
-- I task successivi devono farli passare **senza modificarli**. Se un test di accettazione sembra sbagliato (contraddice l'issue o il brief), puoi cambiarlo solo scrivendolo nel diario sotto "Decisioni da confermare", con la riga dell'issue o del brief che lo giustifica.
+- Il primo task di ogni lavoro che ha logica da verificare è "Test di accettazione": **non lo scrivi tu**. Avvia il subagente `collaudatore-test` (`.claude/agents/collaudatore-test.md`) in modo SCRIVI, passandogli il numero dell'issue, il branch e il testo del task. Scrive solo i test dei criteri di accettazione, con i numeri dell'issue o del brief, senza vedere il codice che li dovrà superare. In quel momento possono fallire. Poi il task passa dalla revisione come gli altri e si committa così. I "Casi non decisi" che il collaudatore elenca li tratti come dice "Limiti": caso piccolo, opzione più semplice e riga nel diario; caso grande, domanda.
+- I task successivi devono farli passare **senza modificarli**: i test di accettazione non li cambi tu, mai. Se un test non passa e pensi che sia sbagliato (contraddice l'issue o il brief) o che manchi un caso, avvia il `collaudatore-test` in modo CONSULTA, passandogli solo la domanda, il percorso del test e l'esito dei test, non il tuo ragionamento né il tuo codice. Un giro solo per domanda. Secondo l'esito:
+  - `TEST CORRETTO`: adatti il codice.
+  - `TEST CORRETTO, ECCO LA MODIFICA` o `CASO MANCANTE, AGGIUNTO`: il collaudatore ha già cambiato il test; scrivi una riga nel diario sotto "Risolte dal collaudatore" e prosegui.
+  - `NESSUN DOCUMENTO LO DECIDE`: scrivi la scelta nel diario sotto "Decisioni da confermare", con il tipo `[prodotto]`, e prosegui con il default proposto (o ti fermi, se il caso è grande: vedi "Limiti").
 - Per i task con schermate valgono anche i **percorsi**: script Playwright che usano l'app simulata a 390 px come farebbe una persona (tocco, scrivo, confermo, torno) e salvano uno screenshot per ogni passo. Stanno in `tests/percorsi/`, si lanciano con `npm run percorsi` (sul modello di `tools/screens.mjs`), gli screenshot vanno in `docs/screenshots/percorsi/<nome>/`. I **percorsi base** (accesso, aggiungere un pasto, aprire Trend, aprire Impostazioni) si lanciano in ogni lavoro con schermate e devono passare. Se lo script o i percorsi base non esistono ancora, il primo lavoro con schermate li crea in un suo task.
 
 ## Ciclo di un task
@@ -85,7 +88,12 @@ docs/            brief, lavori, archivio, guide
 `docs/lavori/<n>-<parola>/`, una per issue. Le sessioni scrivono solo nella cartella del proprio lavoro.
 
 - **`TASKS.md`**: lo scrive il pianificatore (formato nel suo file). Stati: `da fare`, `fatto`, `bloccato`. La sessione cambia solo gli stati.
-- **`DIARIO.md`**: una riga per task chiuso (codice, esito, eventuale nota, verdetto del revisore nel formato `revisore: APPROVATO` o `revisore: RESPINTO`; escluso il task del report). In fondo due elenchi sempre aggiornati: "Decisioni da confermare" e "Non verificato". Niente racconto del lavoro.
+- **`DIARIO.md`**: una riga per task chiuso (codice, esito, eventuale nota, verdetto del revisore nel formato `revisore: APPROVATO` o `revisore: RESPINTO`; escluso il task del report). In fondo tre elenchi sempre aggiornati:
+  - "Decisioni da confermare": solo ciò che spetta alle persone. Ogni riga ha il tipo: `[prodotto]` (scelta di prodotto che nessun documento decide) oppure `[brief]` (caso che il brief poteva prevedere e non prevede del tutto: una persona lo guarda e di solito lo fa entrare nel brief con un caso numerico);
+  - "Risolte dal collaudatore": una riga per ogni dubbio sui test chiuso dal `collaudatore-test` (cosa, esito, riga di issue o brief citata, tipo `[test]` o `[brief]`). Non richiedono nessuna azione: servono a vedere cosa si ripete;
+  - "Non verificato".
+
+  Niente racconto del lavoro.
 - **`REPORT.md`**: a fine lavoro (vedi sotto).
 
 ## GitHub
@@ -110,7 +118,7 @@ Quando tutti i task sono `fatto` o `bloccato`:
 2. **Scrivi `REPORT.md`**, in due parti:
    - **In parole semplici**: cosa c'è ora, cosa si può provare e come (un controllo sul telefono per ogni task), cosa manca, se c'è un SQL da eseguire.
    - **Prove di collaudo**: 2-5 prove da fare su `dev` prima dell'uscita, d'insieme (la funzione nuova insieme al resto dell'app), numerate, ognuna "fai così → devi vedere questo".
-   - **Tecnica**: task chiusi e bloccati, copertura dei test, decisioni da confermare, limiti e cose non verificate.
+   - **Tecnica**: task chiusi e bloccati, copertura dei test, decisioni da confermare, quante cose ha chiuso il collaudatore (da "Risolte dal collaudatore"), limiti e cose non verificate.
 3. **Pull request** verso `dev`, **in bozza**, o aggiorna quella che esiste già. Titolo `#<n> <titolo dell'issue>`; nel testo la parte "In parole semplici" del report e la riga `Closes #<n>`.
 4. **Etichette sulla pull request**:
    - sempre `per-<responsabile>`, con il commento "Lavoro finito. Segna la pull request come pronta (Ready for review), oppure chiedilo alla tua chat: parte la valutazione con le prove da fare.";
