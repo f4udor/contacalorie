@@ -17,35 +17,25 @@ e guidami nella preparazione per lavorare a Personal Health.
 - Un passo alla volta: spiega cosa fare in due o tre righe, aspetta che la persona dica com'è andata, poi passa al successivo.
 - Quando un passo lo può fare lei con i propri strumenti (creare o condividere un file su Drive), lo fa, dopo averlo detto.
 - Non indovina menu o percorsi delle impostazioni che non conosce: descrive cosa cercare.
-- Prima dei passi tecnici fa l'**Orientamento** qui sotto, anche a chi ha già fatto una parte della preparazione.
+- Prima dei passi dice **Come si lavora** qui sotto, in parole semplici, senza quiz né domande di controllo. Se la persona ha già fatto una parte della preparazione, lo dice comunque, in breve.
+- Niente tecnicismi: se un termine non serve per il passo che si sta facendo, non lo usa.
 - Alla fine segna la preparazione come conclusa (passo 9).
 - Se la persona ha già fatto la preparazione con la versione precedente di questo documento, la chat le fa fare solo i passi che mancano (di solito 4, 7 e 8).
 
-## Orientamento
+## Come si lavora (da dire a voce, in breve)
 
-Prima dei passi tecnici, perché le attività notturne o le etichette si capiscono solo dopo aver visto il ciclo. Cinque blocchi, circa 15 minuti: per ognuno la chat spiega in poche righe, con parole semplici, poi fa **una domanda** per controllare che sia chiaro e aspetta la risposta. Se la risposta mostra un dubbio, rispiega meglio prima di andare avanti. Dove la persona sa già (cosa fa l'app, perché la sviluppiamo, chi fa cosa), non lo ripete. La stessa cosa, da rileggere, sta su Notion: Personal Health → "Inizia da qui".
+Prima dei passi, due minuti per dire come si lavora, con parole semplici e **senza domande di controllo**: non è un esame. Se la persona ha dubbi li dice lei. Dove sa già le cose, la chat salta. Le stesse cose, da rileggere, stanno su Notion: Personal Health → "Inizia da qui".
 
-1. **Dove sta cosa.**
-   - Lavori, idee e priorità: issue di GitHub. Ogni lavoro ha un responsabile.
-   - Regole del prodotto e regole per gli agenti: repository (`docs/BRIEF.md`, `docs/METODO.md`, `CLAUDE.md`). Se due posti dicono cose diverse, vale il repository.
-   - A che punto è ciascuno: tre file di stato su Drive.
-   - Spiegazioni, roadmap, business, legale, riunioni: Notion.
-   - Cosa tocca a te: Slack, canale con il proprio nome.
-   Domanda: "Se vuoi sapere cosa devi fare oggi, dove guardi?" (Slack e le issue assegnate a te.)
-2. **Il ciclo a due livelli**, con l'esempio vero della #50 (icone diverse per versione). Dettaglio in `docs/METODO.md`, "Ciclo di un lavoro" e "Uscita di versione".
-   - Riunione → issue → il "cosa" scritto con la propria chat → `pronta`.
-   - Di notte gli agenti costruiscono sul branch e aprono la pull request (la #50: aperta alle 02:44).
-   - **Livello 1**: segni pronta la pull request, il valutatore dell'altro ti dà prove di 5 minuti, le fai sull'app rossa "PH Prova", racconti l'esito alla chat, unisci in `dev` da solo.
-   - **Livello 2**: le prove di collaudo si accumulano in un'issue; tutti e due collaudate l'app gialla "PH Dev"; dopo almeno 7 giorni e con entrambi gli esiti ok si prepara l'uscita; l'app vera (`main`, blu) si aggiorna solo con l'approvazione di entrambi.
-   Domanda: "Quando puoi unire da solo, e quando serve anche l'altro?" (Da solo in `dev` dopo valutazione ed esito ok; in `main` sempre in due.)
-3. **I tuoi passaggi.** Le cose che solo la persona può fare: segnare pronta, fare le prove e raccontarle, unire in `dev`, collaudare, approvare le uscite (Claudiu) o eseguire gli SQL (Mauro). Ognuno si fa dall'app GitHub sul telefono oppure chiedendolo alla chat (`docs/METODO.md`, "Passaggi umani"). La chat non unisce e non approva mai.
-   Domanda: "Hai fatto le prove e una non va: cosa fai?" (Lo racconti alla chat: scrive l'esito e rimette il lavoro in `pronta` con cosa correggere.)
-4. **Gli agenti.** Pianificatore (divide il lavoro), costruttore (scrive il codice), revisore (controlla ogni pezzo senza conoscere il ragionamento di chi l'ha scritto), valutatore (controlla il lavoro finito per l'altra persona), rilascio (prepara il passaggio a `main`). Non decidono il prodotto: se manca una decisione si fermano e chiedono. Non unisce mai nessuno di loro. Non si parlano tra loro apposta: chi controlla non deve essere convinto da chi ha costruito. Quando qualcosa si rompe arriva un avviso "⚠️ Imprevisto" con cosa fare, e poi "✅ Risolto".
-   Domanda: "Perché il revisore non vede il ragionamento del costruttore?"
-5. **Come ti guida la chat, e il primo compito.** Quando tocca a te, alla fine del messaggio la chat scrive una riga "👉 Prossimo passo per te". Ciò che non è immediato diventa un'issue assegnata a te con `per-claudiu` (o `per-mauro`) e arriva su Slack. Ogni chat comincia con "inizia" e chiede un ruolo (oggi development od operations, oppure nessuno); i ruoli nuovi nascono dal lavoro che si ripete, e ognuno crea i suoi (`docs/ruoli/README.md`). Il primo compito di Claudiu è la roadmap: issue #73, da lavorare con la propria chat e portare in riunione.
-   Domanda: "Dove ti arriva un compito nuovo?"
+- **Ogni lavoro è un'issue su GitHub**, con una persona responsabile. Lì si vede cosa c'è da fare.
+- **Il "cosa" lo decidiamo noi** (Mauro e Claudiu) con la nostra chat. Quando è chiaro, l'issue si segna `pronta`.
+- **Il codice lo scrive Claude Code, di notte.** Al mattino c'è una pull request con il lavoro fatto.
+- **Tu lo provi sul telefono.** Un altro Claude controlla il lavoro e ti dà poche prove da 5 minuti. Racconti alla chat com'è andata; se va bene, il lavoro si unisce in `dev`, la versione di prova.
+- **L'app vera si aggiorna solo se siamo d'accordo in due.**
+- **La chat ti dice sempre cosa fare adesso**, in una riga che inizia con "👉 Prossimo passo per te". Le cose meno urgenti arrivano su Slack, nel canale col tuo nome.
+- **La chat non unisce e non approva mai niente al posto tuo.**
 
-Poi si passa ai passi tecnici.
+Non servono i nomi degli agenti, dei branch o delle etichette: li impari usandoli, e la chat te li spiega quando servono.
+
 
 ## I passi
 
