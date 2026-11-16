@@ -25,7 +25,7 @@ Vincoli: database no; nessuna schermata e nessun uso della funzione; `src/engine
 - Test: i casi sopra, con i numeri esatti; nessuno screenshot.
 - Percorsi: nessuno (nessuna schermata).
 
-### T96.2 Funzione weekEnd · da fare
+### T96.2 Funzione weekEnd · fatto
 - Cosa fare: aggiungere in `src/engine/dates.ts`, accanto a `weekStart`, `export function weekEnd(date: DateKey): DateKey` con commento "Domenica della settimana che contiene la data." Far passare i test di T96.1 senza modificarli.
 - File e cartelle: `src/engine/dates.ts`. L'esportazione da `src/engine/index.ts` c'è già tramite `export * from "./dates"`: verificare, non duplicare.
 - Criteri di accettazione: tutti i criteri di T96.1 passano; `npm run lint`, `npm test`, `npm run build` passano; nessun altro file cambia.

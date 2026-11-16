@@ -34,6 +34,11 @@ export function weekStart(date: DateKey): DateKey {
   return addDays(date, -weekdayIndex(date));
 }
 
+/** Domenica della settimana che contiene la data. */
+export function weekEnd(date: DateKey): DateKey {
+  return addDays(weekStart(date), 6);
+}
+
 /** Le sette date (lunedì-domenica) della settimana che contiene la data. */
 export function weekDates(date: DateKey): DateKey[] {
   const start = weekStart(date);
