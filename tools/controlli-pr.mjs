@@ -6,7 +6,7 @@ import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const FILE_DI_PROCESSO = ["CLAUDE.md", ".claude/", "docs/METODO.md", "docs/ATTIVITA.md", "docs/AVVIO.md", ".github/", "docs/BRIEF.md"];
+const FILE_DI_PROCESSO = ["CLAUDE.md", ".claude/", "docs/METODO.md", "docs/DEV-PRODOTTO.md", "docs/dev/", "docs/ATTIVITA.md", "docs/AVVIO.md", ".github/", "docs/BRIEF.md"];
 
 function git(dir, ...args) {
   return execFileSync("git", args, { cwd: dir, encoding: "utf8" });
