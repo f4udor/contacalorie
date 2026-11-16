@@ -32,13 +32,13 @@ Prima dei passi tecnici, perché le attività notturne o le etichette si capisco
    - Spiegazioni, roadmap, business, legale, riunioni: Notion.
    - Cosa tocca a te: Slack, canale con il proprio nome.
    Domanda: "Se vuoi sapere cosa devi fare oggi, dove guardi?" (Slack e le issue assegnate a te.)
-2. **Il ciclo a due livelli**, con l'esempio vero della #50 (icone diverse per versione). Dettaglio in `docs/METODO.md`, "Ciclo di un lavoro" e "Uscita di versione".
+2. **Il ciclo a due livelli**, con l'esempio vero della #50 (icone diverse per versione). Dettaglio in `docs/dev/METODO-DEV.md`, "Ciclo di un lavoro" e "Collaudo e uscita di versione".
    - Riunione → issue → il "cosa" scritto con la propria chat → `pronta`.
    - Di notte gli agenti costruiscono sul branch e aprono la pull request (la #50: aperta alle 02:44).
    - **Livello 1**: segni pronta la pull request, il valutatore dell'altro ti dà prove di 5 minuti, le fai sull'app rossa "PH Prova", racconti l'esito alla chat, unisci in `dev` da solo.
    - **Livello 2**: le prove di collaudo si accumulano in un'issue; tutti e due collaudate l'app gialla "PH Dev"; dopo almeno 7 giorni e con entrambi gli esiti ok si prepara l'uscita; l'app vera (`main`, blu) si aggiorna solo con l'approvazione di entrambi.
    Domanda: "Quando puoi unire da solo, e quando serve anche l'altro?" (Da solo in `dev` dopo valutazione ed esito ok; in `main` sempre in due.)
-3. **I tuoi passaggi.** Le cose che solo la persona può fare: segnare pronta, fare le prove e raccontarle, unire in `dev`, collaudare, approvare le uscite (Claudiu) o eseguire gli SQL (Mauro). Ognuno si fa dall'app GitHub sul telefono oppure chiedendolo alla chat (`docs/METODO.md`, "Passaggi umani"). La chat non unisce e non approva mai.
+3. **I tuoi passaggi.** Le cose che solo la persona può fare: segnare pronta, fare le prove e raccontarle, unire in `dev`, collaudare, approvare le uscite (Claudiu) o eseguire gli SQL (Mauro). Ognuno si fa dall'app GitHub sul telefono oppure chiedendolo alla chat (`docs/dev/METODO-DEV.md`, "Passaggi umani"). La chat non unisce e non approva mai.
    Domanda: "Hai fatto le prove e una non va: cosa fai?" (Lo racconti alla chat: scrive l'esito e rimette il lavoro in `pronta` con cosa correggere.)
 4. **Gli agenti.** Pianificatore (divide il lavoro), costruttore (scrive il codice), revisore (controlla ogni pezzo senza conoscere il ragionamento di chi l'ha scritto), valutatore (controlla il lavoro finito per l'altra persona), rilascio (prepara il passaggio a `main`). Non decidono il prodotto: se manca una decisione si fermano e chiedono. Non unisce mai nessuno di loro. Non si parlano tra loro apposta: chi controlla non deve essere convinto da chi ha costruito. Quando qualcosa si rompe arriva un avviso "⚠️ Imprevisto" con cosa fare, e poi "✅ Risolto".
    Domanda: "Perché il revisore non vede il ragionamento del costruttore?"
@@ -59,8 +59,8 @@ Poi si passa ai passi tecnici.
    - condividerlo in sola lettura con l'altra persona (la chat chiede l'email);
    - aprire il file `personal-health-stato-comune.md` che Mauro ha condiviso come editor, e quello personale di Mauro, per controllare che si leggano.
 7. **Slack.** Accettare l'invito allo spazio Slack, installare Slack sul telefono e attivare le notifiche di tutti i messaggi per il proprio canale (`#claudiu` o `#mauro`). Lì arrivano le richieste degli agenti.
-8. **Attività programmate.** Creare sul proprio account le due attività di `docs/ATTIVITA.md` (notturna e valutatore) da **claude.ai/code/routines**, con i testi già pronti lì. La chat non può crearle da sola (in chat il comando `/schedule` non esiste): guida la persona nel modulo un campo alla volta, oppure, se la chat è nell'app desktop, lo compila dal browser integrato e la persona clicca **Creare**. Ricorda di togliere tutti i connettori. Poi la persona preme **Esegui ora** sulla notturna: senza issue `pronta` deve fermarsi dicendo che non c'è nulla da fare. Se non si riesce a crearle, vale il piano B di `docs/METODO.md`: le lancia Mauro.
-9. **Fine.** La chat scrive nel file di stato personale "Preparazione conclusa il <data>" e toglie la voce corrispondente dal file comune. Poi spiega in cinque righe il ciclo di un lavoro (`docs/METODO.md`) e suggerisce di aprire la prima chat dentro il progetto.
+8. **Attività programmate.** Creare sul proprio account l'attività "valutatore" di `docs/ATTIVITA.md` (l'avvio programmato delle sessioni è opzionale) da **claude.ai/code/routines**, con i testi già pronti lì. La chat non può crearle da sola (in chat il comando `/schedule` non esiste): guida la persona nel modulo un campo alla volta, oppure, se la chat è nell'app desktop, lo compila dal browser integrato e la persona clicca **Creare**. Ricorda di togliere tutti i connettori. Se non si riesce a crearla, vale il piano B di `docs/METODO.md`: il valutatore lo lancia Mauro a mano.
+9. **Fine.** La chat scrive nel file di stato personale "Preparazione conclusa il <data>" e toglie la voce corrispondente dal file comune. Poi spiega in cinque righe il ciclo di un lavoro (`docs/dev/METODO-DEV.md`) e suggerisce di aprire la prima chat dentro il progetto.
 
 Su Vercel e su Supabase entra solo Mauro: il piano gratuito di Vercel ha un posto, e gli SQL li esegue lui. I link alle anteprime si trovano nei commenti di Vercel sulle pull request.
 
